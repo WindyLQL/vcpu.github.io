@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://vcpu.github.io/"/>
-  <updated>2017-05-27T08:57:02.000Z</updated>
+  <updated>2017-06-05T03:54:55.000Z</updated>
   <id>https://vcpu.github.io/</id>
   
   <author>
@@ -14,6 +14,62 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>systemtap使用调试记录（一）</title>
+    <link href="https://vcpu.github.io/2017/06/05/systemtap%E4%BD%BF%E7%94%A8%E8%B0%83%E8%AF%95%E8%AE%B0%E5%BD%95%EF%BC%88%E4%B8%80%EF%BC%89/"/>
+    <id>https://vcpu.github.io/2017/06/05/systemtap使用调试记录（一）/</id>
+    <published>2017-06-05T03:54:55.000Z</published>
+    <updated>2017-06-05T03:54:55.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="systemtap使用调试记录（一）"><a href="#systemtap使用调试记录（一）" class="headerlink" title="systemtap使用调试记录（一）"></a>systemtap使用调试记录（一）</h1><h2 id="一、调试环境介绍"><a href="#一、调试环境介绍" class="headerlink" title="一、调试环境介绍"></a>一、调试环境介绍</h2><pre><code>Linux 3.10.0-514.16.1.el7.x86_64 
+kernel-devel-3.10.0-514.16.1.el7.x86_64.rpm 同版本的开发头文件
+kernel-debuginfo-common-x86_64-3.10.0-514.16.1.el7.x86_64.rpm
+kernel-debuginfo-3.10.0-514.16.1.el7.x86_64.rpm 同版本调试数据包
+linux-3.10.0-514.16.1.el7.tar.xz 同版本的源码
+</code></pre><p><a href="https://centos.pkgs.org/7/centos-updates-x86_64/kernel-devel-3.10.0-514.16.1.el7.x86_64.rpm.html" target="_blank" rel="external"><em>kernel开发头文件下载地址</em></a><br><a href="http://debuginfo.centos.org/7/x86_64/kernel-debuginfo-3.10.0-514.16.1.el7.x86_64.rpm" target="_blank" rel="external"><em>kernel调试包下载地址</em></a><br><a href="http://debuginfo.centos.org/7/x86_64/kernel-debuginfo-common-x86_64-3.10.0-514.16.1.el7.x86_64.rpm" target="_blank" rel="external"><em>kernel调试common包下载地址</em></a><br><a href="https://wiki.centos.org/zh/HowTos/I_need_the_Kernel_Source#head-963cd44439b8c10fa507fa0c90725029c060108a" target="_blank" rel="external">根据当前虚拟机获取内核代码的方法</a></p>
+<a id="more"></a>
+<h2 id="二、centos7安装方法"><a href="#二、centos7安装方法" class="headerlink" title="二、centos7安装方法"></a>二、centos7安装方法</h2><pre><code>yum install *.rpm  安装上述3个（debugifo,devel,debuginfo-common）rpm包
+yum install systemtap
+stap -ve &apos;probe begin { log(&quot;hello world&quot;) exit() }&apos;
+</code></pre><p>测试正常结果如下：    </p>
+<blockquote>
+<p>[root@localhost qinlong]# stap -ve ‘probe begin { log(“hello world”) exit() }’<br>Pass 1: parsed user script and 120 library scripts using 227352virt/40488res/3260shr/37400data kb, in 260usr/30sys/338real ms.<br>Pass 2: analyzed script: 1 probe, 2 functions, 0 embeds, 0 globals using 228540virt/41804res/3420shr/38588data kb, in 10usr/0sys/6real ms.<br>Pass 3: translated to C into “/tmp/stap5CqHmN/stap_f7a5084b8a638f5ce64a31271684ef1f_1133_src.c” using 228672virt/42408res/3996shr/38720data kb, in 0usr/0sys/0real ms.<br>Pass 4: compiled C into “stap_f7a5084b8a638f5ce64a31271684ef1f_1133.ko” in 1000usr/330sys/1247real ms.<br>Pass 5: starting run.<br>hello world<br>Pass 5: run completed in 10usr/40sys/362real ms.</p>
+</blockquote>
+<h2 id="三、通用案例"><a href="#三、通用案例" class="headerlink" title="三、通用案例"></a>三、通用案例</h2><h3 id="1-函数调用栈打印"><a href="#1-函数调用栈打印" class="headerlink" title="1.函数调用栈打印"></a>1.函数调用栈打印</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">[root@localhost stp]# cat bt.stp</div><div class="line">	probe kernel.function(@1)&#123;</div><div class="line">	    print(&quot;----------------START-------------------------\n&quot;)</div><div class="line">	    printf(&quot;In process [%s]\n&quot;, execname())</div><div class="line">	    print_regs()</div><div class="line">	    print_backtrace()</div><div class="line">	    print(&quot;----------------END-------------------------\n&quot;)</div><div class="line">	    exit()</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<p>打印内核函数的调用栈</p>
+<blockquote>
+<p>[root@localhost stp]# stap bt.stp tcp_sendmsg<br>—————-START————————-<br>In process [sshd]<br>RIP: ffffffff815c1ee0<br>RSP: ffff88003d217d28  EFLAGS: 00000202<br>RAX: ffffffff81aa20a0 RBX: ffff88003d217e38 RCX: 0000000000000024<br>RDX: ffff88003d217da8 RSI: ffff88003b3b87c0 RDI: ffff88003d217e38<br>RBP: ffff88003d217d50 R08: 0000000000000000 R09: 0000000000000000<br>R10: ffff88003d217da8 R11: 0000000000000000 R12: ffff88003d217e38<br>R13: 0000000000000001 R14: ffff88003d217e28 R15: ffff8800274d3480<br>FS:  00007f03e5514840(0000) GS:ffff88003fd00000(0000) knlGS:0000000000000000<br>CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033<br>CR2: 00007f19c6dc8000 CR3: 0000000035a5c000 CR4: 00000000000406e0<br> 0xffffffff815c1ee0 : tcp_sendmsg+0x0/0xc40 [kernel]<br> 0xffffffff815ed254 : inet_sendmsg+0x64/0xb0 [kernel]<br> 0xffffffff81554e07 : sock_aio_write+0x157/0x180 [kernel]<br> 0xffffffff811fdf3d : do_sync_write+0x8d/0xd0 [kernel]<br> 0xffffffff811fe8a5 : vfs_write+0x1b5/0x1e0 [kernel]<br> 0xffffffff811ff2cf : sys_write+0x7f/0xe0 [kernel]<br> 0xffffffff81697189 : system_call_fastpath+0x16/0x1b [kernel]<br>—————-END————————-</p>
+<h3 id="2-函数的调用过程"><a href="#2-函数的调用过程" class="headerlink" title="2.函数的调用过程"></a>2.函数的调用过程</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[root@localhost stp]# cat socket-trace.stp</div><div class="line">probe kernel.function(&quot;*@net/socket.c&quot;).call&#123;</div><div class="line">	printf(&quot;%s -&gt; %s\n&quot;,thread_indent(1),ppfunc())</div><div class="line">&#125;</div><div class="line">probe kernel.function(&quot;*@net/socket.c&quot;).return&#123;</div><div class="line">	printf(&quot;%s&lt;-%s\n&quot;,thread_indent(-1),ppfunc())</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</blockquote>
+<p>thread_indent(1)     打印程序名称（线程id）<br>ppfunc() 打印出执行函数符号</p>
+<p>kernel.function(“<em>@net/socket.c”).call<br>调用net/socket.c 文件中函数时候会触发函数体执行打印动作<br>kernel.function(“</em>@net/socket.c”).return<br>调用net/socket.c文件中函数执行完成返回后会触发函数体打印动作</p>
+<blockquote>
+<p>[root@localhost stp]# stap socket-trace.stp<br>  0 dndX11(3295): -&gt; SyS_recvmsg<br>  0 dndX11(3295): -&gt; <strong>sys_recvmsg<br>  0 dndX11(3295): -&gt; sockfd_lookup_light<br>  0 dndX11(3295):&lt;-sockfd_lookup<em>light<br>  1 dndX11(3295): -&gt; </em></strong>sys_recvmsg<br>  3 dndX11(3295): -&gt; sock_recvmsg<br>  7 dndX11(3295):&lt;-sock_recvmsg<br>  8 dndX11(3295):&lt;-<strong>_sys_recvmsg<br>  9 dndX11(3295):&lt;-</strong>sys_recvmsg<br> 10 dndX11(3295):&lt;-SyS_recvmsg<br>25274 dndX11(3295): -&gt; SyS_recvmsg<br>25279 dndX11(3295): -&gt; <strong>sys_recvmsg<br>25281 dndX11(3295): -&gt; sockfd_lookup_light<br>25284 dndX11(3295):&lt;-sockfd_lookup<em>light<br>25285 dndX11(3295): -&gt; </em></strong>sys_recvmsg<br>25288 dndX11(3295): -&gt; sock_recvmsg<br>25291 dndX11(3295):&lt;-sock_recvmsgx</p>
+<h3 id="3-打印协议栈函数中某一行数据"><a href="#3-打印协议栈函数中某一行数据" class="headerlink" title="3.打印协议栈函数中某一行数据"></a>3.打印协议栈函数中某一行数据</h3></blockquote>
+<p>/home/qinlong/rpmbuild/SOURCES/linux-3.10.0-514.16.1.el7/net/ipv4/tcp.c<br>局部源码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">1065 int tcp_sendmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,</div><div class="line">1066                 size_t size)</div><div class="line">1067 &#123;</div><div class="line">1068         struct iovec *iov;</div><div class="line">1069         struct tcp_sock *tp = tcp_sk(sk);</div><div class="line">1070         struct sk_buff *skb;</div><div class="line">1071         int iovlen, flags, err, copied = 0;</div><div class="line">1072         int mss_now = 0, size_goal, copied_syn = 0, offset = 0;</div><div class="line">1073         bool sg;</div><div class="line">1074         long timeo;</div><div class="line">1075</div><div class="line">1076         lock_sock(sk);</div><div class="line">1077</div><div class="line">1078         flags = msg-&gt;msg_flags;</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]# stap -L &apos;kernel.statement(&quot;*@net/ipv4/tcp.c:1078&quot;)&apos;</div><div class="line">kernel.statement(&quot;tcp_sendmsg@net/ipv4/tcp.c:1078&quot;) $iocb:struct kiocb* $sk:struct sock* $msg:struct msghdr* $size:size_t $copied:int $mss_now:int $size_goal:int $copied_syn:int $offset:int $timeo:long int</div></pre></td></tr></table></figure>
+<p>执行上述函数，可确代码具体的函数局部变量<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">$iocb:struct kiocb* </div><div class="line">$sk:struct sock* </div><div class="line">$msg:struct msghdr* </div><div class="line">$size:size_t </div><div class="line">$copied:int</div><div class="line">$mss_now:int </div><div class="line">$size_goal:int </div><div class="line">$copied_syn:int </div><div class="line">$offset:int </div><div class="line">$timeo:long int</div></pre></td></tr></table></figure></p>
+<p>根据以上变量打印出size值<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]# stap -e &apos;probe kernel.statement(&quot;*@net/ipv4/tcp.c:1078&quot;) &#123;printf(&quot;size %d \n&quot;,$size)&#125;&apos;</div><div class="line">size 36</div><div class="line">size 44</div></pre></td></tr></table></figure></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;systemtap使用调试记录（一）&quot;&gt;&lt;a href=&quot;#systemtap使用调试记录（一）&quot; class=&quot;headerlink&quot; title=&quot;systemtap使用调试记录（一）&quot;&gt;&lt;/a&gt;systemtap使用调试记录（一）&lt;/h1&gt;&lt;h2 id=&quot;一、调试环境介绍&quot;&gt;&lt;a href=&quot;#一、调试环境介绍&quot; class=&quot;headerlink&quot; title=&quot;一、调试环境介绍&quot;&gt;&lt;/a&gt;一、调试环境介绍&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;Linux 3.10.0-514.16.1.el7.x86_64 
+kernel-devel-3.10.0-514.16.1.el7.x86_64.rpm 同版本的开发头文件
+kernel-debuginfo-common-x86_64-3.10.0-514.16.1.el7.x86_64.rpm
+kernel-debuginfo-3.10.0-514.16.1.el7.x86_64.rpm 同版本调试数据包
+linux-3.10.0-514.16.1.el7.tar.xz 同版本的源码
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;a href=&quot;https://centos.pkgs.org/7/centos-updates-x86_64/kernel-devel-3.10.0-514.16.1.el7.x86_64.rpm.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;&lt;em&gt;kernel开发头文件下载地址&lt;/em&gt;&lt;/a&gt;&lt;br&gt;&lt;a href=&quot;http://debuginfo.centos.org/7/x86_64/kernel-debuginfo-3.10.0-514.16.1.el7.x86_64.rpm&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;&lt;em&gt;kernel调试包下载地址&lt;/em&gt;&lt;/a&gt;&lt;br&gt;&lt;a href=&quot;http://debuginfo.centos.org/7/x86_64/kernel-debuginfo-common-x86_64-3.10.0-514.16.1.el7.x86_64.rpm&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;&lt;em&gt;kernel调试common包下载地址&lt;/em&gt;&lt;/a&gt;&lt;br&gt;&lt;a href=&quot;https://wiki.centos.org/zh/HowTos/I_need_the_Kernel_Source#head-963cd44439b8c10fa507fa0c90725029c060108a&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;根据当前虚拟机获取内核代码的方法&lt;/a&gt;&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="linux kernel" scheme="https://vcpu.github.io/categories/linux-kernel/"/>
+    
+    
+      <category term="systemtap" scheme="https://vcpu.github.io/tags/systemtap/"/>
+    
+  </entry>
   
   <entry>
     <title>Hello World</title>
