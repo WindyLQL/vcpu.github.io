@@ -1,28 +1,360 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <title>博客</title>
+<!doctype html>
+
+
+
   
-  <link href="/atom.xml" rel="self"/>
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
-  <link href="https://vcpu.github.io/"/>
-  <updated>2017-06-09T10:03:12.000Z</updated>
-  <id>https://vcpu.github.io/</id>
   
-  <author>
-    <name>vcpu</name>
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
     
-  </author>
-  
-  <generator uri="http://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>socket()实现源码分析</title>
-    <link href="https://vcpu.github.io/2017/06/09/socket/"/>
-    <id>https://vcpu.github.io/2017/06/09/socket/</id>
-    <published>2017-06-09T10:03:12.000Z</published>
-    <updated>2017-06-09T10:03:12.000Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="socket"><a href="#socket" class="headerlink" title="socket()"></a>socket()</h1><p>内核版本：3.10.0-514.16.1.el7.x86_64</p>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="socket,tcp/ip,kernel3.10.0-514.16.1," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="socket()内核版本：3.10.0-514.16.1.el7.x86_64 1234#include &amp;lt;sys/types.h&amp;gt;          /* See NOTES */#include &amp;lt;sys/socket.h&amp;gt;int socket(int domain, int type, int protocol);fd=socket(PF_INET,SOCK_STRE">
+<meta name="keywords" content="socket,tcp&#x2F;ip,kernel3.10.0-514.16.1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="socket()实现源码分析">
+<meta property="og:url" content="https://vcpu.github.io/2017/06/09/socket/index.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="socket()内核版本：3.10.0-514.16.1.el7.x86_64 1234#include &amp;lt;sys/types.h&amp;gt;          /* See NOTES */#include &amp;lt;sys/socket.h&amp;gt;int socket(int domain, int type, int protocol);fd=socket(PF_INET,SOCK_STRE">
+<meta property="og:image" content="https://vcpu.github.io/myimages/socket.png">
+<meta property="og:updated_time" content="2017-06-09T10:03:12.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="socket()实现源码分析">
+<meta name="twitter:description" content="socket()内核版本：3.10.0-514.16.1.el7.x86_64 1234#include &amp;lt;sys/types.h&amp;gt;          /* See NOTES */#include &amp;lt;sys/socket.h&amp;gt;int socket(int domain, int type, int protocol);fd=socket(PF_INET,SOCK_STRE">
+<meta name="twitter:image" content="https://vcpu.github.io/myimages/socket.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://vcpu.github.io/2017/06/09/socket/"/>
+
+
+
+
+
+  <title>socket()实现源码分析 | 博客</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://vcpu.github.io/2017/06/09/socket/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">socket()实现源码分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-09T18:03:12+08:00">
+                2017-06-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/socket/" itemprop="url" rel="index">
+                    <span itemprop="name">socket</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="socket"><a href="#socket" class="headerlink" title="socket()"></a>socket()</h1><p>内核版本：3.10.0-514.16.1.el7.x86_64</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;          /* See NOTES */</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">socket</span><span class="params">(<span class="keyword">int</span> domain, <span class="keyword">int</span> type, <span class="keyword">int</span> protocol)</span></span>;</div><div class="line">fd=socket(PF_INET,SOCK_STREAM,<span class="number">0</span></div></pre></td></tr></table></figure>
 <a id="more"></a>
 <h2 id="1-接口说明："><a href="#1-接口说明：" class="headerlink" title="(1).接口说明："></a>(1).接口说明：</h2><h3 id="按照顺序可传入如下参数："><a href="#按照顺序可传入如下参数：" class="headerlink" title="按照顺序可传入如下参数："></a>按照顺序可传入如下参数：</h3><ul>
@@ -132,109 +464,400 @@
 <p>files有一个指针fdt<br>fdt-&gt;fd是一个类型为file指针的数组，数组下标为fd<br>rcu_assign_pointer(fdt-&gt;fd[fd], file); 将file安装fd为数组下标放到current-&gt;files管理</p>
 </blockquote>
 </blockquote>
-]]></content>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/socket/" rel="tag"># socket</a>
+          
+            <a href="/tags/tcp-ip/" rel="tag"># tcp/ip</a>
+          
+            <a href="/tags/kernel3-10-0-514-16-1/" rel="tag"># kernel3.10.0-514.16.1</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/05/systemtap使用调试记录（一）/" rel="next" title="systemtap使用调试记录（一）">
+                <i class="fa fa-chevron-left"></i> systemtap使用调试记录（一）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
     
-    <summary type="html">
-    
-      &lt;h1 id=&quot;socket&quot;&gt;&lt;a href=&quot;#socket&quot; class=&quot;headerlink&quot; title=&quot;socket()&quot;&gt;&lt;/a&gt;socket()&lt;/h1&gt;&lt;p&gt;内核版本：3.10.0-514.16.1.el7.x86_64&lt;/p&gt;
-&lt;figure class=&quot;highlight c&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;meta&quot;&gt;#&lt;span class=&quot;meta-keyword&quot;&gt;include&lt;/span&gt; &lt;span class=&quot;meta-string&quot;&gt;&amp;lt;sys/types.h&amp;gt;          /* See NOTES */&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;meta&quot;&gt;#&lt;span class=&quot;meta-keyword&quot;&gt;include&lt;/span&gt; &lt;span class=&quot;meta-string&quot;&gt;&amp;lt;sys/socket.h&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;socket&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(&lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; domain, &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; type, &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; protocol)&lt;/span&gt;&lt;/span&gt;;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;fd=socket(PF_INET,SOCK_STREAM,&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-    
-    </summary>
-    
-      <category term="socket" scheme="https://vcpu.github.io/categories/socket/"/>
-    
-    
-      <category term="socket" scheme="https://vcpu.github.io/tags/socket/"/>
-    
-      <category term="tcp/ip" scheme="https://vcpu.github.io/tags/tcp-ip/"/>
-    
-      <category term="kernel3.10.0-514.16.1" scheme="https://vcpu.github.io/tags/kernel3-10-0-514-16-1/"/>
-    
-  </entry>
+  </div>
+
+
+        </div>
+        
+          
   
-  <entry>
-    <title>systemtap使用调试记录（一）</title>
-    <link href="https://vcpu.github.io/2017/06/05/systemtap%E4%BD%BF%E7%94%A8%E8%B0%83%E8%AF%95%E8%AE%B0%E5%BD%95%EF%BC%88%E4%B8%80%EF%BC%89/"/>
-    <id>https://vcpu.github.io/2017/06/05/systemtap使用调试记录（一）/</id>
-    <published>2017-06-05T10:15:52.000Z</published>
-    <updated>2017-06-05T10:15:52.000Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="systemtap使用调试记录（一）"><a href="#systemtap使用调试记录（一）" class="headerlink" title="systemtap使用调试记录（一）"></a>systemtap使用调试记录（一）</h1><h2 id="一、调试环境介绍"><a href="#一、调试环境介绍" class="headerlink" title="一、调试环境介绍"></a>一、调试环境介绍</h2><pre><code>Linux 3.10.0-514.16.1.el7.x86_64 
-kernel-devel-3.10.0-514.16.1.el7.x86_64.rpm 同版本的开发头文件
-kernel-debuginfo-common-x86_64-3.10.0-514.16.1.el7.x86_64.rpm
-kernel-debuginfo-3.10.0-514.16.1.el7.x86_64.rpm 同版本调试数据包
-linux-3.10.0-514.16.1.el7.tar.xz 同版本的源码
-</code></pre><p><a href="https://centos.pkgs.org/7/centos-updates-x86_64/kernel-devel-3.10.0-514.16.1.el7.x86_64.rpm.html" target="_blank" rel="external"><em>kernel开发头文件下载地址</em></a><br><a href="http://debuginfo.centos.org/7/x86_64/kernel-debuginfo-3.10.0-514.16.1.el7.x86_64.rpm" target="_blank" rel="external"><em>kernel调试包下载地址</em></a><br><a href="http://debuginfo.centos.org/7/x86_64/kernel-debuginfo-common-x86_64-3.10.0-514.16.1.el7.x86_64.rpm" target="_blank" rel="external"><em>kernel调试common包下载地址</em></a><br><a href="https://wiki.centos.org/zh/HowTos/I_need_the_Kernel_Source#head-963cd44439b8c10fa507fa0c90725029c060108a" target="_blank" rel="external">根据当前虚拟机获取内核代码的方法</a></p>
-<a id="more"></a>
-<h2 id="二、centos7安装方法"><a href="#二、centos7安装方法" class="headerlink" title="二、centos7安装方法"></a>二、centos7安装方法</h2><pre><code>yum install *.rpm  安装上述3个（debugifo,devel,debuginfo-common）rpm包
-yum install systemtap
-stap -ve &apos;probe begin { log(&quot;hello world&quot;) exit() }&apos;
-</code></pre><p>测试正常结果如下：    </p>
-<blockquote>
-<p>[root@localhost qinlong]# stap -ve ‘probe begin { log(“hello world”) exit() }’<br>Pass 1: parsed user script and 120 library scripts using 227352virt/40488res/3260shr/37400data kb, in 260usr/30sys/338real ms.<br>Pass 2: analyzed script: 1 probe, 2 functions, 0 embeds, 0 globals using 228540virt/41804res/3420shr/38588data kb, in 10usr/0sys/6real ms.<br>Pass 3: translated to C into “/tmp/stap5CqHmN/stap_f7a5084b8a638f5ce64a31271684ef1f_1133_src.c” using 228672virt/42408res/3996shr/38720data kb, in 0usr/0sys/0real ms.<br>Pass 4: compiled C into “stap_f7a5084b8a638f5ce64a31271684ef1f_1133.ko” in 1000usr/330sys/1247real ms.<br>Pass 5: starting run.<br>hello world<br>Pass 5: run completed in 10usr/40sys/362real ms.</p>
-</blockquote>
-<h2 id="三、通用案例"><a href="#三、通用案例" class="headerlink" title="三、通用案例"></a>三、通用案例</h2><h3 id="1-函数调用栈打印"><a href="#1-函数调用栈打印" class="headerlink" title="1.函数调用栈打印"></a>1.函数调用栈打印</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">[root@localhost stp]# cat bt.stp</div><div class="line">	probe kernel.function(@1)&#123;</div><div class="line">	    print(&quot;----------------START-------------------------\n&quot;)</div><div class="line">	    printf(&quot;In process [%s]\n&quot;, execname())</div><div class="line">	    print_regs()</div><div class="line">	    print_backtrace()</div><div class="line">	    print(&quot;----------------END-------------------------\n&quot;)</div><div class="line">	    exit()</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
-<p>打印内核函数的调用栈</p>
-<blockquote>
-<p>[root@localhost stp]# stap bt.stp tcp_sendmsg<br>—————-START————————-<br>In process [sshd]<br>RIP: ffffffff815c1ee0<br>RSP: ffff88003d217d28  EFLAGS: 00000202<br>RAX: ffffffff81aa20a0 RBX: ffff88003d217e38 RCX: 0000000000000024<br>RDX: ffff88003d217da8 RSI: ffff88003b3b87c0 RDI: ffff88003d217e38<br>RBP: ffff88003d217d50 R08: 0000000000000000 R09: 0000000000000000<br>R10: ffff88003d217da8 R11: 0000000000000000 R12: ffff88003d217e38<br>R13: 0000000000000001 R14: ffff88003d217e28 R15: ffff8800274d3480<br>FS:  00007f03e5514840(0000) GS:ffff88003fd00000(0000) knlGS:0000000000000000<br>CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033<br>CR2: 00007f19c6dc8000 CR3: 0000000035a5c000 CR4: 00000000000406e0<br> 0xffffffff815c1ee0 : tcp_sendmsg+0x0/0xc40 [kernel]<br> 0xffffffff815ed254 : inet_sendmsg+0x64/0xb0 [kernel]<br> 0xffffffff81554e07 : sock_aio_write+0x157/0x180 [kernel]<br> 0xffffffff811fdf3d : do_sync_write+0x8d/0xd0 [kernel]<br> 0xffffffff811fe8a5 : vfs_write+0x1b5/0x1e0 [kernel]<br> 0xffffffff811ff2cf : sys_write+0x7f/0xe0 [kernel]<br> 0xffffffff81697189 : system_call_fastpath+0x16/0x1b [kernel]<br>—————-END————————-</p>
-</blockquote>
-<h3 id="2-函数的调用过程"><a href="#2-函数的调用过程" class="headerlink" title="2.函数的调用过程"></a>2.函数的调用过程</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[root@localhost stp]# cat socket-trace.stp</div><div class="line">probe kernel.function(&quot;*@net/socket.c&quot;).call&#123;</div><div class="line">	printf(&quot;%s -&gt; %s\n&quot;,thread_indent(1),ppfunc())</div><div class="line">&#125;</div><div class="line">probe kernel.function(&quot;*@net/socket.c&quot;).return&#123;</div><div class="line">	printf(&quot;%s&lt;-%s\n&quot;,thread_indent(-1),ppfunc())</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>thread_indent(1)     打印程序名称（线程id）<br>ppfunc() 打印出执行函数符号</p>
-<p>kernel.function(“<em>@net/socket.c”).call<br>调用net/socket.c 文件中函数时候会触发函数体执行打印动作<br>kernel.function(“</em>@net/socket.c”).return<br>调用net/socket.c文件中函数执行完成返回后会触发函数体打印动作</p>
-<blockquote>
-<p>[root@localhost stp]# stap socket-trace.stp<br>  0 dndX11(3295): -&gt; SyS_recvmsg<br>  0 dndX11(3295): -&gt; <strong>sys_recvmsg<br>  0 dndX11(3295): -&gt; sockfd_lookup_light<br>  0 dndX11(3295):&lt;-sockfd_lookup<em>light<br>  1 dndX11(3295): -&gt; </em></strong>sys_recvmsg<br>  3 dndX11(3295): -&gt; sock_recvmsg<br>  7 dndX11(3295):&lt;-sock_recvmsg<br>  8 dndX11(3295):&lt;-<strong>_sys_recvmsg<br>  9 dndX11(3295):&lt;-</strong>sys_recvmsg<br> 10 dndX11(3295):&lt;-SyS_recvmsg<br>25274 dndX11(3295): -&gt; SyS_recvmsg<br>25279 dndX11(3295): -&gt; <strong>sys_recvmsg<br>25281 dndX11(3295): -&gt; sockfd_lookup_light<br>25284 dndX11(3295):&lt;-sockfd_lookup<em>light<br>25285 dndX11(3295): -&gt; </em></strong>sys_recvmsg<br>25288 dndX11(3295): -&gt; sock_recvmsg<br>25291 dndX11(3295):&lt;-sock_recvmsgx</p>
-</blockquote>
-<h3 id="3-打印协议栈函数中某一行数据"><a href="#3-打印协议栈函数中某一行数据" class="headerlink" title="3.打印协议栈函数中某一行数据"></a>3.打印协议栈函数中某一行数据</h3><p>/home/qinlong/rpmbuild/SOURCES/linux-3.10.0-514.16.1.el7/net/ipv4/tcp.c<br>局部源码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">1065 int tcp_sendmsg(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,</div><div class="line">1066                 size_t size)</div><div class="line">1067 &#123;</div><div class="line">1068         struct iovec *iov;</div><div class="line">1069         struct tcp_sock *tp = tcp_sk(sk);</div><div class="line">1070         struct sk_buff *skb;</div><div class="line">1071         int iovlen, flags, err, copied = 0;</div><div class="line">1072         int mss_now = 0, size_goal, copied_syn = 0, offset = 0;</div><div class="line">1073         bool sg;</div><div class="line">1074         long timeo;</div><div class="line">1075</div><div class="line">1076         lock_sock(sk);</div><div class="line">1077</div><div class="line">1078         flags = msg-&gt;msg_flags;</div></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]# stap -L &apos;kernel.statement(&quot;*@net/ipv4/tcp.c:1078&quot;)&apos;</div><div class="line">kernel.statement(&quot;tcp_sendmsg@net/ipv4/tcp.c:1078&quot;) $iocb:struct kiocb* $sk:struct sock* $msg:struct msghdr* $size:size_t $copied:int $mss_now:int $size_goal:int $copied_syn:int $offset:int $timeo:long int</div></pre></td></tr></table></figure>
-<p>执行上述函数，可确代码具体的函数局部变量<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">$iocb:struct kiocb* </div><div class="line">$sk:struct sock* </div><div class="line">$msg:struct msghdr* </div><div class="line">$size:size_t </div><div class="line">$copied:int</div><div class="line">$mss_now:int </div><div class="line">$size_goal:int </div><div class="line">$copied_syn:int </div><div class="line">$offset:int </div><div class="line">$timeo:long int</div></pre></td></tr></table></figure></p>
-<p>根据以上变量打印出size值<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]# stap -e &apos;probe kernel.statement(&quot;*@net/ipv4/tcp.c:1078&quot;) &#123;printf(&quot;size %d \n&quot;,$size)&#125;&apos;</div><div class="line">size 36</div><div class="line">size 44</div></pre></td></tr></table></figure></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;systemtap使用调试记录（一）&quot;&gt;&lt;a href=&quot;#systemtap使用调试记录（一）&quot; class=&quot;headerlink&quot; title=&quot;systemtap使用调试记录（一）&quot;&gt;&lt;/a&gt;systemtap使用调试记录（一）&lt;/h1&gt;&lt;h2 id=&quot;一、调试环境介绍&quot;&gt;&lt;a href=&quot;#一、调试环境介绍&quot; class=&quot;headerlink&quot; title=&quot;一、调试环境介绍&quot;&gt;&lt;/a&gt;一、调试环境介绍&lt;/h2&gt;&lt;pre&gt;&lt;code&gt;Linux 3.10.0-514.16.1.el7.x86_64 
-kernel-devel-3.10.0-514.16.1.el7.x86_64.rpm 同版本的开发头文件
-kernel-debuginfo-common-x86_64-3.10.0-514.16.1.el7.x86_64.rpm
-kernel-debuginfo-3.10.0-514.16.1.el7.x86_64.rpm 同版本调试数据包
-linux-3.10.0-514.16.1.el7.tar.xz 同版本的源码
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;a href=&quot;https://centos.pkgs.org/7/centos-updates-x86_64/kernel-devel-3.10.0-514.16.1.el7.x86_64.rpm.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;&lt;em&gt;kernel开发头文件下载地址&lt;/em&gt;&lt;/a&gt;&lt;br&gt;&lt;a href=&quot;http://debuginfo.centos.org/7/x86_64/kernel-debuginfo-3.10.0-514.16.1.el7.x86_64.rpm&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;&lt;em&gt;kernel调试包下载地址&lt;/em&gt;&lt;/a&gt;&lt;br&gt;&lt;a href=&quot;http://debuginfo.centos.org/7/x86_64/kernel-debuginfo-common-x86_64-3.10.0-514.16.1.el7.x86_64.rpm&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;&lt;em&gt;kernel调试common包下载地址&lt;/em&gt;&lt;/a&gt;&lt;br&gt;&lt;a href=&quot;https://wiki.centos.org/zh/HowTos/I_need_the_Kernel_Source#head-963cd44439b8c10fa507fa0c90725029c060108a&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;根据当前虚拟机获取内核代码的方法&lt;/a&gt;&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="linux kernel" scheme="https://vcpu.github.io/categories/linux-kernel/"/>
-    
-    
-      <category term="systemtap" scheme="https://vcpu.github.io/tags/systemtap/"/>
-    
-  </entry>
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/h.jpg"
+               alt="vcpu" />
+          <p class="site-author-name" itemprop="name">vcpu</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/vcpu/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://ytlm.github.io/" title="CDN张三丰" target="_blank">CDN张三丰</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#socket"><span class="nav-number">1.</span> <span class="nav-text">socket()</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-接口说明："><span class="nav-number">1.1.</span> <span class="nav-text">(1).接口说明：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#按照顺序可传入如下参数："><span class="nav-number">1.1.1.</span> <span class="nav-text">按照顺序可传入如下参数：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#返回值说明"><span class="nav-number">1.1.2.</span> <span class="nav-text">返回值说明</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-内核调用栈"><span class="nav-number">1.2.</span> <span class="nav-text">(2).内核调用栈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-结构体说明"><span class="nav-number">1.3.</span> <span class="nav-text">(3).结构体说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-struct-socket创建源码分析"><span class="nav-number">1.4.</span> <span class="nav-text">(4).struct socket创建源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-sock-alloc函数"><span class="nav-number">1.4.1.</span> <span class="nav-text">(4.1).sock_alloc函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-sock-alloc-gt-new-inode-pseudo-gt-alloc-inode"><span class="nav-number">1.4.2.</span> <span class="nav-text">(4.2).sock_alloc->new_inode_pseudo->alloc_inode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-alloc-inode-gt-sock-alloc-inode"><span class="nav-number">1.4.3.</span> <span class="nav-text">(4.3).alloc_inode -> sock_alloc_inode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-sock-init-中sock-allok-inode挂载过程"><span class="nav-number">1.4.4.</span> <span class="nav-text">(4.4).sock_init 中sock_allok_inode挂载过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-pf-gt-create-即TCP／IP协议族的创建函数inet-create初始化步骤"><span class="nav-number">1.4.5.</span> <span class="nav-text">(4.5).pf->create 即TCP／IP协议族的创建函数inet_create初始化步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-5-1-PF-INET协议族的create函数inet-create会被组册"><span class="nav-number">1.4.5.1.</span> <span class="nav-text">(4.5.1).PF_INET协议族的create函数inet_create会被组册</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-5-2-注册过程"><span class="nav-number">1.4.5.2.</span> <span class="nav-text">(4.5.2).注册过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-5-3-sock-create使用过程"><span class="nav-number">1.4.5.3.</span> <span class="nav-text">(4.5.3).__sock_create使用过程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-inet-create都干了什么？"><span class="nav-number">1.4.6.</span> <span class="nav-text">(4.6).inet_create都干了什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-6-1-inet-protosw初始化过程如何？"><span class="nav-number">1.4.6.1.</span> <span class="nav-text">(4.6.1).inet_protosw初始化过程如何？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-6-2-inet-sock和sock是什么关系？"><span class="nav-number">1.4.6.2.</span> <span class="nav-text">(4.6.2). inet_sock和sock是什么关系？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-6-3-从inet-protosw获取的prot和ops哪些结构体上会记录使用？"><span class="nav-number">1.4.6.3.</span> <span class="nav-text">(4.6.3). 从inet_protosw获取的prot和ops哪些结构体上会记录使用？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-socket与文件系统"><span class="nav-number">1.5.</span> <span class="nav-text">(5).socket与文件系统</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
   
-  <entry>
-    <title>Hello World</title>
-    <link href="https://vcpu.github.io/2017/05/27/hello-world/"/>
-    <id>https://vcpu.github.io/2017/05/27/hello-world/</id>
-    <published>2017-05-27T08:57:02.000Z</published>
-    <updated>2017-05-27T08:57:02.000Z</updated>
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">vcpu</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
     
-    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-]]></content>
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
     
-    <summary type="html">
-    
-      &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.
-    
-    </summary>
-    
-    
-      <category term="tags" scheme="https://vcpu.github.io/tags/tags/"/>
-    
-  </entry>
+
+  </div>
+
   
-</feed>
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
