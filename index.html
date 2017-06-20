@@ -263,6 +263,172 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://vcpu.github.io/2017/06/20/tcp_sndbuf/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/06/20/tcp_sndbuf/" itemprop="url">tcp socket发送缓冲区</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-20T18:31:48+08:00">
+                2017-06-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/socket/" itemprop="url" rel="index">
+                    <span itemprop="name">socket</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/06/20/tcp_sndbuf/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/06/20/tcp_sndbuf/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="tcp-socket发送缓冲区探究结论"><a href="#tcp-socket发送缓冲区探究结论" class="headerlink" title="tcp socket发送缓冲区探究结论"></a>tcp socket发送缓冲区探究结论</h2><blockquote>
+<p>1: 未设置SO_SNDBUF时，sk-&gt;sk_sndbuf值由tcp_finish_connect-&gt;tcp_init_buffer_space-&gt;tcp_sndbuf_expand决定，TCP协议栈会自己计算一个值出来46080，sk_sndbuf是46080和net.ipv4.tcp_wmem[2]（4194304）的较小值</p>
+<p>2: 设置SO_SNDBUF后，tcp_sndbuf_expand将不会再被调用，其值情况完全由sock_setsockopt决定</p>
+<blockquote>
+<p>2-1: 设置值较小 value &lt;  2304 { SOCK_MIN_SNDBUF（4608）/2 }</p>
+<blockquote>
+<p>sk_sndbuf = 4608</p>
+</blockquote>
+<p>2-2: 设置值适中 { SOCK_MIN_SNDBUF（4608）/2 }  &lt;  value  &lt;  net.core.wmem_max</p>
+<blockquote>
+<p>sk_sndbuf = value*2</p>
+</blockquote>
+<p>2-3: 设置值较大 value &gt; net.core.wmem_max</p>
+<blockquote>
+<p>sk_sndbuf = net.core.wmem_max* 2</p>
+</blockquote>
+</blockquote>
+</blockquote>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/06/20/tcp_sndbuf/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://vcpu.github.io/2017/06/20/pf_inet/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -678,156 +844,6 @@
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2017/06/20/socket_stp/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://vcpu.github.io/2017/06/20/tcp_sndbuf/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/06/20/tcp_sndbuf/" itemprop="url">tcp socket发送缓冲区</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-20T14:35:49+08:00">
-                2017-06-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/socket/" itemprop="url" rel="index">
-                    <span itemprop="name">socket</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2017/06/20/tcp_sndbuf/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2017/06/20/tcp_sndbuf/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="tcp-socket发送缓冲区探究结论"><a href="#tcp-socket发送缓冲区探究结论" class="headerlink" title="tcp socket发送缓冲区探究结论"></a>tcp socket发送缓冲区探究结论</h2><p>1: 未设置SO_SNDBUF时，sk-&gt;sk_sndbuf值由tcp_finish_connect-&gt;tcp_init_buffer_space-&gt;tcp_sndbuf_expand决定，TCP协议栈会自己计算一个值出来46080，sk_sndbuf是46080和net.ipv4.tcp_wmem[2]（4194304）的较小值</p>
-<p>2: 设置SO_SNDBUF后，tcp_sndbuf_expand将不会再被调用，其值情况完全由sock_setsockopt决定<br>    2-1: 设置值较小 value &lt;  2304 { SOCK_MIN_SNDBUF（4608）/2 }<br>        sk_sndbuf = 4608<br>    2-2: 设置值适中 { SOCK_MIN_SNDBUF（4608）/2 }  &lt;  value  &lt;  net.core.wmem_max<br>        sk_sndbuf = value<em>2<br>    2-3: 设置值较大 value &gt; net.core.wmem_max<br>        sk_sndbuf = net.core.wmem_max </em> 2</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/06/20/tcp_sndbuf/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
