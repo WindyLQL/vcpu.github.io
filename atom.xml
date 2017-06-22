@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://vcpu.github.io/"/>
-  <updated>2017-06-22T10:10:14.000Z</updated>
+  <updated>2017-06-22T10:39:53.000Z</updated>
   <id>https://vcpu.github.io/</id>
   
   <author>
@@ -16,52 +16,11 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Linux系统调用</title>
-    <link href="https://vcpu.github.io/Linux%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/"/>
-    <id>https://vcpu.github.io/Linux系统调用/</id>
-    <published>2017-06-22T10:10:14.000Z</published>
-    <updated>2017-06-22T10:10:14.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="什么事系统调用"><a href="#什么事系统调用" class="headerlink" title="什么事系统调用"></a>什么事系统调用</h2><ul>
-<li>linux虚拟地址空间分为用户空间和内核空间</li>
-<li>用户空间不可直接访问内核空间，帝王班的内核空间可直接访问用户空间</li>
-<li>用户空间只能通过系统调用访问内核空间</li>
-<li>系统调用时内核提供的一组函数接口，使得用户空间上进程可以和内核空间交互</li>
-</ul>
-<h2 id="系统调用过程"><a href="#系统调用过程" class="headerlink" title="系统调用过程"></a>系统调用过程</h2><ul>
-<li>执行用户程序</li>
-<li>根据glibc中实现，取得系统调用号，将其存入EAX并执行int $0x80（128号中断）</li>
-<li>用户态可以传递变量、参数值给内核，内核态运行时候会保存用户进程的一些寄存器值等（上下文环境）</li>
-<li>触发中断后内核根据系统调用号执行对应的中断处理函数 </li>
-<li>系统调用结束将访问址存入EAX，返回中断处理函数</li>
-<li>中断处理函数根据存储用户态进程上下文环境恢复用户态，同时用户态就获取了内核态函数执行的返回值</li>
-</ul>
-<h2 id="系统调用汇编"><a href="#系统调用汇编" class="headerlink" title="系统调用汇编"></a>系统调用汇编</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">// pid = fork();</div><div class="line">asm volatile(</div><div class="line">    &quot;mov $0x2, %%eax\n\t&quot; // 将fork的系统调用号2存到eax寄存器  </div><div class="line">    &quot;int $0x80\n\t&quot;       // 产生int 0x80中断</div><div class="line">    &quot;mov %%eax,%0\n\t&quot;    // 将结果存入pid中</div><div class="line">    : &quot;=m&quot; (pid)</div></pre></td></tr></table></figure>
-<h2 id="系统调用实现分析"><a href="#系统调用实现分析" class="headerlink" title="系统调用实现分析"></a>系统调用实现分析</h2><p>待续</p>
-<h2 id="添加系统调用"><a href="#添加系统调用" class="headerlink" title="添加系统调用"></a>添加系统调用</h2><p>待续</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;什么事系统调用&quot;&gt;&lt;a href=&quot;#什么事系统调用&quot; class=&quot;headerlink&quot; title=&quot;什么事系统调用&quot;&gt;&lt;/a&gt;什么事系统调用&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;linux虚拟地址空间分为用户空间和内核空间&lt;/li&gt;
-&lt;li&gt;用户空间不可直接访问内核
-    
-    </summary>
-    
-      <category term="linux" scheme="https://vcpu.github.io/categories/linux/"/>
-    
-    
-      <category term="系统调用" scheme="https://vcpu.github.io/tags/%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/"/>
-    
-  </entry>
-  
-  <entry>
     <title>select</title>
     <link href="https://vcpu.github.io/select/"/>
     <id>https://vcpu.github.io/select/</id>
-    <published>2017-06-22T08:34:22.000Z</published>
-    <updated>2017-06-22T08:34:22.000Z</updated>
+    <published>2017-06-22T10:39:53.000Z</published>
+    <updated>2017-06-22T10:39:53.000Z</updated>
     
     <content type="html"><![CDATA[<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/time.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">select</span><span class="params">(<span class="keyword">int</span> nfds, fd_set *readfds, fd_set *writefds,</span></span></div><div class="line">           fd_set *exceptfds, struct timeval *timeout);</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_CLR</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;</div><div class="line"><span class="function"><span class="keyword">int</span>  <span class="title">FD_ISSET</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_SET</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_ZERO</span><span class="params">(fd_set *<span class="built_in">set</span>)</span></span>;</div></pre></td></tr></table></figure>
 <ul>
@@ -175,6 +134,47 @@
       <category term="select" scheme="https://vcpu.github.io/tags/select/"/>
     
       <category term="kernel3.10.0-415.16.1" scheme="https://vcpu.github.io/tags/kernel3-10-0-415-16-1/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Linux系统调用</title>
+    <link href="https://vcpu.github.io/Linux%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/"/>
+    <id>https://vcpu.github.io/Linux系统调用/</id>
+    <published>2017-06-22T10:10:14.000Z</published>
+    <updated>2017-06-22T10:10:14.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="什么事系统调用"><a href="#什么事系统调用" class="headerlink" title="什么事系统调用"></a>什么事系统调用</h2><ul>
+<li>linux虚拟地址空间分为用户空间和内核空间</li>
+<li>用户空间不可直接访问内核空间，帝王班的内核空间可直接访问用户空间</li>
+<li>用户空间只能通过系统调用访问内核空间</li>
+<li>系统调用时内核提供的一组函数接口，使得用户空间上进程可以和内核空间交互</li>
+</ul>
+<h2 id="系统调用过程"><a href="#系统调用过程" class="headerlink" title="系统调用过程"></a>系统调用过程</h2><ul>
+<li>执行用户程序</li>
+<li>根据glibc中实现，取得系统调用号，将其存入EAX并执行int $0x80（128号中断）</li>
+<li>用户态可以传递变量、参数值给内核，内核态运行时候会保存用户进程的一些寄存器值等（上下文环境）</li>
+<li>触发中断后内核根据系统调用号执行对应的中断处理函数 </li>
+<li>系统调用结束将访问址存入EAX，返回中断处理函数</li>
+<li>中断处理函数根据存储用户态进程上下文环境恢复用户态，同时用户态就获取了内核态函数执行的返回值</li>
+</ul>
+<h2 id="系统调用汇编"><a href="#系统调用汇编" class="headerlink" title="系统调用汇编"></a>系统调用汇编</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">// pid = fork();</div><div class="line">asm volatile(</div><div class="line">    &quot;mov $0x2, %%eax\n\t&quot; // 将fork的系统调用号2存到eax寄存器  </div><div class="line">    &quot;int $0x80\n\t&quot;       // 产生int 0x80中断</div><div class="line">    &quot;mov %%eax,%0\n\t&quot;    // 将结果存入pid中</div><div class="line">    : &quot;=m&quot; (pid)</div></pre></td></tr></table></figure>
+<h2 id="系统调用实现分析"><a href="#系统调用实现分析" class="headerlink" title="系统调用实现分析"></a>系统调用实现分析</h2><p>待续</p>
+<h2 id="添加系统调用"><a href="#添加系统调用" class="headerlink" title="添加系统调用"></a>添加系统调用</h2><p>待续</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;什么事系统调用&quot;&gt;&lt;a href=&quot;#什么事系统调用&quot; class=&quot;headerlink&quot; title=&quot;什么事系统调用&quot;&gt;&lt;/a&gt;什么事系统调用&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;linux虚拟地址空间分为用户空间和内核空间&lt;/li&gt;
+&lt;li&gt;用户空间不可直接访问内核
+    
+    </summary>
+    
+      <category term="linux" scheme="https://vcpu.github.io/categories/linux/"/>
+    
+    
+      <category term="系统调用" scheme="https://vcpu.github.io/tags/%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/"/>
     
   </entry>
   
