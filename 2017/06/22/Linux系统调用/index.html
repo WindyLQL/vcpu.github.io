@@ -96,10 +96,10 @@
 <meta name="keywords" content="系统调用">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux系统调用">
-<meta property="og:url" content="https://vcpu.github.io/2017/06/20/Linux系统调用/index.html">
+<meta property="og:url" content="https://vcpu.github.io/2017/06/22/Linux系统调用/index.html">
 <meta property="og:site_name" content="博客">
 <meta property="og:description" content="什么事系统调用 linux虚拟地址空间分为用户空间和内核空间 用户空间不可直接访问内核空间，帝王班的内核空间可直接访问用户空间 用户空间只能通过系统调用访问内核空间 系统调用时内核提供的一组函数接口，使得用户空间上进程可以和内核空间交互  系统调用过程 执行用户程序 根据glibc中实现，取得系统调用号，将其存入EAX并执行int $0x80（128号中断） 用户态可以传递变量、参数值给内核，内核">
-<meta property="og:updated_time" content="2017-06-20T10:53:33.000Z">
+<meta property="og:updated_time" content="2017-06-22T10:10:14.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux系统调用">
 <meta name="twitter:description" content="什么事系统调用 linux虚拟地址空间分为用户空间和内核空间 用户空间不可直接访问内核空间，帝王班的内核空间可直接访问用户空间 用户空间只能通过系统调用访问内核空间 系统调用时内核提供的一组函数接口，使得用户空间上进程可以和内核空间交互  系统调用过程 执行用户程序 根据glibc中实现，取得系统调用号，将其存入EAX并执行int $0x80（128号中断） 用户态可以传递变量、参数值给内核，内核">
@@ -130,7 +130,7 @@
 
 
 
-  <link rel="canonical" href="https://vcpu.github.io/2017/06/20/Linux系统调用/"/>
+  <link rel="canonical" href="https://vcpu.github.io/2017/06/22/Linux系统调用/"/>
 
 
 
@@ -218,6 +218,16 @@
         </li>
       
         
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             
@@ -266,7 +276,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://vcpu.github.io/2017/06/20/Linux系统调用/">
+    <link itemprop="mainEntityOfPage" href="https://vcpu.github.io/2017/06/22/Linux系统调用/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="vcpu">
@@ -295,8 +305,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-20T18:53:33+08:00">
-                2017-06-20
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-22T18:10:14+08:00">
+                2017-06-22
               </time>
             
 
@@ -336,9 +346,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2017/06/20/Linux系统调用/#comments" itemprop="discussionUrl">
+                <a href="/2017/06/22/Linux系统调用/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2017/06/20/Linux系统调用/" itemprop="commentCount"></span>
+                        data-disqus-identifier="2017/06/22/Linux系统调用/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -422,8 +432,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/06/20/tcp_sndbuf/" rel="next" title="tcp socket发送缓冲区">
-                <i class="fa fa-chevron-left"></i> tcp socket发送缓冲区
+              <a href="/2017/06/22/select/" rel="next" title="select">
+                <i class="fa fa-chevron-left"></i> select
               </a>
             
           </div>
@@ -431,10 +441,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/06/22/select/" rel="prev" title="select">
-                select <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -751,8 +757,8 @@
     
       <script type="text/javascript">
         var disqus_config = function () {
-          this.page.url = 'https://vcpu.github.io/2017/06/20/Linux系统调用/';
-          this.page.identifier = '2017/06/20/Linux系统调用/';
+          this.page.url = 'https://vcpu.github.io/2017/06/22/Linux系统调用/';
+          this.page.identifier = '2017/06/22/Linux系统调用/';
           this.page.title = 'Linux系统调用';
         };
         var d = document, s = d.createElement('script');
