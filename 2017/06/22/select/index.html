@@ -99,7 +99,7 @@
 <meta property="og:url" content="https://vcpu.github.io/2017/06/22/select/index.html">
 <meta property="og:site_name" content="博客">
 <meta property="og:description" content="1234567891011#include &amp;lt;sys/time.h&amp;gt;#include &amp;lt;sys/types.h&amp;gt;#include &amp;lt;unistd.h&amp;gt;int select(int nfds, fd_set *readfds, fd_set *writefds,           fd_set *exceptfds, struct timeval *timeou">
-<meta property="og:updated_time" content="2017-06-22T08:32:25.000Z">
+<meta property="og:updated_time" content="2017-06-22T08:34:22.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="select">
 <meta name="twitter:description" content="1234567891011#include &amp;lt;sys/time.h&amp;gt;#include &amp;lt;sys/types.h&amp;gt;#include &amp;lt;unistd.h&amp;gt;int select(int nfds, fd_set *readfds, fd_set *writefds,           fd_set *exceptfds, struct timeval *timeou">
@@ -295,7 +295,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-22T16:32:25+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-22T16:34:22+08:00">
                 2017-06-22
               </time>
             
@@ -445,7 +445,7 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> __kernel_fd_set		fd_set;</div></pre></td></tr></table></figure>
 <p>__kernel_fd_set 中fds_bits 最大只能1024 </p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __FD_SETSIZE	1024</span></div><div class="line"></div><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></div><div class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span> fds_bits[__FD_SETSIZE / (<span class="number">8</span> * <span class="keyword">sizeof</span>(<span class="keyword">long</span>))];</div><div class="line">&#125; __kernel_fd_set;</div></pre></td></tr></table></figure>
-<h3 id="我该怎么办才能突破1024限制？"><a href="#我该怎么办才能突破1024限制？" class="headerlink" title="我该怎么办才能突破1024限制？"></a>我该怎么办才能突破1024限制？</h3><p>修改掉此宏重新编译吧，当然还有其他办法，但是没必要这么复杂，直接用pool或者epool解决吧</p>
+<h3 id="我该怎么办才能突破1024限制？"><a href="#我该怎么办才能突破1024限制？" class="headerlink" title="我该怎么办才能突破1024限制？"></a>我该怎么办才能突破1024限制？</h3><p>修改掉此宏重新编译吧，当然还有其他办法，但是没必要这么复杂，直接用pool或者epool解决吧<br>当然你也可以多进程或者多线程，每个进程／线程 分别select</p>
 <h2 id="select缺点总结"><a href="#select缺点总结" class="headerlink" title="select缺点总结"></a>select缺点总结</h2><blockquote>
 <p>select效率低下，用户空间和内核空间来回拷贝，select内部吧存进程上下文切换，大型项目不适用<br>可同时监听的文件数量有限，linux平台1024个<br>每次调用select都要遍历完成所有的fd，每隔32fd需要调度一次<br>多个fd情况下，如果小的fs一直可读，会导致大的fd信号不会被收集到<br>需要在用户态和内核态来回拷贝fd_set，睡眠唤醒机制需要为fd分配poll_table_entry</p>
 </blockquote>

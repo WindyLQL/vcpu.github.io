@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://vcpu.github.io/"/>
-  <updated>2017-06-22T08:32:25.000Z</updated>
+  <updated>2017-06-22T08:34:22.000Z</updated>
   <id>https://vcpu.github.io/</id>
   
   <author>
@@ -19,8 +19,8 @@
     <title>select</title>
     <link href="https://vcpu.github.io/2017/06/22/select/"/>
     <id>https://vcpu.github.io/2017/06/22/select/</id>
-    <published>2017-06-22T08:32:25.000Z</published>
-    <updated>2017-06-22T08:32:25.000Z</updated>
+    <published>2017-06-22T08:34:22.000Z</published>
+    <updated>2017-06-22T08:34:22.000Z</updated>
     
     <content type="html"><![CDATA[<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/time.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">select</span><span class="params">(<span class="keyword">int</span> nfds, fd_set *readfds, fd_set *writefds,</span></span></div><div class="line">           fd_set *exceptfds, struct timeval *timeout);</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_CLR</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;</div><div class="line"><span class="function"><span class="keyword">int</span>  <span class="title">FD_ISSET</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_SET</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_ZERO</span><span class="params">(fd_set *<span class="built_in">set</span>)</span></span>;</div></pre></td></tr></table></figure>
 <ul>
@@ -104,7 +104,7 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> __kernel_fd_set		fd_set;</div></pre></td></tr></table></figure>
 <p>__kernel_fd_set 中fds_bits 最大只能1024 </p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __FD_SETSIZE	1024</span></div><div class="line"></div><div class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></div><div class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span> fds_bits[__FD_SETSIZE / (<span class="number">8</span> * <span class="keyword">sizeof</span>(<span class="keyword">long</span>))];</div><div class="line">&#125; __kernel_fd_set;</div></pre></td></tr></table></figure>
-<h3 id="我该怎么办才能突破1024限制？"><a href="#我该怎么办才能突破1024限制？" class="headerlink" title="我该怎么办才能突破1024限制？"></a>我该怎么办才能突破1024限制？</h3><p>修改掉此宏重新编译吧，当然还有其他办法，但是没必要这么复杂，直接用pool或者epool解决吧</p>
+<h3 id="我该怎么办才能突破1024限制？"><a href="#我该怎么办才能突破1024限制？" class="headerlink" title="我该怎么办才能突破1024限制？"></a>我该怎么办才能突破1024限制？</h3><p>修改掉此宏重新编译吧，当然还有其他办法，但是没必要这么复杂，直接用pool或者epool解决吧<br>当然你也可以多进程或者多线程，每个进程／线程 分别select</p>
 <h2 id="select缺点总结"><a href="#select缺点总结" class="headerlink" title="select缺点总结"></a>select缺点总结</h2><blockquote>
 <p>select效率低下，用户空间和内核空间来回拷贝，select内部吧存进程上下文切换，大型项目不适用<br>可同时监听的文件数量有限，linux平台1024个<br>每次调用select都要遍历完成所有的fd，每隔32fd需要调度一次<br>多个fd情况下，如果小的fs一直可读，会导致大的fd信号不会被收集到<br>需要在用户态和内核态来回拷贝fd_set，睡眠唤醒机制需要为fd分配poll_table_entry</p>
 </blockquote>
