@@ -313,9 +313,9 @@
     
       <category term="tcp/ip" scheme="https://vcpu.github.io/tags/tcp-ip/"/>
     
-      <category term="kernel3.10.0-514.16.1" scheme="https://vcpu.github.io/tags/kernel3-10-0-514-16-1/"/>
-    
       <category term="socket" scheme="https://vcpu.github.io/tags/socket/"/>
+    
+      <category term="kernel3.10.0-514.16.1" scheme="https://vcpu.github.io/tags/kernel3-10-0-514-16-1/"/>
     
   </entry>
   
@@ -425,9 +425,9 @@
       <category term="linux kernel" scheme="https://vcpu.github.io/categories/linux-kernel/"/>
     
     
-      <category term="kernel3.10.0-514.16.1" scheme="https://vcpu.github.io/tags/kernel3-10-0-514-16-1/"/>
-    
       <category term="socket" scheme="https://vcpu.github.io/tags/socket/"/>
+    
+      <category term="kernel3.10.0-514.16.1" scheme="https://vcpu.github.io/tags/kernel3-10-0-514-16-1/"/>
     
       <category term="systemtap" scheme="https://vcpu.github.io/tags/systemtap/"/>
     
@@ -804,9 +804,9 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
     
       <category term="tcp/ip" scheme="https://vcpu.github.io/tags/tcp-ip/"/>
     
-      <category term="bind" scheme="https://vcpu.github.io/tags/bind/"/>
-    
       <category term="kernel3.10.0-514.16.1" scheme="https://vcpu.github.io/tags/kernel3-10-0-514-16-1/"/>
+    
+      <category term="bind" scheme="https://vcpu.github.io/tags/bind/"/>
     
   </entry>
   
@@ -899,9 +899,9 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
     
       <category term="tcp/ip" scheme="https://vcpu.github.io/tags/tcp-ip/"/>
     
-      <category term="kernel3.10.0-514.16.1" scheme="https://vcpu.github.io/tags/kernel3-10-0-514-16-1/"/>
-    
       <category term="socket" scheme="https://vcpu.github.io/tags/socket/"/>
+    
+      <category term="kernel3.10.0-514.16.1" scheme="https://vcpu.github.io/tags/kernel3-10-0-514-16-1/"/>
     
   </entry>
   
@@ -1036,9 +1036,9 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
     
       <category term="tcp/ip" scheme="https://vcpu.github.io/tags/tcp-ip/"/>
     
-      <category term="kernel3.10.0-514.16.1" scheme="https://vcpu.github.io/tags/kernel3-10-0-514-16-1/"/>
-    
       <category term="socket" scheme="https://vcpu.github.io/tags/socket/"/>
+    
+      <category term="kernel3.10.0-514.16.1" scheme="https://vcpu.github.io/tags/kernel3-10-0-514-16-1/"/>
     
   </entry>
   

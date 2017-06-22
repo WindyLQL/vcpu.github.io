@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+
+    
+  <url>
+    <loc>https://vcpu.github.io/f-stack%E5%AE%89%E8%A3%85/</loc>
+    <lastmod>2017-06-22T16:10:18.000Z</lastmod>
+    <data>
+        <display>
+        <title>f-stack安装运行</title>
+        <pubTime>2017-06-22T16:10:18.000Z</pubTime>
+        
+        <tag>DPDK</tag>
+         
+        <tag>f-stack</tag>
+         
+        <tag>nginx</tag>
+         
+         
+           
+             
+              <breadCrumb title="DPDK" url="https://vcpu.github.io/categories/DPDK/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+    
+  <url>
+    <loc>https://vcpu.github.io/select/</loc>
+    <lastmod>2017-06-22T10:39:53.000Z</lastmod>
+    <data>
+        <display>
+        <title>select</title>
+        <pubTime>2017-06-22T10:39:53.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>select</tag>
+         
+        <tag>kernel3.10.0-415.16.1</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="https://vcpu.github.io/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://vcpu.github.io/socket/</loc>
+    <lastmod>2017-06-22T10:13:08.000Z</lastmod>
+    <data>
+        <display>
+        <title>socket()实现源码分析</title>
+        <pubTime>2017-06-09T09:22:34.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>socket</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="https://vcpu.github.io/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://vcpu.github.io/Linux%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/</loc>
+    <lastmod>2017-06-22T10:10:14.000Z</lastmod>
+    <data>
+        <display>
+        <title>Linux系统调用</title>
+        <pubTime>2017-06-22T10:10:14.000Z</pubTime>
+        
+        <tag>系统调用</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux" url="https://vcpu.github.io/categories/linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+    
+  <url>
+    <loc>https://vcpu.github.io/tcp_sndbuf/</loc>
+    <lastmod>2017-06-20T10:31:48.000Z</lastmod>
+    <data>
+        <display>
+        <title>tcp socket发送缓冲区</title>
+        <pubTime>2017-06-20T10:31:48.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>socket</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="https://vcpu.github.io/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://vcpu.github.io/pf_inet/</loc>
+    <lastmod>2017-06-20T10:12:51.000Z</lastmod>
+    <data>
+        <display>
+        <title>PF_INET和AF_INET区别</title>
+        <pubTime>2017-06-20T10:12:51.000Z</pubTime>
+        
+        <tag>PF_INET</tag>
+         
+        <tag>AF_INET</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="https://vcpu.github.io/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://vcpu.github.io/sockaddr_in/</loc>
+    <lastmod>2017-06-20T07:18:11.000Z</lastmod>
+    <data>
+        <display>
+        <title>sockaddr_in和sockaddr的区别</title>
+        <pubTime>2017-06-20T07:18:11.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>sockaddr_in</tag>
+         
+        <tag>sockaddr</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="https://vcpu.github.io/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://vcpu.github.io/socket_stp/</loc>
+    <lastmod>2017-06-20T06:52:23.000Z</lastmod>
+    <data>
+        <display>
+        <title>systemtap使用调试记录（二）</title>
+        <pubTime>2017-06-20T06:52:23.000Z</pubTime>
+        
+        <tag>socket</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>systemtap</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux kernel" url="https://vcpu.github.io/categories/linux-kernel/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://vcpu.github.io/socketsend1/</loc>
+    <lastmod>2017-06-19T04:43:31.000Z</lastmod>
+    <data>
+        <display>
+        <title>socket send</title>
+        <pubTime>2017-06-19T04:43:31.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>send</tag>
+         
+        <tag>sendto</tag>
+         
+        <tag>sendmsg</tag>
+         
+        <tag>sendmmsg</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="https://vcpu.github.io/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://vcpu.github.io/centos%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/</loc>
+    <lastmod>2017-06-15T07:42:10.000Z</lastmod>
+    <data>
+        <display>
+        <title>centos环境下脚本执行顺序探究</title>
+        <pubTime>2017-06-15T07:42:10.000Z</pubTime>
+        
+        <tag>linux</tag>
+         
+        <tag>centos</tag>
+         
+         
+           
+             
+              <breadCrumb title="centos" url="https://vcpu.github.io/categories/centos/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://vcpu.github.io/TIME_WAIT%E7%8A%B6%E6%80%81%E5%88%86%E6%9E%90/</loc>
+    <lastmod>2017-06-12T10:19:10.000Z</lastmod>
+    <data>
+        <display>
+        <title>TIME_WAIT状态分析</title>
+        <pubTime>2017-06-12T10:19:10.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+         
+           
+             
+              <breadCrumb title="TCP" url="https://vcpu.github.io/categories/TCP/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://vcpu.github.io/bind/</loc>
+    <lastmod>2017-06-12T09:35:01.000Z</lastmod>
+    <data>
+        <display>
+        <title>bind()实现源码分析</title>
+        <pubTime>2017-06-12T09:35:01.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>bind</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="https://vcpu.github.io/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://vcpu.github.io/connect/</loc>
+    <lastmod>2017-06-09T10:59:10.000Z</lastmod>
+    <data>
+        <display>
+        <title>connect()实现源码分析</title>
+        <pubTime>2017-06-09T10:59:10.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>socket</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="https://vcpu.github.io/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://vcpu.github.io/systemtap%E4%BD%BF%E7%94%A8%E8%B0%83%E8%AF%95%E8%AE%B0%E5%BD%95%EF%BC%88%E4%B8%80%EF%BC%89/</loc>
+    <lastmod>2017-06-05T10:15:52.000Z</lastmod>
+    <data>
+        <display>
+        <title>systemtap使用调试记录（一）</title>
+        <pubTime>2017-06-05T10:15:52.000Z</pubTime>
+        
+        <tag>systemtap</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux kernel" url="https://vcpu.github.io/categories/linux-kernel/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+    
+</urlset>
