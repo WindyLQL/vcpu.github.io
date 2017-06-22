@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://vcpu.github.io/about/index.html</loc>
+    
+    <lastmod>2017-06-22T17:34:37.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://vcpu.github.io/f-stack%E5%AE%89%E8%A3%85/</loc>
     
     <lastmod>2017-06-22T17:25:55.000Z</lastmod>
@@ -33,13 +40,6 @@
     <loc>https://vcpu.github.io/Linux%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/</loc>
     
     <lastmod>2017-06-22T10:10:14.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://vcpu.github.io/about/index.html</loc>
-    
-    <lastmod>2017-06-22T10:09:28.000Z</lastmod>
     
   </url>
   
