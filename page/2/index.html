@@ -80,7 +80,7 @@
 
 
 
-  <link rel="alternate" href="/atom.xml" title="博客" type="application/atom+xml" />
+  <link rel="alternate" href="/atom.xml" title="i博客" type="application/atom+xml" />
 
 
 
@@ -93,11 +93,11 @@
 
 
 <meta property="og:type" content="website">
-<meta property="og:title" content="博客">
+<meta property="og:title" content="i博客">
 <meta property="og:url" content="https://vcpu.github.io/page/2/index.html">
-<meta property="og:site_name" content="博客">
+<meta property="og:site_name" content="i博客">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="博客">
+<meta name="twitter:title" content="i博客">
 
 
 
@@ -131,7 +131,7 @@
 
 
 
-  <title>博客</title>
+  <title>i博客</title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -170,7 +170,7 @@
     <div class="custom-logo-site-title">
       <a href="/"  class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">博客</span>
+        <span class="site-title">i博客</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -273,7 +273,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://vcpu.github.io/2017/06/12/bind/">
+    <link itemprop="mainEntityOfPage" href="https://vcpu.github.io/bind/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="vcpu">
@@ -282,7 +282,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
+      <meta itemprop="name" content="i博客">
     </span>
 
     
@@ -292,7 +292,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/12/bind/" itemprop="url">bind()实现源码分析</a></h1>
+                <a class="post-title-link" href="/bind/" itemprop="url">bind()实现源码分析</a></h1>
         
 
         <div class="post-meta">
@@ -345,9 +345,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2017/06/12/bind/#comments" itemprop="discussionUrl">
+                <a href="/bind/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2017/06/12/bind/" itemprop="commentCount"></span>
+                        data-disqus-identifier="bind/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -386,7 +386,7 @@
 <p>情况1:绑定者为客户端，主动发起请求方，绑定地址和端口成功后，会使用该地址和端口进行发包<br>一般情况下，客户端的地址和端口都是其自动选择的，不需要绑定动作。<br>情况2:绑定者为服务端，被动连接接收方，绑定地址和端口成功后，客户端只能向该地址和端口发送连接请求。服务端往往需要绑定地址和端口。如果服务端存在多网卡情况，其只需要绑定服务端口即可，其目的地址就是客户端访问的目的地址。<br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/12/bind/#more" rel="contents">
+            <a class="btn" href="/bind/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -432,7 +432,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://vcpu.github.io/2017/06/09/connect/">
+    <link itemprop="mainEntityOfPage" href="https://vcpu.github.io/connect/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="vcpu">
@@ -441,7 +441,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
+      <meta itemprop="name" content="i博客">
     </span>
 
     
@@ -451,7 +451,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/09/connect/" itemprop="url">connect()实现源码分析</a></h1>
+                <a class="post-title-link" href="/connect/" itemprop="url">connect()实现源码分析</a></h1>
         
 
         <div class="post-meta">
@@ -504,9 +504,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2017/06/09/connect/#comments" itemprop="discussionUrl">
+                <a href="/connect/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2017/06/09/connect/" itemprop="commentCount"></span>
+                        data-disqus-identifier="connect/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -540,7 +540,7 @@
 <p>实例:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">remote_addr</span>;</span></div><div class="line"><span class="built_in">memset</span>(&amp;remote_addr,<span class="number">0</span>,<span class="keyword">sizeof</span>(remote_addr));</div><div class="line">remote_addr.sin_family=AF_INET;</div><div class="line">remote_addr.sin_addr.s_addr=inet_addr(<span class="string">"180.97.33.108"</span>);</div><div class="line">remote_addr.sin_port = htons(<span class="number">80</span>);</div><div class="line">connect(fd,(struct sockaddr*)&amp;remote_addr,<span class="keyword">sizeof</span>(struct sockaddr)</div></pre></td></tr></table></figure></p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/09/connect/#more" rel="contents">
+            <a class="btn" href="/connect/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -586,7 +586,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://vcpu.github.io/2017/06/09/socket/">
+    <link itemprop="mainEntityOfPage" href="https://vcpu.github.io/socket/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="vcpu">
@@ -595,7 +595,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
+      <meta itemprop="name" content="i博客">
     </span>
 
     
@@ -605,7 +605,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/09/socket/" itemprop="url">socket()实现源码分析</a></h1>
+                <a class="post-title-link" href="/socket/" itemprop="url">socket()实现源码分析</a></h1>
         
 
         <div class="post-meta">
@@ -658,9 +658,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2017/06/09/socket/#comments" itemprop="discussionUrl">
+                <a href="/socket/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2017/06/09/socket/" itemprop="commentCount"></span>
+                        data-disqus-identifier="socket/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -690,7 +690,7 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;          /* See NOTES */</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">socket</span><span class="params">(<span class="keyword">int</span> domain, <span class="keyword">int</span> type, <span class="keyword">int</span> protocol)</span></span>;</div><div class="line">fd=socket(PF_INET,SOCK_STREAM,<span class="number">0</span></div></pre></td></tr></table></figure>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/09/socket/#more" rel="contents">
+            <a class="btn" href="/socket/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -736,7 +736,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://vcpu.github.io/2017/06/05/systemtap使用调试记录（一）/">
+    <link itemprop="mainEntityOfPage" href="https://vcpu.github.io/systemtap使用调试记录（一）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="vcpu">
@@ -745,7 +745,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="博客">
+      <meta itemprop="name" content="i博客">
     </span>
 
     
@@ -755,7 +755,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/06/05/systemtap使用调试记录（一）/" itemprop="url">systemtap使用调试记录（一）</a></h1>
+                <a class="post-title-link" href="/systemtap使用调试记录（一）/" itemprop="url">systemtap使用调试记录（一）</a></h1>
         
 
         <div class="post-meta">
@@ -808,9 +808,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2017/06/05/systemtap使用调试记录（一）/#comments" itemprop="discussionUrl">
+                <a href="/systemtap使用调试记录（一）/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2017/06/05/systemtap使用调试记录（一）/" itemprop="commentCount"></span>
+                        data-disqus-identifier="systemtap使用调试记录（一）/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -844,7 +844,7 @@ linux-3.10.0-514.16.1.el7.tar.xz 同版本的源码
 </code></pre><p><a href="https://centos.pkgs.org/7/centos-updates-x86_64/kernel-devel-3.10.0-514.16.1.el7.x86_64.rpm.html" target="_blank" rel="external"><em>kernel开发头文件下载地址</em></a><br><a href="http://debuginfo.centos.org/7/x86_64/kernel-debuginfo-3.10.0-514.16.1.el7.x86_64.rpm" target="_blank" rel="external"><em>kernel调试包下载地址</em></a><br><a href="http://debuginfo.centos.org/7/x86_64/kernel-debuginfo-common-x86_64-3.10.0-514.16.1.el7.x86_64.rpm" target="_blank" rel="external"><em>kernel调试common包下载地址</em></a><br><a href="https://wiki.centos.org/zh/HowTos/I_need_the_Kernel_Source#head-963cd44439b8c10fa507fa0c90725029c060108a" target="_blank" rel="external">根据当前虚拟机获取内核代码的方法</a></p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/06/05/systemtap使用调试记录（一）/#more" rel="contents">
+            <a class="btn" href="/systemtap使用调试记录（一）/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>

@@ -1,0 +1,941 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="tcp/ip,kernel3.10.0-514.16.1,send,sendto,sendmsg,sendmmsg," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="i博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="用户态发送函数列表1234567891011ssize_t send(int sockfd, const void *buf, size_t len, int flags);ssize_t sendto(int sockfd, const void *buf, size_t len, int flags,                            const struct sockad">
+<meta name="keywords" content="tcp&#x2F;ip,kernel3.10.0-514.16.1,send,sendto,sendmsg,sendmmsg">
+<meta property="og:type" content="article">
+<meta property="og:title" content="socket send">
+<meta property="og:url" content="https://vcpu.github.io/socketsend1/index.html">
+<meta property="og:site_name" content="i博客">
+<meta property="og:description" content="用户态发送函数列表1234567891011ssize_t send(int sockfd, const void *buf, size_t len, int flags);ssize_t sendto(int sockfd, const void *buf, size_t len, int flags,                            const struct sockad">
+<meta property="og:updated_time" content="2017-06-19T04:43:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="socket send">
+<meta name="twitter:description" content="用户态发送函数列表1234567891011ssize_t send(int sockfd, const void *buf, size_t len, int flags);ssize_t sendto(int sockfd, const void *buf, size_t len, int flags,                            const struct sockad">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://vcpu.github.io/socketsend1/"/>
+
+
+
+
+
+  <title>socket send | i博客</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">i博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://vcpu.github.io/socketsend1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">socket send</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-19T12:43:31+08:00">
+                2017-06-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/socket/" itemprop="url" rel="index">
+                    <span itemprop="name">socket</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/socketsend1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="socketsend1/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="用户态发送函数列表"><a href="#用户态发送函数列表" class="headerlink" title="用户态发送函数列表"></a>用户态发送函数列表</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">ssize_t</span> send(<span class="keyword">int</span> sockfd, <span class="keyword">const</span> <span class="keyword">void</span> *buf, <span class="keyword">size_t</span> len, <span class="keyword">int</span> flags);</div><div class="line"></div><div class="line"><span class="keyword">ssize_t</span> sendto(<span class="keyword">int</span> sockfd, <span class="keyword">const</span> <span class="keyword">void</span> *buf, <span class="keyword">size_t</span> len, <span class="keyword">int</span> flags,</div><div class="line">                            <span class="keyword">const</span> struct sockaddr *dest_addr, <span class="keyword">socklen_t</span> addrlen);</div><div class="line"></div><div class="line"><span class="keyword">ssize_t</span> sendmsg(<span class="keyword">int</span> sockfd, <span class="keyword">const</span> struct msghdr *msg, <span class="keyword">int</span> flags);</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">sendmmsg</span><span class="params">(<span class="keyword">int</span> sockfd, struct mmsghdr *msgvec, <span class="keyword">unsigned</span> <span class="keyword">int</span> vlen,</span></span></div><div class="line">                                                            <span class="keyword">unsigned</span> <span class="keyword">int</span> flags);</div><div class="line">                                                            </div><div class="line"><span class="keyword">ssize_t</span> write(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">void</span> *buf, <span class="keyword">size_t</span> count);</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="发送函数之间差别"><a href="#发送函数之间差别" class="headerlink" title="发送函数之间差别"></a>发送函数之间差别</h2><blockquote>
+<p>send 有连接协议发送数据使用，send第四个参数flags为0时候，等价于write</p>
+<blockquote>
+<p>send(sockfd, buf, len, 0) 等价 write（sockfd, buf, len）</p>
+</blockquote>
+<p>send是sendto一部分,send可被sendto替换</p>
+<blockquote>
+<p>send(sockfd, buf, len, flags) 等价于  sendto(sockfd, buf, len, flags, NULL, 0)</p>
+</blockquote>
+<p>sendto 无连接和有连接发包都可以使用</p>
+<p>sendmsg 可替换上树所有的发包函数</p>
+<blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">msghdr</span> &#123;</span></div><div class="line">     <span class="keyword">void</span>         *msg_name;       <span class="comment">/* optional address */</span></div><div class="line">     <span class="keyword">socklen_t</span>     msg_namelen;    <span class="comment">/* size of address */</span></div><div class="line">     <span class="class"><span class="keyword">struct</span> <span class="title">iovec</span> *<span class="title">msg_iov</span>;</span>        <span class="comment">/* scatter/gather array */</span></div><div class="line">     <span class="keyword">size_t</span>        msg_iovlen;     <span class="comment">/* # elements in msg_iov */</span></div><div class="line">     <span class="keyword">void</span>         *msg_control;    <span class="comment">/* ancillary data, see below */</span></div><div class="line">     <span class="keyword">size_t</span>        msg_controllen; <span class="comment">/* ancillary data buffer len */</span></div><div class="line">     <span class="keyword">int</span>           msg_flags;      <span class="comment">/* flags (unused) */</span></div><div class="line"> &#125;;</div></pre></td></tr></table></figure>
+</blockquote>
+<p> /proc/sys/net/core/optmem_max可控制每个socket的msg_control大小<br> sendmsg不使用msg_flags参数</p>
+</blockquote>
+<h2 id="send发包过程概述"><a href="#send发包过程概述" class="headerlink" title="send发包过程概述"></a>send发包过程概述</h2><ul>
+<li><p>阻塞模式下<br> 调用send函数时候，比较要发送数据和套接字发送缓冲区长度（net.ipv4.tcp_wmem）；如果发送缓冲区较小，函数直接返回SOCKET_ERR;</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> send_len &lt;= tcp_wmem&#123;</div><div class="line">	<span class="keyword">if</span> is sending&#123;</div><div class="line">		wait</div><div class="line">		<span class="keyword">if</span> network err</div><div class="line">			<span class="keyword">return</span> SCOKET_ERR</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">else</span>&#123;</div><div class="line">		<span class="keyword">if</span> len &gt; tcp_wmem left&#123;</div><div class="line">			wait</div><div class="line">			<span class="keyword">if</span> network err</div><div class="line">				<span class="keyword">return</span> SCOKET_ERR</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">else</span>&#123;</div><div class="line">			copy data to tcp buf</div><div class="line">			<span class="keyword">if</span> copy err</div><div class="line">				<span class="keyword">return</span> SCOKET_ERR</div><div class="line">			<span class="keyword">return</span> copy data size</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> 剩余缓冲区能容纳发送数据，则直接将数据拷贝到缓冲区中，send直接返回。如果剩余缓冲区不足，发送端阻塞等待，对端在协议栈层接收到数据后会发送ack确认，发送方接收到ack后释放缓冲区空间；如果此时剩余缓冲区大小可放置要发送数据，则直接将数据拷入缓冲区，返回。<br> Tips：阻塞模式下，数据发送正常，其返回的数据长度一定是发送数据的长度。</p>
+</li>
+</ul>
+<ul>
+<li>非阻塞模式下<br>  send函数将数据拷入协议栈缓冲区，如果缓冲区不足，则send尽力拷贝，并返回拷贝大小；如果缓冲区满则返回-1，同时errno为EAGAIN，让发送端再次尝试发送数据。</li>
+</ul>
+<h2 id="发送缓冲区设置"><a href="#发送缓冲区设置" class="headerlink" title="发送缓冲区设置"></a>发送缓冲区设置</h2><pre><code>socklen_t sendbuflen = 0;  
+socklen_t len = sizeof(sendbuflen);  
+getsockopt(clientSocket, SOL_SOCKET, SO_SNDBUF, (void*)&amp;sendbuflen, &amp;len);  
+printf(&quot;default,sendbuf:%d\n&quot;, sendbuflen);      
+sendbuflen = 10240;  
+setsockopt(clientSocket, SOL_SOCKET, SO_SNDBUF, (void*)&amp;sendbuflen, len);  
+getsockopt(clientSocket, SOL_SOCKET, SO_SNDBUF, (void*)&amp;sendbuflen, &amp;len);  
+printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen); 
+</code></pre><h2 id="send发包实例解析"><a href="#send发包实例解析" class="headerlink" title="send发包实例解析"></a>send发包实例解析</h2><p>实际socket使用过程中，常用的是非阻塞模式，我们就以非阻塞模式为例进行分析，预设多种场景如下：</p>
+<ul>
+<li><p>场景1：发送端10k数据已经安全放入缓冲区，已实际发出2k（收到对端ack），接收端正在处理数据，此时发送端因为10k数据发送完毕，关闭了socket。</p>
+<blockquote>
+<p>场景分析：</p>
+<blockquote>
+<p>发送端关闭socket，主动fin告诉对端发送端数据发送完毕想关闭TCP连接，发送完fin后发送端处于fin wait1状态等待接收端ack确认；发送端协议栈剩余8k数据依然在独立发送，待数据发送完成后，协议栈才会把fin发给接收端；接收端在接收ack完10k数据后，且收到fin信号后，接收端回复ack确认fin信号，两者协商关闭socket。</p>
+</blockquote>
+</blockquote>
+</li>
+<li><p>场景2：发送端预期发送10k数据，已将2k数据拷入缓冲区并实际发出拷入的2k数据（收到对端ack），接收端正在处理数据，此时发送端又发送了8k新数据；（缓冲区充足(8k新数据会被拷入缓冲区)情况我们不讨论）缓冲区不足时候会发生什么？</p>
+<blockquote>
+<p>场景分析</p>
+<blockquote>
+<p>新发送的10k数据会尽力拷入缓冲区，send返回拷入缓冲区数据长度2k，如果此时缓冲区剩余空间为0时候，客户端强制send数据，会收到EAGAIN信号；其实这种情况客户端正确处理方式是读出缓冲区可写信号再发送数据，而不是自己进行发送尝试。</p>
+</blockquote>
+</blockquote>
+</li>
+<li><p>场景3:发送端10k数据已经安全放入缓冲区，已实际发出2k（收到对端ack），接收端正在处理接收到1k数据，处理完成后数据接收端关闭了socket，会发发生什么？</p>
+<blockquote>
+<p>场景分析</p>
+<blockquote>
+<ul>
+<li>数据发送端有监听机制，数据发送端用户态会得到接收端端关闭信号（socket可读信号），这时候用户正确打开方式是调用close关闭socket</li>
+<li>如果数据发送端未处理该关闭信号，且数据接收端没有rst强制关闭连接，数据发送端仍然可正常发送数据</li>
+<li>如果数据发送端未处理该关闭信号，但是数据接收端已经rst强制关闭连接，数据发送端仍然在send发送数据，send将返回-1</li>
+<li>如果是阻塞情况，但是因缓冲区满正在阻塞，如果接收端发送rst，阻塞发送端会退出阻塞返回，发送成功字节数，如果在此调用send，将返回-1</li>
+</ul>
+</blockquote>
+</blockquote>
+</li>
+<li><p>场景4：发送端10k数据已经安全放入缓冲区，已实际发出2k（收到对端ack），接收端正在处理接收到1k数据，此时网络出现异常</p>
+<blockquote>
+<p>场景分析</p>
+<blockquote>
+<p>接收应用程序在处理完已收到的1k数据后,会继续从缓存区读取余下的1k数据,然后就表现为无数据可读的现象,这种情况需要应用程序来处理超时.一般做法是设定一个select等待的最大时间,如果超出这个时间依然没有数据可读,则认为socket已不可用.<br>发送应用程序会不断的将余下的数据发送到网络上,但始终得不到确认,所以缓存区的可用空间持续为0,这种情况也需要应用程序来处理.如果不由应用程序来处理这种情况超时的情况,也可以通过tcp协议本身来处理,具体可以查看sysctl项中的:<br>net.ipv4.tcp_keepalive_intvl<br>net.ipv4.tcp_keepalive_probes<br>net.ipv4.tcp_keepalive_time</p>
+</blockquote>
+</blockquote>
+</li>
+</ul>
+<h2 id="send特点"><a href="#send特点" class="headerlink" title="send特点"></a>send特点</h2><ul>
+<li>send只是将数据放入缓冲区中，并不是真正已经发给对方</li>
+<li>非阻塞发送字节可以是1-n，其发送多少完全依赖于剩余的发送缓冲区</li>
+</ul>
+<h2 id="socket发送函数解析"><a href="#socket发送函数解析" class="headerlink" title="socket发送函数解析"></a>socket发送函数解析</h2><h3 id="发送流程图"><a href="#发送流程图" class="headerlink" title="发送流程图"></a>发送流程图</h3><blockquote>
+<p>send<br>sendto<br>sendmmsg<br>sendmsg </p>
+</blockquote>
+<p>上述流程调用过程如下：<br>-&gt;socketcall -&gt;sock_sendmsg -&gt; __sock_sendmsg -&gt; sock-&gt;ops-&gt;sendmsg(inet_sendmsg)<br>-&gt;[tcp_prot]tcp_sendmsg</p>
+<h3 id="内核系统调用"><a href="#内核系统调用" class="headerlink" title="内核系统调用"></a>内核系统调用</h3><p>send    、sendto、sendmsg、sendmmsg发送函数由glibc提供，声明于/usr/include/sys/socket.h<br>用户态在调用后会进入到sys_socketcall系统调用中，下面代码部分就是其入口<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">SYSCALL_DEFINE2(socketcall, <span class="keyword">int</span>, call, <span class="keyword">unsigned</span> <span class="keyword">long</span> __user *, args)</div><div class="line">&#123;</div><div class="line">...</div><div class="line">	<span class="keyword">switch</span> (call) &#123;</div><div class="line">	...</div><div class="line">	<span class="keyword">case</span> SYS_SEND:</div><div class="line">		err = sys_send(a0, (<span class="keyword">void</span> __user *)a1, a[<span class="number">2</span>], a[<span class="number">3</span>]);</div><div class="line">		<span class="keyword">break</span>;</div><div class="line">	<span class="keyword">case</span> SYS_SENDTO:</div><div class="line">		err = sys_sendto(a0, (<span class="keyword">void</span> __user *)a1, a[<span class="number">2</span>], a[<span class="number">3</span>],</div><div class="line">				 (struct sockaddr __user *)a[<span class="number">4</span>], a[<span class="number">5</span>]);</div><div class="line">		<span class="keyword">break</span>;</div><div class="line">	...</div><div class="line">	<span class="keyword">case</span> SYS_SENDMSG:</div><div class="line">		err = sys_sendmsg(a0, (struct msghdr __user *)a1, a[<span class="number">2</span>]);</div><div class="line">		<span class="keyword">break</span>;</div><div class="line">	<span class="keyword">case</span> SYS_SENDMMSG:</div><div class="line">		err = sys_sendmmsg(a0, (struct mmsghdr __user *)a1, a[<span class="number">2</span>], a[<span class="number">3</span>]);</div><div class="line">		<span class="keyword">break</span>;</div><div class="line">	...</div><div class="line">		<span class="keyword">default</span>:</div><div class="line">		err = -EINVAL;</div><div class="line">		<span class="keyword">break</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> err;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<ul>
+<li>send 是sendto的一种特殊情况,(sendto发送地址为NULL发送地址长度为0)</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">SYSCALL_DEFINE4(send, <span class="keyword">int</span>, fd, <span class="keyword">void</span> __user *, buff, <span class="keyword">size_t</span>, len,</div><div class="line">		<span class="keyword">unsigned</span> <span class="keyword">int</span>, flags)</div><div class="line">&#123;</div><div class="line">	<span class="keyword">return</span> sys_sendto(fd, buff, len, flags, <span class="literal">NULL</span>, <span class="number">0</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>sendto -&gt; sock_sendmsg -&gt; __sock_sendmsg -&gt; sock-&gt;ops-&gt;sendmsg(inet_sendmsg)</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">SYSCALL_DEFINE6(sendto, <span class="keyword">int</span>, fd, <span class="keyword">void</span> __user *, buff, <span class="keyword">size_t</span>, len,</div><div class="line">		<span class="keyword">unsigned</span> <span class="keyword">int</span>, flags, struct sockaddr __user *, addr,</div><div class="line">		<span class="keyword">int</span>, addr_len)</div><div class="line">&#123;</div><div class="line"> ...</div><div class="line">	err = sock_sendmsg(sock, &amp;msg, len);</div><div class="line"></div><div class="line">out_put:</div><div class="line">	fput_light(sock-&gt;file, fput_needed);</div><div class="line">out:</div><div class="line">	<span class="keyword">return</span> err;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>sendmsg 和sendmmsg 完成用户态数据拷贝到内核态后，最终也是调用inet_sendmsg处理，在此就拿sendto情况详细分析</li>
+</ul>
+<h3 id="sendto源码实现分析"><a href="#sendto源码实现分析" class="headerlink" title="sendto源码实现分析"></a>sendto源码实现分析</h3><p>sendto -&gt; sock_sendmsg -&gt; “<strong>sock_sendmsg” -&gt;”</strong>sock_sendmsg_nosec” -&gt; sock-&gt;ops-&gt;sendmsg(inet_sendmsg)</p>
+<ul>
+<li>首先分析sock_sendmsg实现</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">sock_sendmsg</span><span class="params">(struct socket *sock, struct msghdr *msg, <span class="keyword">size_t</span> size)</span></span></div><div class="line">&#123;</div><div class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">kiocb</span> <span class="title">iocb</span>;</span></div><div class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sock_iocb</span> <span class="title">siocb</span>;</span></div><div class="line">	<span class="keyword">int</span> ret;</div><div class="line">	<span class="comment">/*异步IO控制块初始化*/</span></div><div class="line">	init_sync_kiocb(&amp;iocb, <span class="literal">NULL</span>);</div><div class="line">	iocb.<span class="keyword">private</span> = &amp;siocb;</div><div class="line">	<span class="comment">/*异步控制块调用完毕后，可调用__sock_sendmsg发送数据*/</span></div><div class="line">	ret = __sock_sendmsg(&amp;iocb, sock, msg, size);</div><div class="line">	<span class="keyword">if</span> (-EIOCBQUEUED == ret)</div><div class="line">		ret = wait_on_sync_kiocb(&amp;iocb);</div><div class="line">	<span class="keyword">return</span> ret;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">int</span> __sock_sendmsg(struct kiocb *iocb, struct socket *sock,</div><div class="line">				 struct msghdr *msg, <span class="keyword">size_t</span> size)</div><div class="line">&#123;</div><div class="line">	<span class="keyword">int</span> err = security_socket_sendmsg(sock, msg, size);</div><div class="line">	<span class="comment">/*调用__sock_sendmsg_nosec*/</span></div><div class="line">	<span class="keyword">return</span> err ?: __sock_sendmsg_nosec(iocb, sock, msg, size);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">int</span> __sock_sendmsg_nosec(struct kiocb *iocb, struct socket *sock,</div><div class="line">				       struct msghdr *msg, <span class="keyword">size_t</span> size)</div><div class="line">&#123;</div><div class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sock_iocb</span> *<span class="title">si</span> = <span class="title">kiocb_to_siocb</span>(<span class="title">iocb</span>);</span></div><div class="line"></div><div class="line">	si-&gt;sock = sock;</div><div class="line">	si-&gt;scm = <span class="literal">NULL</span>;</div><div class="line">	si-&gt;msg = msg;</div><div class="line">	si-&gt;size = size;</div><div class="line">	</div><div class="line">	<span class="comment">/*调用inet_sendnsg*/</span></div><div class="line">	<span class="keyword">return</span> sock-&gt;ops-&gt;sendmsg(iocb, sock, msg, size);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">inet_sendmsg</span><span class="params">(struct kiocb *iocb, struct socket *sock, struct msghdr *msg,</span></span></div><div class="line">		 <span class="keyword">size_t</span> size)</div><div class="line">&#123;</div><div class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sock</span> *<span class="title">sk</span> = <span class="title">sock</span>-&gt;<span class="title">sk</span>;</span></div><div class="line"></div><div class="line">	sock_rps_record_flow(sk);</div><div class="line">	<span class="comment">/*如果连接没有分配本地端口且允许分配本地端口，我们就给连接绑定一个本地端口</span></div><div class="line">	*/</div><div class="line">	<span class="comment">/* We may need to bind the socket. */</span></div><div class="line">	<span class="keyword">if</span> (!inet_sk(sk)-&gt;inet_num &amp;&amp; !sk-&gt;sk_prot-&gt;no_autobind &amp;&amp;</div><div class="line">	    inet_autobind(sk))</div><div class="line">	   </div><div class="line">		<span class="keyword">return</span> -EAGAIN;</div><div class="line">	<span class="comment">/*传输层是TCP情况下，调用tcp_sendmsg()*/</span></div><div class="line">	<span class="keyword">return</span> sk-&gt;sk_prot-&gt;sendmsg(iocb, sk, msg, size);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>其次分析inet_autobind ，获取可用端口并给，获取后的端口会赋值给inet-&gt;inet_sport/inet_num</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">inet_autobind</span><span class="params">(struct sock *sk)</span></span></div><div class="line">&#123;</div><div class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">inet_sock</span> *<span class="title">inet</span>;</span></div><div class="line">	<span class="comment">/* We may need to bind the socket. */</span></div><div class="line">	lock_sock(sk);</div><div class="line">	inet = inet_sk(sk);</div><div class="line">	<span class="keyword">if</span> (!inet-&gt;inet_num) &#123;</div><div class="line">		<span class="comment">/*针对于TCP情况sk-&gt;sk_prot-&gt;get_port调用的是inet_csk_get_port</span></div><div class="line">		* inet_csk_get_port工作获取端口，并将其赋值给inet-&gt;inet_num</div><div class="line">		*/</div><div class="line">		<span class="keyword">if</span> (sk-&gt;sk_prot-&gt;get_port(sk, <span class="number">0</span>)) &#123;</div><div class="line">			release_sock(sk);</div><div class="line">			<span class="keyword">return</span> -EAGAIN;</div><div class="line">		&#125;</div><div class="line">		<span class="comment">/*获取inet-&gt;inet_num赋值给inet-&gt;inet_sport*/</span></div><div class="line">		inet-&gt;inet_sport = htons(inet-&gt;inet_num);</div><div class="line">	&#125;</div><div class="line">	release_sock(sk);</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>最后分析tcp_sendmsg</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div><div class="line">248</div><div class="line">249</div><div class="line">250</div><div class="line">251</div><div class="line">252</div><div class="line">253</div><div class="line">254</div><div class="line">255</div><div class="line">256</div><div class="line">257</div><div class="line">258</div><div class="line">259</div><div class="line">260</div><div class="line">261</div><div class="line">262</div><div class="line">263</div><div class="line">264</div><div class="line">265</div><div class="line">266</div><div class="line">267</div><div class="line">268</div><div class="line">269</div><div class="line">270</div><div class="line">271</div><div class="line">272</div><div class="line">273</div><div class="line">274</div><div class="line">275</div><div class="line">276</div><div class="line">277</div><div class="line">278</div><div class="line">279</div><div class="line">280</div><div class="line">281</div><div class="line">282</div><div class="line">283</div><div class="line">284</div><div class="line">285</div><div class="line">286</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">tcp_sendmsg</span><span class="params">(struct kiocb *iocb, struct sock *sk, struct msghdr *msg,</span></span></div><div class="line">		<span class="keyword">size_t</span> size)</div><div class="line">&#123;</div><div class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">iovec</span> *<span class="title">iov</span>;</span></div><div class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">tcp_sock</span> *<span class="title">tp</span> = <span class="title">tcp_sk</span>(<span class="title">sk</span>);</span></div><div class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sk_buff</span> *<span class="title">skb</span>;</span></div><div class="line">	<span class="keyword">int</span> iovlen, flags, err, copied = <span class="number">0</span>;</div><div class="line">	<span class="keyword">int</span> mss_now = <span class="number">0</span>, size_goal, copied_syn = <span class="number">0</span>, offset = <span class="number">0</span>;</div><div class="line">	<span class="keyword">bool</span> sg;</div><div class="line">	<span class="keyword">long</span> timeo;</div><div class="line"></div><div class="line">	lock_sock(sk);</div><div class="line">	</div><div class="line">	flags = msg-&gt;msg_flags;</div><div class="line">	<span class="keyword">if</span> (flags &amp; MSG_FASTOPEN) &#123;</div><div class="line">		err = tcp_sendmsg_fastopen(sk, msg, &amp;copied_syn, size);</div><div class="line">		<span class="keyword">if</span> (err == -EINPROGRESS &amp;&amp; copied_syn &gt; <span class="number">0</span>)</div><div class="line">			<span class="keyword">goto</span> out;</div><div class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (err)</div><div class="line">			<span class="keyword">goto</span> out_err;</div><div class="line">		offset = copied_syn;</div><div class="line">	&#125;</div><div class="line">  </div><div class="line">    <span class="comment">/*</span></div><div class="line">	* 获取数据发送超时时间</div><div class="line">	*/</div><div class="line">	timeo = sock_sndtimeo(sk, flags &amp; MSG_DONTWAIT);</div><div class="line"></div><div class="line">	<span class="comment">/* Wait for a connection to finish. One exception is TCP Fast Open</span></div><div class="line">	 * (passive side) where data is allowed to be sent before a connection</div><div class="line">	 * is fully established.</div><div class="line">	 */</div><div class="line">	<span class="comment">/*</span></div><div class="line">	 * TCP状态检查，ES和CLOSE_WAIT状态才能发送数据，其它状态都要等待连接建立起来</div><div class="line">	 * 否则直接返回错误</div><div class="line">	 * </div><div class="line">	 * 随着协议栈进步，增加一种情况tcp_passive_fastopen即tcp被动快速打开时候，不区分当前TCP处于状态</div><div class="line">	 */</div><div class="line">	<span class="keyword">if</span> (((<span class="number">1</span> &lt;&lt; sk-&gt;sk_state) &amp; ~(TCPF_ESTABLISHED | TCPF_CLOSE_WAIT)) &amp;&amp;</div><div class="line">	    !tcp_passive_fastopen(sk)) &#123;</div><div class="line">	    <span class="comment">/*等待连接建立，连接建立成功则返回0*/</span></div><div class="line">		<span class="keyword">if</span> ((err = sk_stream_wait_connect(sk, &amp;timeo)) != <span class="number">0</span>)</div><div class="line">			<span class="keyword">goto</span> do_error;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">/*开启repair功能处理*/</span></div><div class="line">	<span class="keyword">if</span> (unlikely(tp-&gt;repair)) &#123;</div><div class="line">		<span class="keyword">if</span> (tp-&gt;repair_queue == TCP_RECV_QUEUE) &#123;</div><div class="line">			copied = tcp_send_rcvq(sk, msg, size);</div><div class="line">			<span class="keyword">goto</span> out_nopush;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		err = -EINVAL;</div><div class="line">		<span class="keyword">if</span> (tp-&gt;repair_queue == TCP_NO_QUEUE)</div><div class="line">			<span class="keyword">goto</span> out_err;</div><div class="line"></div><div class="line">		<span class="comment">/* 'common' sending to sendq */</span></div><div class="line">	&#125;</div><div class="line">	<span class="comment">/**/</span></div><div class="line">	<span class="comment">/* This should be in poll */</span></div><div class="line">	clear_bit(SOCK_ASYNC_NOSPACE, &amp;sk-&gt;sk_socket-&gt;flags);</div><div class="line"></div><div class="line">	<span class="comment">/*获取发送mss*/</span></div><div class="line">	mss_now = tcp_send_mss(sk, &amp;size_goal, flags);</div><div class="line"></div><div class="line">	<span class="comment">/* Ok commence sending. */</span></div><div class="line">	iovlen = msg-&gt;msg_iovlen;<span class="comment">//应用层要发送数据块个数</span></div><div class="line">	iov = msg-&gt;msg_iov;<span class="comment">//要发送数据地址</span></div><div class="line">	copied = <span class="number">0</span>;<span class="comment">//已经放到缓冲区的数据长度</span></div><div class="line"></div><div class="line">	err = -EPIPE;</div><div class="line">	<span class="comment">/*在发送数据前，如果sk已经关闭或者出现err，直接返回 -EPIPE*/</span></div><div class="line">	<span class="keyword">if</span> (sk-&gt;sk_err || (sk-&gt;sk_shutdown &amp; SEND_SHUTDOWN))</div><div class="line">		<span class="keyword">goto</span> out_err;</div><div class="line"></div><div class="line">	<span class="comment">/*网卡分散聚合*/</span></div><div class="line">	sg = !!(sk-&gt;sk_route_caps &amp; NETIF_F_SG);</div><div class="line"></div><div class="line">	<span class="keyword">while</span> (--iovlen &gt;= <span class="number">0</span>) &#123;</div><div class="line">	</div><div class="line">		<span class="comment">/*获取用户态数据长度和数据指针并指向下一个用户态要发送数据块*/</span></div><div class="line">		<span class="keyword">size_t</span> seglen = iov-&gt;iov_len;</div><div class="line">		<span class="keyword">unsigned</span> <span class="keyword">char</span> __user *from = iov-&gt;iov_base;</div><div class="line">		iov++;</div><div class="line">		</div><div class="line">		<span class="comment">/*TCP fast open涉及*/</span></div><div class="line">		<span class="keyword">if</span> (unlikely(offset &gt; <span class="number">0</span>)) &#123;  <span class="comment">/* Skip bytes copied in SYN */</span></div><div class="line">			<span class="keyword">if</span> (offset &gt;= seglen) &#123;</div><div class="line">				offset -= seglen;</div><div class="line">				<span class="keyword">continue</span>;</div><div class="line">			&#125;</div><div class="line">			seglen -= offset;</div><div class="line">			from += offset;</div><div class="line">			offset = <span class="number">0</span>;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="keyword">while</span> (seglen &gt; <span class="number">0</span>) &#123;</div><div class="line">			<span class="keyword">int</span> copy = <span class="number">0</span>;</div><div class="line">			<span class="keyword">int</span> max = size_goal;</div><div class="line">			<span class="comment">/*从发送队列尾部取skb，尝试将用户态数据放入skb-&gt;data剩余空间*/</span></div><div class="line">			skb = tcp_write_queue_tail(sk);</div><div class="line">			<span class="keyword">if</span> (tcp_send_head(sk)) &#123;</div><div class="line">			</div><div class="line">				<span class="comment">/*另一种mss情况，GSO*/</span></div><div class="line">				<span class="keyword">if</span> (skb-&gt;ip_summed == CHECKSUM_NONE)</div><div class="line">					max = mss_now;</div><div class="line">				copy = max - skb-&gt;len;</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			<span class="keyword">if</span> (copy &lt;= <span class="number">0</span>) &#123;<span class="comment">/*skb已经装满数据，后续会申请新的skb来发送数据*/</span></div><div class="line">new_segment:</div><div class="line">				<span class="comment">/* Allocate new segment. If the interface is SG,</span></div><div class="line">				 * allocate skb fitting to single page.</div><div class="line">				 */</div><div class="line">				<span class="keyword">if</span> (!sk_stream_memory_free(sk))</div><div class="line">					<span class="keyword">goto</span> wait_for_sndbuf;</div><div class="line">				</div><div class="line">				<span class="comment">/*申请内存大小为select_size（线性数据区+协议头），申请失败或者不合法，睡眠等待*/</span></div><div class="line">				skb = sk_stream_alloc_skb(sk,</div><div class="line">							  select_size(sk, sg),</div><div class="line">							  sk-&gt;sk_allocation);</div><div class="line">				<span class="keyword">if</span> (!skb)</div><div class="line">					<span class="keyword">goto</span> wait_for_memory;</div><div class="line"></div><div class="line">				<span class="comment">/*</span></div><div class="line">				 * Check whether we can use HW checksum.</div><div class="line">				 * 检查释放网卡硬件释放可以计算校验和</div><div class="line">				 */</div><div class="line">				<span class="keyword">if</span> (sk-&gt;sk_route_caps &amp; NETIF_F_CSUM_MASK)</div><div class="line">					skb-&gt;ip_summed = CHECKSUM_PARTIAL;</div><div class="line"></div><div class="line">				<span class="comment">/*将新分配的skb入sk_write_queue数据发送队列*/</span></div><div class="line">				skb_entail(sk, skb);</div><div class="line">				copy = size_goal;</div><div class="line">				max = size_goal;</div><div class="line"></div><div class="line">				<span class="comment">/* All packets are restored as if they have</span></div><div class="line">				 * already been sent. skb_mstamp isn't set to</div><div class="line">				 * avoid wrong rtt estimation.</div><div class="line">				 * TCP repair</div><div class="line">				 */</div><div class="line">				<span class="keyword">if</span> (tp-&gt;repair)</div><div class="line">					TCP_SKB_CB(skb)-&gt;sacked |= TCPCB_REPAIRED;</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			<span class="comment">/* Try to append data to the end of skb. */</span></div><div class="line">			<span class="keyword">if</span> (copy &gt; seglen)</div><div class="line">				copy = seglen;</div><div class="line"></div><div class="line">			<span class="comment">/* Where to copy to? */</span></div><div class="line">			<span class="comment">/*如果数据还有线性区间，直接将数据拷入冰计算校验和*/</span></div><div class="line">			<span class="keyword">if</span> (skb_availroom(skb) &gt; <span class="number">0</span>) &#123;</div><div class="line">				<span class="comment">/* We have some space in skb head. Superb! */</span></div><div class="line">				copy = <span class="keyword">min_t</span>(<span class="keyword">int</span>, copy, skb_availroom(skb));</div><div class="line">				err = skb_add_data_nocache(sk, skb, from, copy);</div><div class="line">				<span class="keyword">if</span> (err)</div><div class="line">					<span class="keyword">goto</span> do_fault;</div><div class="line">			&#125; <span class="keyword">else</span> &#123;<span class="comment">/*如果没有了线性空间*/</span></div><div class="line">				<span class="comment">/*</span></div><div class="line">				*  数据会被复制到分页中</div><div class="line">				*  </div><div class="line">				*/</div><div class="line">				<span class="keyword">bool</span> merge = <span class="literal">true</span>;</div><div class="line">				<span class="comment">/*取得当前SKB的分片段数*/</span></div><div class="line">				<span class="keyword">int</span> i = skb_shinfo(skb)-&gt;nr_frags;</div><div class="line">				<span class="class"><span class="keyword">struct</span> <span class="title">page_frag</span> *<span class="title">pfrag</span> = <span class="title">sk_page_frag</span>(<span class="title">sk</span>);</span></div><div class="line">				<span class="comment">/*检查分也可用空间，如果没有就申请新的页，如果系统内存不足就睡眠等待*/</span></div><div class="line">				<span class="keyword">if</span> (!sk_page_frag_refill(sk, pfrag))</div><div class="line">					<span class="keyword">goto</span> wait_for_memory;</div><div class="line">				</div><div class="line">				<span class="comment">/*如果不能将数据最佳到最后一个分片*/</span></div><div class="line">				<span class="keyword">if</span> (!skb_can_coalesce(skb, i, pfrag-&gt;page,</div><div class="line">						      pfrag-&gt;offset)) &#123;</div><div class="line">					<span class="comment">/*分页已经达到最大规格，将当前数据发出去，跳到new_segment重新申请skb*/</span></div><div class="line">					<span class="keyword">if</span> (i == MAX_SKB_FRAGS || !sg) &#123;</div><div class="line">						tcp_mark_push(tp, skb);</div><div class="line">						<span class="keyword">goto</span> new_segment;</div><div class="line">					&#125;</div><div class="line">					merge = <span class="literal">false</span>;</div><div class="line">				&#125;</div><div class="line"></div><div class="line">				copy = <span class="keyword">min_t</span>(<span class="keyword">int</span>, copy, pfrag-&gt;size - pfrag-&gt;offset);</div><div class="line">				</div><div class="line">				<span class="comment">/*系统对发送缓冲区申请合法性判断*/</span></div><div class="line">				<span class="keyword">if</span> (!sk_wmem_schedule(sk, copy))</div><div class="line">					<span class="keyword">goto</span> wait_for_memory;</div><div class="line">				<span class="comment">/*拷贝用户空间数据，同时计算校验和，更新数据skb长度和缓存*/</span></div><div class="line">				err = skb_copy_to_page_nocache(sk, from, skb,</div><div class="line">							       pfrag-&gt;page,</div><div class="line">							       pfrag-&gt;offset,</div><div class="line">							       copy);</div><div class="line">				<span class="keyword">if</span> (err)</div><div class="line">					<span class="keyword">goto</span> do_error;</div><div class="line"></div><div class="line">				<span class="comment">/* Update the skb. */</span></div><div class="line">				<span class="comment">/*最后一个分页可以放数据数据页被放入了，就更新分也大小记录*/</span></div><div class="line">				<span class="keyword">if</span> (merge) &#123;</div><div class="line">					skb_frag_size_add(&amp;skb_shinfo(skb)-&gt;frags[i - <span class="number">1</span>], copy);</div><div class="line">				&#125; <span class="keyword">else</span> &#123;</div><div class="line">					<span class="comment">/*如果不能分页就新增页，并初始化*/</span></div><div class="line">					skb_fill_page_desc(skb, i, pfrag-&gt;page,</div><div class="line">							   pfrag-&gt;offset, copy);</div><div class="line">					get_page(pfrag-&gt;page);</div><div class="line">				&#125;</div><div class="line">				pfrag-&gt;offset += copy;</div><div class="line">			&#125;</div><div class="line">			</div><div class="line">			<span class="comment">/*如果复制数据长度为0，不用加PSH标记*/</span></div><div class="line">			<span class="keyword">if</span> (!copied)</div><div class="line">				TCP_SKB_CB(skb)-&gt;tcp_flags &amp;= ~TCPHDR_PSH;</div><div class="line">			<span class="comment">/*更新发送队列中最后一个序号，数据包的最后一个序号*/</span></div><div class="line">			tp-&gt;write_seq += copy;</div><div class="line">			TCP_SKB_CB(skb)-&gt;end_seq += copy;</div><div class="line">			skb_shinfo(skb)-&gt;gso_segs = <span class="number">0</span>;</div><div class="line">			</div><div class="line">			<span class="comment">/*已经拷入了copy大小数据，用户态指针后移且更新已经拷贝数据增加*/</span></div><div class="line">			from += copy;</div><div class="line">			copied += copy;</div><div class="line">			</div><div class="line">			<span class="comment">/*所有数据处理完毕，直接退出*/</span></div><div class="line">			<span class="keyword">if</span> ((seglen -= copy) == <span class="number">0</span> &amp;&amp; iovlen == <span class="number">0</span>)</div><div class="line">				<span class="keyword">goto</span> out;</div><div class="line"></div><div class="line">			<span class="comment">/*如果skbb还可以继续填充数据或者是带外数据或者是有REPAIR选项，继续使用skb*/</span></div><div class="line">			<span class="keyword">if</span> (skb-&gt;len &lt; max || (flags &amp; MSG_OOB) || unlikely(tp-&gt;repair))</div><div class="line">				<span class="keyword">continue</span>;</div><div class="line"></div><div class="line">			<span class="comment">/*检查释放必须立即发送，即检查自上次发送后产生的数据是否已经超过对方通告过的最大接收窗口的一半。如果必须发送则设置紧急数据标示，然后将数据发出去*/</span></div><div class="line">			<span class="keyword">if</span> (forced_push(tp)) &#123;</div><div class="line">				tcp_mark_push(tp, skb);</div><div class="line">				__tcp_push_pending_frames(sk, mss_now, TCP_NAGLE_PUSH);</div><div class="line">			&#125; <span class="keyword">else</span> <span class="keyword">if</span> (skb == tcp_send_head(sk))</div><div class="line">				<span class="comment">/*数据不必立即发送，且数据上只存在这段数据，则将这段数据发出*/</span></div><div class="line">				tcp_push_one(sk, mss_now);</div><div class="line">				</div><div class="line">			<span class="keyword">continue</span>;</div><div class="line"></div><div class="line">wait_for_sndbuf:</div><div class="line"><span class="comment">/*套接口缓冲区大小超过限制，此时无法再申请skb放数据，我们设置socket满标志*/</span></div><div class="line">			set_bit(SOCK_NOSPACE, &amp;sk-&gt;sk_socket-&gt;flags);</div><div class="line">			</div><div class="line"><span class="comment">/*系统内存不足处理*/</span></div><div class="line">wait_for_memory:</div><div class="line">	<span class="comment">/*skb分配失败了，已经拷入发送队列数据，直接调用tcp_push发出去</span></div><div class="line">	～MSG_MORE表示无更多数据</div><div class="line">	TCP_NAGLE_PUSH 选项调用NAGLE，尽量减少小字节发送数据</div><div class="line">	*/</div><div class="line">			<span class="keyword">if</span> (copied)</div><div class="line">				tcp_push(sk, flags &amp; ~MSG_MORE, mss_now,</div><div class="line">					 TCP_NAGLE_PUSH, size_goal);</div><div class="line">		<span class="comment">/*等待内存空闲，超过timeo时间后返回错误*/</span></div><div class="line">			<span class="keyword">if</span> ((err = sk_stream_wait_memory(sk, &amp;timeo)) != <span class="number">0</span>)</div><div class="line">				<span class="keyword">goto</span> do_error;</div><div class="line">			<span class="comment">/*啊，内存来了，重新获取MSS和TSO，继续将用户态数据拷入缓冲区*/</span></div><div class="line">			mss_now = tcp_send_mss(sk, &amp;size_goal, flags);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">out:</div><div class="line">	<span class="comment">/*如果数据已经拷入发送队列，则立即发送*/</span></div><div class="line">	<span class="keyword">if</span> (copied)</div><div class="line">		tcp_push(sk, flags, mss_now, tp-&gt;nonagle, size_goal);</div><div class="line">out_nopush:</div><div class="line">	release_sock(sk);</div><div class="line">	<span class="keyword">return</span> copied + copied_syn;</div><div class="line"></div><div class="line">do_fault:</div><div class="line">	<span class="comment">/*复制数据异常时才进入这里</span></div><div class="line">	* skb无负载数据，从发送队列上去除，并更新发送队列等参数*/</div><div class="line">	<span class="keyword">if</span> (!skb-&gt;len) &#123;</div><div class="line">		tcp_unlink_write_queue(skb, sk);</div><div class="line">		<span class="comment">/* It is the one place in all of TCP, except connection</span></div><div class="line">		 * reset, where we can be unlinking the send_head.</div><div class="line">		 */</div><div class="line">		tcp_check_send_head(sk, skb);</div><div class="line">		sk_wmem_free_skb(sk, skb);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">do_error:</div><div class="line">	<span class="comment">/*如果已经复制了部分数据，即使发生了错误也可以发送，跳到out就是去发送数据去了*/</span></div><div class="line">	<span class="keyword">if</span> (copied + copied_syn)</div><div class="line">		<span class="keyword">goto</span> out;</div><div class="line">out_err:</div><div class="line">	err = sk_stream_error(sk, flags, err);</div><div class="line">	release_sock(sk);</div><div class="line">	<span class="keyword">return</span> err;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>tcp_sendmsg()做了以下事情：</p>
+<ol>
+<li>如果使用了TCP Fast Open，则会在发送SYN包的同时携带上数据。</li>
+<li>如果连接尚未建立好，不处于ESTABLISHED或者CLOSE_WAIT状态，<br> 那么进程进行睡眠，等待三次握手的完成。</li>
+<li>获取当前的MSS、网络设备支持的最大数据长度size_goal。<br> 如果支持GSO，size_goal会是MSS的整数倍。</li>
+<li>遍历用户层的数据块数组：<br> 4.1 获取发送队列的最后一个skb，如果是尚未发送的，且长度尚未达到size_goal，<pre><code>那么可以往此skb继续追加数据。
+</code></pre> 4.2 否则需要申请一个新的skb来装载数据。<br> 4.2.1 如果发送队列的总大小sk_wmem_queued大于等于发送缓存的上限sk_sndbuf，<pre><code>或者发送缓存中尚未发送的数据量超过了用户的设置值：
+设置同步发送时发送缓存不够的标志。
+如果此时已有数据复制到发送队列了，就尝试立即发送。
+等待发送缓存，直到sock有发送缓存可写事件唤醒进程，或者等待超时。
+</code></pre> 4.2.2 申请一个skb，其线性数据区的大小为：<pre><code>通过select_size()得到的线性数据区中TCP负荷的大小 + 最大的协议头长度。
+如果申请skb失败了，或者虽然申请skb成功，但是从系统层面判断此次申请不合法，
+等待可用内存，等待时间为2~202ms之间的一个随机数。
+</code></pre> 4.2.3 如果以上两步成功了，就更新skb的TCP控制块字段，把skb加入到sock发送队列的尾部，<pre><code>增加发送队列的大小，减小预分配缓存的大小。
+</code></pre> 4.3 接下来就是拷贝消息头中的数据到skb中了。<pre><code>如果skb的线性数据区还有剩余空间，就复制数据到线性数据区中，同时计算校验和。
+</code></pre> 4.4 如果skb的线性数据区已经用完了，那么就使用分页区：<br> 4.4.1 检查分页是否有可用空间，如果没有就申请新的page。如果申请失败，说明系统内存不足。<pre><code>之后会设置TCP内存压力标志，减小发送缓冲区的上限，睡眠等待内存。
+</code></pre> 4.4.2 判断能否往最后一个分页追加数据。不能追加时，检查分页数是否达到了上限、<pre><code>或网卡不支持分散聚合。如果是的话，就为此skb设置PSH标志。
+然后跳转到4.2处申请新的skb，来继续填装数据。
+</code></pre> 4.4.3 从系统层面判断此次分页发送缓存的申请是否合法。<br> 4.4.4 拷贝用户空间的数据到skb的分页中，同时计算校验和。<pre><code>更新skb的长度字段，更新sock的发送队列大小和预分配缓存。
+</code></pre> 4.4.5 如果把数据追加到最后一个分页了，更新最后一个分页的数据大小。否则初始化新的分页。<br> 4.5 拷贝成功后更新：发送队列的最后一个序号、skb的结束序号、已经拷贝到发送队列的数据量。<br> 4.6 尽可能的将发送队列中的skb发送出去。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>  <a href="http://blog.csdn.net/zhangskd/article/details/48207553" target="_blank" rel="external">http://blog.csdn.net/zhangskd/article/details/48207553</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/tcp-ip/" rel="tag"># tcp/ip</a>
+          
+            <a href="/tags/kernel3-10-0-514-16-1/" rel="tag"># kernel3.10.0-514.16.1</a>
+          
+            <a href="/tags/send/" rel="tag"># send</a>
+          
+            <a href="/tags/sendto/" rel="tag"># sendto</a>
+          
+            <a href="/tags/sendmsg/" rel="tag"># sendmsg</a>
+          
+            <a href="/tags/sendmmsg/" rel="tag"># sendmmsg</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/f-stack安装/" rel="next" title="f-stack安装运行">
+                <i class="fa fa-chevron-left"></i> f-stack安装运行
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/socket_stp/" rel="prev" title="systemtap使用调试记录（二）">
+                systemtap使用调试记录（二） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/h.jpg"
+               alt="vcpu" />
+          <p class="site-author-name" itemprop="name">vcpu</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">14</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/vcpu/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://ytlm.github.io/" title="CDN张三丰" target="_blank">CDN张三丰</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#用户态发送函数列表"><span class="nav-number">1.</span> <span class="nav-text">用户态发送函数列表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#发送函数之间差别"><span class="nav-number">2.</span> <span class="nav-text">发送函数之间差别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#send发包过程概述"><span class="nav-number">3.</span> <span class="nav-text">send发包过程概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#发送缓冲区设置"><span class="nav-number">4.</span> <span class="nav-text">发送缓冲区设置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#send发包实例解析"><span class="nav-number">5.</span> <span class="nav-text">send发包实例解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#send特点"><span class="nav-number">6.</span> <span class="nav-text">send特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#socket发送函数解析"><span class="nav-number">7.</span> <span class="nav-text">socket发送函数解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#发送流程图"><span class="nav-number">7.1.</span> <span class="nav-text">发送流程图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内核系统调用"><span class="nav-number">7.2.</span> <span class="nav-text">内核系统调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sendto源码实现分析"><span class="nav-number">7.3.</span> <span class="nav-text">sendto源码实现分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">vcpu</span>
+</div>
+
+
+<div class="powered-by">
+  windy liu
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+<span id="busuanzi_container_site_uv">
+  你是第<span id="busuanzi_value_site_uv"></span>个访问的小伙伴
+</span>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://vcpu-me.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://vcpu.github.io/socketsend1/';
+          this.page.identifier = 'socketsend1/';
+          this.page.title = 'socket send';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://vcpu-me.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

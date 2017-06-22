@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>博客</title>
+  <title>i博客</title>
   
   <link href="/atom.xml" rel="self"/>
   
@@ -17,8 +17,8 @@
   
   <entry>
     <title>Linux系统调用</title>
-    <link href="https://vcpu.github.io/2017/06/22/Linux%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/"/>
-    <id>https://vcpu.github.io/2017/06/22/Linux系统调用/</id>
+    <link href="https://vcpu.github.io/Linux%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/"/>
+    <id>https://vcpu.github.io/Linux系统调用/</id>
     <published>2017-06-22T10:10:14.000Z</published>
     <updated>2017-06-22T10:10:14.000Z</updated>
     
@@ -58,8 +58,8 @@
   
   <entry>
     <title>select</title>
-    <link href="https://vcpu.github.io/2017/06/22/select/"/>
-    <id>https://vcpu.github.io/2017/06/22/select/</id>
+    <link href="https://vcpu.github.io/select/"/>
+    <id>https://vcpu.github.io/select/</id>
     <published>2017-06-22T08:34:22.000Z</published>
     <updated>2017-06-22T08:34:22.000Z</updated>
     
@@ -180,8 +180,8 @@
   
   <entry>
     <title>tcp socket发送缓冲区</title>
-    <link href="https://vcpu.github.io/2017/06/20/tcp_sndbuf/"/>
-    <id>https://vcpu.github.io/2017/06/20/tcp_sndbuf/</id>
+    <link href="https://vcpu.github.io/tcp_sndbuf/"/>
+    <id>https://vcpu.github.io/tcp_sndbuf/</id>
     <published>2017-06-20T10:31:48.000Z</published>
     <updated>2017-06-20T10:31:48.000Z</updated>
     
@@ -268,8 +268,8 @@
   
   <entry>
     <title>PF_INET和AF_INET区别</title>
-    <link href="https://vcpu.github.io/2017/06/20/pf_inet/"/>
-    <id>https://vcpu.github.io/2017/06/20/pf_inet/</id>
+    <link href="https://vcpu.github.io/pf_inet/"/>
+    <id>https://vcpu.github.io/pf_inet/</id>
     <published>2017-06-20T10:12:51.000Z</published>
     <updated>2017-06-20T10:12:51.000Z</updated>
     
@@ -303,8 +303,8 @@
   
   <entry>
     <title>sockaddr_in和sockaddr的区别</title>
-    <link href="https://vcpu.github.io/2017/06/20/sockaddr_in/"/>
-    <id>https://vcpu.github.io/2017/06/20/sockaddr_in/</id>
+    <link href="https://vcpu.github.io/sockaddr_in/"/>
+    <id>https://vcpu.github.io/sockaddr_in/</id>
     <published>2017-06-20T07:18:11.000Z</published>
     <updated>2017-06-20T07:18:11.000Z</updated>
     
@@ -345,8 +345,8 @@
   
   <entry>
     <title>systemtap使用调试记录（二）</title>
-    <link href="https://vcpu.github.io/2017/06/20/socket_stp/"/>
-    <id>https://vcpu.github.io/2017/06/20/socket_stp/</id>
+    <link href="https://vcpu.github.io/socket_stp/"/>
+    <id>https://vcpu.github.io/socket_stp/</id>
     <published>2017-06-20T06:52:23.000Z</published>
     <updated>2017-06-20T06:52:23.000Z</updated>
     
@@ -382,8 +382,8 @@
   
   <entry>
     <title>socket send</title>
-    <link href="https://vcpu.github.io/2017/06/19/socketsend1/"/>
-    <id>https://vcpu.github.io/2017/06/19/socketsend1/</id>
+    <link href="https://vcpu.github.io/socketsend1/"/>
+    <id>https://vcpu.github.io/socketsend1/</id>
     <published>2017-06-19T04:43:31.000Z</published>
     <updated>2017-06-19T04:43:31.000Z</updated>
     
@@ -544,8 +544,8 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
   
   <entry>
     <title>f-stack安装运行</title>
-    <link href="https://vcpu.github.io/2017/06/15/f-stack%E5%AE%89%E8%A3%85/"/>
-    <id>https://vcpu.github.io/2017/06/15/f-stack安装/</id>
+    <link href="https://vcpu.github.io/f-stack%E5%AE%89%E8%A3%85/"/>
+    <id>https://vcpu.github.io/f-stack安装/</id>
     <published>2017-06-15T08:06:20.000Z</published>
     <updated>2017-06-15T08:06:20.000Z</updated>
     
@@ -597,8 +597,8 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
   
   <entry>
     <title>centos环境下脚本执行顺序探究</title>
-    <link href="https://vcpu.github.io/2017/06/15/centos%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/"/>
-    <id>https://vcpu.github.io/2017/06/15/centos脚本执行顺序/</id>
+    <link href="https://vcpu.github.io/centos%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/"/>
+    <id>https://vcpu.github.io/centos脚本执行顺序/</id>
     <published>2017-06-15T07:42:10.000Z</published>
     <updated>2017-06-15T07:42:10.000Z</updated>
     
@@ -668,8 +668,8 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
   
   <entry>
     <title>TIME_WAIT状态分析</title>
-    <link href="https://vcpu.github.io/2017/06/12/TIME_WAIT%E7%8A%B6%E6%80%81%E5%88%86%E6%9E%90/"/>
-    <id>https://vcpu.github.io/2017/06/12/TIME_WAIT状态分析/</id>
+    <link href="https://vcpu.github.io/TIME_WAIT%E7%8A%B6%E6%80%81%E5%88%86%E6%9E%90/"/>
+    <id>https://vcpu.github.io/TIME_WAIT状态分析/</id>
     <published>2017-06-12T10:19:10.000Z</published>
     <updated>2017-06-12T10:19:10.000Z</updated>
     
@@ -707,8 +707,8 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
   
   <entry>
     <title>bind()实现源码分析</title>
-    <link href="https://vcpu.github.io/2017/06/12/bind/"/>
-    <id>https://vcpu.github.io/2017/06/12/bind/</id>
+    <link href="https://vcpu.github.io/bind/"/>
+    <id>https://vcpu.github.io/bind/</id>
     <published>2017-06-12T09:35:01.000Z</published>
     <updated>2017-06-12T09:35:01.000Z</updated>
     
@@ -812,8 +812,8 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
   
   <entry>
     <title>connect()实现源码分析</title>
-    <link href="https://vcpu.github.io/2017/06/09/connect/"/>
-    <id>https://vcpu.github.io/2017/06/09/connect/</id>
+    <link href="https://vcpu.github.io/connect/"/>
+    <id>https://vcpu.github.io/connect/</id>
     <published>2017-06-09T10:59:10.000Z</published>
     <updated>2017-06-09T10:59:10.000Z</updated>
     
@@ -907,8 +907,8 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
   
   <entry>
     <title>socket()实现源码分析</title>
-    <link href="https://vcpu.github.io/2017/06/09/socket/"/>
-    <id>https://vcpu.github.io/2017/06/09/socket/</id>
+    <link href="https://vcpu.github.io/socket/"/>
+    <id>https://vcpu.github.io/socket/</id>
     <published>2017-06-09T09:22:34.000Z</published>
     <updated>2017-06-22T10:13:08.000Z</updated>
     
@@ -1044,8 +1044,8 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
   
   <entry>
     <title>systemtap使用调试记录（一）</title>
-    <link href="https://vcpu.github.io/2017/06/05/systemtap%E4%BD%BF%E7%94%A8%E8%B0%83%E8%AF%95%E8%AE%B0%E5%BD%95%EF%BC%88%E4%B8%80%EF%BC%89/"/>
-    <id>https://vcpu.github.io/2017/06/05/systemtap使用调试记录（一）/</id>
+    <link href="https://vcpu.github.io/systemtap%E4%BD%BF%E7%94%A8%E8%B0%83%E8%AF%95%E8%AE%B0%E5%BD%95%EF%BC%88%E4%B8%80%EF%BC%89/"/>
+    <id>https://vcpu.github.io/systemtap使用调试记录（一）/</id>
     <published>2017-06-05T10:15:52.000Z</published>
     <updated>2017-06-05T10:15:52.000Z</updated>
     
