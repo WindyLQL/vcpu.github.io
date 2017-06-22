@@ -802,9 +802,9 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
       <category term="socket" scheme="https://vcpu.github.io/categories/socket/"/>
     
     
-      <category term="bind" scheme="https://vcpu.github.io/tags/bind/"/>
-    
       <category term="tcp/ip" scheme="https://vcpu.github.io/tags/tcp-ip/"/>
+    
+      <category term="bind" scheme="https://vcpu.github.io/tags/bind/"/>
     
       <category term="kernel3.10.0-514.16.1" scheme="https://vcpu.github.io/tags/kernel3-10-0-514-16-1/"/>
     
