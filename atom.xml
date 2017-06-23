@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://vcpu.me/"/>
-  <updated>2017-06-23T03:11:13.000Z</updated>
+  <updated>2017-06-23T03:16:59.000Z</updated>
   <id>https://vcpu.me/</id>
   
   <author>
@@ -19,8 +19,8 @@
     <title>TIME_WAIT状态分析</title>
     <link href="https://vcpu.me/TIME_WAIT%E7%8A%B6%E6%80%81%E5%88%86%E6%9E%90/"/>
     <id>https://vcpu.me/TIME_WAIT状态分析/</id>
-    <published>2017-06-23T03:11:13.000Z</published>
-    <updated>2017-06-23T03:11:13.000Z</updated>
+    <published>2017-06-23T03:16:59.000Z</published>
+    <updated>2017-06-23T03:16:59.000Z</updated>
     
     <content type="html"><![CDATA[<h1 id="TIME-WAIT状态分析"><a href="#TIME-WAIT状态分析" class="headerlink" title="TIME_WAIT状态分析"></a>TIME_WAIT状态分析</h1><p>之所以起这样一个题目是因为很久以前我曾经写过一篇介绍TIME_WAIT的文章，不过当时基本属于浅尝辄止，并没深入说明问题的来龙去脉，碰巧这段时间反复被别人问到相关的问题，让我觉得有必要全面总结一下，以备不时之需。</p>
 <p>讨论前大家可以拿手头的服务器摸摸底，记住「ss」比「netstat」快：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ss -ant | awk 'NR&gt;1 &#123;++s[$1]&#125; END &#123;for(k in s) print k,s[k]&#125;</div></pre></td></tr></table></figure></p>
@@ -802,9 +802,9 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
       <category term="socket" scheme="https://vcpu.me/categories/socket/"/>
     
     
-      <category term="tcp/ip" scheme="https://vcpu.me/tags/tcp-ip/"/>
-    
       <category term="bind" scheme="https://vcpu.me/tags/bind/"/>
+    
+      <category term="tcp/ip" scheme="https://vcpu.me/tags/tcp-ip/"/>
     
       <category term="kernel3.10.0-514.16.1" scheme="https://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
     
