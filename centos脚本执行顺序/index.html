@@ -10,6 +10,16 @@
   <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入文章密码') !== ''){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
 
 <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
 <link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
@@ -530,8 +540,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/TIME_WAIT状态分析/" rel="next" title="TIME_WAIT状态分析">
-                <i class="fa fa-chevron-left"></i> TIME_WAIT状态分析
+              <a href="/f-stack安装/" rel="next" title="f-stack安装运行">
+                <i class="fa fa-chevron-left"></i> f-stack安装运行
               </a>
             
           </div>
