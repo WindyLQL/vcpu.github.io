@@ -4,16 +4,18 @@
 
     
   <url>
-    <loc>https://vcpu.me/socket_rw_proc/</loc>
-    <lastmod>2017-06-26T08:55:50.000Z</lastmod>
+    <loc>https://vcpu.me/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/</loc>
+    <lastmod>2017-06-26T09:01:27.000Z</lastmod>
     <data>
         <display>
-        <title>socket读写条件</title>
+        <title>socket信号处理</title>
         <pubTime>2017-06-26T11:10:34.000Z</pubTime>
         
         <tag>tcp/ip</tag>
          
         <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>socket信号处理</tag>
          
          
            
@@ -26,18 +28,40 @@
 
     
   <url>
-    <loc>https://vcpu.me/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/</loc>
-    <lastmod>2017-06-26T07:10:43.000Z</lastmod>
+    <loc>https://vcpu.me/select/</loc>
+    <lastmod>2017-06-26T09:00:57.000Z</lastmod>
     <data>
         <display>
-        <title>socket信号处理</title>
-        <pubTime>2017-06-26T11:10:34.000Z</pubTime>
+        <title>select</title>
+        <pubTime>2017-06-26T09:00:57.000Z</pubTime>
         
         <tag>tcp/ip</tag>
          
         <tag>kernel3.10.0-514.16.1</tag>
          
-        <tag>socket信号处理</tag>
+        <tag>select</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="https://vcpu.me/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://vcpu.me/socket_rw_proc/</loc>
+    <lastmod>2017-06-26T08:55:50.000Z</lastmod>
+    <data>
+        <display>
+        <title>socket读写条件</title>
+        <pubTime>2017-06-26T11:10:34.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
          
          
            
@@ -118,30 +142,6 @@
     </url>
 
     
-    
-  <url>
-    <loc>https://vcpu.me/select/</loc>
-    <lastmod>2017-06-22T10:39:53.000Z</lastmod>
-    <data>
-        <display>
-        <title>select</title>
-        <pubTime>2017-06-22T10:39:53.000Z</pubTime>
-        
-        <tag>tcp/ip</tag>
-         
-        <tag>select</tag>
-         
-        <tag>kernel3.10.0-415.16.1</tag>
-         
-         
-           
-             
-              <breadCrumb title="socket" url="https://vcpu.me/categories/socket/"/>
-          
-        </display>
-    </data>
-    </url>
-
     
   <url>
     <loc>https://vcpu.me/socket/</loc>

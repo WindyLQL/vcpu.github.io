@@ -2,16 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://vcpu.me/socket_rw_proc/</loc>
+    <loc>https://vcpu.me/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/</loc>
     
-    <lastmod>2017-06-26T08:55:50.000Z</lastmod>
+    <lastmod>2017-06-26T09:01:27.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://vcpu.me/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/</loc>
+    <loc>https://vcpu.me/select/</loc>
     
-    <lastmod>2017-06-26T07:10:43.000Z</lastmod>
+    <lastmod>2017-06-26T09:00:57.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://vcpu.me/socket_rw_proc/</loc>
+    
+    <lastmod>2017-06-26T08:55:50.000Z</lastmod>
     
   </url>
   
@@ -47,13 +54,6 @@
     <loc>https://vcpu.me/top/index.html</loc>
     
     <lastmod>2017-06-22T14:58:14.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://vcpu.me/select/</loc>
-    
-    <lastmod>2017-06-22T10:39:53.000Z</lastmod>
     
   </url>
   
