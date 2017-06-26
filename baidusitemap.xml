@@ -4,6 +4,30 @@
 
     
   <url>
+    <loc>https://vcpu.me/connect/</loc>
+    <lastmod>2017-06-26T02:29:18.000Z</lastmod>
+    <data>
+        <display>
+        <title>connect()实现源码分析</title>
+        <pubTime>2017-06-09T09:30:34.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>socket</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="https://vcpu.me/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>https://vcpu.me/TIME_WAIT%E7%8A%B6%E6%80%81%E5%88%86%E6%9E%90/</loc>
     <lastmod>2017-06-23T03:16:59.000Z</lastmod>
     <data>
@@ -271,35 +295,11 @@
         <title>bind()实现源码分析</title>
         <pubTime>2017-06-12T09:35:01.000Z</pubTime>
         
+        <tag>tcp/ip</tag>
+         
         <tag>bind</tag>
          
-        <tag>tcp/ip</tag>
-         
         <tag>kernel3.10.0-514.16.1</tag>
-         
-         
-           
-             
-              <breadCrumb title="socket" url="https://vcpu.me/categories/socket/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://vcpu.me/connect/</loc>
-    <lastmod>2017-06-09T10:59:10.000Z</lastmod>
-    <data>
-        <display>
-        <title>connect()实现源码分析</title>
-        <pubTime>2017-06-09T10:59:10.000Z</pubTime>
-        
-        <tag>tcp/ip</tag>
-         
-        <tag>kernel3.10.0-514.16.1</tag>
-         
-        <tag>socket</tag>
          
          
            
