@@ -4,6 +4,45 @@
 
     
   <url>
+    <loc>https://vcpu.me/f-stack%E5%AE%89%E8%A3%85/</loc>
+    <lastmod>2017-06-27T08:43:07.000Z</lastmod>
+    <data>
+        <display>
+        <title>f-stack安装运行</title>
+        <pubTime>2017-06-12T09:50:55.000Z</pubTime>
+        
+        <tag>DPDK</tag>
+         
+        <tag>f-stack</tag>
+         
+        <tag>nginx</tag>
+         
+         
+           
+             
+              <breadCrumb title="DPDK" url="https://vcpu.me/categories/DPDK/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://vcpu.me/epool/</loc>
+    <lastmod>2017-06-27T08:15:26.000Z</lastmod>
+    <data>
+        <display>
+        <title></title>
+        <pubTime>2017-06-27T07:10:01.000Z</pubTime>
+        
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>https://vcpu.me/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/</loc>
     <lastmod>2017-06-26T09:01:27.000Z</lastmod>
     <data>
@@ -117,30 +156,6 @@
     </url>
 
     
-    
-  <url>
-    <loc>https://vcpu.me/f-stack%E5%AE%89%E8%A3%85/</loc>
-    <lastmod>2017-06-22T17:25:55.000Z</lastmod>
-    <data>
-        <display>
-        <title>f-stack安装运行</title>
-        <pubTime>2017-06-12T09:50:55.000Z</pubTime>
-        
-        <tag>DPDK</tag>
-         
-        <tag>f-stack</tag>
-         
-        <tag>nginx</tag>
-         
-         
-           
-             
-              <breadCrumb title="DPDK" url="https://vcpu.me/categories/DPDK/"/>
-          
-        </display>
-    </data>
-    </url>
-
     
     
   <url>

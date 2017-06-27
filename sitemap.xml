@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://vcpu.me/f-stack%E5%AE%89%E8%A3%85/</loc>
+    
+    <lastmod>2017-06-27T08:43:07.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://vcpu.me/epool/</loc>
+    
+    <lastmod>2017-06-27T08:15:26.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://vcpu.me/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/</loc>
     
     <lastmod>2017-06-26T09:01:27.000Z</lastmod>
@@ -40,13 +54,6 @@
     <loc>https://vcpu.me/about/index.html</loc>
     
     <lastmod>2017-06-22T17:34:37.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://vcpu.me/f-stack%E5%AE%89%E8%A3%85/</loc>
-    
-    <lastmod>2017-06-22T17:25:55.000Z</lastmod>
     
   </url>
   
