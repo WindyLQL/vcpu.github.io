@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://vcpu.me/about/index.html</loc>
+    
+    <lastmod>2017-06-29T10:17:20.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://vcpu.me/epool/</loc>
     
     <lastmod>2017-06-29T03:10:27.000Z</lastmod>
@@ -54,13 +61,6 @@
     <loc>https://vcpu.me/TIME_WAIT%E7%8A%B6%E6%80%81%E5%88%86%E6%9E%90/</loc>
     
     <lastmod>2017-06-23T03:16:59.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://vcpu.me/about/index.html</loc>
-    
-    <lastmod>2017-06-22T17:34:37.000Z</lastmod>
     
   </url>
   
