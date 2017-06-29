@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://vcpu.me/"/>
-  <updated>2017-06-29T02:59:14.000Z</updated>
+  <updated>2017-06-29T03:06:20.000Z</updated>
   <id>https://vcpu.me/</id>
   
   <author>
@@ -20,11 +20,9 @@
     <link href="https://vcpu.me/%E6%83%8A%E7%BE%A4/"/>
     <id>https://vcpu.me/惊群/</id>
     <published>2017-06-29T04:00:00.000Z</published>
-    <updated>2017-06-29T02:59:14.000Z</updated>
+    <updated>2017-06-29T03:06:20.000Z</updated>
     
-    <content type="html"><![CDATA[<h2 id="惊群"><a href="#惊群" class="headerlink" title="惊群"></a>惊群</h2><ul>
-<li>发生在多进程或者多线程，等待同一个socket事件，当该事件发生，这些进程或者线程都被唤醒</li>
-</ul>
+    <content type="html"><![CDATA[<h2 id="惊群"><a href="#惊群" class="headerlink" title="惊群"></a>惊群</h2><p>发生在多进程或者多线程，等待同一个socket事件，当该事件发生，这些进程或者线程都被唤醒</p>
 <h2 id="发生位置"><a href="#发生位置" class="headerlink" title="发生位置"></a>发生位置</h2><p>2.6版本内核accept已经解决该问题了，但是select／poll或者epool_wait仍然存在该问题</p>
 <h2 id="产生影响"><a href="#产生影响" class="headerlink" title="产生影响"></a>产生影响</h2><p>一个连接来临时，多个子进程同时被唤醒，却只有一个子进程accept成功，其余都失败，重新休眠；产生了没有必要的唤醒和上下文切换，造成性能浪费。</p>
 <h2 id="惊群实例分析"><a href="#惊群实例分析" class="headerlink" title="惊群实例分析"></a>惊群实例分析</h2><p>总体结论：accept linux内核已经解决惊群问题3.10.0-514.16.1.el7.x86_64，具体唤醒方式实现参见<a href="http://vcpu.me/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">socket信号处理博文</a><br>select/pool和epool内核并没有支持解决惊群问题。<br>之前一直觉得epool和select使用非常平凡，为什么操作系统不直接自己解决惊群问题？应该是epool和select不仅仅使用在socket监听中，会存在需要唤醒多个进程的使用场景。</p>
@@ -65,9 +63,7 @@
     
     <summary type="html">
     
-      &lt;h2 id=&quot;惊群&quot;&gt;&lt;a href=&quot;#惊群&quot; class=&quot;headerlink&quot; title=&quot;惊群&quot;&gt;&lt;/a&gt;惊群&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;发生在多进程或者多线程，等待同一个socket事件，当该事件发生，这些进程或者线程都被唤醒&lt;/li&gt;
-&lt;/ul&gt;
+      &lt;h2 id=&quot;惊群&quot;&gt;&lt;a href=&quot;#惊群&quot; class=&quot;headerlink&quot; title=&quot;惊群&quot;&gt;&lt;/a&gt;惊群&lt;/h2&gt;&lt;p&gt;发生在多进程或者多线程，等待同一个socket事件，当该事件发生，这些进程或者线程都被唤醒&lt;/p&gt;
 &lt;h2 id=&quot;发生位置&quot;&gt;&lt;a href=&quot;#发生位置&quot; class=&quot;headerlink&quot; title=&quot;发生位置&quot;&gt;&lt;/a&gt;发生位置&lt;/h2&gt;&lt;p&gt;2.6版本内核accept已经解决该问题了，但是select／poll或者epool_wait仍然存在该问题&lt;/p&gt;
 &lt;h2 id=&quot;产生影响&quot;&gt;&lt;a href=&quot;#产生影响&quot; class=&quot;headerlink&quot; title=&quot;产生影响&quot;&gt;&lt;/a&gt;产生影响&lt;/h2&gt;&lt;p&gt;一个连接来临时，多个子进程同时被唤醒，却只有一个子进程accept成功，其余都失败，重新休眠；产生了没有必要的唤醒和上下文切换，造成性能浪费。&lt;/p&gt;
 &lt;h2 id=&quot;惊群实例分析&quot;&gt;&lt;a href=&quot;#惊群实例分析&quot; class=&quot;headerlink&quot; title=&quot;惊群实例分析&quot;&gt;&lt;/a&gt;惊群实例分析&lt;/h2&gt;&lt;p&gt;总体结论：accept linux内核已经解决惊群问题3.10.0-514.16.1.el7.x86_64，具体唤醒方式实现参见&lt;a href=&quot;http://vcpu.me/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/&quot;&gt;socket信号处理博文&lt;/a&gt;&lt;br&gt;select/pool和epool内核并没有支持解决惊群问题。&lt;br&gt;之前一直觉得epool和select使用非常平凡，为什么操作系统不直接自己解决惊群问题？应该是epool和select不仅仅使用在socket监听中，会存在需要唤醒多个进程的使用场景。&lt;/p&gt;
@@ -92,7 +88,7 @@
     <link href="https://vcpu.me/epool/"/>
     <id>https://vcpu.me/epool/</id>
     <published>2017-06-28T04:00:00.000Z</published>
-    <updated>2017-06-29T03:04:51.000Z</updated>
+    <updated>2017-06-29T03:10:27.000Z</updated>
     
     <content type="html"><![CDATA[<h2 id="epool基本概念"><a href="#epool基本概念" class="headerlink" title="epool基本概念"></a>epool基本概念</h2><h3 id="是什么？"><a href="#是什么？" class="headerlink" title="是什么？"></a>是什么？</h3><p>改进的pool，一种I/O多路复用技术，可管理大批量文件描述符。</p>
 <h3 id="工作原理？"><a href="#工作原理？" class="headerlink" title="工作原理？"></a>工作原理？</h3><blockquote>
@@ -129,7 +125,7 @@
     
     </summary>
     
-      <category term="tcp/ip" scheme="https://vcpu.me/categories/tcp-ip/"/>
+      <category term="socket" scheme="https://vcpu.me/categories/socket/"/>
     
     
       <category term="tcp/ip" scheme="https://vcpu.me/tags/tcp-ip/"/>

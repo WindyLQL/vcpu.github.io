@@ -599,9 +599,7 @@
 
       
         
-          <h2 id="惊群"><a href="#惊群" class="headerlink" title="惊群"></a>惊群</h2><ul>
-<li>发生在多进程或者多线程，等待同一个socket事件，当该事件发生，这些进程或者线程都被唤醒</li>
-</ul>
+          <h2 id="惊群"><a href="#惊群" class="headerlink" title="惊群"></a>惊群</h2><p>发生在多进程或者多线程，等待同一个socket事件，当该事件发生，这些进程或者线程都被唤醒</p>
 <h2 id="发生位置"><a href="#发生位置" class="headerlink" title="发生位置"></a>发生位置</h2><p>2.6版本内核accept已经解决该问题了，但是select／poll或者epool_wait仍然存在该问题</p>
 <h2 id="产生影响"><a href="#产生影响" class="headerlink" title="产生影响"></a>产生影响</h2><p>一个连接来临时，多个子进程同时被唤醒，却只有一个子进程accept成功，其余都失败，重新休眠；产生了没有必要的唤醒和上下文切换，造成性能浪费。</p>
 <h2 id="惊群实例分析"><a href="#惊群实例分析" class="headerlink" title="惊群实例分析"></a>惊群实例分析</h2><p>总体结论：accept linux内核已经解决惊群问题3.10.0-514.16.1.el7.x86_64，具体唤醒方式实现参见<a href="http://vcpu.me/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">socket信号处理博文</a><br>select/pool和epool内核并没有支持解决惊群问题。<br>之前一直觉得epool和select使用非常平凡，为什么操作系统不直接自己解决惊群问题？应该是epool和select不仅仅使用在socket监听中，会存在需要唤醒多个进程的使用场景。</p>
@@ -711,8 +709,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/tcp-ip/" itemprop="url" rel="index">
-                    <span itemprop="name">tcp/ip</span>
+                  <a href="/categories/socket/" itemprop="url" rel="index">
+                    <span itemprop="name">socket</span>
                   </a>
                 </span>
 
@@ -2013,7 +2011,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>

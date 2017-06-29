@@ -118,17 +118,17 @@
 
 
 
-<meta name="description" content="惊群 发生在多进程或者多线程，等待同一个socket事件，当该事件发生，这些进程或者线程都被唤醒  发生位置2.6版本内核accept已经解决该问题了，但是select／poll或者epool_wait仍然存在该问题 产生影响一个连接来临时，多个子进程同时被唤醒，却只有一个子进程accept成功，其余都失败，重新休眠；产生了没有必要的唤醒和上下文切换，造成性能浪费。 惊群实例分析总体结论：acce">
+<meta name="description" content="惊群发生在多进程或者多线程，等待同一个socket事件，当该事件发生，这些进程或者线程都被唤醒 发生位置2.6版本内核accept已经解决该问题了，但是select／poll或者epool_wait仍然存在该问题 产生影响一个连接来临时，多个子进程同时被唤醒，却只有一个子进程accept成功，其余都失败，重新休眠；产生了没有必要的唤醒和上下文切换，造成性能浪费。 惊群实例分析总体结论：accept">
 <meta name="keywords" content="tcp&#x2F;ip,kernel3.10.0-514.16.1,nginx,惊群">
 <meta property="og:type" content="article">
 <meta property="og:title" content="惊群探究">
 <meta property="og:url" content="https://vcpu.me/惊群/index.html">
 <meta property="og:site_name" content="i博客">
-<meta property="og:description" content="惊群 发生在多进程或者多线程，等待同一个socket事件，当该事件发生，这些进程或者线程都被唤醒  发生位置2.6版本内核accept已经解决该问题了，但是select／poll或者epool_wait仍然存在该问题 产生影响一个连接来临时，多个子进程同时被唤醒，却只有一个子进程accept成功，其余都失败，重新休眠；产生了没有必要的唤醒和上下文切换，造成性能浪费。 惊群实例分析总体结论：acce">
-<meta property="og:updated_time" content="2017-06-29T02:59:14.000Z">
+<meta property="og:description" content="惊群发生在多进程或者多线程，等待同一个socket事件，当该事件发生，这些进程或者线程都被唤醒 发生位置2.6版本内核accept已经解决该问题了，但是select／poll或者epool_wait仍然存在该问题 产生影响一个连接来临时，多个子进程同时被唤醒，却只有一个子进程accept成功，其余都失败，重新休眠；产生了没有必要的唤醒和上下文切换，造成性能浪费。 惊群实例分析总体结论：accept">
+<meta property="og:updated_time" content="2017-06-29T03:06:20.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="惊群探究">
-<meta name="twitter:description" content="惊群 发生在多进程或者多线程，等待同一个socket事件，当该事件发生，这些进程或者线程都被唤醒  发生位置2.6版本内核accept已经解决该问题了，但是select／poll或者epool_wait仍然存在该问题 产生影响一个连接来临时，多个子进程同时被唤醒，却只有一个子进程accept成功，其余都失败，重新休眠；产生了没有必要的唤醒和上下文切换，造成性能浪费。 惊群实例分析总体结论：acce">
+<meta name="twitter:description" content="惊群发生在多进程或者多线程，等待同一个socket事件，当该事件发生，这些进程或者线程都被唤醒 发生位置2.6版本内核accept已经解决该问题了，但是select／poll或者epool_wait仍然存在该问题 产生影响一个连接来临时，多个子进程同时被唤醒，却只有一个子进程accept成功，其余都失败，重新休眠；产生了没有必要的唤醒和上下文切换，造成性能浪费。 惊群实例分析总体结论：accept">
 
 
 
@@ -443,9 +443,7 @@
       
 
       
-        <h2 id="惊群"><a href="#惊群" class="headerlink" title="惊群"></a>惊群</h2><ul>
-<li>发生在多进程或者多线程，等待同一个socket事件，当该事件发生，这些进程或者线程都被唤醒</li>
-</ul>
+        <h2 id="惊群"><a href="#惊群" class="headerlink" title="惊群"></a>惊群</h2><p>发生在多进程或者多线程，等待同一个socket事件，当该事件发生，这些进程或者线程都被唤醒</p>
 <h2 id="发生位置"><a href="#发生位置" class="headerlink" title="发生位置"></a>发生位置</h2><p>2.6版本内核accept已经解决该问题了，但是select／poll或者epool_wait仍然存在该问题</p>
 <h2 id="产生影响"><a href="#产生影响" class="headerlink" title="产生影响"></a>产生影响</h2><p>一个连接来临时，多个子进程同时被唤醒，却只有一个子进程accept成功，其余都失败，重新休眠；产生了没有必要的唤醒和上下文切换，造成性能浪费。</p>
 <h2 id="惊群实例分析"><a href="#惊群实例分析" class="headerlink" title="惊群实例分析"></a>惊群实例分析</h2><p>总体结论：accept linux内核已经解决惊群问题3.10.0-514.16.1.el7.x86_64，具体唤醒方式实现参见<a href="http://vcpu.me/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">socket信号处理博文</a><br>select/pool和epool内核并没有支持解决惊群问题。<br>之前一直觉得epool和select使用非常平凡，为什么操作系统不直接自己解决惊群问题？应该是epool和select不仅仅使用在socket监听中，会存在需要唤醒多个进程的使用场景。</p>
@@ -505,7 +503,7 @@
   <p><span>本文标题:</span><a href="/惊群/">惊群探究</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 vcpu 的个人博客">vcpu</a></p>
   <p><span>发布时间:</span>2017年06月29日 - 12:06</p>
-  <p><span>最后更新:</span>2017年06月29日 - 10:06</p>
+  <p><span>最后更新:</span>2017年06月29日 - 11:06</p>
   <p><span>原始链接:</span><a href="/惊群/" title="惊群探究">https://vcpu.me/惊群/</a>
     <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://vcpu.me/惊群/"  aria-label="复制成功！"></i></span>
   </p>
@@ -658,7 +656,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
