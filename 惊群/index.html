@@ -1,0 +1,1352 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<script>
+    (function(){
+        if(''){
+            if (prompt('请输入文章密码') !== ''){
+                alert('密码错误！');
+                history.back();
+            }
+        }
+    })();
+</script>
+
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+<style>
+    .pace .pace-progress {
+        background: #1E92FB; /*进度条颜色*/
+        height: 3px;
+    }
+    .pace .pace-progress-inner {
+         box-shadow: 0 0 10px #1E92FB, 0 0 5px     #1E92FB; /*阴影颜色*/
+    }
+    .pace .pace-activity {
+        border-top-color: #1E92FB;    /*上边框颜色*/
+        border-left-color: #1E92FB;    /*左边框颜色*/
+    }
+</style>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="tcp/ip,kernel3.10.0-514.16.1,nginx,惊群," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="i博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="惊群 发生在多进程或者多线程，等待同一个socket事件，当该事件发生，这些进程或者线程都被唤醒  发生位置2.6版本内核accept已经解决该问题了，但是select／poll或者epool_wait仍然存在该问题 产生影响一个连接来临时，多个子进程同时被唤醒，却只有一个子进程accept成功，其余都失败，重新休眠；产生了没有必要的唤醒和上下文切换，造成性能浪费。 惊群实例分析总体结论：acce">
+<meta name="keywords" content="tcp&#x2F;ip,kernel3.10.0-514.16.1,nginx,惊群">
+<meta property="og:type" content="article">
+<meta property="og:title" content="惊群探究">
+<meta property="og:url" content="https://vcpu.me/惊群/index.html">
+<meta property="og:site_name" content="i博客">
+<meta property="og:description" content="惊群 发生在多进程或者多线程，等待同一个socket事件，当该事件发生，这些进程或者线程都被唤醒  发生位置2.6版本内核accept已经解决该问题了，但是select／poll或者epool_wait仍然存在该问题 产生影响一个连接来临时，多个子进程同时被唤醒，却只有一个子进程accept成功，其余都失败，重新休眠；产生了没有必要的唤醒和上下文切换，造成性能浪费。 惊群实例分析总体结论：acce">
+<meta property="og:updated_time" content="2017-06-29T02:59:14.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="惊群探究">
+<meta name="twitter:description" content="惊群 发生在多进程或者多线程，等待同一个socket事件，当该事件发生，这些进程或者线程都被唤醒  发生位置2.6版本内核accept已经解决该问题了，但是select／poll或者epool_wait仍然存在该问题 产生影响一个连接来临时，多个子进程同时被唤醒，却只有一个子进程accept成功，其余都失败，重新休眠；产生了没有必要的唤醒和上下文切换，造成性能浪费。 惊群实例分析总体结论：acce">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://vcpu.me/惊群/"/>
+
+
+
+
+
+  <title>惊群探究 | i博客</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">i博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://vcpu.me/惊群/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">惊群探究</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-29T12:00:00+08:00">
+                2017-06-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/惊群/" class="leancloud_visitors" data-flag-title="惊群探究">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="惊群"><a href="#惊群" class="headerlink" title="惊群"></a>惊群</h2><ul>
+<li>发生在多进程或者多线程，等待同一个socket事件，当该事件发生，这些进程或者线程都被唤醒</li>
+</ul>
+<h2 id="发生位置"><a href="#发生位置" class="headerlink" title="发生位置"></a>发生位置</h2><p>2.6版本内核accept已经解决该问题了，但是select／poll或者epool_wait仍然存在该问题</p>
+<h2 id="产生影响"><a href="#产生影响" class="headerlink" title="产生影响"></a>产生影响</h2><p>一个连接来临时，多个子进程同时被唤醒，却只有一个子进程accept成功，其余都失败，重新休眠；产生了没有必要的唤醒和上下文切换，造成性能浪费。</p>
+<h2 id="惊群实例分析"><a href="#惊群实例分析" class="headerlink" title="惊群实例分析"></a>惊群实例分析</h2><p>总体结论：accept linux内核已经解决惊群问题3.10.0-514.16.1.el7.x86_64，具体唤醒方式实现参见<a href="http://vcpu.me/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">socket信号处理博文</a><br>select/pool和epool内核并没有支持解决惊群问题。<br>之前一直觉得epool和select使用非常平凡，为什么操作系统不直接自己解决惊群问题？应该是epool和select不仅仅使用在socket监听中，会存在需要唤醒多个进程的使用场景。</p>
+<a id="more"></a>
+<h3 id="accept"><a href="#accept" class="headerlink" title="accept"></a>accept</h3><p>实例背景：3.10.0-514.16.1.el7.x86_64内核下，在创建、绑定和监听后，创建多进程accept 建立好的fd，当一个客户端访问该服务端时候，观察进程的连接获取情况<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;strings.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> SERV_PORT  9999</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc,<span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line">     <span class="keyword">int</span> listenfd,connfd;</div><div class="line">     <span class="keyword">pid_t</span>  childpid,childpid2;</div><div class="line">     <span class="keyword">socklen_t</span> clilen;</div><div class="line">     <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">cliaddr</span>,<span class="title">servaddr</span>;</span></div><div class="line"></div><div class="line"></div><div class="line">     listenfd = socket(AF_INET,SOCK_STREAM,<span class="number">0</span>);</div><div class="line">     bzero(&amp;servaddr,<span class="keyword">sizeof</span>(servaddr));</div><div class="line">     servaddr.sin_family = AF_INET;</div><div class="line">     servaddr.sin_addr.s_addr = htonl (INADDR_ANY);</div><div class="line">     servaddr.sin_port = htons (SERV_PORT);</div><div class="line"></div><div class="line"></div><div class="line">     bind(listenfd,  (struct sockaddr *) &amp;servaddr, <span class="keyword">sizeof</span>(servaddr));</div><div class="line">    listen(listenfd,<span class="number">1000</span>);</div><div class="line"></div><div class="line">     clilen = <span class="keyword">sizeof</span>(cliaddr);</div><div class="line"></div><div class="line">     <span class="keyword">if</span>( (childpid = fork()) == <span class="number">0</span>)</div><div class="line">     &#123;</div><div class="line">         <span class="keyword">while</span>(<span class="number">1</span>)</div><div class="line">         &#123;</div><div class="line">             connfd = accept(listenfd,(struct sockaddr *) &amp;cliaddr,&amp;clilen);</div><div class="line">             <span class="built_in">printf</span>(<span class="string">"fork 1 is [%d],error is %m\n"</span>,connfd);</div><div class="line">         &#125;</div><div class="line">     &#125;</div><div class="line"></div><div class="line">     <span class="keyword">if</span>( (childpid2 = fork()) == <span class="number">0</span>)</div><div class="line">     &#123;</div><div class="line"></div><div class="line">         <span class="keyword">while</span>(<span class="number">1</span>)&#123;</div><div class="line">             connfd = accept(listenfd,(struct sockaddr *) &amp;cliaddr,&amp;clilen);</div><div class="line">             <span class="built_in">printf</span>(<span class="string">"fork 2 is [%d]，error is %m\n"</span>,connfd);</div><div class="line">         &#125;</div><div class="line">     &#125;</div><div class="line"></div><div class="line">     sleep(<span class="number">100</span>);</div><div class="line">     <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>窗口1:编译运行例子</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[root@localhost demo]# gcc jq.c -o jq</div><div class="line">[root@localhost demo]# ./jq</div><div class="line">fork 1 is [4],error is Success</div></pre></td></tr></table></figure>
+<p>窗口2：访问9999端口<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root@localhost ~]# curl http://127.0.0.1:9999</div></pre></td></tr></table></figure></p>
+<p>结果：在创建、绑定和监听后，创建多进程监听后，只有一个进程被唤醒接收处理fd，其它进程均在休眠阶段，在linux内核3.10.0-514.16.1.el7.x86_64版本下，多进程accept连接时候不存在惊群现象。</p>
+<h3 id="select"><a href="#select" class="headerlink" title="select"></a>select</h3><p>实例背景：3.10.0-514.16.1.el7.x86_64内核下，在创建、绑定和监听后，创建多进程select监听 建立好的fd，当一个客户端访问该服务端时候，多进程活动情况</p>
+<p>jingqunselect.c<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;strings.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> SERV_PORT  8888</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc,<span class="keyword">char</span> **argv)</span></span></div><div class="line">&#123;</div><div class="line">     <span class="keyword">int</span> listenfd,connfd;</div><div class="line">     <span class="keyword">pid_t</span>  childpid,childpid2;</div><div class="line">     <span class="keyword">socklen_t</span> clilen;</div><div class="line">     <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">cliaddr</span>,<span class="title">servaddr</span>;</span></div><div class="line"></div><div class="line"></div><div class="line">     listenfd = socket(AF_INET,SOCK_STREAM,<span class="number">0</span>);</div><div class="line">     bzero(&amp;servaddr,<span class="keyword">sizeof</span>(servaddr));</div><div class="line">     servaddr.sin_family = AF_INET;</div><div class="line">     servaddr.sin_addr.s_addr = htonl (INADDR_ANY);</div><div class="line">     servaddr.sin_port = htons (SERV_PORT);</div><div class="line"></div><div class="line"></div><div class="line">     bind(listenfd,  (struct sockaddr *) &amp;servaddr, <span class="keyword">sizeof</span>(servaddr));</div><div class="line">    listen(listenfd,<span class="number">1000</span>);</div><div class="line"></div><div class="line">     clilen = <span class="keyword">sizeof</span>(cliaddr);</div><div class="line"></div><div class="line">     <span class="keyword">if</span>( (childpid = fork()) == <span class="number">0</span>)</div><div class="line">     &#123;</div><div class="line">         <span class="keyword">int</span> maxsock = listenfd+<span class="number">1</span>;</div><div class="line">         fd_set fdsr;</div><div class="line">         FD_ZERO(&amp;fdsr);</div><div class="line">        FD_SET(listenfd, &amp;fdsr);</div><div class="line">         <span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">tv</span>;</span></div><div class="line">         tv.tv_sec = <span class="number">30</span>;</div><div class="line">         tv.tv_usec = <span class="number">0</span>;</div><div class="line">        <span class="keyword">int</span>   ret = select(maxsock, &amp;fdsr,<span class="literal">NULL</span>,<span class="literal">NULL</span>,&amp;tv);</div><div class="line">        <span class="keyword">if</span>(ret &lt; <span class="number">0</span>)</div><div class="line">        &#123;</div><div class="line">            <span class="built_in">printf</span>(<span class="string">"[%d]child err 1 \n"</span>,getpid());</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(ret == <span class="number">0</span>)</div><div class="line">        &#123;</div><div class="line">            <span class="built_in">printf</span>(<span class="string">"time out\n"</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">else</span></div><div class="line">        &#123;</div><div class="line">            <span class="built_in">printf</span>(<span class="string">"[%d] rcv singal \n"</span>,getpid());</div><div class="line">             <span class="keyword">while</span>(<span class="number">1</span>)</div><div class="line">            &#123;</div><div class="line">             connfd = accept(listenfd,(struct sockaddr *) &amp;cliaddr,&amp;clilen);</div><div class="line">             <span class="built_in">printf</span>(<span class="string">"[%d] [%d],error is %m\n"</span>,getpid(),connfd);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125;</div><div class="line">     &#125;</div><div class="line"></div><div class="line">     <span class="keyword">if</span>( (childpid2 = fork()) == <span class="number">0</span>)</div><div class="line">     &#123;</div><div class="line">         <span class="keyword">int</span> maxsock = listenfd+<span class="number">1</span>;</div><div class="line">         fd_set fdsr;</div><div class="line">         FD_ZERO(&amp;fdsr);</div><div class="line">         FD_SET(listenfd, &amp;fdsr);</div><div class="line">         <span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">tv</span>;</span></div><div class="line">         tv.tv_sec = <span class="number">30</span>;</div><div class="line">         tv.tv_usec = <span class="number">0</span>;</div><div class="line">        <span class="keyword">int</span> ret = select(maxsock, &amp;fdsr,<span class="literal">NULL</span>,<span class="literal">NULL</span>,&amp;tv);</div><div class="line">        <span class="keyword">if</span>(ret &lt; <span class="number">0</span>)</div><div class="line">        &#123;</div><div class="line">            <span class="built_in">printf</span>(<span class="string">"[%d]child 2 err\n"</span>,getpid());</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(ret == <span class="number">0</span>)</div><div class="line">        &#123;</div><div class="line">            <span class="built_in">printf</span>(<span class="string">"time out\n"</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">else</span></div><div class="line">        &#123;</div><div class="line">            <span class="built_in">printf</span>(<span class="string">"[%d] rcv singal \n"</span>,getpid());</div><div class="line">             <span class="keyword">while</span>(<span class="number">1</span>)</div><div class="line">            &#123;</div><div class="line">             connfd = accept(listenfd,(struct sockaddr *) &amp;cliaddr,&amp;clilen);</div><div class="line">             <span class="built_in">printf</span>(<span class="string">"[%d] [%d],error is %m\n"</span>,getpid(),connfd);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">     &#125;</div><div class="line"></div><div class="line">     sleep(<span class="number">100</span>);</div><div class="line">     <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>窗口1:编译运行上述代码<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[root@localhost demo]# gcc jingqunselect.c -o jqselect</div><div class="line">[root@localhost demo]#</div><div class="line">[root@localhost demo]# ./jqselect</div><div class="line">[23954] rcv singal</div><div class="line">[23955]rcv singal</div><div class="line">[23954] [4],error is Success</div></pre></td></tr></table></figure></p>
+<p>窗口2:[root@localhost ~]# curl <a href="http://127.0.0.1:8888" target="_blank" rel="external">http://127.0.0.1:8888</a><br>结论：有连接建立信号时候两个监听进程均被唤醒，也就是存在惊群问题。</p>
+<h3 id="epool"><a href="#epool" class="headerlink" title="epool"></a>epool</h3><p>实例背景：3.10.0-514.16.1.el7.x86_64内核下，在创建、绑定和监听后，创建10个子进程epool监听 建立好的fd，当一个客户端访问该服务端时候，多进程活动情况<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div></pre></td><td class="code"><pre><div class="line">[root@localhost demo]<span class="meta"># cat epjq.c</span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/epoll.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;netdb.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> PROCESS_NUM 10</span></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span></span></div><div class="line"><span class="title">create_and_bind</span> <span class="params">(<span class="keyword">char</span> *port)</span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> fd = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serveraddr</span>;</span></div><div class="line">    serveraddr.sin_family = AF_INET;</div><div class="line">    serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);</div><div class="line">    serveraddr.sin_port = htons(atoi(port));</div><div class="line">    bind(fd, (struct sockaddr*)&amp;serveraddr, <span class="keyword">sizeof</span>(serveraddr));</div><div class="line">    <span class="keyword">return</span> fd;</div><div class="line">&#125;</div><div class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">int</span></span></div><div class="line"><span class="title">make_socket_non_blocking</span> <span class="params">(<span class="keyword">int</span> sfd)</span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> flags, s;</div><div class="line"></div><div class="line">    flags = fcntl (sfd, F_GETFL, <span class="number">0</span>);</div><div class="line">    <span class="keyword">if</span> (flags == <span class="number">-1</span>)</div><div class="line">    &#123;</div><div class="line">        perror (<span class="string">"fcntl"</span>);</div><div class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    flags |= O_NONBLOCK;</div><div class="line">    s = fcntl (sfd, F_SETFL, flags);</div><div class="line">    <span class="keyword">if</span> (s == <span class="number">-1</span>)</div><div class="line">    &#123;</div><div class="line">        perror (<span class="string">"fcntl"</span>);</div><div class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MAXEVENTS 64</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span></span></div><div class="line"><span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> sfd, s;</div><div class="line">    <span class="keyword">int</span> efd;</div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">event</span>;</span></div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> *<span class="title">events</span>;</span></div><div class="line"></div><div class="line">    sfd = create_and_bind(<span class="string">"8888"</span>);</div><div class="line">    <span class="keyword">if</span> (sfd == <span class="number">-1</span>)</div><div class="line">        <span class="built_in">abort</span> ();</div><div class="line"></div><div class="line">    s = make_socket_non_blocking (sfd);</div><div class="line">    <span class="keyword">if</span> (s == <span class="number">-1</span>)</div><div class="line">        <span class="built_in">abort</span> ();</div><div class="line"></div><div class="line">    s = listen(sfd, SOMAXCONN);</div><div class="line">    <span class="keyword">if</span> (s == <span class="number">-1</span>)</div><div class="line">    &#123;</div><div class="line">        perror (<span class="string">"listen"</span>);</div><div class="line">        <span class="built_in">abort</span> ();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    efd = epoll_create(MAXEVENTS);</div><div class="line">    <span class="keyword">if</span> (efd == <span class="number">-1</span>)</div><div class="line">    &#123;</div><div class="line">        perror(<span class="string">"epoll_create"</span>);</div><div class="line">        <span class="built_in">abort</span>();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    event.data.fd = sfd;</div><div class="line">    <span class="comment">//event.events = EPOLLIN | EPOLLET;</span></div><div class="line">    event.events = EPOLLIN;</div><div class="line">    s = epoll_ctl(efd, EPOLL_CTL_ADD, sfd, &amp;event);</div><div class="line">    <span class="keyword">if</span> (s == <span class="number">-1</span>)</div><div class="line">    &#123;</div><div class="line">        perror(<span class="string">"epoll_ctl"</span>);</div><div class="line">        <span class="built_in">abort</span>();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/* Buffer where events are returned */</span></div><div class="line">    events = <span class="built_in">calloc</span>(MAXEVENTS, <span class="keyword">sizeof</span> event);</div><div class="line">            <span class="keyword">int</span> k;</div><div class="line">    <span class="keyword">for</span>(k = <span class="number">0</span>; k &lt; PROCESS_NUM; k++)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">int</span> pid = fork();</div><div class="line">        <span class="keyword">if</span>(pid == <span class="number">0</span>)</div><div class="line">        &#123;</div><div class="line"></div><div class="line">            <span class="comment">/* The event loop */</span></div><div class="line">            <span class="keyword">while</span> (<span class="number">1</span>)</div><div class="line">            &#123;</div><div class="line">                <span class="keyword">int</span> n, i;</div><div class="line">                n = epoll_wait(efd, events, MAXEVENTS, <span class="number">-1</span>);</div><div class="line">                <span class="built_in">printf</span>(<span class="string">"process %d return from epoll_wait!\n"</span>, getpid());</div><div class="line">                                       <span class="comment">/* sleep here is very important!*/</span></div><div class="line">                sleep(<span class="number">2</span>);</div><div class="line"></div><div class="line">                <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; n; i++)</div><div class="line">                &#123;</div><div class="line">                    <span class="keyword">if</span> ((events[i].events &amp; EPOLLERR) || (events[i].events &amp; EPOLLHUP) || (!(events[i].events &amp;                                    EPOLLIN)))</div><div class="line">                    &#123;</div><div class="line">                        <span class="comment">/* An error has occured on this fd, or the socket is not</span></div><div class="line">                        ready for reading (why were we notified then?) */</div><div class="line">                        <span class="built_in">fprintf</span> (<span class="built_in">stderr</span>, <span class="string">"epoll error\n"</span>);</div><div class="line">                        close (events[i].data.fd);</div><div class="line">                        <span class="keyword">continue</span>;</div><div class="line">                    &#125;</div><div class="line">                    <span class="keyword">else</span> <span class="keyword">if</span> (sfd == events[i].data.fd)</div><div class="line">                    &#123;</div><div class="line">                        <span class="comment">/* We have a notification on the listening socket, which</span></div><div class="line">                        means one or more incoming connections. */</div><div class="line">                        struct sockaddr in_addr;</div><div class="line">                        <span class="keyword">socklen_t</span> in_len;</div><div class="line">                        <span class="keyword">int</span> infd;</div><div class="line">                        <span class="keyword">char</span> hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];</div><div class="line"></div><div class="line">                        in_len = <span class="keyword">sizeof</span> in_addr;</div><div class="line">                        infd = accept(sfd, &amp;in_addr, &amp;in_len);</div><div class="line">                        <span class="keyword">if</span> (infd == <span class="number">-1</span>)</div><div class="line">                        &#123;</div><div class="line">                            <span class="built_in">printf</span>(<span class="string">"process %d accept failed!\n"</span>, getpid());</div><div class="line">                            <span class="keyword">break</span>;</div><div class="line">                        &#125;</div><div class="line">                        <span class="built_in">printf</span>(<span class="string">"process %d accept successed!\n"</span>, getpid());</div><div class="line"></div><div class="line">                        <span class="comment">/* Make the incoming socket non-blocking and add it to the</span></div><div class="line">                        list of fds to monitor. */</div><div class="line">                        close(infd);</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">int</span> status;</div><div class="line">    wait(&amp;status);</div><div class="line">    <span class="built_in">free</span> (events);</div><div class="line">    close (sfd);</div><div class="line">    <span class="keyword">return</span> EXIT_SUCCESS;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>窗口1:编译运行epooldemo<br>[root@localhost demo]# ./epjq<br>process 24197 return from epoll_wait!<br>process 24198 return from epoll_wait!<br>process 24196 return from epoll_wait!<br>process 24195 return from epoll_wait!<br>process 24194 return from epoll_wait!<br>process 24193 return from epoll_wait!<br>process 24192 return from epoll_wait!<br>process 24191 return from epoll_wait!<br>process 24190 return from epoll_wait!<br>process 24189 return from epoll_wait!<br>process 24193 accept successed!<br>process 24194 accept failed!<br>process 24197 accept failed!<br>process 24195 accept failed!<br>process 24192 accept failed!<br>process 24191 accept failed!<br>process 24196 accept failed!<br>process 24198 accept failed!<br>process 24189 accept failed!<br>process 24190 accept failed!</p>
+<p>窗口2:[root@localhost ~]# curl <a href="http://127.0.0.1:8888" target="_blank" rel="external">http://127.0.0.1:8888</a></p>
+<p>结论:epoll_wait监听事件时候没有解决惊群问题；所有监听进程均会被打扰惊醒，进行上下文切换后然后进入睡眠。</p>
+<h3 id="how-to-slove"><a href="#how-to-slove" class="headerlink" title="how to slove ?"></a>how to slove ?</h3><p>多进程需要从某一个端口获取连接，为了高性能我们摒弃直接accept而根据具体使用场景选用epool／poll／select等多socket管控机制，这种管控机制会带来惊群问题（具体内容上述实验已经表达）。<br>目前标准解决方案有两种：</p>
+<blockquote>
+<p>1.锁机制（见后文详细说明）<br>2.复用端口</p>
+<blockquote>
+<p>kernel 3.9增加了SO_REUSEPORT socket option，该选项允许服务端socket复用端口，通过hash机制将连接分配客户端到具体的进程；而这一切都是内核在处理。</p>
+</blockquote>
+</blockquote>
+<p>实例背景：3.10.0-514.16.1.el7.x86_64内核，fork多个进程，通过设置SO_REUSEPORT标记，多进程一起监听端口8888，具体实验demo程序如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/epoll.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;netdb.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> PROCESS_NUM 10</span></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span></span></div><div class="line"><span class="title">create_and_bind</span> <span class="params">(<span class="keyword">char</span> *port)</span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> fd = socket(PF_INET, SOCK_STREAM, <span class="number">0</span>);</div><div class="line">    <span class="keyword">int</span> optval = <span class="number">1</span>;</div><div class="line">    setsockopt(fd,SOL_SOCKET,SO_REUSEPORT,&amp;optval,<span class="keyword">sizeof</span>(optval));</div><div class="line"></div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">serveraddr</span>;</span></div><div class="line">    serveraddr.sin_family = AF_INET;</div><div class="line">    serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);</div><div class="line">    serveraddr.sin_port = htons(atoi(port));</div><div class="line">    bind(fd, (struct sockaddr*)&amp;serveraddr, <span class="keyword">sizeof</span>(serveraddr));</div><div class="line">    <span class="keyword">return</span> fd;</div><div class="line">&#125;</div><div class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">int</span></span></div><div class="line"><span class="title">make_socket_non_blocking</span> <span class="params">(<span class="keyword">int</span> sfd)</span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> flags, s;</div><div class="line"></div><div class="line">    flags = fcntl (sfd, F_GETFL, <span class="number">0</span>);</div><div class="line">    <span class="keyword">if</span> (flags == <span class="number">-1</span>)</div><div class="line">    &#123;</div><div class="line">        perror (<span class="string">"fcntl"</span>);</div><div class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    flags |= O_NONBLOCK;</div><div class="line">    s = fcntl (sfd, F_SETFL, flags);</div><div class="line">    <span class="keyword">if</span> (s == <span class="number">-1</span>)</div><div class="line">    &#123;</div><div class="line">        perror (<span class="string">"fcntl"</span>);</div><div class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MAXEVENTS 64</span></div><div class="line"></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">socket_proc</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> sfd, s;</div><div class="line">    <span class="keyword">int</span> efd;</div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">event</span>;</span></div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> *<span class="title">events</span>;</span></div><div class="line"></div><div class="line">    sfd = create_and_bind(<span class="string">"8888"</span>);</div><div class="line">    <span class="keyword">if</span> (sfd == <span class="number">-1</span>)</div><div class="line">        <span class="built_in">abort</span> ();</div><div class="line"></div><div class="line">    s = make_socket_non_blocking (sfd);</div><div class="line">    <span class="keyword">if</span> (s == <span class="number">-1</span>)</div><div class="line">        <span class="built_in">abort</span> ();</div><div class="line"></div><div class="line">    s = listen(sfd, SOMAXCONN);</div><div class="line">    <span class="keyword">if</span> (s == <span class="number">-1</span>)</div><div class="line">    &#123;</div><div class="line">        perror (<span class="string">"listen"</span>);</div><div class="line">        <span class="built_in">abort</span> ();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    efd = epoll_create(MAXEVENTS);</div><div class="line">    <span class="keyword">if</span> (efd == <span class="number">-1</span>)</div><div class="line">    &#123;</div><div class="line">        perror(<span class="string">"epoll_create"</span>);</div><div class="line">        <span class="built_in">abort</span>();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    event.data.fd = sfd;</div><div class="line">    <span class="comment">//event.events = EPOLLIN | EPOLLET;</span></div><div class="line">    event.events = EPOLLIN;</div><div class="line">    s = epoll_ctl(efd, EPOLL_CTL_ADD, sfd, &amp;event);</div><div class="line">    <span class="keyword">if</span> (s == <span class="number">-1</span>)</div><div class="line">    &#123;</div><div class="line">        perror(<span class="string">"epoll_ctl"</span>);</div><div class="line">        <span class="built_in">abort</span>();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/* Buffer where events are returned */</span></div><div class="line">    events = <span class="built_in">calloc</span>(MAXEVENTS, <span class="keyword">sizeof</span> event);</div><div class="line"></div><div class="line">	  <span class="comment">/* The event loop */</span></div><div class="line">	  <span class="keyword">while</span> (<span class="number">1</span>)</div><div class="line">	  &#123;</div><div class="line">	      <span class="keyword">int</span> n, i;</div><div class="line">	      n = epoll_wait(efd, events, MAXEVENTS, <span class="number">-1</span>);</div><div class="line">	      <span class="built_in">printf</span>(<span class="string">"process %d return from epoll_wait!\n"</span>, getpid());</div><div class="line">	                             <span class="comment">/* sleep here is very important!*/</span></div><div class="line">	    <span class="comment">//  sleep(2);</span></div><div class="line">	</div><div class="line">	      <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; n; i++)</div><div class="line">	      &#123;</div><div class="line">	          <span class="keyword">if</span> ((events[i].events &amp; EPOLLERR) || (events[i].events &amp; EPOLLHUP) || (!(events[i].events &amp; EPOLLIN)))</div><div class="line">	          &#123;</div><div class="line">	              <span class="comment">/* An error has occured on this fd, or the socket is not</span></div><div class="line">	              ready for reading (why were we notified then?) */</div><div class="line">	              <span class="built_in">fprintf</span> (<span class="built_in">stderr</span>, <span class="string">"epoll error\n"</span>);</div><div class="line">	              close (events[i].data.fd);</div><div class="line">	              <span class="keyword">continue</span>;</div><div class="line">	          &#125;</div><div class="line">	          <span class="keyword">else</span> <span class="keyword">if</span> (sfd == events[i].data.fd)</div><div class="line">	          &#123;</div><div class="line">	              <span class="comment">/* We have a notification on the listening socket, which</span></div><div class="line">	              means one or more incoming connections. */</div><div class="line">	              struct sockaddr in_addr;</div><div class="line">	              <span class="keyword">socklen_t</span> in_len;</div><div class="line">	              <span class="keyword">int</span> infd;</div><div class="line">	              <span class="keyword">char</span> hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];</div><div class="line">	</div><div class="line">	              in_len = <span class="keyword">sizeof</span> in_addr;</div><div class="line">	              infd = accept(sfd, &amp;in_addr, &amp;in_len);</div><div class="line">	              <span class="keyword">if</span> (infd == <span class="number">-1</span>)</div><div class="line">	              &#123;</div><div class="line">	                  <span class="built_in">printf</span>(<span class="string">"process %d accept failed!\n"</span>, getpid());</div><div class="line">	                  <span class="keyword">break</span>;</div><div class="line">	              &#125;</div><div class="line">	              <span class="built_in">printf</span>(<span class="string">"process %d accept successed!\n"</span>, getpid());</div><div class="line">	</div><div class="line">	              <span class="comment">/* Make the incoming socket non-blocking and add it to the</span></div><div class="line">	              list of fds to monitor. */</div><div class="line">	              close(infd);</div><div class="line">	          &#125;</div><div class="line">	      &#125;</div><div class="line">	  &#125;</div><div class="line">    <span class="built_in">free</span> (events);</div><div class="line">    close (sfd);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span></span></div><div class="line"><span class="title">main</span> <span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></div><div class="line">&#123;</div><div class="line"></div><div class="line">     <span class="keyword">int</span> k;</div><div class="line">    <span class="keyword">for</span>(k = <span class="number">0</span>; k &lt; PROCESS_NUM; k++)</div><div class="line">    &#123;</div><div class="line"></div><div class="line">        <span class="keyword">int</span> pid = fork();</div><div class="line">        <span class="keyword">if</span>(pid == <span class="number">0</span>)</div><div class="line">        &#123;</div><div class="line">            socket_proc();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">     <span class="keyword">int</span> status;</div><div class="line">    wait(&amp;status);</div><div class="line">    <span class="keyword">return</span> EXIT_SUCCESS;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>编译运行：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[root@localhost demo]#</div><div class="line">[root@localhost demo]# gcc epjqreuseport.c -o e.out</div><div class="line">[root@localhost demo]# ./e.out</div><div class="line">process 31071 return from epoll_wait!</div><div class="line">process 31071 accept successed!</div><div class="line">process 31075 return from epoll_wait!</div><div class="line">process 31075 accept successed!</div></pre></td></tr></table></figure></p>
+<p>总结：SO_REUSEPORT允许多进程共同bind同一个端口，内核会按照一定机制分配访问连接到不同的进程</p>
+<h3 id="nginx采用epool模型，怎么解决惊群？"><a href="#nginx采用epool模型，怎么解决惊群？" class="headerlink" title="nginx采用epool模型，怎么解决惊群？"></a>nginx采用epool模型，怎么解决惊群？</h3><blockquote>
+<p>如果进程并没有处于过载状态，那么就会去争用锁，当然，实际上是争用监听套接口的监控权.</p>
+<ul>
+<li>争锁成功就会把所有监听套接口加入到自身的事件监控机制里（如果原本不在）</li>
+<li>争锁失败就会把监听套接口从自身的事件监控机制里删除（如果原本在）</li>
+</ul>
+<p>争抢成功的进程，可以调用epoll_ctl把所有要监听的端口加入该进程的epool事件中，然后epool_wait阻塞及时获取客户端的新建tcp事件，如果获取到相应事件，该进程调用accept正式建立建立连接；然后释放锁。当锁被释放后所有进程可以共同争抢锁了。</p>
+<p>也就是说，因为锁的原因，同一时间只能有一个进程拥有监听端口的监控权利（将监听端口放入自己epool中中控制并且调用epoolwait监控新建事件）。这种机制保障了不会有多进程共同拥有套接口的监控权，从而避免了惊群问题。</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+	<div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>本文标题:</span><a href="/惊群/">惊群探究</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 vcpu 的个人博客">vcpu</a></p>
+  <p><span>发布时间:</span>2017年06月29日 - 12:06</p>
+  <p><span>最后更新:</span>2017年06月29日 - 10:06</p>
+  <p><span>原始链接:</span><a href="/惊群/" title="惊群探究">https://vcpu.me/惊群/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://vcpu.me/惊群/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({   
+          title: "",   
+          text: '复制成功',   
+          html: false,
+          timer: 500,   
+          showConfirmButton: false
+        });
+      });
+    }));  
+</script>
+
+
+      
+	</div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/tcp-ip/" rel="tag">#tcp/ip</a>
+          
+            <a href="/tags/kernel3-10-0-514-16-1/" rel="tag">#kernel3.10.0-514.16.1</a>
+          
+            <a href="/tags/nginx/" rel="tag">#nginx</a>
+          
+            <a href="/tags/惊群/" rel="tag">#惊群</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/epool/" rel="next" title="epool基本用法">
+                <i class="fa fa-chevron-left"></i> epool基本用法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/h.jpg"
+               alt="vcpu" />
+          <p class="site-author-name" itemprop="name">vcpu</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">18</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/vcpu/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://ytlm.github.io/" title="CDN张三丰" target="_blank">CDN张三丰</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#惊群"><span class="nav-number">1.</span> <span class="nav-text">惊群</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#发生位置"><span class="nav-number">2.</span> <span class="nav-text">发生位置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#产生影响"><span class="nav-number">3.</span> <span class="nav-text">产生影响</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#惊群实例分析"><span class="nav-number">4.</span> <span class="nav-text">惊群实例分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#accept"><span class="nav-number">4.1.</span> <span class="nav-text">accept</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#select"><span class="nav-number">4.2.</span> <span class="nav-text">select</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#epool"><span class="nav-number">4.3.</span> <span class="nav-text">epool</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#how-to-slove"><span class="nav-number">4.4.</span> <span class="nav-text">how to slove ?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nginx采用epool模型，怎么解决惊群？"><span class="nav-number">4.5.</span> <span class="nav-text">nginx采用epool模型，怎么解决惊群？</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">vcpu</span>
+</div>
+
+
+<!--
+<div class="powered-by">
+  windy liu
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+-->
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+<span id="busuanzi_container_site_uv">
+  你是第<span id="busuanzi_value_site_uv"></span>个访问的小伙伴
+</span>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (search_path.endsWith("json")) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("l5u4v8AcoPCp9wlPGVJTG6Ny-gzGzoHsz", "RQdYIOd2snvd1muAW65nsn25");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

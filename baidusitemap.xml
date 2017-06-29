@@ -4,8 +4,58 @@
 
     
   <url>
+    <loc>https://vcpu.me/epool/</loc>
+    <lastmod>2017-06-29T03:04:51.000Z</lastmod>
+    <data>
+        <display>
+        <title>epool基本用法</title>
+        <pubTime>2017-06-28T04:00:00.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>epoll</tag>
+         
+         
+           
+             
+              <breadCrumb title="tcp/ip" url="https://vcpu.me/categories/tcp-ip/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://vcpu.me/%E6%83%8A%E7%BE%A4/</loc>
+    <lastmod>2017-06-29T02:59:14.000Z</lastmod>
+    <data>
+        <display>
+        <title>惊群探究</title>
+        <pubTime>2017-06-29T04:00:00.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>nginx</tag>
+         
+        <tag>惊群</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux" url="https://vcpu.me/categories/linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>https://vcpu.me/f-stack%E5%AE%89%E8%A3%85/</loc>
-    <lastmod>2017-06-27T08:43:07.000Z</lastmod>
+    <lastmod>2017-06-27T08:43:50.000Z</lastmod>
     <data>
         <display>
         <title>f-stack安装运行</title>
@@ -22,21 +72,6 @@
              
               <breadCrumb title="DPDK" url="https://vcpu.me/categories/DPDK/"/>
           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://vcpu.me/epool/</loc>
-    <lastmod>2017-06-27T08:15:26.000Z</lastmod>
-    <data>
-        <display>
-        <title></title>
-        <pubTime>2017-06-27T07:10:01.000Z</pubTime>
-        
-         
-           
         </display>
     </data>
     </url>
