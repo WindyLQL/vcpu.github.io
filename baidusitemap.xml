@@ -391,9 +391,9 @@
         <title>bind()实现源码分析</title>
         <pubTime>2017-06-12T09:35:01.000Z</pubTime>
         
-        <tag>tcp/ip</tag>
-         
         <tag>bind</tag>
+         
+        <tag>tcp/ip</tag>
          
         <tag>kernel3.10.0-514.16.1</tag>
          
