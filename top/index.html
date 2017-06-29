@@ -117,7 +117,7 @@
     fancybox: true,
     motion: true,
     duoshuo: {
-      userId: '0',
+      userId: 'undefined',
       author: 'Author'
     },
     algolia: {
@@ -324,6 +324,8 @@
           
   <div class="comments" id="comments">
     
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
   </div>
 
 
@@ -404,7 +406,7 @@
           
             
               <span class="links-of-author-item">
-                <a href="https://githubb.com/vcpu/" target="_blank" title="GitHub">
+                <a href="https://github.com/vcpu/" target="_blank" title="GitHub">
                   
                     <i class="fa fa-fw fa-github"></i>
                   
@@ -580,18 +582,21 @@
 
 
   
-
-
-
-
-
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "863fca753b274564bc586efc2a6ffbb0",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
   
 
 
 
 
-
-  
 
 
 
