@@ -1067,9 +1067,9 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
       <category term="socket" scheme="http://vcpu.me/categories/socket/"/>
     
     
-      <category term="bind" scheme="http://vcpu.me/tags/bind/"/>
-    
       <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
+    
+      <category term="bind" scheme="http://vcpu.me/tags/bind/"/>
     
       <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
     
