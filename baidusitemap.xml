@@ -4,6 +4,54 @@
 
     
   <url>
+    <loc>http://vcpu.me/TCP%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6/</loc>
+    <lastmod>2017-07-04T06:39:04.000Z</lastmod>
+    <data>
+        <display>
+        <title>拥塞控制</title>
+        <pubTime>2017-07-04T03:47:50.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>拥塞控制</tag>
+         
+        <tag>Linux拥塞控制基本概念</tag>
+         
+         
+           
+             
+              <breadCrumb title="TCP" url="http://vcpu.me/categories/TCP/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/f-stack%E5%AE%89%E8%A3%85/</loc>
+    <lastmod>2017-07-04T06:38:48.000Z</lastmod>
+    <data>
+        <display>
+        <title>f-stack安装运行</title>
+        <pubTime>2017-06-12T09:50:55.000Z</pubTime>
+        
+        <tag>DPDK</tag>
+         
+        <tag>f-stack</tag>
+         
+        <tag>nginx</tag>
+         
+         
+           
+             
+              <breadCrumb title="DPDK" url="http://vcpu.me/categories/DPDK/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/interrupt/</loc>
     <lastmod>2017-07-04T03:28:38.000Z</lastmod>
     <data>
@@ -70,30 +118,6 @@
            
              
               <breadCrumb title="linux" url="http://vcpu.me/categories/linux/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://vcpu.me/f-stack%E5%AE%89%E8%A3%85/</loc>
-    <lastmod>2017-06-27T08:43:50.000Z</lastmod>
-    <data>
-        <display>
-        <title>f-stack安装运行</title>
-        <pubTime>2017-06-12T09:50:55.000Z</pubTime>
-        
-        <tag>DPDK</tag>
-         
-        <tag>f-stack</tag>
-         
-        <tag>nginx</tag>
-         
-         
-           
-             
-              <breadCrumb title="DPDK" url="http://vcpu.me/categories/DPDK/"/>
           
         </display>
     </data>

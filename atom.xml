@@ -68,6 +68,150 @@
   </entry>
   
   <entry>
+    <title>拥塞控制</title>
+    <link href="http://vcpu.me/TCP%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6/"/>
+    <id>http://vcpu.me/TCP拥塞控制/</id>
+    <published>2017-07-04T03:47:50.000Z</published>
+    <updated>2017-07-04T06:39:04.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="TCP拥塞控制设计概念"><a href="#TCP拥塞控制设计概念" class="headerlink" title="TCP拥塞控制设计概念"></a>TCP拥塞控制设计概念</h2><h3 id="延迟确认定时器"><a href="#延迟确认定时器" class="headerlink" title="延迟确认定时器"></a>延迟确认定时器</h3><blockquote>
+<p>TCP延时确认定时器是指在一个TCP连接中，当一方收到另一端的数据后，并不是立马返回ACK进行确认，而是等待200ms（2.6内核 40ms），如果这断时间内有新的数据要法往对方，本地奖ACK和数据封装在一个数据包中一起发送，捎带机制。超时后即使没有新数据也要将ACK发送给对方。</p>
+</blockquote>
+<p>好处：减少一次数据传输带来的消耗<br>坏处：增加了延迟    </p>
+<h3 id="重传超时定时器"><a href="#重传超时定时器" class="headerlink" title="重传超时定时器"></a>重传超时定时器</h3><p>超时重传是TCP协议栈保障数据可靠性的一个重要机制<br>原理</p>
+<blockquote>
+<p>发送一个数据后就开启一个定时器，在一定时间内如果没有得到发送的数据报的ACK，定时器激活重新发送数据包，直到发送成功或者到达最大重传次数。<br><a id="more"></a></p>
+<h3 id="RTO"><a href="#RTO" class="headerlink" title="RTO"></a>RTO</h3><p>重传超时时间</p>
+<blockquote>
+<p>如果RTO值被设置过大，将会使得发送端经过很长时间等待才能发现报文段丢失，降低吞吐。<br>如果RTO值被设置很小，发送端尽管可以很快的检测出报文段的丢失，但也可能将一些延迟大的报文段误认为是丢失，造成不必要重传，浪费网络资源。</p>
+</blockquote>
+</blockquote>
+<h3 id="门限"><a href="#门限" class="headerlink" title="门限"></a>门限</h3><p>门限是慢启动算法和拥塞避免的分水岭，当拥塞窗口大于门限时，就用拥塞避免<br>小于门限就用慢启动。</p>
+<h3 id="SACK机制"><a href="#SACK机制" class="headerlink" title="SACK机制"></a>SACK机制</h3><p>SACK TCP选项<br>    SACK是TCP一个选项，再握手过程中会协商判断是非支持SACK，如果支持会在TCP选项中SACK permitted。<br>SACK 选项格式<br>    TCP不能超过四组SACK边界，因为TCP选项最大支持40个字节</p>
+<p>作用描述<br>    SACK通常是由数据接收方产生，收到的SYN包中有SACK-Permitted选项为true，同时自己也支持SACK，可以在接收数据异常时候，产生SACK option。SACK中需要携带接收队列中没有被确认的数据信息，已经确认的数据信息不会通过SACK携带。<br>发送端SACK含义：<br>    第一个block指出是哪个segment触发了SACK 选项，发sack人认为是谁乱序了才导致SACK<br>    尽可能填满SACK<br>    SACK需要报告最近接收的不连续的数据块<br>接收端：<br>    数据没有被确认前都会保持在滑动窗口内<br>    每一个数据包都有一个sakced标记，发送数据会忽略被sacked的数据<br>    如果SACK丢失，超时重传后重置所有数据包的SACKed标记<br>SACK分析<br>    适用于多包丢失情况，可以快速退出快速恢复阶段；如果丢包率很低，或者丢包时常常只丢一个包，那么SACK就是多余的。</p>
+<h3 id="D-SACK"><a href="#D-SACK" class="headerlink" title="D-SACK"></a>D-SACK</h3><p>D-SACK主要是使用SACK来告诉发送方有哪些数据被重复接收了，如果是D-SACK；D-SACK option的第一个block代表呗重复发送的序号片段。<br>注意：<br>D_SACK仅仅是接收端的报告重复连续的片段<br>每个重复连续片段只能在第一个block，其它block是接收端已经收到但是还没有ACK的数包<br>汇报重复收到片段<br>    此时数据发送端，可以知道，是对方的ACK丢失了导致此种情况</p>
+<h3 id="慢启动过程"><a href="#慢启动过程" class="headerlink" title="慢启动过程"></a>慢启动过程</h3><p>最初的TCP在建立完成后会向网络中发送大量的数据包，这样很容易导致网络中路由缓存空间耗尽，从而发生拥塞。慢启动就是为解决该问题，其思想是一开始不是发大量的数据包而是根据网络情况逐步增加每次的发送的数量，以避免上述现象的发生。<br>其基本做法为：<br>新建连接时候，CWND初始化1个最大报文段大小，每当一个报文段被确认，拥塞窗口就增价1个mss大小，在发出的报文段均被正常确认情况 下，拥塞窗会随着往返时间指数增长。慢启动并不慢。RTTlogW 时间可占满带宽。</p>
+<h3 id="拥塞避免"><a href="#拥塞避免" class="headerlink" title="拥塞避免"></a>拥塞避免</h3><p>拥塞窗口不能一直增长下去，其受慢启动阈值（一开始为65535）限制；如果超过该阈值，进入拥塞避免阶段。<br>    拥塞避免思想<br>    拥塞窗口的加法增大，拥塞窗口随着RTT开始线性增加，这样可以避免增长过快导致网络拥塞，慢慢调整到网络的最佳值。</p>
+<h2 id="如何确定拥塞状态"><a href="#如何确定拥塞状态" class="headerlink" title="如何确定拥塞状态"></a>如何确定拥塞状态</h2><h4 id="超时重传"><a href="#超时重传" class="headerlink" title="超时重传"></a>超时重传</h4><p>此时发出去的报文在RTT时间内没有被确认，此时发生拥塞可能性较大，TCP协议栈强烈反应为：</p>
+<blockquote>
+<p>慢启动阈值 降低为当前拥塞窗口的一半<br>拥塞窗口设置为1，从新进入慢启动</p>
+</blockquote>
+<h4 id="快速重传"><a href="#快速重传" class="headerlink" title="快速重传"></a>快速重传</h4><p>收到3个相同的ACK，TCP在收到乱序包时就会立即发送ACK，TCP利用3个相同的ACK判定数据包失效，发送快速重传，TCP协议栈强烈反应为：</p>
+<blockquote>
+<p>慢启动阈值降低设置为拥塞窗口的一半<br>拥塞窗口设置为慢启动阈值，从新进入拥塞避免阶段 </p>
+</blockquote>
+<h4 id="快速恢复"><a href="#快速恢复" class="headerlink" title="快速恢复"></a>快速恢复</h4><p>当收到三个重复ACK时，随着TCP协议栈改进TCP进入的不是拥塞避免，而是快速恢复。<br>快速恢复思想是：</p>
+<blockquote>
+<p>数据包守恒原则，当老的数据包离开了网络后，才能向网络中发送一个新的数据包。<br>    如果收到一个重复ACK，代表已经有一个数据包离开了网络，于是拥塞窗口加1，此时能向网络中发一个新的数据包。</p>
+</blockquote>
+<p>具体步骤：</p>
+<blockquote>
+<p>当收到3个重复ACK，慢启动阈值会降为拥塞窗口的一半，把拥塞窗口设置为慢启动阈值大小+3（3个数据包离开网络）；<br>        再收到重复ACK时，拥塞窗口+1<br>        当收到新的数据包ACK时候，拥塞窗口设置为慢启动阈值，快速恢复结束，可以回到拥塞避免阶段了<br>    上述算法是reno算法，新版本的reno算法差异为：<br>        reno算法发再收到一个新的数据ACK退出快速恢复状态，new reno 需要收等到改窗口所有的数据包确认才会推出快速恢复。</p>
+</blockquote>
+<h3 id="TCP协议栈拥塞窗口改变时机"><a href="#TCP协议栈拥塞窗口改变时机" class="headerlink" title="TCP协议栈拥塞窗口改变时机"></a>TCP协议栈拥塞窗口改变时机</h3><p>拥塞窗口改变只发生在收到ACK和重传定时器超时。</p>
+<h2 id="LINUX协议栈拥塞控制状态划分"><a href="#LINUX协议栈拥塞控制状态划分" class="headerlink" title="LINUX协议栈拥塞控制状态划分"></a>LINUX协议栈拥塞控制状态划分</h2><h3 id="open状态"><a href="#open状态" class="headerlink" title="open状态"></a>open状态</h3><p>慢启动和拥塞避免状态都是没有发生拥塞，网络畅通的状态，linux协议栈使用open状态来表示慢启动和拥塞避免。</p>
+<blockquote>
+<p>当TCP会话初次建立连接时，还没有发生拥塞，这时慢启动阈值无法估计，linux协议栈设置为极大值0xffffffff；Reno和Cubic算法在慢启动阶段都是当有n个数据报被确认，拥塞窗口就自增n，但是两者在拥塞避免和慢启动阈值计算上，是不同的。</p>
+</blockquote>
+<h3 id="diorder状态"><a href="#diorder状态" class="headerlink" title="diorder状态"></a>diorder状态</h3><p>在Linux内核TCP实现中，有一个disorder状态，此状态是open状态向快速重传过度的一个状态，收到3个重复确认才开开始快速重传，从收到第一个重复确认到收到第三个重复确认这段时间，处于disorder状态。</p>
+<blockquote>
+<p>设置disorder状态的必要性在于，当收到重复确认比较少时，我们还没法判断当前是否发生丢包，因为对端收到乱序报文，也会发送选择确认。如果重复确认足够多比如3个重复确认，就进入recovery状态，而如果在收到1-2个重复确认再收到数据确认，则回到open状态。</p>
+<p>从disorder状态回到open状态时，拥塞窗口和慢启动阈值不发生变化，会继续进行慢启动或者拥塞避免。</p>
+</blockquote>
+<h3 id="reocvery状态"><a href="#reocvery状态" class="headerlink" title="reocvery状态"></a>reocvery状态</h3><p>在linux内核实现中快速重传（动作）和快速恢复（阶段）用recovery状态表示。<br>快速恢复阶段，指的是从快速重传开始，到网络上没有丢失的报文，可以回到open状态的这段时间，拥塞窗口和慢启动阈值也调整回去。</p>
+<h3 id="LOSS状态"><a href="#LOSS状态" class="headerlink" title="LOSS状态"></a>LOSS状态</h3><p>重传定时器超时以后所处状态就是Loss状态。</p>
+<blockquote>
+<p>重传定时器超时时，代表网络环境已经极差，此时会拥塞窗口变得很小（一般1），同时调整慢启动阈值为一半，重新开始慢启动算法；认为之前发出去的所有数据包均已经丢失，重新开始慢启动算法。<br>    重传定时器超时之前所有已发的数据包被确认后才退出快速loss状态。<br>    Loss状态和Open状态差别<br>    Loss状态是采用慢启动来重传丢失的报文，知道丢失的报文被确认后才发新的数据包，而Open状态没有丢失数据包，一直再发新的数据包。</p>
+</blockquote>
+<h2 id="Linux协议栈拥塞控制的初始化"><a href="#Linux协议栈拥塞控制的初始化" class="headerlink" title="Linux协议栈拥塞控制的初始化"></a>Linux协议栈拥塞控制的初始化</h2><p>当TCP从syn sent或者syn recv进入 established状态时，初始话拥塞窗口和慢启动阈值。<br>kernel2.6版本拥塞窗口会根据mss大小来进行初始话，mss值越大窗口就越小。<br>    因为网络最初建立时候，网络情况很难估计，一半慢启动阈值会被设置很大0x7fffffff<br>直到察觉到拥塞发生时才做调整。<br>    Linux在TCP实现中，当TCP连接进入TW和LAST_ACK准备关闭连接时候，会选者性地将拥塞窗口和慢启动阈值保存下来。作为下一次同一条线路TCP会话建立时的拥塞窗口和慢启动阈值初始值。</p>
+<h2 id="Linux协议栈拥塞控制相关杂谈"><a href="#Linux协议栈拥塞控制相关杂谈" class="headerlink" title="Linux协议栈拥塞控制相关杂谈"></a>Linux协议栈拥塞控制相关杂谈</h2><h3 id="发送数据包的限制"><a href="#发送数据包的限制" class="headerlink" title="发送数据包的限制"></a>发送数据包的限制</h3><blockquote>
+<p>发送数据包实际上受三个条件限制：<br>条件1:发送端的拥塞窗口<br>条件2:接收端的接收窗口<br>条件3:发送队列上实际数据包量</p>
+</blockquote>
+<h3 id="慢启动阶段拥塞窗口调整策略"><a href="#慢启动阶段拥塞窗口调整策略" class="headerlink" title="慢启动阶段拥塞窗口调整策略"></a>慢启动阶段拥塞窗口调整策略</h3><p>慢启动阶段，有多少数据包被确认久增加多少数据包。一般的描述为一个传输轮次，拥塞窗口翻倍。这与有多少数据包被确认，拥塞窗口增加多少是一个意思。后者更适合于写代码。<br>拥塞避免阶段拥塞窗口调整<br>    没收到一定个数的ACK拥塞窗口加1<br>reno算法拥塞避免表现为：<br>    拥塞窗口在维持一段时间内的恒定值后，自增1</p>
+<h3 id="disorder阶段拥塞窗口调整"><a href="#disorder阶段拥塞窗口调整" class="headerlink" title="disorder阶段拥塞窗口调整"></a>disorder阶段拥塞窗口调整</h3><blockquote>
+<p>disorder是一个观望状态，拥塞窗口和慢启动阈值保持不变。即此时满足in_flight &lt; 拥塞窗口，对端能接收，并且发送队列中还有数据，则会继续发送数据。</p>
+<p>disorder收到数据确认时候，先前引发重复确认报文段已经到达了接收端，这时会重新回到open状态，拥塞窗口和慢启动阈值没有发生任何变化。</p>
+<p>disorder接收到足够多的重复确认数据包时（一般3个），会进入revocery状态。</p>
+</blockquote>
+<h3 id="快速恢复阶段拥塞窗口调整"><a href="#快速恢复阶段拥塞窗口调整" class="headerlink" title="快速恢复阶段拥塞窗口调整"></a>快速恢复阶段拥塞窗口调整</h3><p>进入快速恢复之前，调整慢启动阈值，等退出快速恢复阶段时，拥塞窗口等于慢启动阈值。快速恢复阶段不同恢复算法用不同的拥塞窗口调整策略。</p>
+<h4 id="快速恢复阶段突降式调整"><a href="#快速恢复阶段突降式调整" class="headerlink" title="快速恢复阶段突降式调整"></a>快速恢复阶段突降式调整</h4><p>突降方式调整是指进入快速恢复阶段，就立刻调整拥塞窗口。windows采用的就是这种调整方法。</p>
+<h4 id="快速恢复阶段比例式拥塞窗口调整"><a href="#快速恢复阶段比例式拥塞窗口调整" class="headerlink" title="快速恢复阶段比例式拥塞窗口调整"></a>快速恢复阶段比例式拥塞窗口调整</h4><p>拥塞窗口缓慢过度至慢启动阈值。</p>
+<h3 id="快速重传阶段继续收到重复确认处理"><a href="#快速重传阶段继续收到重复确认处理" class="headerlink" title="快速重传阶段继续收到重复确认处理"></a>快速重传阶段继续收到重复确认处理</h3><p>Linux协议栈采用的方法为：</p>
+<blockquote>
+<p>如果拥塞窗口没有降到慢启动阈值，每收到两个重复ACK，拥塞窗口减1，并发送丢失的数据段。否则拥塞窗口不变，每收到一个重复ACK就重传一次。<br>在此期间不发送新的数据段。    </p>
+</blockquote>
+<h3 id="快速重传部分确认处理"><a href="#快速重传部分确认处理" class="headerlink" title="快速重传部分确认处理"></a>快速重传部分确认处理</h3><p>Linux2.6的处理是：<br>    ACK确认了新数据时候，有两种可能性。第一种，重传数据到达对端<br>    第二种，正常数据到达对端<br>为了区分这两种情况，协议栈会比较新数据ack的时间戳和发生重传数据时间戳。如果后发的重传数据，则说明数据包没有丢失，只是晚到达了，慢启动阈值会被恢复到之前的值；此时不重传此ACK的数据包。<br>    如果是重传到达对端，导致的新数据ACK产生；此时重传ACK报文，如果拥塞窗口允许，就发数据。</p>
+<h3 id="Loss状态收到ACK"><a href="#Loss状态收到ACK" class="headerlink" title="Loss状态收到ACK"></a>Loss状态收到ACK</h3><p>如果从ack判断出这个ack报文在我们最后一次重传前就已经发出，这种情况代表重传是没有必要重传，其重传数据段已经到达了对端。把慢启动窗口和阈值恢复到loss状态前的值，就当什么也没有发生过，继续发送数据。<br>    否则：<br>    继续重传队列中剩余的数据，重传过程中不发新数据；重传完成后按照拥塞窗口进行发送。进入Loss时候会记录至少重传最大序列号；在确认这些数据传输完成，协议栈从Loss退出进入open。</p>
+<h3 id="拥塞控制的误判"><a href="#拥塞控制的误判" class="headerlink" title="拥塞控制的误判"></a>拥塞控制的误判</h3><p>发生在进入Recovery和Loss状态时，会发送误判。<br>并不是收到三个重复ACK就一定代表需要快速从传，并不是重传定时器超时就一定是网络拥塞。</p>
+<h4 id="误判进入recovery状态导致问题："><a href="#误判进入recovery状态导致问题：" class="headerlink" title="误判进入recovery状态导致问题："></a>误判进入recovery状态导致问题：</h4><p>拥塞窗口和慢启动阈值减小是不必要的，会导致不必要的性能下降。</p>
+<h4 id="超时误判："><a href="#超时误判：" class="headerlink" title="超时误判："></a>超时误判：</h4><p>由于网络状态的不稳定性，RTT会经常变化，超时时有可能发生的。单相对恢复误判，超时误判发生可能性小，因为重传定时器RTO比RTT大。</p>
+<h4 id="误判的判定："><a href="#误判的判定：" class="headerlink" title="误判的判定："></a>误判的判定：</h4><p>recovery误判：如果重传数据到达之前，ack就确认了这个数据包，则说明为误判，直接回到以前状态。</p>
+<p>这种误判恢复linux需要时间戳的支持。</p>
+<p>误判发生经常伴随着时间戳和sack出现。</p>
+<h4 id="重定序临界值"><a href="#重定序临界值" class="headerlink" title="重定序临界值"></a>重定序临界值</h4><p>这个临界值就是我们经常说的3个重复ACK的值，在kernel的描述；实际上该值是可能变化的，例如误判发生时，该临界值会变大。这也是linux较为保守的实现。</p>
+<h2 id="Linux拥塞控制概述"><a href="#Linux拥塞控制概述" class="headerlink" title="Linux拥塞控制概述"></a>Linux拥塞控制概述</h2><blockquote>
+<p>慢启动阶段涨的很快，拥塞避免阶段探测性增长，收到重复确认先观望，收到足够多的重复确认时开始快速重传；在快速恢复阶段争取把可能丢失的报文重传出去，并适当发送新的数据包以维持协议栈正常运转。当退出快速重传时，拥塞窗口和慢启动阈值按预期的值变小。并会到拥塞避免阶段。同时挂一个定时器来处理长时间未收到报文的情况。当重传定时器超时时，批量重传，重新开始慢启动。</p>
+</blockquote>
+<p>慢启动大家基本默认翻倍增长，在一次TCP的生命周期中，只要不断网，超时重传可能性很小，所以拥塞控制算法的主要集中在拥塞避免阶段，偶尔处在recovery状态；即<br>    拥塞避免-recovery-拥塞避免-recovery<br>拥塞控制性能差异，主要来源于：<br>    1 拥塞避免阶段初始窗口大小，即推出快速恢复状态时的慢启动阈值<br>    2.拥塞避免阶段的拥塞窗口调整策略<br>    3.快速恢复状态的快慢（指不支持sack）</p>
+<p>拥塞控制状态图<br>  <img src="/myimages/tcp.jpg" alt="tcp"></p>
+<h3 id="慢启动阶段"><a href="#慢启动阶段" class="headerlink" title="慢启动阶段"></a>慢启动阶段</h3><p>1.发出去数据均能被ack</p>
+<blockquote>
+<p>拥塞窗口持续指数增加，另外一种描述发出去的数据包被ACK多少就额外增加多少数据包。这个情况下拥塞窗口会持续增加。</p>
+</blockquote>
+<p>2.收到重复ACK但是还没有达到3个</p>
+<blockquote>
+<p>拥塞窗口和慢启动阈值不会变化，此时发包行为取决于当前和拥塞窗口接收端的窗口，以及当前发送队列上的数据量。如果其后续收到了新的数据ack，会继续进行慢启动，就好像什么也没有发生一样。<br>    如果没有收到新数据ack，会引发快速重传。</p>
+</blockquote>
+<p>3.收到足够重复ACK</p>
+<blockquote>
+<p>足够的重复ack引发快速重传，慢启动阈值降低为当前拥塞窗口的一半，拥塞窗口设置为慢启动阈值+3（已经收到3个重复ack，代表3个数据包已经离开网络到达对端）；此时此刻会重传丢失的数据包，具体要不要发新数据包完全取决于当前的拥塞窗口。如果丢失的数据包统统确认已经到达对端，会退出快速恢复从新进入open状态；进入open状态后因为拥塞窗口大于慢启动阈值，所以 会进入拥塞避免阶段。</p>
+</blockquote>
+<p>4.发送数据包超时</p>
+<blockquote>
+<p>慢启动阈值变为当前拥塞窗口一半，拥塞窗口减少到1，会按照慢启动发包行为发送认为已经丢失的报文；待这些报文被确认后退出超时阶段从新回到open。按照当前的拥塞窗口和慢启动阈值进行慢启动或者拥塞避免发包。</p>
+</blockquote>
+<h3 id="拥塞避免阶段"><a href="#拥塞避免阶段" class="headerlink" title="拥塞避免阶段"></a>拥塞避免阶段</h3><p>1.发出去数据均被ack</p>
+<blockquote>
+<p>拥塞窗口会继续线性增长，慢启动阈值保持不变。</p>
+</blockquote>
+<p>2.收到重复ack但是还没有达到3个</p>
+<blockquote>
+<p>此状态属于TCP协议栈的disorder状态，慢启动阈值保持不变，拥塞窗口保持不变，协议栈发包行为收协议栈拥塞窗口的限制。如果后续收到新数据的ACK，将从disorder状态回到拥塞避免阶段，从新线性增长方式发包。</p>
+</blockquote>
+<p>3.收到足够重复ack</p>
+<blockquote>
+<p>足够的重复ack引发快速重传，慢启动阈值降低为当前拥塞窗口的一半，拥塞窗口设置为慢启动阈值+3；此时此刻会重传丢失的数据包，具体要不要发新数据取决于当前的拥塞窗口。如果丢失数据包通通被确认已经到达对端，会退出快速恢复阶段进入拥塞避免阶段。</p>
+</blockquote>
+<p>4.发送数据包超时</p>
+<blockquote>
+<p>慢启动阈值变成当前拥塞窗口一半，拥塞窗口减少到1，会按照慢启动发包行为完成已经发送数据包的重传。待这些报文被确认后退出loss阶段，从新回到open状态，根据慢启动阈值和拥塞窗口大小进行慢启动或者拥塞避免发包。</p>
+</blockquote>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;TCP拥塞控制设计概念&quot;&gt;&lt;a href=&quot;#TCP拥塞控制设计概念&quot; class=&quot;headerlink&quot; title=&quot;TCP拥塞控制设计概念&quot;&gt;&lt;/a&gt;TCP拥塞控制设计概念&lt;/h2&gt;&lt;h3 id=&quot;延迟确认定时器&quot;&gt;&lt;a href=&quot;#延迟确认定时器&quot; class=&quot;headerlink&quot; title=&quot;延迟确认定时器&quot;&gt;&lt;/a&gt;延迟确认定时器&lt;/h3&gt;&lt;blockquote&gt;
+&lt;p&gt;TCP延时确认定时器是指在一个TCP连接中，当一方收到另一端的数据后，并不是立马返回ACK进行确认，而是等待200ms（2.6内核 40ms），如果这断时间内有新的数据要法往对方，本地奖ACK和数据封装在一个数据包中一起发送，捎带机制。超时后即使没有新数据也要将ACK发送给对方。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;好处：减少一次数据传输带来的消耗&lt;br&gt;坏处：增加了延迟    &lt;/p&gt;
+&lt;h3 id=&quot;重传超时定时器&quot;&gt;&lt;a href=&quot;#重传超时定时器&quot; class=&quot;headerlink&quot; title=&quot;重传超时定时器&quot;&gt;&lt;/a&gt;重传超时定时器&lt;/h3&gt;&lt;p&gt;超时重传是TCP协议栈保障数据可靠性的一个重要机制&lt;br&gt;原理&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;发送一个数据后就开启一个定时器，在一定时间内如果没有得到发送的数据报的ACK，定时器激活重新发送数据包，直到发送成功或者到达最大重传次数。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="TCP" scheme="http://vcpu.me/categories/TCP/"/>
+    
+    
+      <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
+    
+      <category term="拥塞控制" scheme="http://vcpu.me/tags/%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6/"/>
+    
+      <category term="Linux拥塞控制基本概念" scheme="http://vcpu.me/tags/Linux%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/"/>
+    
+  </entry>
+  
+  <entry>
     <title>惊群探究</title>
     <link href="http://vcpu.me/%E6%83%8A%E7%BE%A4/"/>
     <id>http://vcpu.me/惊群/</id>
@@ -974,7 +1118,7 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
     <link href="http://vcpu.me/f-stack%E5%AE%89%E8%A3%85/"/>
     <id>http://vcpu.me/f-stack安装/</id>
     <published>2017-06-12T09:50:55.000Z</published>
-    <updated>2017-06-27T08:43:50.000Z</updated>
+    <updated>2017-07-04T06:38:48.000Z</updated>
     
     <content type="html"><![CDATA[<h1 id="mac-os-virtual-box跑f-stack环境搭建"><a href="#mac-os-virtual-box跑f-stack环境搭建" class="headerlink" title="mac os virtual box跑f-stack环境搭建"></a>mac os virtual box跑f-stack环境搭建</h1><h2 id="基本环境"><a href="#基本环境" class="headerlink" title="基本环境"></a>基本环境</h2><p>kernel版本3.10.0-514.el7.x86_64<br>CentOS-7-x86_64-Minimal-1611.iso<br>Mac osx<br>Oreacle Virtual Box5.1.22<br>kernel-devel</p>
 <h2 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h2><h3 id="在Oreacle-Virtual-Box上安装centos-7虚拟机"><a href="#在Oreacle-Virtual-Box上安装centos-7虚拟机" class="headerlink" title="在Oreacle Virtual Box上安装centos 7虚拟机"></a>在Oreacle Virtual Box上安装centos 7虚拟机</h3><h4 id="配置开启NAT网卡和桥接网卡"><a href="#配置开启NAT网卡和桥接网卡" class="headerlink" title="配置开启NAT网卡和桥接网卡"></a>配置开启NAT网卡和桥接网卡</h4><ul>
