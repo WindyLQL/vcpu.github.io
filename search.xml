@@ -47,8 +47,8 @@
         <category>TCP</category>
       </categories>
       <tags>
-        <tag>拥塞控制</tag>
         <tag>tcp/ip</tag>
+        <tag>拥塞控制</tag>
         <tag>Linux拥塞控制基本概念</tag>
       </tags>
   </entry>
@@ -251,8 +251,8 @@
         <category>socket</category>
       </categories>
       <tags>
-        <tag>tcp/ip</tag>
         <tag>bind</tag>
+        <tag>tcp/ip</tag>
         <tag>kernel3.10.0-514.16.1</tag>
       </tags>
   </entry>

@@ -83,9 +83,9 @@
         <title>拥塞控制</title>
         <pubTime>2017-07-04T10:00:00.000Z</pubTime>
         
-        <tag>拥塞控制</tag>
-         
         <tag>tcp/ip</tag>
+         
+        <tag>拥塞控制</tag>
          
         <tag>Linux拥塞控制基本概念</tag>
          
@@ -509,9 +509,9 @@
         <title>bind()实现源码分析</title>
         <pubTime>2017-06-12T09:35:01.000Z</pubTime>
         
-        <tag>tcp/ip</tag>
-         
         <tag>bind</tag>
+         
+        <tag>tcp/ip</tag>
          
         <tag>kernel3.10.0-514.16.1</tag>
          
