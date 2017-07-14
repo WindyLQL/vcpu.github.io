@@ -4,6 +4,28 @@
 
     
   <url>
+    <loc>http://vcpu.me/network1/</loc>
+    <lastmod>2017-07-14T07:31:24.000Z</lastmod>
+    <data>
+        <display>
+        <title> 虚拟网络</title>
+        <pubTime>2017-07-14T10:00:00.000Z</pubTime>
+        
+        <tag>network namespace</tag>
+         
+        <tag>网络设备tun/tap</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/cmd1/</loc>
     <lastmod>2017-07-13T10:59:59.000Z</lastmod>
     <data>
@@ -509,9 +531,9 @@
         <title>bind()实现源码分析</title>
         <pubTime>2017-06-12T09:35:01.000Z</pubTime>
         
-        <tag>bind</tag>
-         
         <tag>tcp/ip</tag>
+         
+        <tag>bind</tag>
          
         <tag>kernel3.10.0-514.16.1</tag>
          

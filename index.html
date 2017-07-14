@@ -471,6 +471,157 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/network1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/network1/" itemprop="url"> 虚拟网络</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-14T18:00:00+08:00">
+                2017-07-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络/" itemprop="url" rel="index">
+                    <span itemprop="name">网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/network1/" class="leancloud_visitors" data-flag-title=" 虚拟网络">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="network-namespace"><a href="#network-namespace" class="headerlink" title="network namespace"></a>network namespace</h1><h2 id="是什么？"><a href="#是什么？" class="headerlink" title="是什么？"></a>是什么？</h2><p>当前系统的网络空间，拥有单独的网络协议栈，网络设备、网卡、路由表、转发表、ARP表、ip地址表、iptables、socket等与网络有关的组建均独立，就像进入了另一个网络环境<br>且该网络空间可以实现交换机、路由器、防火墙等功能</p>
+<h2 id="使用netns在linux系统上搭建网络"><a href="#使用netns在linux系统上搭建网络" class="headerlink" title="使用netns在linux系统上搭建网络"></a>使用netns在linux系统上搭建网络</h2><p><img src="/myimages/bridge1.png" alt="bridge1"><br><strong>网络描述</strong>：<br>   该网络由四部分组成：外网、虚拟网络空间net0、虚拟网络空间net1、虚拟网络空间net2<br>   net0和net2分别为网段10.0.1.0/24 10.0.2.0/24的网络空间，并且接入网桥<br>   net1为网络空间，分别以接口eth0和eth1接入虚拟网桥，分别和net0和net2同一个网段<br>   net1为网络空间，以eth2接入网桥，和物理接口enp0s8同一个网段<br>   enp0s8为虚拟机的桥接物理网卡（虚拟机接口混杂模式开启）<br>   192.168.55.165物理机器，接入虚拟机虚拟bridge另外一端均属于ubuntun虚拟机上搭建虚拟网络<br>   淡黄色部分属于虚拟网桥<br>   net0和net2的默认网关是net1<br>   net1的默认网关是办公网络交换机192.168.55.254<br>   经过net1出去流量做snat</p>
+<p><strong>搭建网络最终效果</strong>：<br>    net0和net1和net2 网络空间中均可以上外网<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/network1/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://vcpu.me/cmd1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1710,177 +1861,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/socket信号处理/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/socket信号处理/" itemprop="url">socket信号处理</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-26T19:10:34+08:00">
-                2017-06-26
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/socket/" itemprop="url" rel="index">
-                    <span itemprop="name">socket</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/socket信号处理/" class="leancloud_visitors" data-flag-title="socket信号处理">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="socket-I-O事件处理"><a href="#socket-I-O事件处理" class="headerlink" title="socket I/O事件处理"></a>socket I/O事件处理</h2><p>以TCP socket为例<br>kernel: 3.10.0-514.16.1.el7.x86_64</p>
-<h3 id="socket-IO处理函数"><a href="#socket-IO处理函数" class="headerlink" title="socket IO处理函数"></a>socket IO处理函数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sock</span> &#123;</span></div><div class="line">	...</div><div class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">socket_wq</span> __<span class="title">rcu</span> *<span class="title">sk_wq</span>;</span> <span class="comment">/*等待队列和异步队列*/</span></div><div class="line">	...</div><div class="line">	<span class="keyword">void</span>			(*sk_state_change)(struct sock *sk);</div><div class="line">	<span class="keyword">void</span>			(*sk_data_ready)(struct sock *sk, <span class="keyword">int</span> bytes);</div><div class="line">	<span class="keyword">void</span>			(*sk_write_space)(struct sock *sk);</div><div class="line">	<span class="keyword">void</span>			(*sk_error_report)(struct sock *sk);</div><div class="line">	<span class="keyword">int</span>			(*sk_backlog_rcv)(struct sock *sk);</div><div class="line">	...</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<ul>
-<li><p>sk_wq</p>
-<blockquote>
-<p>含有等待队列用来睡眠唤醒程序使用，异步队列异步socket使用</p>
-</blockquote>
-</li>
-<li><p>sk_state_change </p>
-<blockquote>
-<p>从SYN_SEND或者SYN_RECV到ES状态，从ES到CLOSE_WAIT状态，当协议栈遇到这些事件时候会调用</p>
-</blockquote>
-</li>
-<li><p>sk_data_ready</p>
-</li>
-<li><p>sk_write_space</p>
-<blockquote>
-<p>sock有数据可读和可写时候调用</p>
-</blockquote>
-</li>
-<li><p>sk_error_report</p>
-<blockquote>
-<p>sock上存在错误时调用，比如收到RST包</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/socket信号处理/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1930,7 +1910,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">23</span>
+                <span class="site-state-item-count">24</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1952,7 +1932,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">36</span>
+                <span class="site-state-item-count">38</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
