@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://vcpu.me/"/>
-  <updated>2017-07-14T07:31:24.000Z</updated>
+  <updated>2017-07-19T05:13:58.000Z</updated>
   <id>http://vcpu.me/</id>
   
   <author>
@@ -14,6 +14,57 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title> vxlan</title>
+    <link href="http://vcpu.me/vxlan1/"/>
+    <id>http://vcpu.me/vxlan1/</id>
+    <published>2017-07-19T10:00:00.000Z</published>
+    <updated>2017-07-19T05:13:58.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="云计算网络要求"><a href="#云计算网络要求" class="headerlink" title="云计算网络要求"></a>云计算网络要求</h2><h3 id="虚拟机迁移"><a href="#虚拟机迁移" class="headerlink" title="虚拟机迁移"></a>虚拟机迁移</h3><p>（1）二层网络且链路冗余可靠<br>虚拟机迁移从一个物理机迁移到另一个物理机，要求虚拟机不间断业务；因此虚拟机迁移时候必须要保证IP和MAC等网络参数维持不变，放眼此要求也迁移的两台虚拟机处于二层网络时才能满足；而且要求网络本身能多链路冗余和可靠。<br>（2）二层网络下STP（网络生成树）协议复杂，且搞不定大网络规模网络<br>（3）各个厂商虚拟化网络技术，虽然可以简化拓扑，但网络规模和灵活性上欠缺，适合小规模网络构建，例如数据中心内部网络<br>（4）大规模网络扩展TRILL/SPB/FabricPath/VPLS等技术，课解决上述问题，但是对网络硬件有要求，部署成本高</p>
+<h3 id="虚拟机规模受网络规格限制"><a href="#虚拟机规模受网络规格限制" class="headerlink" title="虚拟机规模受网络规格限制"></a>虚拟机规模受网络规格限制</h3><p>大二层网络环境下，所有交换机均需要记录下所有地址和接口映射；一般场景下核心交换机可满足此需求，但是针对于接入交换机却搞不定这件事情；当然你也可以提升所有交换机档次，那么网络建设成本也相应提升。</p>
+<h3 id="网络广播隔离"><a href="#网络广播隔离" class="headerlink" title="网络广播隔离"></a>网络广播隔离</h3><p>（1）主流的vlan技术，会限制vlan数目为4094个<br>（2）vlan技术的静态配置型技术，这样使得数据中心网络几乎为所有vlan被允许通过，导致任何一个vlan 的未知广播数据会在整网泛滥，无节制消耗网络交换能力和带宽。<br>（3）对于小规模的云计算虚拟化环境，现有的网络技术如虚拟机接入感知(VEPA/802.1Qbg)、数据中心二层网络扩展(IRF/vPC/TRILL/FabricPath)、数据中心间二层技术(OTV/EVI/TRILL)等可以很好的满足业务需求，上述限制不成为瓶颈。然而，完全依赖于物理网络设备本身的技术改良，目前看来并不能完全解决大规模云计算环境下的问题。<br><a id="more"></a></p>
+<h2 id="如何满足云计算网络要求？-so-you-can-use-vxlan"><a href="#如何满足云计算网络要求？-so-you-can-use-vxlan" class="headerlink" title="如何满足云计算网络要求？ so you can use vxlan"></a>如何满足云计算网络要求？ so you can use vxlan</h2><p>云计算，虚拟化服务器迁移不改变IP地址，也不用修改主机路由等；这种使用场景二层网络可满足，传统网络通常采用VLAN进行通信隔离和广播隔离<br>实现2层网络；Vxlan是实现如何在三层网络中进行二层传输的overlay技术。Vxlan技术是SDN解决方案中最流行的技术。</p>
+<h3 id="vxlan-amp-openflow-different？"><a href="#vxlan-amp-openflow-different？" class="headerlink" title="vxlan &amp; openflow different？"></a>vxlan &amp; openflow different？</h3><p>overlay只是一组组网方案，openflow是一个控制协议；实际使用网络中是通过openflow协议控制vSwitch构建overlay网络。</p>
+<h2 id="why-vxlan（overlay）"><a href="#why-vxlan（overlay）" class="headerlink" title="why vxlan（overlay）?"></a>why vxlan（overlay）?</h2><h3 id="云计算需要弹性的二层网络，这种弹性overlay网络可满足"><a href="#云计算需要弹性的二层网络，这种弹性overlay网络可满足" class="headerlink" title="云计算需要弹性的二层网络，这种弹性overlay网络可满足"></a>云计算需要弹性的二层网络，这种弹性overlay网络可满足</h3><p>overlay网络的本质是在三层网络中实现二层网络的扩展。其也就具备了三层网络的优点。<br>三层网络优点如下：<br>（1）三层网络路由方式转发，突破网络结构限制<br>（2）具有良性大规模扩展能力<br>（3）对网络设备本身无要求<br>（4）故障自愈能力强<br>（5）负责均衡能力强</p>
+<h3 id="overlay组网，设备互联采用三层，ARP表不需要泛红到全网，tor交换机维护mac地址表页也会很小"><a href="#overlay组网，设备互联采用三层，ARP表不需要泛红到全网，tor交换机维护mac地址表页也会很小" class="headerlink" title="overlay组网，设备互联采用三层，ARP表不需要泛红到全网，tor交换机维护mac地址表页也会很小"></a>overlay组网，设备互联采用三层，ARP表不需要泛红到全网，tor交换机维护mac地址表页也会很小</h3><h3 id="vxlan可以解决度租户问题"><a href="#vxlan可以解决度租户问题" class="headerlink" title="vxlan可以解决度租户问题"></a>vxlan可以解决度租户问题</h3><h3 id="overlay组网避免二层带来的广播、组播、单播问题"><a href="#overlay组网避免二层带来的广播、组播、单播问题" class="headerlink" title="overlay组网避免二层带来的广播、组播、单播问题"></a>overlay组网避免二层带来的广播、组播、单播问题</h3><h2 id="vlan报文头-amp-vxlan报文头"><a href="#vlan报文头-amp-vxlan报文头" class="headerlink" title="vlan报文头 &amp; vxlan报文头"></a>vlan报文头 &amp; vxlan报文头</h2><p><img src="myimages/vxlanframe.png" alt="vxlanframe"></p>
+<h3 id="vxlan封装端口默认是4798"><a href="#vxlan封装端口默认是4798" class="headerlink" title="vxlan封装端口默认是4798"></a>vxlan封装端口默认是4798</h3><h3 id="支持多达16M（（2-24-1）-1024-2）租户"><a href="#支持多达16M（（2-24-1）-1024-2）租户" class="headerlink" title="支持多达16M（（2^24-1）/1024^2）租户"></a>支持多达16M（（2^24-1）/1024^2）租户</h3><h3 id="vxlan数据平面-amp-控制平面"><a href="#vxlan数据平面-amp-控制平面" class="headerlink" title="vxlan数据平面 &amp; 控制平面"></a>vxlan数据平面 &amp; 控制平面</h3><p>（1）数据平面-隧道机制<br>已经知道，VTEP为虚拟机的数据包加上了层包头，这些新的报头之有在数据到达目的VTEP后才会被去掉。<br>中间路径的网络设备只会根据外层包头内的目的地址进行数据转发，对于转发路径上的网络来说，一个Vxlan<br>数据包跟一个普通IP包相比，除了个头大一点外没有区别。<br>     由于VXLAN的数据包在整个转发过程中保持了内部数据的完整，因此VXLAN的数据平面是一个基于隧道<br>的数据平面。</p>
+<p>(2) 控制平面—-改进的二层协议<br>     VXLAN不会在虚拟机之间维持一个长连接，所以VXLAN需要一个控制平面来记录对端地址可达情况。控制<br>平面的表为(VNI，内层MAC，外层vtep_ip)。Vxlan学习地址的时候仍然保存着二层协议的特征，节点之间不会<br>周期性的交换各自的路由表，对于不认识的MAC地址，VXLAN依靠组播来获取路径信息(如果有SDN Controller，<br>可以向SDN单播获取)。<br>    另一方面，VXLAN还有自学习的功能，当VTEP收到一个UDP数据报后，会检查自己是否收到过这个虚拟机的<br>数据，如果没有，VTEP就会记录源vni/源外层ip/源内层mac对应关系，避免组播学习</p>
+<h2 id="vxlan实验同网段ping主机"><a href="#vxlan实验同网段ping主机" class="headerlink" title="vxlan实验同网段ping主机"></a>vxlan实验同网段ping主机</h2><p>虚拟主机1<br><img src="myimages/vxlan1.png" alt="vxlan1"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# cat vxlan1.sh </div><div class="line"></div><div class="line">ovs-vsctl add-br br0</div><div class="line">ovs-vsctl add-br br1</div><div class="line">ovs-vsctl add-port br0 enp0s8</div><div class="line"></div><div class="line">ifconfig enp0s8 0 </div><div class="line">ifconfig br0 192.168.55.151/24 up</div><div class="line">route add default gw 192.168.55.254 br0</div><div class="line">ovs-vsctl add-port br1 vx1 -- set interface vx1 type=vxlan options:remote_ip=192.168.55.188</div><div class="line"></div><div class="line">ifconfig br1 10.0.0.1/24 up</div></pre></td></tr></table></figure></p>
+<p>虚拟主机2<br><img src="myimages/vxlan2.png" alt="vxlan2"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# cat vxlan1.sh </div><div class="line"></div><div class="line">ovs-vsctl add-br br0</div><div class="line">ovs-vsctl add-br br1</div><div class="line">ovs-vsctl add-port br0 enp0s8</div><div class="line"></div><div class="line">ifconfig enp0s8 0 </div><div class="line">ifconfig br0 192.168.55.188/24 up</div><div class="line">route add default gw 192.168.55.254 br0</div><div class="line">ovs-vsctl add-port br1 vx1 -- set interface vx1 type=vxlan options:remote_ip=192.168.55.151</div><div class="line">ifconfig br1 10.0.0.2/24 up</div></pre></td></tr></table></figure></p>
+<h3 id="此实验下vxlan-ARP数据包处理过程"><a href="#此实验下vxlan-ARP数据包处理过程" class="headerlink" title="此实验下vxlan ARP数据包处理过程"></a>此实验下vxlan ARP数据包处理过程</h3><p>步骤1：虚拟机1中ping 虚拟机2的10.0.0.2，arp表中无10.0.0.2的MAC地址，虚拟机1广播ARP请求<br>步骤2：br1即VTEP1会将报文封装起来。封装时候目的IP是确定的，源ip会经过路由抉择进行选择（VNI、源地址为VTEP1地址192.168.55.151、目的地址为VTEP2地址192.168.55.188）<br>步骤3：被封装流量经过物理网络到达VTEP2<br>步骤4：VTEP2接受到封装后报文，获取记录（VNI、内层源MAC、内层源IP），解除封装并在VNI中广播<br>步骤5：虚拟机2收到广播流量后，br1回复ARP请求,br1即VETP2会将ARP回复报文进行封装,因为回复数据要发给192.168.55.151，经过路由抉择发送源ip为192.168.55.188<br>步骤6：虚拟机1VTEP1收到报文后，学习收到报文的内层源MAC、内层源IP，解封将流量发给虚拟机1的br1<br>步骤7：br1获取MAC地址，ARP交互结束</p>
+<h2 id="vxlan实验不同网段ping主机"><a href="#vxlan实验不同网段ping主机" class="headerlink" title="vxlan实验不同网段ping主机"></a>vxlan实验不同网段ping主机</h2><p>不同网断vxlan只需要将网关设置为开启vxlan的接口br1</p>
+<p>虚拟主机1<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# cat vxlan1.sh </div><div class="line"></div><div class="line">ovs-vsctl add-br br0</div><div class="line">ovs-vsctl add-br br1</div><div class="line">ovs-vsctl add-port br0 enp0s8</div><div class="line"></div><div class="line">ifconfig enp0s8 0 </div><div class="line">ifconfig br0 192.168.55.151/24 up</div><div class="line">route add default gw 192.168.55.254 br0</div><div class="line">ovs-vsctl add-port br1 vx1 -- set interface vx1 type=vxlan options:remote_ip=192.168.55.188</div><div class="line"></div><div class="line">ifconfig br1 10.0.0.1/24 up</div><div class="line">route add -net 10.0.1.0 netmask 255.255.255.0 gw 10.0.0.1 dev br1</div></pre></td></tr></table></figure></p>
+<p>虚拟主机2<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# cat vxlan1.sh </div><div class="line"></div><div class="line">ovs-vsctl add-br br0</div><div class="line">ovs-vsctl add-br br1</div><div class="line">ovs-vsctl add-port br0 enp0s8</div><div class="line"></div><div class="line">ifconfig enp0s8 0 </div><div class="line">ifconfig br0 192.168.55.188/24 up</div><div class="line">route add default gw 192.168.55.254 br0</div><div class="line">ovs-vsctl add-port br1 vx1 -- set interface vx1 type=vxlan options:remote_ip=192.168.55.151</div><div class="line">ifconfig br1 10.0.1.1/24 up</div><div class="line">route add -net 10.0.0.0 netmask 255.255.255.0 gw 10.0.1.1 dev br1</div></pre></td></tr></table></figure></p>
+<h2 id="来自牛人的总结"><a href="#来自牛人的总结" class="headerlink" title="来自牛人的总结"></a>来自牛人的总结</h2><p>总要有结尾，此总结来自 <a href="http://www.jianshu.com/p/d8351b6bf41b" target="_blank" rel="external">http://www.jianshu.com/p/d8351b6bf41b</a></p>
+<p>1、Overlay网络的优点简单说就两句话：一是在三层网络中利用封装技术提高二层网络扩展性的同时规避了传统二层网络的种种弊端；二是通过引入VNID的概念，满足了云计算多租户vlan不够，以及租户间网络隔离的问题。               </p>
+<p>2、Overlay技术的诞生实际就是为了解决云计算大环境下传统网络的种种问题，从它的技术构想到落地方案都是按照云计算的思路来的，所以对于一个规模较小且相对稳定的网络环境中是没有必要用overlay技术的，用了反而把网络搞复杂了。</p>
+<p>3、Overlay的所有技术路线中，VXLAN的运用最广泛，得到了最多的主流网络厂商的支持，未来很长一段时间里很可能成为overlay技术的代名词；</p>
+<p>4、对于overlay的软硬件模式之争，是仁者见仁、智者见智的，我觉得目前来看软件模式更加容易落地，如果虚拟化平台是开源的需要自己去研发vSwitch是有一些落地难度的，但是vmware NSX相对还是比较成熟的，但是也需要谨慎，最好在一些测试环境或者非重要的环境中先试用。而硬件的overlay方式存在一个所有硬件交换机都需要更换的问题，成本比较高，设备的更换的风险也高，而且硬件overlay方案的捆绑太厉害，需要谨慎考虑。不过我在测试了cisco的ACI后感觉还是很有特点的，后面会单独把ACI拿出来介绍一下，如果是一个完全全新的数据中心倒是可以考虑尝试硬件的overlay模式。</p>
+<p>5、在网络的世界里并不是说一个技术叫好就会叫座，比如当年的ATM和Ethernet之争，会有很多客观因素来决定的，比如用户使用习惯，技术落地难度等等，所以对于overlay的技术走向或者SDN的技术走向，还是有很多不确定因素的，各个流派间的博弈也是愈演愈烈，最终鹿死谁手真的很难说，因此这也是对我们用户来说比较头痛的事情，一个正在发展且没有什么标准化的技术，落地的风险比较大，只能抱着边尝试边观望的态度，不轻易落地也不能轻易掉队。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;云计算网络要求&quot;&gt;&lt;a href=&quot;#云计算网络要求&quot; class=&quot;headerlink&quot; title=&quot;云计算网络要求&quot;&gt;&lt;/a&gt;云计算网络要求&lt;/h2&gt;&lt;h3 id=&quot;虚拟机迁移&quot;&gt;&lt;a href=&quot;#虚拟机迁移&quot; class=&quot;headerlink&quot; title=&quot;虚拟机迁移&quot;&gt;&lt;/a&gt;虚拟机迁移&lt;/h3&gt;&lt;p&gt;（1）二层网络且链路冗余可靠&lt;br&gt;虚拟机迁移从一个物理机迁移到另一个物理机，要求虚拟机不间断业务；因此虚拟机迁移时候必须要保证IP和MAC等网络参数维持不变，放眼此要求也迁移的两台虚拟机处于二层网络时才能满足；而且要求网络本身能多链路冗余和可靠。&lt;br&gt;（2）二层网络下STP（网络生成树）协议复杂，且搞不定大网络规模网络&lt;br&gt;（3）各个厂商虚拟化网络技术，虽然可以简化拓扑，但网络规模和灵活性上欠缺，适合小规模网络构建，例如数据中心内部网络&lt;br&gt;（4）大规模网络扩展TRILL/SPB/FabricPath/VPLS等技术，课解决上述问题，但是对网络硬件有要求，部署成本高&lt;/p&gt;
+&lt;h3 id=&quot;虚拟机规模受网络规格限制&quot;&gt;&lt;a href=&quot;#虚拟机规模受网络规格限制&quot; class=&quot;headerlink&quot; title=&quot;虚拟机规模受网络规格限制&quot;&gt;&lt;/a&gt;虚拟机规模受网络规格限制&lt;/h3&gt;&lt;p&gt;大二层网络环境下，所有交换机均需要记录下所有地址和接口映射；一般场景下核心交换机可满足此需求，但是针对于接入交换机却搞不定这件事情；当然你也可以提升所有交换机档次，那么网络建设成本也相应提升。&lt;/p&gt;
+&lt;h3 id=&quot;网络广播隔离&quot;&gt;&lt;a href=&quot;#网络广播隔离&quot; class=&quot;headerlink&quot; title=&quot;网络广播隔离&quot;&gt;&lt;/a&gt;网络广播隔离&lt;/h3&gt;&lt;p&gt;（1）主流的vlan技术，会限制vlan数目为4094个&lt;br&gt;（2）vlan技术的静态配置型技术，这样使得数据中心网络几乎为所有vlan被允许通过，导致任何一个vlan 的未知广播数据会在整网泛滥，无节制消耗网络交换能力和带宽。&lt;br&gt;（3）对于小规模的云计算虚拟化环境，现有的网络技术如虚拟机接入感知(VEPA/802.1Qbg)、数据中心二层网络扩展(IRF/vPC/TRILL/FabricPath)、数据中心间二层技术(OTV/EVI/TRILL)等可以很好的满足业务需求，上述限制不成为瓶颈。然而，完全依赖于物理网络设备本身的技术改良，目前看来并不能完全解决大规模云计算环境下的问题。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="网络" scheme="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+    
+    
+      <category term="overlay" scheme="http://vcpu.me/tags/overlay/"/>
+    
+      <category term="云计算组网" scheme="http://vcpu.me/tags/%E4%BA%91%E8%AE%A1%E7%AE%97%E7%BB%84%E7%BD%91/"/>
+    
+      <category term="vxlan原理" scheme="http://vcpu.me/tags/vxlan%E5%8E%9F%E7%90%86/"/>
+    
+      <category term="vxlan实验" scheme="http://vcpu.me/tags/vxlan%E5%AE%9E%E9%AA%8C/"/>
+    
+  </entry>
   
   <entry>
     <title> 虚拟网络</title>
@@ -364,9 +415,9 @@
       <category term="TCP" scheme="http://vcpu.me/categories/TCP/"/>
     
     
-      <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
-    
       <category term="拥塞控制" scheme="http://vcpu.me/tags/%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6/"/>
+    
+      <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
     
       <category term="Linux拥塞控制基本概念" scheme="http://vcpu.me/tags/Linux%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/"/>
     
@@ -546,44 +597,6 @@
   </entry>
   
   <entry>
-    <title>socket读写条件</title>
-    <link href="http://vcpu.me/socket_rw_proc/"/>
-    <id>http://vcpu.me/socket_rw_proc/</id>
-    <published>2017-06-26T11:10:34.000Z</published>
-    <updated>2017-06-26T08:55:50.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="概念说明"><a href="#概念说明" class="headerlink" title="概念说明"></a>概念说明</h2><p>1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：<br>每个套接字有一个接收低水位和一个发送低水位。他们由select函数使用。<br>接收低水位标记是让select返回”可读”时套接字接收缓冲区中所需的数据量。对于TCP,其默认值为1。<br>发送低水位标记是让select返回”可写”时套接字发送缓冲区中所需的可用空间。对于TCP，其默认值常为2048</p>
-<p>通俗的解释一下，缓存区我们当成一个大小为 n bytes的空间，那么：<br>接收区缓存的作用就是，接收对面的数据放在缓存区，供应用程序读。当然了，只有当缓存区可读的数据量(接收低水位标记)到达一定程度（eg:1）的时候，我们才能读到数据，不然不就读不到数据了吗。<br>发送区缓存的作用就是，发送应用程序的数据到缓存区，然后一起发给对面。当然了，只有当缓存区剩余一定空间(发送低水位标记)（eg:2048）,你才能写数据进去，不然可能导致空间不够。</p>
-<p>2.FIN: (结束标志,Finish)用来结束一个TCP回话.但对应端口仍处于开放状态,准备接收后续数据.</p>
-<p>特别纠正说明：</p>
-<blockquote>
-<p>经过测试在3.10.0-514.16.1.el7.x86_64 内核情况下SO_SNDLOWAT/SO_RCVLOWAT<br>默认发送和接收最低水位均为1，也就是说默认情况下低水位值可以不考虑，系统缓冲区有数据就读<br>有空闲就写</p>
-</blockquote>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> value =<span class="number">0</span>;</div><div class="line"><span class="keyword">int</span> v_len = <span class="keyword">sizeof</span>(value);</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_SNDLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"snd low at value: %d\n"</span>,value);</div><div class="line">value = <span class="number">0</span>;</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_RCVLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"rcv low at value: %d\n"</span>,value);</div></pre></td></tr></table></figure>
-<h2 id="socket可读的条件"><a href="#socket可读的条件" class="headerlink" title="socket可读的条件"></a>socket可读的条件</h2><p>下列四个条件中的任何一个满足时,socket准备好读:<br>1.socket的接收缓冲区中的数据字节大于等于该socket的接收缓冲区低水位标记的当前大小。对这样的socket的读操作将不阻塞并返回一个大于0的值 {也就是返回准备好读入的数据}。我们可以用SO_RCVLOWATsocket选项来设置该socket的低水位标记。对于TCP和UDP .socket而言，其缺省值为1</p>
-<p>2.该连接的读这一半关闭{也就是接收了FIN的TCP连接}。对这样的socket的读操作将不阻塞并返回0</p>
-<p>3.socket是一个用于监听的socket,并且已经完成的连接数为非0.这样的soocket处于可读状态,是因为socket收到了对方的connect请求,执行了三次握手的第一步:对方发送SYN请求过来,使监听socket处于可读状态;正常情况下,这样的socket上的accept操作不会阻塞;</p>
-<p>4.有一个socket有异常错误条件待处理。对于这样的socket的读操作将不会阻塞,并且返回一个错误-1,errno则设置成明确的错误条件。这些待处理的错误也可通过指定socket选项SO_ERROR调用getsockopt来取得并清除</p>
-<h2 id="socket可写的条件"><a href="#socket可写的条件" class="headerlink" title="socket可写的条件"></a>socket可写的条件</h2><p>1.socket发送缓冲区中数据字节大于等于该socket发送缓冲区低水位大小。写操作不会被阻塞，会直接返回写入的数据大小，SO_SNDLOWAT socket选项设置socket可写低水位大小。经过测试默认大小为1。<br>2.如果你已经关闭连接，或者主动fin半关闭。这种情况下socket再些将要产生SIGPIPE信号，你没有对这个信号处理的话，你的进程将会被关闭。<br>3.有socket异常错误待处理，这种情况下写操作并不会被阻塞会直接返回一个错误-1，想知道错误原因erron可以帮助你。</p>
-<h2 id="参考地址"><a href="#参考地址" class="headerlink" title="参考地址"></a>参考地址</h2><p><a href="http://blog.csdn.net/szcarewell/article/details/51227540" target="_blank" rel="external">http://blog.csdn.net/szcarewell/article/details/51227540</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;概念说明&quot;&gt;&lt;a href=&quot;#概念说明&quot; class=&quot;headerlink&quot; title=&quot;概念说明&quot;&gt;&lt;/a&gt;概念说明&lt;/h2&gt;&lt;p&gt;1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：&lt;br&gt;每个套接字有一个接收低水位和一个发送低水位。他们
-    
-    </summary>
-    
-      <category term="socket" scheme="http://vcpu.me/categories/socket/"/>
-    
-    
-      <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
-    
-      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
-    
-  </entry>
-  
-  <entry>
     <title>socket信号处理</title>
     <link href="http://vcpu.me/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/"/>
     <id>http://vcpu.me/socket信号处理/</id>
@@ -686,6 +699,44 @@
       <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
     
       <category term="socket信号处理" scheme="http://vcpu.me/tags/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>socket读写条件</title>
+    <link href="http://vcpu.me/socket_rw_proc/"/>
+    <id>http://vcpu.me/socket_rw_proc/</id>
+    <published>2017-06-26T11:10:34.000Z</published>
+    <updated>2017-06-26T08:55:50.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="概念说明"><a href="#概念说明" class="headerlink" title="概念说明"></a>概念说明</h2><p>1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：<br>每个套接字有一个接收低水位和一个发送低水位。他们由select函数使用。<br>接收低水位标记是让select返回”可读”时套接字接收缓冲区中所需的数据量。对于TCP,其默认值为1。<br>发送低水位标记是让select返回”可写”时套接字发送缓冲区中所需的可用空间。对于TCP，其默认值常为2048</p>
+<p>通俗的解释一下，缓存区我们当成一个大小为 n bytes的空间，那么：<br>接收区缓存的作用就是，接收对面的数据放在缓存区，供应用程序读。当然了，只有当缓存区可读的数据量(接收低水位标记)到达一定程度（eg:1）的时候，我们才能读到数据，不然不就读不到数据了吗。<br>发送区缓存的作用就是，发送应用程序的数据到缓存区，然后一起发给对面。当然了，只有当缓存区剩余一定空间(发送低水位标记)（eg:2048）,你才能写数据进去，不然可能导致空间不够。</p>
+<p>2.FIN: (结束标志,Finish)用来结束一个TCP回话.但对应端口仍处于开放状态,准备接收后续数据.</p>
+<p>特别纠正说明：</p>
+<blockquote>
+<p>经过测试在3.10.0-514.16.1.el7.x86_64 内核情况下SO_SNDLOWAT/SO_RCVLOWAT<br>默认发送和接收最低水位均为1，也就是说默认情况下低水位值可以不考虑，系统缓冲区有数据就读<br>有空闲就写</p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> value =<span class="number">0</span>;</div><div class="line"><span class="keyword">int</span> v_len = <span class="keyword">sizeof</span>(value);</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_SNDLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"snd low at value: %d\n"</span>,value);</div><div class="line">value = <span class="number">0</span>;</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_RCVLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"rcv low at value: %d\n"</span>,value);</div></pre></td></tr></table></figure>
+<h2 id="socket可读的条件"><a href="#socket可读的条件" class="headerlink" title="socket可读的条件"></a>socket可读的条件</h2><p>下列四个条件中的任何一个满足时,socket准备好读:<br>1.socket的接收缓冲区中的数据字节大于等于该socket的接收缓冲区低水位标记的当前大小。对这样的socket的读操作将不阻塞并返回一个大于0的值 {也就是返回准备好读入的数据}。我们可以用SO_RCVLOWATsocket选项来设置该socket的低水位标记。对于TCP和UDP .socket而言，其缺省值为1</p>
+<p>2.该连接的读这一半关闭{也就是接收了FIN的TCP连接}。对这样的socket的读操作将不阻塞并返回0</p>
+<p>3.socket是一个用于监听的socket,并且已经完成的连接数为非0.这样的soocket处于可读状态,是因为socket收到了对方的connect请求,执行了三次握手的第一步:对方发送SYN请求过来,使监听socket处于可读状态;正常情况下,这样的socket上的accept操作不会阻塞;</p>
+<p>4.有一个socket有异常错误条件待处理。对于这样的socket的读操作将不会阻塞,并且返回一个错误-1,errno则设置成明确的错误条件。这些待处理的错误也可通过指定socket选项SO_ERROR调用getsockopt来取得并清除</p>
+<h2 id="socket可写的条件"><a href="#socket可写的条件" class="headerlink" title="socket可写的条件"></a>socket可写的条件</h2><p>1.socket发送缓冲区中数据字节大于等于该socket发送缓冲区低水位大小。写操作不会被阻塞，会直接返回写入的数据大小，SO_SNDLOWAT socket选项设置socket可写低水位大小。经过测试默认大小为1。<br>2.如果你已经关闭连接，或者主动fin半关闭。这种情况下socket再些将要产生SIGPIPE信号，你没有对这个信号处理的话，你的进程将会被关闭。<br>3.有socket异常错误待处理，这种情况下写操作并不会被阻塞会直接返回一个错误-1，想知道错误原因erron可以帮助你。</p>
+<h2 id="参考地址"><a href="#参考地址" class="headerlink" title="参考地址"></a>参考地址</h2><p><a href="http://blog.csdn.net/szcarewell/article/details/51227540" target="_blank" rel="external">http://blog.csdn.net/szcarewell/article/details/51227540</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;概念说明&quot;&gt;&lt;a href=&quot;#概念说明&quot; class=&quot;headerlink&quot; title=&quot;概念说明&quot;&gt;&lt;/a&gt;概念说明&lt;/h2&gt;&lt;p&gt;1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：&lt;br&gt;每个套接字有一个接收低水位和一个发送低水位。他们
+    
+    </summary>
+    
+      <category term="socket" scheme="http://vcpu.me/categories/socket/"/>
+    
+    
+      <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
+    
+      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
     
   </entry>
   
