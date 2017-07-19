@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://vcpu.me/"/>
-  <updated>2017-07-19T05:42:16.000Z</updated>
+  <updated>2017-07-19T05:43:20.000Z</updated>
   <id>http://vcpu.me/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://vcpu.me/vxlan1/"/>
     <id>http://vcpu.me/vxlan1/</id>
     <published>2017-07-19T10:00:00.000Z</published>
-    <updated>2017-07-19T05:42:16.000Z</updated>
+    <updated>2017-07-19T05:43:20.000Z</updated>
     
     <content type="html"><![CDATA[<h2 id="云计算网络要求"><a href="#云计算网络要求" class="headerlink" title="云计算网络要求"></a>云计算网络要求</h2><h3 id="虚拟机迁移"><a href="#虚拟机迁移" class="headerlink" title="虚拟机迁移"></a>虚拟机迁移</h3><p>（1）二层网络且链路冗余可靠<br>虚拟机迁移从一个物理机迁移到另一个物理机，要求虚拟机不间断业务；因此虚拟机迁移时候必须要保证IP和MAC等网络参数维持不变，放眼此要求也迁移的两台虚拟机处于二层网络时才能满足；而且要求网络本身能多链路冗余和可靠。<br>（2）二层网络下STP（网络生成树）协议复杂，且搞不定大网络规模网络<br>（3）各个厂商虚拟化网络技术，虽然可以简化拓扑，但网络规模和灵活性上欠缺，适合小规模网络构建，例如数据中心内部网络<br>（4）大规模网络扩展TRILL/SPB/FabricPath/VPLS等技术，课解决上述问题，但是对网络硬件有要求，部署成本高</p>
 <h3 id="虚拟机规模受网络规格限制"><a href="#虚拟机规模受网络规格限制" class="headerlink" title="虚拟机规模受网络规格限制"></a>虚拟机规模受网络规格限制</h3><p>大二层网络环境下，所有交换机均需要记录下所有地址和接口映射；一般场景下核心交换机可满足此需求，但是针对于接入交换机却搞不定这件事情；当然你也可以提升所有交换机档次，那么网络建设成本也相应提升。</p>
