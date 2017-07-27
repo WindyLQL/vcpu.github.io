@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://vcpu.me/iptables/</loc>
+    
+    <lastmod>2017-07-27T03:22:09.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://vcpu.me/vxlan1/</loc>
     
     <lastmod>2017-07-19T05:43:20.000Z</lastmod>

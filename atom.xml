@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://vcpu.me/"/>
-  <updated>2017-07-19T05:43:20.000Z</updated>
+  <updated>2017-07-27T03:22:09.000Z</updated>
   <id>http://vcpu.me/</id>
   
   <author>
@@ -14,6 +14,108 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>iptables</title>
+    <link href="http://vcpu.me/iptables/"/>
+    <id>http://vcpu.me/iptables/</id>
+    <published>2017-07-27T10:00:00.000Z</published>
+    <updated>2017-07-27T03:22:09.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="filter表"><a href="#filter表" class="headerlink" title="filter表"></a>filter表</h2><p>根据已配置好的规则操作本机的包（INPUT）、转发的包（FORWARD）、本机发出的包（OUTPUT）；最终决定是否放行（ACCEPT）、丢弃（DROP）、拒绝（REJECT）、产生告警日志（LOG）。</p>
+<h2 id="nat表"><a href="#nat表" class="headerlink" title="nat表"></a>nat表</h2><p>根据配置好的规则，在包刚刚到达FW时修改目的地址（PREROUTING）、本机产生包修改目的地址（OUTPUT）、离开转发系统前修改源地址（POSTROUTING）；最终实现网络SNAT、REDIRECT、DNAT</p>
+<h2 id="mangle表"><a href="#mangle表" class="headerlink" title="mangle表"></a>mangle表</h2><p>主要用于修改数据包的TOS（Type Of Service，服务类型）、TTL（Time To Live，生存周期）指以及为数据包设置Mark标记，以实现Qos(Quality Of Service，服务质量)调整以及策略路由等应用，由于需要相应的路由设备支持，因此应用并不广泛。包含五个规则链——PREROUTING，POSTROUTING，INPUT，OUTPUT，FORWARD。</p>
+<a id="more"></a>
+<h2 id="iptables工作的netfilter框架挂载点转发流程"><a href="#iptables工作的netfilter框架挂载点转发流程" class="headerlink" title="iptables工作的netfilter框架挂载点转发流程"></a>iptables工作的netfilter框架挂载点转发流程</h2><p><img src="/myimages/netfliter.png" alt="netfilter"></p>
+<ul>
+<li><p>1.数据包从网络A经过网卡中断送入内核协议栈，首先进入prerouting挂载点，路由前的操作可加入到此挂载点完成，如图的对目的地址的修改，修改后的地址会跟进修改后的地址会继续进入转发路由查找但是查找路由的目的地址变成了目的NAT后的地</p>
+</li>
+<li><p>2.经过转发路由查找，如果是发给本机的报文，交给本机的应用程序处理；在具体的应用程序处理之前<br>会经过input挂载点，如图你可以进行上本机的报文限制，直接在input挂载点丢弃报文，使其无法到达具体的应用程序。</p>
+</li>
+<li><blockquote>
+<p>2-1.应用程序在处理完成后，根据本机路由表酱数据发出，在本机报文发出前，会经过output挂载点，此处你的策略只针对于本机发出报文有效。如果你想修改本机发出报文的源地址，你需要在此实现。</p>
+</blockquote>
+</li>
+<li><p>3.经过转发路由查找，如果是转发的报文，在具体的转发报文之前，你可以通过在forward挂载点操作进行过滤等动作。</p>
+</li>
+<li><p>4.无论是转发报文还是本机发出的报文，它们最终会经过postrouting挂载点，送到最终物理发包流程；也就是说postrouting是数据包离开本netfilter协议栈的最后一个流程，你可以在这个流程中修改源IP地址。</p>
+</li>
+</ul>
+<h2 id="iptables基本命令"><a href="#iptables基本命令" class="headerlink" title="iptables基本命令"></a>iptables基本命令</h2><p><img src="/myimages/iptablecmd.png" alt="iptablecmd"></p>
+<ul>
+<li>[-t 表名]：该规则所操作的哪个表，可以使用filter、nat等，如果没有指定则默认为filter</li>
+<li>-A：新增一条规则，到该规则链列表的最后一行</li>
+<li>-I：插入一条规则，原本该位置上的规则会往后顺序移动，没有指定编号则为1</li>
+<li>-D：从规则链中删除一条规则，要么输入完整的规则，或者指定规则编号加以删除</li>
+<li>-R：替换某条规则，规则替换不会改变顺序，而且必须指定编号。</li>
+<li>-P：设置某条规则链的默认动作</li>
+<li>-nL：-L、-n，查看当前运行的防火墙规则列表</li>
+<li>chain名：指定规则表的哪个链，如INPUT、OUPUT、FORWARD、PREROUTING等</li>
+<li>[规则编号]：插入、删除、替换规则时用，–line-numbers显示号码</li>
+<li>[-i|o 网卡名称]：i是指定数据包从哪块网卡进入，o是指定数据包从哪块网卡输出</li>
+<li>[-p 协议类型]：可以指定规则应用的协议，包含tcp、udp和icmp等</li>
+<li>[-s 源IP地址]：源主机的IP地址或子网地址</li>
+<li>[–sport 源端口号]：数据包的IP的源端口号</li>
+<li>[-d目标IP地址]：目标主机的IP地址或子网地址</li>
+<li>[–dport目标端口号]：数据包的IP的目标端口号</li>
+<li>-m：extend matches，这个选项用于提供更多的匹配参数，如：</li>
+<li>-m state –state ESTABLISHED,RELATED</li>
+<li>-m tcp –dport 22</li>
+<li>-m multiport –dports 80,8080</li>
+<li>-m icmp –icmp-type 8</li>
+<li>&lt;-j 动作&gt;：处理数据包的动作，包括ACCEPT、DROP、REJECT等<h2 id="iptables命令"><a href="#iptables命令" class="headerlink" title="iptables命令"></a>iptables命令</h2></li>
+</ul>
+<h3 id="iptables-nL-查看当前iptables-filter规则"><a href="#iptables-nL-查看当前iptables-filter规则" class="headerlink" title="iptables -nL 查看当前iptables filter规则"></a>iptables -nL 查看当前iptables filter规则</h3><p>   iptables -nL 等价于iptables -nL -t filter</p>
+<h3 id="iptables-nL-t-nat查看nat规则"><a href="#iptables-nL-t-nat查看nat规则" class="headerlink" title="iptables -nL -t nat查看nat规则"></a>iptables -nL -t nat查看nat规则</h3><h3 id="iptables-nL-–line-number-显示规则链编号"><a href="#iptables-nL-–line-number-显示规则链编号" class="headerlink" title="iptables -nL –line-number 显示规则链编号"></a>iptables -nL –line-number 显示规则链编号</h3><h3 id="iptables-D-FORWARD-2删除FORWARD链第二条规则"><a href="#iptables-D-FORWARD-2删除FORWARD链第二条规则" class="headerlink" title="iptables -D FORWARD 2删除FORWARD链第二条规则"></a>iptables -D FORWARD 2删除FORWARD链第二条规则</h3><h3 id="iptables-A-INPUT-j-REJECT-–reject-with-icmp-host-prohibited拒绝所有报文，并回应主机已被封锁"><a href="#iptables-A-INPUT-j-REJECT-–reject-with-icmp-host-prohibited拒绝所有报文，并回应主机已被封锁" class="headerlink" title="iptables -A INPUT -j REJECT –reject-with icmp-host-prohibited拒绝所有报文，并回应主机已被封锁"></a>iptables -A INPUT -j REJECT –reject-with icmp-host-prohibited拒绝所有报文，并回应主机已被封锁</h3><p>–reject-with icmp-net-prohibited 拒绝数据包回应一条icmp改造主机被封锁<br>–reject-with tcp-reset 拒绝数据包 tcp回应rst<br>–reject-with icmp-net-prohibited 拒绝数据包回应一条icmp告知网络禁止</p>
+<h3 id="实现在外界和本机访问主机的80端口就相当于访问8080端口"><a href="#实现在外界和本机访问主机的80端口就相当于访问8080端口" class="headerlink" title="实现在外界和本机访问主机的80端口就相当于访问8080端口"></a>实现在外界和本机访问主机的80端口就相当于访问8080端口</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">iptables -t nat -A PREROUTING -p -m tcp --dport 80 -j REDIRECT --to-ports 8080</div><div class="line">iptables -t nat -A OUTPUT -p tcp -m --dport 80 -j REDIRECT --to-ports 8080</div></pre></td></tr></table></figure>
+<h3 id="设置input默认丢包，forward和output默认放通"><a href="#设置input默认丢包，forward和output默认放通" class="headerlink" title="设置input默认丢包，forward和output默认放通"></a>设置input默认丢包，forward和output默认放通</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">iptables -P INPUT DROP</div><div class="line">iptables -P FORWARD ACCEPT</div><div class="line">iptables -P OUTPUT ACCEPT</div></pre></td></tr></table></figure>
+<h3 id="iptables-m-state-–state-NEW-ESTABLISHED"><a href="#iptables-m-state-–state-NEW-ESTABLISHED" class="headerlink" title="iptables -m state –state NEW,ESTABLISHED"></a>iptables -m state –state NEW,ESTABLISHED</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">iptables -I INPUT 3 -p icmp -m state --state NEW -j ACCEPT</div></pre></td></tr></table></figure>
+<p>背景：策略放在主机A, 默认策略是INPUT丢包，没有安全策略情况下，主机A和主机B可以相互ping通<br>测试结果：执行上述命令后效果为：主机A ping主机B ping不通；主机B ping主机A能通一个包</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">iptables -I INPUT 3 -p icmp -m state --state ESTABLISHED -j ACCEPT</div></pre></td></tr></table></figure>
+<p>背景：策略放在主机A, 默认策略是INPUT丢包<br>测试结果：主机A ping主机B能ping通，主机B ping主机A并不能ping通</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">iptables -I INPUT 3 -p icmp -m state --state RELATED -j ACCEPT</div></pre></td></tr></table></figure>
+<p>背景：策略放在主机A, 默认策略是INPUT丢包<br>测结果：主机A和主机B均不通</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">iptables -I INPUT 3 -s 10.30.10.141 -p tcp  -m state --state NEW -j ACCEPT</div></pre></td></tr></table></figure>
+<p>背景：策略放在主机A, 默认策略是INPUT丢包，没有安全策略情况下，主机A和主机B可以相互ssh连接<br>测试结果：主机A无法 telnet 主机B(10.30.10.141) 22端口， 主机B telnet 主机A 可完成三次握手</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">iptables -I INPUT 3 -s 10.30.10.141 -p tcp  -m state --state ESTABLISHED -j ACCEPT</div></pre></td></tr></table></figure>
+<p>背景：策略放在主机A, 默认策略是INPUT丢包，没有安全策略情况下，主机A和主机B可以相互ssh连接<br>测试结果：主机A可正常ssh主机B，主机B无法ssh主机A</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">iptables -I INPUT 3 -s 10.30.10.141 -p tcp  -m state --state NEW,ESTABLISHED -j ACCEPT</div></pre></td></tr></table></figure>
+<p>背景：策略放在主机A, 默认策略是INPUT丢包，没有安全策略情况下，主机A和主机B可以相互ssh连接<br>测试结果：主机A和主机B可以相互ssh连接</p>
+<p><strong>其它说明</strong><br>指定要匹配包的的状态，当前有4种状态可用：INVALID，ESTABLISHED，NEW和RELATED。 </p>
+<ul>
+<li>INVALID意味着这个包没有已知的流或连接与之关联，也可能是它包含的数据或包头有问题。</li>
+<li>ESTABLISHED意思是包是完全有效的，而且属于一个已建立的连接，这个连接的两端都已经有数据发送</li>
+<li>RELATED说明包正在建立一个新的连接，这个连接是和一个已建立的连接相关的。比如，FTP data transfer，ICMP error 和一个TCP或UDP连接相关。</li>
+<li>NEW状态可以理解成允许首包建立会话，这里首包不适一个包的意思（icmp是第一个包的意思、TCP是三次握手的意思）。</li>
+</ul>
+<h3 id="10-30-0-0-16-网断允许访问本机的80和443端口"><a href="#10-30-0-0-16-网断允许访问本机的80和443端口" class="headerlink" title="10.30.0.0/16 网断允许访问本机的80和443端口"></a>10.30.0.0/16 网断允许访问本机的80和443端口</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">iptables -A INPUT -s 10.30.0.0/16 -p tcp -m tcp -m multiport --dports 80,443 -j ACCEPT</div></pre></td></tr></table></figure>
+<h3 id="10-30-10-0／24网段所有报文均不允许访问本机tcp的80端口，直接丢弃数据包"><a href="#10-30-10-0／24网段所有报文均不允许访问本机tcp的80端口，直接丢弃数据包" class="headerlink" title="10.30.10.0／24网段所有报文均不允许访问本机tcp的80端口，直接丢弃数据包"></a>10.30.10.0／24网段所有报文均不允许访问本机tcp的80端口，直接丢弃数据包</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">iptables -A INPUT -s 10.30.10.0/24 -p tcp -m tcp --dport 80 -j DROP</div></pre></td></tr></table></figure>
+<h3 id="完全信任主机10-30-10-30"><a href="#完全信任主机10-30-10-30" class="headerlink" title="完全信任主机10.30.10.30"></a>完全信任主机10.30.10.30</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">iptables -A INPUT -s 10.30.10.30 -j ACCEPT</div></pre></td></tr></table></figure>
+<h3 id="放行lo口所有规则并且插入到规则2位置"><a href="#放行lo口所有规则并且插入到规则2位置" class="headerlink" title="放行lo口所有规则并且插入到规则2位置"></a>放行lo口所有规则并且插入到规则2位置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">iptables -I INPUT 2 -i lo -j ACCEPT</div></pre></td></tr></table></figure>
+<h3 id="当有人连接22端口时候产生日志，并对日志写入进行限制"><a href="#当有人连接22端口时候产生日志，并对日志写入进行限制" class="headerlink" title="当有人连接22端口时候产生日志，并对日志写入进行限制"></a>当有人连接22端口时候产生日志，并对日志写入进行限制</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">iptables -R INPUT 1 -p tcp --dport 22 -m limit --limit 3/minute --limit-burst 8 -j LOG</div></pre></td></tr></table></figure>
+<h3 id="iptables-A-PREROUTING-i-eth0-d-202-110-123-100-j-DNAT-–to-10-30-10-30"><a href="#iptables-A-PREROUTING-i-eth0-d-202-110-123-100-j-DNAT-–to-10-30-10-30" class="headerlink" title="iptables -A PREROUTING -i eth0 -d 202.110.123.100 -j DNAT –to 10.30.10.30"></a>iptables -A PREROUTING -i eth0 -d 202.110.123.100 -j DNAT –to 10.30.10.30</h3><p>目的NAT，访问202.110.123.100，最终相当于访问10.30.10.30</p>
+<h3 id="iptables-A-POSTROUTING-o-eth0-s-1-1-1-1-j-SNAT-–to-202-110-123-200"><a href="#iptables-A-POSTROUTING-o-eth0-s-1-1-1-1-j-SNAT-–to-202-110-123-200" class="headerlink" title="iptables -A POSTROUTING -o eth0 -s 1.1.1.1 -j SNAT –to 202.110.123.200"></a>iptables -A POSTROUTING -o eth0 -s 1.1.1.1 -j SNAT –to 202.110.123.200</h3><p>源NAT，1.1.1.1内网机器上外网，其报文源地址全部变成 202.110.123.200</p>
+<h3 id="iptables-A-POSTROUTING-o-eth0-s-192-168-1-200-j-SNAT-–to-NASQUERADE"><a href="#iptables-A-POSTROUTING-o-eth0-s-192-168-1-200-j-SNAT-–to-NASQUERADE" class="headerlink" title="iptables -A POSTROUTING -o eth0 -s 192.168.1.200 -j SNAT –to NASQUERADE"></a>iptables -A POSTROUTING -o eth0 -s 192.168.1.200 -j SNAT –to NASQUERADE</h3><p>源NAT，1.1.1.1内网机器上外网，其报文根据接口情况进行变更</p>
+<h2 id="ubuntun-iptables规则开机启动"><a href="#ubuntun-iptables规则开机启动" class="headerlink" title="ubuntun iptables规则开机启动"></a>ubuntun iptables规则开机启动</h2><p>步骤1:将规则保存到<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">iptables-save &gt; /etc/iptables.up.rules</div></pre></td></tr></table></figure></p>
+<p>步骤2:系统启动时候加载这些配置,vim /etc/network/interfaces;在最后一行加入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">root@controller:~# cat /etc/network/interfaces</div><div class="line"># interfaces(5) file used by ifup(8) and ifdown(8)</div><div class="line">auto lo</div><div class="line">iface lo inet loopback</div><div class="line">pre-up iptables-restore &lt; /etc/iptables.up.rules</div></pre></td></tr></table></figure></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;filter表&quot;&gt;&lt;a href=&quot;#filter表&quot; class=&quot;headerlink&quot; title=&quot;filter表&quot;&gt;&lt;/a&gt;filter表&lt;/h2&gt;&lt;p&gt;根据已配置好的规则操作本机的包（INPUT）、转发的包（FORWARD）、本机发出的包（OUTPUT）；最终决定是否放行（ACCEPT）、丢弃（DROP）、拒绝（REJECT）、产生告警日志（LOG）。&lt;/p&gt;
+&lt;h2 id=&quot;nat表&quot;&gt;&lt;a href=&quot;#nat表&quot; class=&quot;headerlink&quot; title=&quot;nat表&quot;&gt;&lt;/a&gt;nat表&lt;/h2&gt;&lt;p&gt;根据配置好的规则，在包刚刚到达FW时修改目的地址（PREROUTING）、本机产生包修改目的地址（OUTPUT）、离开转发系统前修改源地址（POSTROUTING）；最终实现网络SNAT、REDIRECT、DNAT&lt;/p&gt;
+&lt;h2 id=&quot;mangle表&quot;&gt;&lt;a href=&quot;#mangle表&quot; class=&quot;headerlink&quot; title=&quot;mangle表&quot;&gt;&lt;/a&gt;mangle表&lt;/h2&gt;&lt;p&gt;主要用于修改数据包的TOS（Type Of Service，服务类型）、TTL（Time To Live，生存周期）指以及为数据包设置Mark标记，以实现Qos(Quality Of Service，服务质量)调整以及策略路由等应用，由于需要相应的路由设备支持，因此应用并不广泛。包含五个规则链——PREROUTING，POSTROUTING，INPUT，OUTPUT，FORWARD。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="网络" scheme="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+    
+    
+      <category term="iptables" scheme="http://vcpu.me/tags/iptables/"/>
+    
+      <category term="netfilter框架原理" scheme="http://vcpu.me/tags/netfilter%E6%A1%86%E6%9E%B6%E5%8E%9F%E7%90%86/"/>
+    
+  </entry>
   
   <entry>
     <title> vxlan</title>

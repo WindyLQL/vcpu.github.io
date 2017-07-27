@@ -4,6 +4,28 @@
 
     
   <url>
+    <loc>http://vcpu.me/iptables/</loc>
+    <lastmod>2017-07-27T03:22:09.000Z</lastmod>
+    <data>
+        <display>
+        <title>iptables</title>
+        <pubTime>2017-07-27T10:00:00.000Z</pubTime>
+        
+        <tag>iptables</tag>
+         
+        <tag>netfilter框架原理</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/vxlan1/</loc>
     <lastmod>2017-07-19T05:43:20.000Z</lastmod>
     <data>
