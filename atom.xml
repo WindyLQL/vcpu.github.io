@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://vcpu.me/"/>
-  <updated>2017-07-27T03:22:09.000Z</updated>
+  <updated>2017-07-27T03:24:52.000Z</updated>
   <id>http://vcpu.me/</id>
   
   <author>
@@ -20,13 +20,13 @@
     <link href="http://vcpu.me/iptables/"/>
     <id>http://vcpu.me/iptables/</id>
     <published>2017-07-27T10:00:00.000Z</published>
-    <updated>2017-07-27T03:22:09.000Z</updated>
+    <updated>2017-07-27T03:24:52.000Z</updated>
     
     <content type="html"><![CDATA[<h2 id="filter表"><a href="#filter表" class="headerlink" title="filter表"></a>filter表</h2><p>根据已配置好的规则操作本机的包（INPUT）、转发的包（FORWARD）、本机发出的包（OUTPUT）；最终决定是否放行（ACCEPT）、丢弃（DROP）、拒绝（REJECT）、产生告警日志（LOG）。</p>
 <h2 id="nat表"><a href="#nat表" class="headerlink" title="nat表"></a>nat表</h2><p>根据配置好的规则，在包刚刚到达FW时修改目的地址（PREROUTING）、本机产生包修改目的地址（OUTPUT）、离开转发系统前修改源地址（POSTROUTING）；最终实现网络SNAT、REDIRECT、DNAT</p>
 <h2 id="mangle表"><a href="#mangle表" class="headerlink" title="mangle表"></a>mangle表</h2><p>主要用于修改数据包的TOS（Type Of Service，服务类型）、TTL（Time To Live，生存周期）指以及为数据包设置Mark标记，以实现Qos(Quality Of Service，服务质量)调整以及策略路由等应用，由于需要相应的路由设备支持，因此应用并不广泛。包含五个规则链——PREROUTING，POSTROUTING，INPUT，OUTPUT，FORWARD。</p>
 <a id="more"></a>
-<h2 id="iptables工作的netfilter框架挂载点转发流程"><a href="#iptables工作的netfilter框架挂载点转发流程" class="headerlink" title="iptables工作的netfilter框架挂载点转发流程"></a>iptables工作的netfilter框架挂载点转发流程</h2><p><img src="/myimages/netfliter.png" alt="netfilter"></p>
+<h2 id="iptables工作的netfilter框架挂载点转发流程"><a href="#iptables工作的netfilter框架挂载点转发流程" class="headerlink" title="iptables工作的netfilter框架挂载点转发流程"></a>iptables工作的netfilter框架挂载点转发流程</h2><p><img src="/myimages/netfilter.png" alt="netfilter"></p>
 <ul>
 <li><p>1.数据包从网络A经过网卡中断送入内核协议栈，首先进入prerouting挂载点，路由前的操作可加入到此挂载点完成，如图的对目的地址的修改，修改后的地址会跟进修改后的地址会继续进入转发路由查找但是查找路由的目的地址变成了目的NAT后的地</p>
 </li>
