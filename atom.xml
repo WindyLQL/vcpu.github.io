@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://vcpu.me/"/>
-  <updated>2017-07-31T12:24:08.000Z</updated>
+  <updated>2017-07-31T12:28:42.000Z</updated>
   <id>http://vcpu.me/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://vcpu.me/openvswitch/"/>
     <id>http://vcpu.me/openvswitch/</id>
     <published>2017-07-31T10:00:00.000Z</published>
-    <updated>2017-07-31T12:24:08.000Z</updated>
+    <updated>2017-07-31T12:28:42.000Z</updated>
     
     <content type="html"><![CDATA[<h2 id="openvSwitch简介"><a href="#openvSwitch简介" class="headerlink" title="openvSwitch简介"></a>openvSwitch简介</h2><p>openvSwitch 是SDN常用的虚拟交换机，其将普通交换机的数据平面和控制平面相分离，SDN交换机只负责数据的转发，而控制指令则由更上一级的控制器下发</p>
 <h2 id="OpenvSwitch（虚拟交换机）常用模块"><a href="#OpenvSwitch（虚拟交换机）常用模块" class="headerlink" title="OpenvSwitch（虚拟交换机）常用模块"></a>OpenvSwitch（虚拟交换机）常用模块</h2><ul>
@@ -32,7 +32,7 @@
 <li>ovsdb-server </li>
 </ul>
 <p>虚拟交换机配置信息（接口、交换内容、VLAN等）存放的数据库服务，ovs-vswitchd会根据ovsdb-server中的配置工作。<br>ovsdb-server 和ovs-vswitchd 使用OVSDB(JSON-RPC)方式通信<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root      2201     1  0 20:05 ?        00:00:00 ovsdb-server: monitoring pid 2202 (healthy)</div><div class="line">root      2202  2201  0 20:05 ?        00:00:00 ovsdb-server /etc/openvswitch/conf.db -vconsole:emer -vsyslog:err -vfile:info --remote=punix:/var/run/openvswitch/db.sock --private-key=db:Open_vSwitch,SSL,private_key --certificate=db:Open_vSwitch,SSL,certificate --bootstrap-ca-cert=db:Open_vSwitch,SSL,ca_cert --no-chdir --log-file=/var/log/openvswitch/ovsdb-server.log --pidfile=/var/run/openvswitch/ovsdb-server.pid --detach --monitor</div></pre></td></tr></table></figure></p>
-<h2 id="openvSwitch编译"><a href="#openvSwitch编译" class="headerlink" title="openvSwitch编译"></a>openvSwitch编译</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">cat build.sh</div><div class="line"></div><div class="line">apt-get install build-essential libssl-dev linux-headers-$(uname -r) </div><div class="line">apt-get install graphviz autoconf automake bzip2 debhelper dh-autoreconf libssl-dev libtool openssl procps python-all python-qt4 python-twisted-conch python-zopeinterface python-six dkms module-assistant ipsec-tools racoon  libc6-dev  module-init-tools  netbase  python-argparse  uuid-runtime -y</div><div class="line">git clone https://github.com/openvswitch/ovs.git</div><div class="line">cd ovs</div><div class="line">./boot.sh</div><div class="line">./configure --with-linux=/lib/modules/`uname -r`/build</div><div class="line">make</div><div class="line">make install</div><div class="line">make modules_install</div><div class="line">/sbin/modprobe openvswitch</div><div class="line">ovsdb-tool create /usr/local/etc/openvswitch/conf.db vswitchd/vswitch.ovsschema</div><div class="line">ovsdb-server --remote=punix:/usr/local/var/run/openvswitch/db.sock \</div><div class="line">             --remote=db:Open_vSwitch,Open_vSwitch,manager_options \</div><div class="line">             --private-key=db:Open_vSwitch,SSL,private_key \</div><div class="line">             --certificate=db:Open_vSwitch,SSL,certificate \</div><div class="line">             --bootstrap-ca-cert=db:Open_vSwitch,SSL,ca_cert \</div><div class="line">             --pidfile --detach</div><div class="line">ovs-vsctl --no-wait init</div><div class="line">ovs-vswitchd --pidfile --detach</div></pre></td></tr></table></figure>
+<h2 id="openvSwitch编译"><a href="#openvSwitch编译" class="headerlink" title="openvSwitch编译"></a>openvSwitch编译</h2><p>编译环境：ubuntun16.04<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">cat build.sh</div><div class="line"></div><div class="line">apt-get install build-essential libssl-dev linux-headers-$(uname -r) </div><div class="line">apt-get install graphviz autoconf automake bzip2 debhelper dh-autoreconf libssl-dev libtool openssl procps python-all python-qt4 python-twisted-conch python-zopeinterface python-six dkms module-assistant ipsec-tools racoon  libc6-dev  module-init-tools  netbase  python-argparse  uuid-runtime -y</div><div class="line">git clone https://github.com/openvswitch/ovs.git</div><div class="line">cd ovs</div><div class="line">./boot.sh</div><div class="line">./configure --with-linux=/lib/modules/`uname -r`/build</div><div class="line">make</div><div class="line">make install</div><div class="line">make modules_install</div><div class="line">/sbin/modprobe openvswitch</div><div class="line">ovsdb-tool create /usr/local/etc/openvswitch/conf.db vswitchd/vswitch.ovsschema</div><div class="line">ovsdb-server --remote=punix:/usr/local/var/run/openvswitch/db.sock \</div><div class="line">             --remote=db:Open_vSwitch,Open_vSwitch,manager_options \</div><div class="line">             --private-key=db:Open_vSwitch,SSL,private_key \</div><div class="line">             --certificate=db:Open_vSwitch,SSL,certificate \</div><div class="line">             --bootstrap-ca-cert=db:Open_vSwitch,SSL,ca_cert \</div><div class="line">             --pidfile --detach</div><div class="line">ovs-vsctl --no-wait init</div><div class="line">ovs-vswitchd --pidfile --detach</div></pre></td></tr></table></figure></p>
 <blockquote>
 <p>make modules_install 错误<br>ubbuntun16.04报错如下,该错误忽略即可</p>
 </blockquote>
@@ -142,6 +142,8 @@
       <category term="ovs" scheme="http://vcpu.me/tags/ovs/"/>
     
       <category term="虚拟交换机" scheme="http://vcpu.me/tags/%E8%99%9A%E6%8B%9F%E4%BA%A4%E6%8D%A2%E6%9C%BA/"/>
+    
+      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
     
   </entry>
   
