@@ -4,6 +4,28 @@
 
     
   <url>
+    <loc>http://vcpu.me/openvswitch/</loc>
+    <lastmod>2017-07-31T12:18:35.000Z</lastmod>
+    <data>
+        <display>
+        <title>openvSwitch</title>
+        <pubTime>2017-07-31T10:00:00.000Z</pubTime>
+        
+        <tag>ovs</tag>
+         
+        <tag>虚拟交换机</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/iptables/</loc>
     <lastmod>2017-07-27T03:24:52.000Z</lastmod>
     <data>
@@ -581,9 +603,9 @@
         
         <tag>tcp/ip</tag>
          
-        <tag>bind</tag>
-         
         <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>bind</tag>
          
          
            
