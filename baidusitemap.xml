@@ -5,7 +5,7 @@
     
   <url>
     <loc>http://vcpu.me/openvswitch/</loc>
-    <lastmod>2017-07-31T12:18:35.000Z</lastmod>
+    <lastmod>2017-07-31T12:24:08.000Z</lastmod>
     <data>
         <display>
         <title>openvSwitch</title>
@@ -603,9 +603,9 @@
         
         <tag>tcp/ip</tag>
          
-        <tag>kernel3.10.0-514.16.1</tag>
-         
         <tag>bind</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
          
          
            

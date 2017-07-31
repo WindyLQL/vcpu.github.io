@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://vcpu.me/"/>
-  <updated>2017-07-31T12:18:35.000Z</updated>
+  <updated>2017-07-31T12:24:08.000Z</updated>
   <id>http://vcpu.me/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://vcpu.me/openvswitch/"/>
     <id>http://vcpu.me/openvswitch/</id>
     <published>2017-07-31T10:00:00.000Z</published>
-    <updated>2017-07-31T12:18:35.000Z</updated>
+    <updated>2017-07-31T12:24:08.000Z</updated>
     
     <content type="html"><![CDATA[<h2 id="openvSwitch简介"><a href="#openvSwitch简介" class="headerlink" title="openvSwitch简介"></a>openvSwitch简介</h2><p>openvSwitch 是SDN常用的虚拟交换机，其将普通交换机的数据平面和控制平面相分离，SDN交换机只负责数据的转发，而控制指令则由更上一级的控制器下发</p>
 <h2 id="OpenvSwitch（虚拟交换机）常用模块"><a href="#OpenvSwitch（虚拟交换机）常用模块" class="headerlink" title="OpenvSwitch（虚拟交换机）常用模块"></a>OpenvSwitch（虚拟交换机）常用模块</h2><ul>
@@ -78,7 +78,7 @@
 <li>trunk port<br>（1）这个port不配置tag，配置trunks，如果trunks为空，则所有的VLAN都trunk，也就意味着对于所有的VLAN的包，本身带什么VLAN ID，就是携带者什么VLAN ID，<br>（2）如果没有设置VLAN，就属于VLAN 0，全部允许通过。<br>（3）如果trunks不为空，则仅仅带着这些VLAN ID的包通过。</li>
 <li>access port<br>（1）这个port配置tag，从这个port进来的包会被打上这个tag，<br>（2）从其他的trunk port中进来的本身就带有VLAN ID的包，如果VLAN ID等于tag，则会从这个port发出，<br>（3）从其他的access port上来的包，如果tag相同，也会被forward到这个port。<br>（4）从access port发出的包不带VLAN ID。<br>（5）如果一个本身带VLAN ID的包到达access port，即便VLAN ID等于tag，也会被抛弃。</li>
 </ul>
-<h2 id="ovs-bonding链路冗余"><a href="#ovs-bonding链路冗余" class="headerlink" title="ovs bonding链路冗余"></a>ovs bonding链路冗余</h2><h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">          Unsaved               </div><div class="line"></div><div class="line">  192.168.0.101/24</div><div class="line">+---------+            +-------------------------------+</div><div class="line">|         |            |                               |</div><div class="line">|     tap0+------------+tap0     br0                   |</div><div class="line">|         |           ++                               |</div><div class="line">|         |            |       +-------------+         |</div><div class="line">|         |            +---------|bond0|---------------+</div><div class="line">+---------+                    +-------------+</div><div class="line">   ns1                  br0_tap0  |    | br0_tap1</div><div class="line">                                  |    |</div><div class="line">                                  |    |</div><div class="line">                        br1_tap0  |    | br1_tap1</div><div class="line">  192.168.0.102/24            +--------------+</div><div class="line">+---------+            +---------|bond1|---------------+</div><div class="line">|         +------------+      +--------------+         |</div><div class="line">|         |            |                               |</div><div class="line">|         |            |      br1                      |</div><div class="line">|         |            |                               |</div><div class="line">|         |            +-------------------------------+</div><div class="line">+---------+</div><div class="line">   ns2</div></pre></td></tr></table></figure>
+<h2 id="ovs-bonding链路冗余"><a href="#ovs-bonding链路冗余" class="headerlink" title="ovs bonding链路冗余"></a>ovs bonding链路冗余</h2><h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">  192.168.0.101/24</div><div class="line">+---------+            +-------------------------------+</div><div class="line">|         |            |                               |</div><div class="line">|     tap0+------------+tap0     br0                   |</div><div class="line">|         |           ++                               |</div><div class="line">|         |            |       +-------------+         |</div><div class="line">|         |            +---------|bond0|---------------+</div><div class="line">+---------+                    +-------------+</div><div class="line">   ns1                  br0_tap0  |    | br0_tap1</div><div class="line">                                  |    |</div><div class="line">                                  |    |</div><div class="line">                        br1_tap0  |    | br1_tap1</div><div class="line">  192.168.0.102/24            +--------------+</div><div class="line">+---------+            +---------|bond1|---------------+</div><div class="line">|         +------------+      +--------------+         |</div><div class="line">|         |            |                               |</div><div class="line">|         |            |      br1                      |</div><div class="line">|         |            |                               |</div><div class="line">|         |            +-------------------------------+</div><div class="line">+---------+</div><div class="line">   ns2</div></pre></td></tr></table></figure>
 <h3 id="环境搭建脚本"><a href="#环境搭建脚本" class="headerlink" title="环境搭建脚本"></a>环境搭建脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-br br0</div><div class="line">ovs-vsctl add-br br1</div><div class="line">ip link add br0_tap0 type veth peer name br1_tap0</div><div class="line">ip link add br0_tap1 type veth peer name br1_tap1</div><div class="line">ip link set br0_tap0 up</div><div class="line">ip link set br0_tap1 up</div><div class="line">ip link set br1_tap0 up</div><div class="line">ip link set br1_tap1 up</div><div class="line"></div><div class="line">ovs-vsctl add-bond br0 bond0 br0_tap0 br0_tap1 </div><div class="line">ovs-vsctl add-bond br1 bond1 br1_tap0 br1_tap1</div><div class="line"></div><div class="line"></div><div class="line">ip netns add ns1</div><div class="line">ip netns add ns2</div><div class="line">ovs-vsctl add-port br0 tap1 -- set Interface tap1 type=internal</div><div class="line">ip link set tap1 netns ns1</div><div class="line">ip netns exec ns1 ip link set dev tap1 up</div><div class="line">ip netns exec ns1 ip addr add 192.168.1.101/24 dev tap1</div><div class="line"></div><div class="line"></div><div class="line">ovs-vsctl add-port br1 tap2 -- set Interface tap2 type=internal</div><div class="line">ip link set tap2 netns ns2</div><div class="line">ip netns exec ns2 ip link set dev tap2 up</div><div class="line">ip netns exec ns2 ip addr add 192.168.1.102/24 dev tap2</div><div class="line"></div><div class="line"></div><div class="line">ovs-vsctl set Port bond0 lacp=active </div><div class="line">ovs-vsctl set Port bond1 lacp=active</div></pre></td></tr></table></figure>
 <h3 id="环境搭建完成后查看bond"><a href="#环境搭建完成后查看bond" class="headerlink" title="环境搭建完成后查看bond"></a>环境搭建完成后查看bond</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-appctl bond/show</div><div class="line">---- bond1 ----</div><div class="line">bond_mode: active-backup</div><div class="line">bond may use recirculation: no, Recirc-ID : -1</div><div class="line">bond-hash-basis: 0</div><div class="line">updelay: 0 ms</div><div class="line">downdelay: 0 ms</div><div class="line">lacp_status: negotiated</div><div class="line">lacp_fallback_ab: false</div><div class="line">active slave mac: 9e:d9:94:98:26:85(br1_tap0)</div><div class="line"></div><div class="line">slave br1_tap0: enabled</div><div class="line">  active slave</div><div class="line">  may_enable: true</div><div class="line"></div><div class="line">slave br1_tap1: enabled</div><div class="line">  may_enable: true</div><div class="line"></div><div class="line">---- bond0 ----</div><div class="line">bond_mode: active-backup</div><div class="line">bond may use recirculation: no, Recirc-ID : -1</div><div class="line">bond-hash-basis: 0</div><div class="line">updelay: 0 ms</div><div class="line">downdelay: 0 ms</div><div class="line">lacp_status: negotiated</div><div class="line">lacp_fallback_ab: false</div><div class="line">active slave mac: 6a:d8:f8:f3:2b:6d(br0_tap0)</div><div class="line"></div><div class="line">slave br0_tap0: enabled</div><div class="line">  active slave</div><div class="line">  may_enable: true</div><div class="line"></div><div class="line">slave br0_tap1: enabled</div><div class="line">  may_enable: true</div></pre></td></tr></table></figure>
 <p><strong>查看结论：</strong></p>
@@ -830,44 +830,6 @@
   </entry>
   
   <entry>
-    <title>socket读写条件</title>
-    <link href="http://vcpu.me/socket_rw_proc/"/>
-    <id>http://vcpu.me/socket_rw_proc/</id>
-    <published>2017-06-26T11:10:34.000Z</published>
-    <updated>2017-06-26T08:55:50.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="概念说明"><a href="#概念说明" class="headerlink" title="概念说明"></a>概念说明</h2><p>1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：<br>每个套接字有一个接收低水位和一个发送低水位。他们由select函数使用。<br>接收低水位标记是让select返回”可读”时套接字接收缓冲区中所需的数据量。对于TCP,其默认值为1。<br>发送低水位标记是让select返回”可写”时套接字发送缓冲区中所需的可用空间。对于TCP，其默认值常为2048</p>
-<p>通俗的解释一下，缓存区我们当成一个大小为 n bytes的空间，那么：<br>接收区缓存的作用就是，接收对面的数据放在缓存区，供应用程序读。当然了，只有当缓存区可读的数据量(接收低水位标记)到达一定程度（eg:1）的时候，我们才能读到数据，不然不就读不到数据了吗。<br>发送区缓存的作用就是，发送应用程序的数据到缓存区，然后一起发给对面。当然了，只有当缓存区剩余一定空间(发送低水位标记)（eg:2048）,你才能写数据进去，不然可能导致空间不够。</p>
-<p>2.FIN: (结束标志,Finish)用来结束一个TCP回话.但对应端口仍处于开放状态,准备接收后续数据.</p>
-<p>特别纠正说明：</p>
-<blockquote>
-<p>经过测试在3.10.0-514.16.1.el7.x86_64 内核情况下SO_SNDLOWAT/SO_RCVLOWAT<br>默认发送和接收最低水位均为1，也就是说默认情况下低水位值可以不考虑，系统缓冲区有数据就读<br>有空闲就写</p>
-</blockquote>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> value =<span class="number">0</span>;</div><div class="line"><span class="keyword">int</span> v_len = <span class="keyword">sizeof</span>(value);</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_SNDLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"snd low at value: %d\n"</span>,value);</div><div class="line">value = <span class="number">0</span>;</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_RCVLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"rcv low at value: %d\n"</span>,value);</div></pre></td></tr></table></figure>
-<h2 id="socket可读的条件"><a href="#socket可读的条件" class="headerlink" title="socket可读的条件"></a>socket可读的条件</h2><p>下列四个条件中的任何一个满足时,socket准备好读:<br>1.socket的接收缓冲区中的数据字节大于等于该socket的接收缓冲区低水位标记的当前大小。对这样的socket的读操作将不阻塞并返回一个大于0的值 {也就是返回准备好读入的数据}。我们可以用SO_RCVLOWATsocket选项来设置该socket的低水位标记。对于TCP和UDP .socket而言，其缺省值为1</p>
-<p>2.该连接的读这一半关闭{也就是接收了FIN的TCP连接}。对这样的socket的读操作将不阻塞并返回0</p>
-<p>3.socket是一个用于监听的socket,并且已经完成的连接数为非0.这样的soocket处于可读状态,是因为socket收到了对方的connect请求,执行了三次握手的第一步:对方发送SYN请求过来,使监听socket处于可读状态;正常情况下,这样的socket上的accept操作不会阻塞;</p>
-<p>4.有一个socket有异常错误条件待处理。对于这样的socket的读操作将不会阻塞,并且返回一个错误-1,errno则设置成明确的错误条件。这些待处理的错误也可通过指定socket选项SO_ERROR调用getsockopt来取得并清除</p>
-<h2 id="socket可写的条件"><a href="#socket可写的条件" class="headerlink" title="socket可写的条件"></a>socket可写的条件</h2><p>1.socket发送缓冲区中数据字节大于等于该socket发送缓冲区低水位大小。写操作不会被阻塞，会直接返回写入的数据大小，SO_SNDLOWAT socket选项设置socket可写低水位大小。经过测试默认大小为1。<br>2.如果你已经关闭连接，或者主动fin半关闭。这种情况下socket再些将要产生SIGPIPE信号，你没有对这个信号处理的话，你的进程将会被关闭。<br>3.有socket异常错误待处理，这种情况下写操作并不会被阻塞会直接返回一个错误-1，想知道错误原因erron可以帮助你。</p>
-<h2 id="参考地址"><a href="#参考地址" class="headerlink" title="参考地址"></a>参考地址</h2><p><a href="http://blog.csdn.net/szcarewell/article/details/51227540" target="_blank" rel="external">http://blog.csdn.net/szcarewell/article/details/51227540</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;概念说明&quot;&gt;&lt;a href=&quot;#概念说明&quot; class=&quot;headerlink&quot; title=&quot;概念说明&quot;&gt;&lt;/a&gt;概念说明&lt;/h2&gt;&lt;p&gt;1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：&lt;br&gt;每个套接字有一个接收低水位和一个发送低水位。他们
-    
-    </summary>
-    
-      <category term="socket" scheme="http://vcpu.me/categories/socket/"/>
-    
-    
-      <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
-    
-      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
-    
-  </entry>
-  
-  <entry>
     <title>socket信号处理</title>
     <link href="http://vcpu.me/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/"/>
     <id>http://vcpu.me/socket信号处理/</id>
@@ -970,6 +932,44 @@
       <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
     
       <category term="socket信号处理" scheme="http://vcpu.me/tags/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>socket读写条件</title>
+    <link href="http://vcpu.me/socket_rw_proc/"/>
+    <id>http://vcpu.me/socket_rw_proc/</id>
+    <published>2017-06-26T11:10:34.000Z</published>
+    <updated>2017-06-26T08:55:50.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="概念说明"><a href="#概念说明" class="headerlink" title="概念说明"></a>概念说明</h2><p>1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：<br>每个套接字有一个接收低水位和一个发送低水位。他们由select函数使用。<br>接收低水位标记是让select返回”可读”时套接字接收缓冲区中所需的数据量。对于TCP,其默认值为1。<br>发送低水位标记是让select返回”可写”时套接字发送缓冲区中所需的可用空间。对于TCP，其默认值常为2048</p>
+<p>通俗的解释一下，缓存区我们当成一个大小为 n bytes的空间，那么：<br>接收区缓存的作用就是，接收对面的数据放在缓存区，供应用程序读。当然了，只有当缓存区可读的数据量(接收低水位标记)到达一定程度（eg:1）的时候，我们才能读到数据，不然不就读不到数据了吗。<br>发送区缓存的作用就是，发送应用程序的数据到缓存区，然后一起发给对面。当然了，只有当缓存区剩余一定空间(发送低水位标记)（eg:2048）,你才能写数据进去，不然可能导致空间不够。</p>
+<p>2.FIN: (结束标志,Finish)用来结束一个TCP回话.但对应端口仍处于开放状态,准备接收后续数据.</p>
+<p>特别纠正说明：</p>
+<blockquote>
+<p>经过测试在3.10.0-514.16.1.el7.x86_64 内核情况下SO_SNDLOWAT/SO_RCVLOWAT<br>默认发送和接收最低水位均为1，也就是说默认情况下低水位值可以不考虑，系统缓冲区有数据就读<br>有空闲就写</p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> value =<span class="number">0</span>;</div><div class="line"><span class="keyword">int</span> v_len = <span class="keyword">sizeof</span>(value);</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_SNDLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"snd low at value: %d\n"</span>,value);</div><div class="line">value = <span class="number">0</span>;</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_RCVLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"rcv low at value: %d\n"</span>,value);</div></pre></td></tr></table></figure>
+<h2 id="socket可读的条件"><a href="#socket可读的条件" class="headerlink" title="socket可读的条件"></a>socket可读的条件</h2><p>下列四个条件中的任何一个满足时,socket准备好读:<br>1.socket的接收缓冲区中的数据字节大于等于该socket的接收缓冲区低水位标记的当前大小。对这样的socket的读操作将不阻塞并返回一个大于0的值 {也就是返回准备好读入的数据}。我们可以用SO_RCVLOWATsocket选项来设置该socket的低水位标记。对于TCP和UDP .socket而言，其缺省值为1</p>
+<p>2.该连接的读这一半关闭{也就是接收了FIN的TCP连接}。对这样的socket的读操作将不阻塞并返回0</p>
+<p>3.socket是一个用于监听的socket,并且已经完成的连接数为非0.这样的soocket处于可读状态,是因为socket收到了对方的connect请求,执行了三次握手的第一步:对方发送SYN请求过来,使监听socket处于可读状态;正常情况下,这样的socket上的accept操作不会阻塞;</p>
+<p>4.有一个socket有异常错误条件待处理。对于这样的socket的读操作将不会阻塞,并且返回一个错误-1,errno则设置成明确的错误条件。这些待处理的错误也可通过指定socket选项SO_ERROR调用getsockopt来取得并清除</p>
+<h2 id="socket可写的条件"><a href="#socket可写的条件" class="headerlink" title="socket可写的条件"></a>socket可写的条件</h2><p>1.socket发送缓冲区中数据字节大于等于该socket发送缓冲区低水位大小。写操作不会被阻塞，会直接返回写入的数据大小，SO_SNDLOWAT socket选项设置socket可写低水位大小。经过测试默认大小为1。<br>2.如果你已经关闭连接，或者主动fin半关闭。这种情况下socket再些将要产生SIGPIPE信号，你没有对这个信号处理的话，你的进程将会被关闭。<br>3.有socket异常错误待处理，这种情况下写操作并不会被阻塞会直接返回一个错误-1，想知道错误原因erron可以帮助你。</p>
+<h2 id="参考地址"><a href="#参考地址" class="headerlink" title="参考地址"></a>参考地址</h2><p><a href="http://blog.csdn.net/szcarewell/article/details/51227540" target="_blank" rel="external">http://blog.csdn.net/szcarewell/article/details/51227540</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;概念说明&quot;&gt;&lt;a href=&quot;#概念说明&quot; class=&quot;headerlink&quot; title=&quot;概念说明&quot;&gt;&lt;/a&gt;概念说明&lt;/h2&gt;&lt;p&gt;1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：&lt;br&gt;每个套接字有一个接收低水位和一个发送低水位。他们
+    
+    </summary>
+    
+      <category term="socket" scheme="http://vcpu.me/categories/socket/"/>
+    
+    
+      <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
+    
+      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
     
   </entry>
   
@@ -1762,9 +1762,9 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
     
       <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
     
-      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
-    
       <category term="bind" scheme="http://vcpu.me/tags/bind/"/>
+    
+      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
     
   </entry>
   
