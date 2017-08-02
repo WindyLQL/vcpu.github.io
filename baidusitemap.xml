@@ -4,6 +4,32 @@
 
     
   <url>
+    <loc>http://vcpu.me/hub/</loc>
+    <lastmod>2017-08-02T02:17:55.000Z</lastmod>
+    <data>
+        <display>
+        <title>集线器、网桥、交换机、中继器原理</title>
+        <pubTime>2017-07-07T09:22:34.000Z</pubTime>
+        
+        <tag>集线器</tag>
+         
+        <tag>网桥</tag>
+         
+        <tag>中继器</tag>
+         
+        <tag>交换机</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/openvswitch/</loc>
     <lastmod>2017-08-02T02:16:33.000Z</lastmod>
     <data>
@@ -112,32 +138,6 @@
         <tag>地址配置相关命令</tag>
          
         <tag>虚拟命名空间相关命令</tag>
-         
-         
-           
-             
-              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://vcpu.me/hub/</loc>
-    <lastmod>2017-07-07T07:04:56.000Z</lastmod>
-    <data>
-        <display>
-        <title>集线器、网桥、交换机、中继器原理</title>
-        <pubTime>2017-07-07T09:22:34.000Z</pubTime>
-        
-        <tag>集线器</tag>
-         
-        <tag>网桥</tag>
-         
-        <tag>中继器</tag>
-         
-        <tag>交换机</tag>
          
          
            

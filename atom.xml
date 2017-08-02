@@ -501,12 +501,11 @@
     <link href="http://vcpu.me/hub/"/>
     <id>http://vcpu.me/hub/</id>
     <published>2017-07-07T09:22:34.000Z</published>
-    <updated>2017-07-07T07:04:56.000Z</updated>
+    <updated>2017-08-02T02:17:55.000Z</updated>
     
     <content type="html"><![CDATA[<h2 id="集线器"><a href="#集线器" class="headerlink" title="集线器"></a>集线器</h2><p>集线器（HUB），它是工作在物理层的设备，由于它只是工作在物理层的设备，所以它并不关心也不可能关心OSI上面几层所涉及的，它的工作机制流程 是：从一个端口接收到数据包时，会在其他端口把这个包转发一次，因为它不知道也不可能知道这个包是发给谁的（物理层设备只关心电压这些物理概念），它也只能对所有人广播(这里和下文提到的广播该词的意思和ARP请求时的广播有些不同。</p>
 <p>这里的广播意思是：使用物理层转发设备，如HUB，导致的广播，可以说这个广播是被逼的，因为设备的问题！是设备转发包引起的广播！而ARP请求的 广播是自己要求的，主动的，因为ARP请求包的目标地址IP是255.255.255.255，但ARP请求的广播涉及IP层的知识，不在这篇文章讨论的 范围，所以这里提到的广播，除非特别说明，否则都是第一个意思，也就说是”因设备转发数据包引起的广播” )，让他们自己处理了。</p>
-<p>这样一来会有不少问题，你发的数据其他人都收到了，私隐这总东西是不存在的！别入可以随便监听你信息！所以会话劫持在那个年代相当容易（记得俺第一次接触会话劫持这个概念的时候还是高2，那是2001~2002，呵，那时候集线器还是比较普遍的）。</p>
-<p>另外一个比较严重的问题是，如果一个大型的局域网，比如有500台机器，全部用HUB连接的，后果会怎么样呢？？相当慢，网络的效率极差！为什么？ 如果500台机器都发一个包，那就是说每台机器，都需要接收差不多499个无用包…并且如果是需要回应的话……无用的数据包会充斥着整个的局 域网，这就是传说中的广播风暴！</p>
+<p>这样一来会有不少问题，你发的数据其他人都收到了，私隐这总东西是不存在的！别入可以随便监听你信息！所以会话劫持在那个年代相当容易（记得俺第一次接触会话劫持这个概念的时候还是高2，那是2001~2002，呵，那时候集线器还是比较普遍的）。<br><a id="more"></a><br>另外一个比较严重的问题是，如果一个大型的局域网，比如有500台机器，全部用HUB连接的，后果会怎么样呢？？相当慢，网络的效率极差！为什么？ 如果500台机器都发一个包，那就是说每台机器，都需要接收差不多499个无用包…并且如果是需要回应的话……无用的数据包会充斥着整个的局 域网，这就是传说中的广播风暴！</p>
 <p>为了减少广播风暴，网桥产生了（注意这里用的时候“减少”，不是“杜绝”，仅仅是减少!如果仅仅用网桥说能杜绝广播风暴，个人觉得还是不太准确，后来交换机的出现才可以说是完全杜绝了广播风暴的发生）！</p>
 <p>在介绍网桥之前，还想简单介绍另一个物理层的设备：“中继器”，这种设备的作用是把物理层传输的信号放大，由于长距离的传输，信号会有一定的损耗的，这种设备主要解决的就是这个问题。它和HUB的区别是：HUB主要是为了在物理层上转发数据的，所以它不关心电压值的大小，也不会放大物理信号；而中继器它的作用就是为了放大信号用的，SO…..</p>
 <h2 id="网桥"><a href="#网桥" class="headerlink" title="网桥"></a>网桥</h2><p>网桥又称桥接器，英文名Network Bridge，数据链路层设备。它也是转发数据包的设备，但和HUB不一样的是，它工作在数据链路层，HUB只能看懂物理层上的东西（比如一段物理信号），网桥却能看懂一些帧的信息（在链路层上，把上面传下来的数据封装后，封装好了的数据就是帧，但这里我用“数据包”这样的泛指去代替“帧”这个专业术语）。</p>
@@ -534,7 +533,9 @@
     
     <summary type="html">
     
-      &lt;h2 id=&quot;集线器&quot;&gt;&lt;a href=&quot;#集线器&quot; class=&quot;headerlink&quot; title=&quot;集线器&quot;&gt;&lt;/a&gt;集线器&lt;/h2&gt;&lt;p&gt;集线器（HUB），它是工作在物理层的设备，由于它只是工作在物理层的设备，所以它并不关心也不可能关心OSI上面几层所涉及的，它的工作机
+      &lt;h2 id=&quot;集线器&quot;&gt;&lt;a href=&quot;#集线器&quot; class=&quot;headerlink&quot; title=&quot;集线器&quot;&gt;&lt;/a&gt;集线器&lt;/h2&gt;&lt;p&gt;集线器（HUB），它是工作在物理层的设备，由于它只是工作在物理层的设备，所以它并不关心也不可能关心OSI上面几层所涉及的，它的工作机制流程 是：从一个端口接收到数据包时，会在其他端口把这个包转发一次，因为它不知道也不可能知道这个包是发给谁的（物理层设备只关心电压这些物理概念），它也只能对所有人广播(这里和下文提到的广播该词的意思和ARP请求时的广播有些不同。&lt;/p&gt;
+&lt;p&gt;这里的广播意思是：使用物理层转发设备，如HUB，导致的广播，可以说这个广播是被逼的，因为设备的问题！是设备转发包引起的广播！而ARP请求的 广播是自己要求的，主动的，因为ARP请求包的目标地址IP是255.255.255.255，但ARP请求的广播涉及IP层的知识，不在这篇文章讨论的 范围，所以这里提到的广播，除非特别说明，否则都是第一个意思，也就说是”因设备转发数据包引起的广播” )，让他们自己处理了。&lt;/p&gt;
+&lt;p&gt;这样一来会有不少问题，你发的数据其他人都收到了，私隐这总东西是不存在的！别入可以随便监听你信息！所以会话劫持在那个年代相当容易（记得俺第一次接触会话劫持这个概念的时候还是高2，那是2001~2002，呵，那时候集线器还是比较普遍的）。&lt;br&gt;
     
     </summary>
     
@@ -869,44 +870,6 @@
   </entry>
   
   <entry>
-    <title>socket读写条件</title>
-    <link href="http://vcpu.me/socket_rw_proc/"/>
-    <id>http://vcpu.me/socket_rw_proc/</id>
-    <published>2017-06-26T11:10:34.000Z</published>
-    <updated>2017-06-26T08:55:50.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="概念说明"><a href="#概念说明" class="headerlink" title="概念说明"></a>概念说明</h2><p>1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：<br>每个套接字有一个接收低水位和一个发送低水位。他们由select函数使用。<br>接收低水位标记是让select返回”可读”时套接字接收缓冲区中所需的数据量。对于TCP,其默认值为1。<br>发送低水位标记是让select返回”可写”时套接字发送缓冲区中所需的可用空间。对于TCP，其默认值常为2048</p>
-<p>通俗的解释一下，缓存区我们当成一个大小为 n bytes的空间，那么：<br>接收区缓存的作用就是，接收对面的数据放在缓存区，供应用程序读。当然了，只有当缓存区可读的数据量(接收低水位标记)到达一定程度（eg:1）的时候，我们才能读到数据，不然不就读不到数据了吗。<br>发送区缓存的作用就是，发送应用程序的数据到缓存区，然后一起发给对面。当然了，只有当缓存区剩余一定空间(发送低水位标记)（eg:2048）,你才能写数据进去，不然可能导致空间不够。</p>
-<p>2.FIN: (结束标志,Finish)用来结束一个TCP回话.但对应端口仍处于开放状态,准备接收后续数据.</p>
-<p>特别纠正说明：</p>
-<blockquote>
-<p>经过测试在3.10.0-514.16.1.el7.x86_64 内核情况下SO_SNDLOWAT/SO_RCVLOWAT<br>默认发送和接收最低水位均为1，也就是说默认情况下低水位值可以不考虑，系统缓冲区有数据就读<br>有空闲就写</p>
-</blockquote>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> value =<span class="number">0</span>;</div><div class="line"><span class="keyword">int</span> v_len = <span class="keyword">sizeof</span>(value);</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_SNDLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"snd low at value: %d\n"</span>,value);</div><div class="line">value = <span class="number">0</span>;</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_RCVLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"rcv low at value: %d\n"</span>,value);</div></pre></td></tr></table></figure>
-<h2 id="socket可读的条件"><a href="#socket可读的条件" class="headerlink" title="socket可读的条件"></a>socket可读的条件</h2><p>下列四个条件中的任何一个满足时,socket准备好读:<br>1.socket的接收缓冲区中的数据字节大于等于该socket的接收缓冲区低水位标记的当前大小。对这样的socket的读操作将不阻塞并返回一个大于0的值 {也就是返回准备好读入的数据}。我们可以用SO_RCVLOWATsocket选项来设置该socket的低水位标记。对于TCP和UDP .socket而言，其缺省值为1</p>
-<p>2.该连接的读这一半关闭{也就是接收了FIN的TCP连接}。对这样的socket的读操作将不阻塞并返回0</p>
-<p>3.socket是一个用于监听的socket,并且已经完成的连接数为非0.这样的soocket处于可读状态,是因为socket收到了对方的connect请求,执行了三次握手的第一步:对方发送SYN请求过来,使监听socket处于可读状态;正常情况下,这样的socket上的accept操作不会阻塞;</p>
-<p>4.有一个socket有异常错误条件待处理。对于这样的socket的读操作将不会阻塞,并且返回一个错误-1,errno则设置成明确的错误条件。这些待处理的错误也可通过指定socket选项SO_ERROR调用getsockopt来取得并清除</p>
-<h2 id="socket可写的条件"><a href="#socket可写的条件" class="headerlink" title="socket可写的条件"></a>socket可写的条件</h2><p>1.socket发送缓冲区中数据字节大于等于该socket发送缓冲区低水位大小。写操作不会被阻塞，会直接返回写入的数据大小，SO_SNDLOWAT socket选项设置socket可写低水位大小。经过测试默认大小为1。<br>2.如果你已经关闭连接，或者主动fin半关闭。这种情况下socket再些将要产生SIGPIPE信号，你没有对这个信号处理的话，你的进程将会被关闭。<br>3.有socket异常错误待处理，这种情况下写操作并不会被阻塞会直接返回一个错误-1，想知道错误原因erron可以帮助你。</p>
-<h2 id="参考地址"><a href="#参考地址" class="headerlink" title="参考地址"></a>参考地址</h2><p><a href="http://blog.csdn.net/szcarewell/article/details/51227540" target="_blank" rel="external">http://blog.csdn.net/szcarewell/article/details/51227540</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;概念说明&quot;&gt;&lt;a href=&quot;#概念说明&quot; class=&quot;headerlink&quot; title=&quot;概念说明&quot;&gt;&lt;/a&gt;概念说明&lt;/h2&gt;&lt;p&gt;1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：&lt;br&gt;每个套接字有一个接收低水位和一个发送低水位。他们
-    
-    </summary>
-    
-      <category term="socket" scheme="http://vcpu.me/categories/socket/"/>
-    
-    
-      <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
-    
-      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
-    
-  </entry>
-  
-  <entry>
     <title>socket信号处理</title>
     <link href="http://vcpu.me/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/"/>
     <id>http://vcpu.me/socket信号处理/</id>
@@ -1009,6 +972,44 @@
       <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
     
       <category term="socket信号处理" scheme="http://vcpu.me/tags/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>socket读写条件</title>
+    <link href="http://vcpu.me/socket_rw_proc/"/>
+    <id>http://vcpu.me/socket_rw_proc/</id>
+    <published>2017-06-26T11:10:34.000Z</published>
+    <updated>2017-06-26T08:55:50.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="概念说明"><a href="#概念说明" class="headerlink" title="概念说明"></a>概念说明</h2><p>1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：<br>每个套接字有一个接收低水位和一个发送低水位。他们由select函数使用。<br>接收低水位标记是让select返回”可读”时套接字接收缓冲区中所需的数据量。对于TCP,其默认值为1。<br>发送低水位标记是让select返回”可写”时套接字发送缓冲区中所需的可用空间。对于TCP，其默认值常为2048</p>
+<p>通俗的解释一下，缓存区我们当成一个大小为 n bytes的空间，那么：<br>接收区缓存的作用就是，接收对面的数据放在缓存区，供应用程序读。当然了，只有当缓存区可读的数据量(接收低水位标记)到达一定程度（eg:1）的时候，我们才能读到数据，不然不就读不到数据了吗。<br>发送区缓存的作用就是，发送应用程序的数据到缓存区，然后一起发给对面。当然了，只有当缓存区剩余一定空间(发送低水位标记)（eg:2048）,你才能写数据进去，不然可能导致空间不够。</p>
+<p>2.FIN: (结束标志,Finish)用来结束一个TCP回话.但对应端口仍处于开放状态,准备接收后续数据.</p>
+<p>特别纠正说明：</p>
+<blockquote>
+<p>经过测试在3.10.0-514.16.1.el7.x86_64 内核情况下SO_SNDLOWAT/SO_RCVLOWAT<br>默认发送和接收最低水位均为1，也就是说默认情况下低水位值可以不考虑，系统缓冲区有数据就读<br>有空闲就写</p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> value =<span class="number">0</span>;</div><div class="line"><span class="keyword">int</span> v_len = <span class="keyword">sizeof</span>(value);</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_SNDLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"snd low at value: %d\n"</span>,value);</div><div class="line">value = <span class="number">0</span>;</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_RCVLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"rcv low at value: %d\n"</span>,value);</div></pre></td></tr></table></figure>
+<h2 id="socket可读的条件"><a href="#socket可读的条件" class="headerlink" title="socket可读的条件"></a>socket可读的条件</h2><p>下列四个条件中的任何一个满足时,socket准备好读:<br>1.socket的接收缓冲区中的数据字节大于等于该socket的接收缓冲区低水位标记的当前大小。对这样的socket的读操作将不阻塞并返回一个大于0的值 {也就是返回准备好读入的数据}。我们可以用SO_RCVLOWATsocket选项来设置该socket的低水位标记。对于TCP和UDP .socket而言，其缺省值为1</p>
+<p>2.该连接的读这一半关闭{也就是接收了FIN的TCP连接}。对这样的socket的读操作将不阻塞并返回0</p>
+<p>3.socket是一个用于监听的socket,并且已经完成的连接数为非0.这样的soocket处于可读状态,是因为socket收到了对方的connect请求,执行了三次握手的第一步:对方发送SYN请求过来,使监听socket处于可读状态;正常情况下,这样的socket上的accept操作不会阻塞;</p>
+<p>4.有一个socket有异常错误条件待处理。对于这样的socket的读操作将不会阻塞,并且返回一个错误-1,errno则设置成明确的错误条件。这些待处理的错误也可通过指定socket选项SO_ERROR调用getsockopt来取得并清除</p>
+<h2 id="socket可写的条件"><a href="#socket可写的条件" class="headerlink" title="socket可写的条件"></a>socket可写的条件</h2><p>1.socket发送缓冲区中数据字节大于等于该socket发送缓冲区低水位大小。写操作不会被阻塞，会直接返回写入的数据大小，SO_SNDLOWAT socket选项设置socket可写低水位大小。经过测试默认大小为1。<br>2.如果你已经关闭连接，或者主动fin半关闭。这种情况下socket再些将要产生SIGPIPE信号，你没有对这个信号处理的话，你的进程将会被关闭。<br>3.有socket异常错误待处理，这种情况下写操作并不会被阻塞会直接返回一个错误-1，想知道错误原因erron可以帮助你。</p>
+<h2 id="参考地址"><a href="#参考地址" class="headerlink" title="参考地址"></a>参考地址</h2><p><a href="http://blog.csdn.net/szcarewell/article/details/51227540" target="_blank" rel="external">http://blog.csdn.net/szcarewell/article/details/51227540</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;概念说明&quot;&gt;&lt;a href=&quot;#概念说明&quot; class=&quot;headerlink&quot; title=&quot;概念说明&quot;&gt;&lt;/a&gt;概念说明&lt;/h2&gt;&lt;p&gt;1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：&lt;br&gt;每个套接字有一个接收低水位和一个发送低水位。他们
+    
+    </summary>
+    
+      <category term="socket" scheme="http://vcpu.me/categories/socket/"/>
+    
+    
+      <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
+    
+      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
     
   </entry>
   
