@@ -2,16 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://vcpu.me/hub/</loc>
+    <loc>http://vcpu.me/openvswitch1/</loc>
     
-    <lastmod>2017-08-02T02:17:55.000Z</lastmod>
+    <lastmod>2017-08-03T07:32:28.000Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://vcpu.me/openvswitch/</loc>
     
-    <lastmod>2017-08-02T02:16:33.000Z</lastmod>
+    <lastmod>2017-08-03T07:24:09.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://vcpu.me/hub/</loc>
+    
+    <lastmod>2017-08-02T02:17:55.000Z</lastmod>
     
   </url>
   

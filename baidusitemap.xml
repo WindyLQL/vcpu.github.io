@@ -4,6 +4,60 @@
 
     
   <url>
+    <loc>http://vcpu.me/openvswitch1/</loc>
+    <lastmod>2017-08-03T07:32:28.000Z</lastmod>
+    <data>
+        <display>
+        <title>openvSwitch mirror、Qos、STP</title>
+        <pubTime>2017-08-03T10:00:00.000Z</pubTime>
+        
+        <tag>ovs</tag>
+         
+        <tag>虚拟交换机</tag>
+         
+        <tag>ubuntun16.04</tag>
+         
+        <tag>mirror</tag>
+         
+        <tag>Qos</tag>
+         
+        <tag>STP</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/openvswitch/</loc>
+    <lastmod>2017-08-03T07:24:09.000Z</lastmod>
+    <data>
+        <display>
+        <title>openvSwitch</title>
+        <pubTime>2017-07-31T10:00:00.000Z</pubTime>
+        
+        <tag>ovs</tag>
+         
+        <tag>虚拟交换机</tag>
+         
+        <tag>ubuntun16.04</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/hub/</loc>
     <lastmod>2017-08-02T02:17:55.000Z</lastmod>
     <data>
@@ -18,30 +72,6 @@
         <tag>中继器</tag>
          
         <tag>交换机</tag>
-         
-         
-           
-             
-              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://vcpu.me/openvswitch/</loc>
-    <lastmod>2017-08-02T02:16:33.000Z</lastmod>
-    <data>
-        <display>
-        <title>openvSwitch</title>
-        <pubTime>2017-07-31T10:00:00.000Z</pubTime>
-        
-        <tag>ovs</tag>
-         
-        <tag>虚拟交换机</tag>
-         
-        <tag>ubuntun16.04</tag>
          
          
            
