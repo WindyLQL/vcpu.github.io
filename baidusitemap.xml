@@ -4,6 +4,30 @@
 
     
   <url>
+    <loc>http://vcpu.me/f-stack%E5%AE%89%E8%A3%85/</loc>
+    <lastmod>2017-08-07T10:58:32.000Z</lastmod>
+    <data>
+        <display>
+        <title>f-stack安装运行</title>
+        <pubTime>2017-06-12T09:50:55.000Z</pubTime>
+        
+        <tag>DPDK</tag>
+         
+        <tag>f-stack</tag>
+         
+        <tag>nginx</tag>
+         
+         
+           
+             
+              <breadCrumb title="DPDK" url="http://vcpu.me/categories/DPDK/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/openvswitch2/</loc>
     <lastmod>2017-08-07T09:45:44.000Z</lastmod>
     <data>
@@ -301,30 +325,6 @@
            
              
               <breadCrumb title="TCP" url="http://vcpu.me/categories/TCP/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://vcpu.me/f-stack%E5%AE%89%E8%A3%85/</loc>
-    <lastmod>2017-07-04T06:38:48.000Z</lastmod>
-    <data>
-        <display>
-        <title>f-stack安装运行</title>
-        <pubTime>2017-06-12T09:50:55.000Z</pubTime>
-        
-        <tag>DPDK</tag>
-         
-        <tag>f-stack</tag>
-         
-        <tag>nginx</tag>
-         
-         
-           
-             
-              <breadCrumb title="DPDK" url="http://vcpu.me/categories/DPDK/"/>
           
         </display>
     </data>
