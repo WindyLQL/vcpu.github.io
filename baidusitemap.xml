@@ -4,12 +4,12 @@
 
     
   <url>
-    <loc>http://vcpu.me/openvswitch2/</loc>
-    <lastmod>2017-08-03T11:21:49.000Z</lastmod>
+    <loc>http://vcpu.me/ipenvswitch3/</loc>
+    <lastmod>2017-08-07T07:39:02.000Z</lastmod>
     <data>
         <display>
-        <title>openvSwitch tunnel</title>
-        <pubTime>2017-08-03T10:00:00.000Z</pubTime>
+        <title>openvSwitch flow</title>
+        <pubTime>2017-08-07T10:00:00.000Z</pubTime>
         
         <tag>ovs</tag>
          
@@ -17,19 +17,28 @@
          
         <tag>ubuntun16.04</tag>
          
-        <tag>gre</tag>
-         
-        <tag>vxlan</tag>
-         
-        <tag>ovx tunnel</tag>
-         
-        <tag>ipsec gre</tag>
+        <tag>ovs-ofctl</tag>
          
          
            
              
               <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/openvswitch2/</loc>
+    <lastmod>2017-08-03T11:26:43.000Z</lastmod>
+    <data>
+        <display>
+        <title></title>
+        <pubTime>2017-08-03T11:00:30.000Z</pubTime>
+        
+         
+           
         </display>
     </data>
     </url>
@@ -239,9 +248,9 @@
         <title>拥塞控制</title>
         <pubTime>2017-07-04T10:00:00.000Z</pubTime>
         
-        <tag>拥塞控制</tag>
-         
         <tag>tcp/ip</tag>
+         
+        <tag>拥塞控制</tag>
          
         <tag>Linux拥塞控制基本概念</tag>
          
