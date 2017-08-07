@@ -319,6 +319,167 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/Linux系统调用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/Linux系统调用/" itemprop="url">Linux系统调用</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-22T18:10:14+08:00">
+                2017-06-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/Linux系统调用/" class="leancloud_visitors" data-flag-title="Linux系统调用">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="什么事系统调用"><a href="#什么事系统调用" class="headerlink" title="什么事系统调用"></a>什么事系统调用</h2><ul>
+<li>linux虚拟地址空间分为用户空间和内核空间</li>
+<li>用户空间不可直接访问内核空间，帝王班的内核空间可直接访问用户空间</li>
+<li>用户空间只能通过系统调用访问内核空间</li>
+<li>系统调用时内核提供的一组函数接口，使得用户空间上进程可以和内核空间交互</li>
+</ul>
+<h2 id="系统调用过程"><a href="#系统调用过程" class="headerlink" title="系统调用过程"></a>系统调用过程</h2><ul>
+<li>执行用户程序</li>
+<li>根据glibc中实现，取得系统调用号，将其存入EAX并执行int $0x80（128号中断）</li>
+<li>用户态可以传递变量、参数值给内核，内核态运行时候会保存用户进程的一些寄存器值等（上下文环境）</li>
+<li>触发中断后内核根据系统调用号执行对应的中断处理函数 </li>
+<li>系统调用结束将访问址存入EAX，返回中断处理函数</li>
+<li>中断处理函数根据存储用户态进程上下文环境恢复用户态，同时用户态就获取了内核态函数执行的返回值</li>
+</ul>
+<h2 id="系统调用汇编"><a href="#系统调用汇编" class="headerlink" title="系统调用汇编"></a>系统调用汇编</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">// pid = fork();</div><div class="line">asm volatile(</div><div class="line">    &quot;mov $0x2, %%eax\n\t&quot; // 将fork的系统调用号2存到eax寄存器  </div><div class="line">    &quot;int $0x80\n\t&quot;       // 产生int 0x80中断</div><div class="line">    &quot;mov %%eax,%0\n\t&quot;    // 将结果存入pid中</div><div class="line">    : &quot;=m&quot; (pid)</div></pre></td></tr></table></figure>
+<h2 id="系统调用实现分析"><a href="#系统调用实现分析" class="headerlink" title="系统调用实现分析"></a>系统调用实现分析</h2><p>待续</p>
+<h2 id="添加系统调用"><a href="#添加系统调用" class="headerlink" title="添加系统调用"></a>添加系统调用</h2><p>待续</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://vcpu.me/tcp_sndbuf/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1703,165 +1864,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/systemtap使用调试记录（一）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/systemtap使用调试记录（一）/" itemprop="url">systemtap使用调试记录（一）</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-05T18:15:52+08:00">
-                2017-06-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux-kernel/" itemprop="url" rel="index">
-                    <span itemprop="name">linux kernel</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/systemtap使用调试记录（一）/" class="leancloud_visitors" data-flag-title="systemtap使用调试记录（一）">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="systemtap使用调试记录（一）"><a href="#systemtap使用调试记录（一）" class="headerlink" title="systemtap使用调试记录（一）"></a>systemtap使用调试记录（一）</h1><h2 id="一、调试环境介绍"><a href="#一、调试环境介绍" class="headerlink" title="一、调试环境介绍"></a>一、调试环境介绍</h2><pre><code>Linux 3.10.0-514.16.1.el7.x86_64 
-kernel-devel-3.10.0-514.16.1.el7.x86_64.rpm 同版本的开发头文件
-kernel-debuginfo-common-x86_64-3.10.0-514.16.1.el7.x86_64.rpm
-kernel-debuginfo-3.10.0-514.16.1.el7.x86_64.rpm 同版本调试数据包
-linux-3.10.0-514.16.1.el7.tar.xz 同版本的源码
-</code></pre><p><a href="https://centos.pkgs.org/7/centos-updates-x86_64/kernel-devel-3.10.0-514.16.1.el7.x86_64.rpm.html" target="_blank" rel="external"><em>kernel开发头文件下载地址</em></a><br><a href="http://debuginfo.centos.org/7/x86_64/kernel-debuginfo-3.10.0-514.16.1.el7.x86_64.rpm" target="_blank" rel="external"><em>kernel调试包下载地址</em></a><br><a href="http://debuginfo.centos.org/7/x86_64/kernel-debuginfo-common-x86_64-3.10.0-514.16.1.el7.x86_64.rpm" target="_blank" rel="external"><em>kernel调试common包下载地址</em></a><br><a href="https://wiki.centos.org/zh/HowTos/I_need_the_Kernel_Source#head-963cd44439b8c10fa507fa0c90725029c060108a" target="_blank" rel="external">根据当前虚拟机获取内核代码的方法</a></p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/systemtap使用调试记录（一）/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1906,7 +1913,7 @@ linux-3.10.0-514.16.1.el7.tar.xz 同版本的源码
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-count">31</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1928,7 +1935,7 @@ linux-3.10.0-514.16.1.el7.tar.xz 同版本的源码
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-count">56</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
