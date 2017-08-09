@@ -95,21 +95,21 @@
 
 
 
-<meta name="description" content="Security group(安全组)概念安全组是通过Linux IPtables实现的，安全组对象是虚拟网卡，由L2 Agent（neutron_openvswitch_agent、neutron_linuxbridfe_agent）实现,在计算节点上通过iptables规则限制虚拟网卡流量进出。其容易和FW混淆，FW主要是异常流量隔离，一般负责跨子网流量不管虚拟网卡间通讯流量。 neutron">
+<meta name="description" content="Security group(安全组)概念安全组是通过Linux IPtables实现的，安全组对象是虚拟网卡，由L2 Agent（neutron_openvswitch_agent、neutron_linuxbridfe_agent）实现,在计算节点上通过iptables规则限制虚拟网卡流量进出。其容易和FW混淆，FW主要是异常流量隔离，一般负责跨子网流量不管虚拟网卡间通讯流量。">
 <meta name="keywords" content="ubuntun16.04,Security group,安全组">
 <meta property="og:type" content="article">
 <meta property="og:title" content="openstack Security group">
 <meta property="og:url" content="http://vcpu.me/secritygroup/index.html">
 <meta property="og:site_name" content="i博客">
-<meta property="og:description" content="Security group(安全组)概念安全组是通过Linux IPtables实现的，安全组对象是虚拟网卡，由L2 Agent（neutron_openvswitch_agent、neutron_linuxbridfe_agent）实现,在计算节点上通过iptables规则限制虚拟网卡流量进出。其容易和FW混淆，FW主要是异常流量隔离，一般负责跨子网流量不管虚拟网卡间通讯流量。 neutron">
+<meta property="og:description" content="Security group(安全组)概念安全组是通过Linux IPtables实现的，安全组对象是虚拟网卡，由L2 Agent（neutron_openvswitch_agent、neutron_linuxbridfe_agent）实现,在计算节点上通过iptables规则限制虚拟网卡流量进出。其容易和FW混淆，FW主要是异常流量隔离，一般负责跨子网流量不管虚拟网卡间通讯流量。">
 <meta property="og:image" content="http://vcpu.me/myimages/self_service.png">
 <meta property="og:image" content="http://vcpu.me/myimages/compute_input.png">
 <meta property="og:image" content="http://vcpu.me/myimages/compute_output.png">
 <meta property="og:image" content="http://vcpu.me/myimages/compute_forward.png">
-<meta property="og:updated_time" content="2017-08-09T06:53:08.000Z">
+<meta property="og:updated_time" content="2017-08-09T06:59:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="openstack Security group">
-<meta name="twitter:description" content="Security group(安全组)概念安全组是通过Linux IPtables实现的，安全组对象是虚拟网卡，由L2 Agent（neutron_openvswitch_agent、neutron_linuxbridfe_agent）实现,在计算节点上通过iptables规则限制虚拟网卡流量进出。其容易和FW混淆，FW主要是异常流量隔离，一般负责跨子网流量不管虚拟网卡间通讯流量。 neutron">
+<meta name="twitter:description" content="Security group(安全组)概念安全组是通过Linux IPtables实现的，安全组对象是虚拟网卡，由L2 Agent（neutron_openvswitch_agent、neutron_linuxbridfe_agent）实现,在计算节点上通过iptables规则限制虚拟网卡流量进出。其容易和FW混淆，FW主要是异常流量隔离，一般负责跨子网流量不管虚拟网卡间通讯流量。">
 <meta name="twitter:image" content="http://vcpu.me/myimages/self_service.png">
 
 
@@ -434,7 +434,7 @@
       
 
       
-        <h1 id="Security-group-安全组-概念"><a href="#Security-group-安全组-概念" class="headerlink" title="Security group(安全组)概念"></a>Security group(安全组)概念</h1><p>安全组是通过Linux IPtables实现的，安全组对象是虚拟网卡，由L2 Agent（neutron_openvswitch_agent、neutron_linuxbridfe_agent）实现,在计算节点上通过iptables规则限制虚拟网卡流量进出。其容易和FW混淆，FW主要是异常流量隔离，一般负责跨子网流量不管虚拟网卡间通讯流量。</p>
+        <h1 id="Security-group-安全组-概念"><a href="#Security-group-安全组-概念" class="headerlink" title="Security group(安全组)概念"></a>Security group(安全组)概念</h1><p>安全组是通过Linux IPtables实现的，安全组对象是虚拟网卡，由L2 Agent（neutron_openvswitch_agent、neutron_linuxbridfe_agent）实现,在计算节点上通过iptables规则限制虚拟网卡流量进出。其容易和FW混淆，FW主要是异常流量隔离，一般负责跨子网流量不管虚拟网卡间通讯流量。<br><a id="more"></a></p>
 <h2 id="neutron-port-list-列出属于租户的所有接口"><a href="#neutron-port-list-列出属于租户的所有接口" class="headerlink" title="neutron port-list 列出属于租户的所有接口"></a>neutron port-list 列出属于租户的所有接口</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">root@controller:~# . demo-openrc</div><div class="line">root@controller:~# neutron port-list</div><div class="line">+--------------------------------------+------+-------------------+--------------------------------------------+</div><div class="line">| id                                   | name | mac_address       | fixed_ips                                  |</div><div class="line">+--------------------------------------+------+-------------------+--------------------------------------------+</div><div class="line">| 44a3abfa-1203-48d8-b83c-0c8657853db9 |      | fa:16:3e:71:34:ed | &#123;&quot;subnet_id&quot;: &quot;f746bd76-5bb3-4432-8fde-    |</div><div class="line">|                                      |      |                   | 66ccf8c59da9&quot;, &quot;ip_address&quot;: &quot;172.16.1.7&quot;&#125; |</div><div class="line">| d879832c-1ec1-429e-8e4f-2e11506435a4 |      | fa:16:3e:2e:09:4b | &#123;&quot;subnet_id&quot;: &quot;f746bd76-5bb3-4432-8fde-    |</div><div class="line">|                                      |      |                   | 66ccf8c59da9&quot;, &quot;ip_address&quot;: &quot;172.16.1.1&quot;&#125; |</div><div class="line">| f804cbf3-c4e8-4f66-ade5-87661591ecca |      | fa:16:3e:f2:22:5d | &#123;&quot;subnet_id&quot;: &quot;f746bd76-5bb3-4432-8fde-    |</div><div class="line">|                                      |      |                   | 66ccf8c59da9&quot;, &quot;ip_address&quot;: &quot;172.16.1.2&quot;&#125; |</div><div class="line">+--------------------------------------+------+-------------------+--------------------------------------------+</div></pre></td></tr></table></figure>
 <h1 id="openstack连接拓扑图（在此基础上研究安全组概念）"><a href="#openstack连接拓扑图（在此基础上研究安全组概念）" class="headerlink" title="openstack连接拓扑图（在此基础上研究安全组概念）"></a>openstack连接拓扑图（在此基础上研究安全组概念）</h1><p><img src="/myimages/self_service.png" alt="self_service"></p>
 <h2 id="查看计算节点INPUT链"><a href="#查看计算节点INPUT链" class="headerlink" title="查看计算节点INPUT链"></a>查看计算节点INPUT链</h2><p><strong>总结图：</strong><br><img src="/myimages/compute_input.png" alt="compute_input"></p>
