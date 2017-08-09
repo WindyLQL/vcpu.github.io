@@ -1,0 +1,1298 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ubuntun16.04,Security group,安全组," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="i博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="Security group(安全组)概念安全组是通过Linux IPtables实现的，安全组对象是虚拟网卡，由L2 Agent（neutron_openvswitch_agent、neutron_linuxbridfe_agent）实现,在计算节点上通过iptables规则限制虚拟网卡流量进出。其容易和FW混淆，FW主要是忘不流量隔离，一般负责跨子网流量不管虚拟网卡间通讯流量。 neutron">
+<meta name="keywords" content="ubuntun16.04,Security group,安全组">
+<meta property="og:type" content="article">
+<meta property="og:title" content="openstack Security group">
+<meta property="og:url" content="http://vcpu.me/secritygroup/index.html">
+<meta property="og:site_name" content="i博客">
+<meta property="og:description" content="Security group(安全组)概念安全组是通过Linux IPtables实现的，安全组对象是虚拟网卡，由L2 Agent（neutron_openvswitch_agent、neutron_linuxbridfe_agent）实现,在计算节点上通过iptables规则限制虚拟网卡流量进出。其容易和FW混淆，FW主要是忘不流量隔离，一般负责跨子网流量不管虚拟网卡间通讯流量。 neutron">
+<meta property="og:image" content="http://vcpu.me/myimages/compute_input.png">
+<meta property="og:image" content="http://vcpu.me/myimages/compute_output.png">
+<meta property="og:image" content="http://vcpu.me/myimages/compute_forward.png">
+<meta property="og:updated_time" content="2017-08-09T06:40:25.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="openstack Security group">
+<meta name="twitter:description" content="Security group(安全组)概念安全组是通过Linux IPtables实现的，安全组对象是虚拟网卡，由L2 Agent（neutron_openvswitch_agent、neutron_linuxbridfe_agent）实现,在计算节点上通过iptables规则限制虚拟网卡流量进出。其容易和FW混淆，FW主要是忘不流量隔离，一般负责跨子网流量不管虚拟网卡间通讯流量。 neutron">
+<meta name="twitter:image" content="http://vcpu.me/myimages/compute_input.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://vcpu.me/secritygroup/"/>
+
+
+
+
+
+  <title>openstack Security group | i博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">i博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">仰望星空前，还需脚踏实地。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/secritygroup/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">openstack Security group</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-09T18:00:00+08:00">
+                2017-08-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/openstack/" itemprop="url" rel="index">
+                    <span itemprop="name">openstack</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/secritygroup/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/secritygroup/" class="leancloud_visitors" data-flag-title="openstack Security group">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Security-group-安全组-概念"><a href="#Security-group-安全组-概念" class="headerlink" title="Security group(安全组)概念"></a>Security group(安全组)概念</h2><p>安全组是通过Linux IPtables实现的，安全组对象是虚拟网卡，由L2 Agent（neutron_openvswitch_agent、neutron_linuxbridfe_agent）实现,在计算节点上通过iptables规则限制虚拟网卡流量进出。其容易和FW混淆，FW主要是忘不流量隔离，一般负责跨子网流量不管虚拟网卡间通讯流量。</p>
+<h2 id="neutron-port-list-列出属于租户的所有接口"><a href="#neutron-port-list-列出属于租户的所有接口" class="headerlink" title="neutron port-list 列出属于租户的所有接口"></a>neutron port-list 列出属于租户的所有接口</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">root@controller:~# . demo-openrc</div><div class="line">root@controller:~# neutron port-list</div><div class="line">+--------------------------------------+------+-------------------+--------------------------------------------+</div><div class="line">| id                                   | name | mac_address       | fixed_ips                                  |</div><div class="line">+--------------------------------------+------+-------------------+--------------------------------------------+</div><div class="line">| 44a3abfa-1203-48d8-b83c-0c8657853db9 |      | fa:16:3e:71:34:ed | &#123;&quot;subnet_id&quot;: &quot;f746bd76-5bb3-4432-8fde-    |</div><div class="line">|                                      |      |                   | 66ccf8c59da9&quot;, &quot;ip_address&quot;: &quot;172.16.1.7&quot;&#125; |</div><div class="line">| d879832c-1ec1-429e-8e4f-2e11506435a4 |      | fa:16:3e:2e:09:4b | &#123;&quot;subnet_id&quot;: &quot;f746bd76-5bb3-4432-8fde-    |</div><div class="line">|                                      |      |                   | 66ccf8c59da9&quot;, &quot;ip_address&quot;: &quot;172.16.1.1&quot;&#125; |</div><div class="line">| f804cbf3-c4e8-4f66-ade5-87661591ecca |      | fa:16:3e:f2:22:5d | &#123;&quot;subnet_id&quot;: &quot;f746bd76-5bb3-4432-8fde-    |</div><div class="line">|                                      |      |                   | 66ccf8c59da9&quot;, &quot;ip_address&quot;: &quot;172.16.1.2&quot;&#125; |</div><div class="line">+--------------------------------------+------+-------------------+--------------------------------------------+</div></pre></td></tr></table></figure>
+<h2 id="查看计算节点INPUT链"><a href="#查看计算节点INPUT链" class="headerlink" title="查看计算节点INPUT链"></a>查看计算节点INPUT链</h2><p><strong>总结图：</strong><br><img src="/myimages/compute_input.png" alt="compute_input"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL INPUT</div><div class="line">Chain INPUT (policy ACCEPT 36472 packets, 8475K bytes)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1    33322 7781K nova-compute-INPUT  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">2    36472 8475K neutron-linuxbri-INPUT  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">3        0     0 ACCEPT     udp  --  virbr0 *       0.0.0.0/0            0.0.0.0/0            udp dpt:53</div><div class="line">4        0     0 ACCEPT     tcp  --  virbr0 *       0.0.0.0/0            0.0.0.0/0            tcp dpt:53</div><div class="line">5        0     0 ACCEPT     udp  --  virbr0 *       0.0.0.0/0            0.0.0.0/0            udp dpt:67</div><div class="line">6        0     0 ACCEPT     tcp  --  virbr0 *       0.0.0.0/0            0.0.0.0/0            tcp dpt:67</div></pre></td></tr></table></figure>
+<p>上述3、4、5、6策略放通dns和dhcp流量使用</p>
+<h3 id="根据策略1继续查看-nova-compute-INPUT"><a href="#根据策略1继续查看-nova-compute-INPUT" class="headerlink" title="根据策略1继续查看 nova-compute-INPUT"></a>根据策略1继续查看 nova-compute-INPUT</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL nova-compute-INPUT</div><div class="line">Chain nova-compute-INPUT (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div></pre></td></tr></table></figure>
+<h3 id="根据策略2继续查看-neutron-linuxbri-INPUT"><a href="#根据策略2继续查看-neutron-linuxbri-INPUT" class="headerlink" title="根据策略2继续查看 neutron-linuxbri-INPUT"></a>根据策略2继续查看 neutron-linuxbri-INPUT</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Chain neutron-linuxbri-INPUT (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1        0     0 neutron-linuxbri-o44a3abfa-1  all  --  *      *       0.0.0.0/0            0.0.0.0/0            PHYSDEV match --physdev-in tap44a3abfa-12 --physdev-is-bridged /* Direct incoming traffic from VM to the security group chain. */</div></pre></td></tr></table></figure>
+<p>linux桥和vm互联接口为tap44a3abfa-12，vm发出流量，查找INPUT链最终会查找neutron-linuxbri-o44a3abfa-1</p>
+<h4 id="根据策略1-继续查看neutron-linuxbri-o44a3abfa-1"><a href="#根据策略1-继续查看neutron-linuxbri-o44a3abfa-1" class="headerlink" title="根据策略1 继续查看neutron-linuxbri-o44a3abfa-1"></a>根据策略1 继续查看neutron-linuxbri-o44a3abfa-1</h4><p>root@compute:~# iptables –line-numbers -vnL  neutron-linuxbri-o44a3abfa-1<br>Chain neutron-linuxbri-o44a3abfa-1 (2 references)<br>num   pkts bytes target     prot opt in     out     source               destination<br>1        2   648 RETURN     udp  –  <em>      </em>       0.0.0.0              255.255.255.255      udp spt:68 dpt:67 /<em> Allow DHCP client traffic. </em>/<br>2      904  106K neutron-linuxbri-s44a3abfa-1  all  –  <em>      </em>       0.0.0.0/0            0.0.0.0/0<br>3        0     0 RETURN     udp  –  <em>      </em>       0.0.0.0/0            0.0.0.0/0            udp spt:68 dpt:67 /<em> Allow DHCP client traffic. </em>/<br>4        0     0 DROP       udp  –  <em>      </em>       0.0.0.0/0            0.0.0.0/0            udp spt:67 udp dpt:68 /<em> Prevent DHCP Spoofing by VM. </em>/<br>5      865  103K RETURN     all  –  <em>      </em>       0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED /<em> Direct packets associated with a known session to the RETURN chain. </em>/<br>6       39  2573 RETURN     all  –  <em>      </em>       0.0.0.0/0            0.0.0.0/0<br>7        0     0 DROP       all  –  <em>      </em>       0.0.0.0/0            0.0.0.0/0            state INVALID /<em> Drop packets that appear related to an existing connection (e.g. TCP ACK/FIN) but do not have an entry in conntrack. </em>/<br>8        0     0 neutron-linuxbri-sg-fallback  all  –  <em>      </em>       0.0.0.0/0            0.0.0.0/0            /<em> Send unmatched traffic to the fallback chain. </em>/</p>
+<p>DHCP广播地址、vm发包的ip和mac必须是vm分配的</p>
+<h4 id="neutron-linuxbri-s44a3abfa-1-检查流量源ip和mac是否为已分配（防止伪装地址攻击）"><a href="#neutron-linuxbri-s44a3abfa-1-检查流量源ip和mac是否为已分配（防止伪装地址攻击）" class="headerlink" title="neutron-linuxbri-s44a3abfa-1 检查流量源ip和mac是否为已分配（防止伪装地址攻击）"></a>neutron-linuxbri-s44a3abfa-1 检查流量源ip和mac是否为已分配（防止伪装地址攻击）</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL  neutron-linuxbri-s44a3abfa-1</div><div class="line">Chain neutron-linuxbri-s44a3abfa-1 (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1      904  106K RETURN     all  --  *      *       172.16.1.7           0.0.0.0/0            MAC FA:16:3E:71:34:ED /* Allow traffic from defined IP/MAC pairs. */</div><div class="line">2        0     0 DROP       all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* Drop traffic without an IP/MAC allow rule. */</div><div class="line">root@compute:~#</div></pre></td></tr></table></figure>
+<p>该链表主要检查从vm发出来的数据包，是否是openstack所分配的IP和MAC，如果不匹配，禁止通过。此处是为了防止利用VM上进行一些伪装地址的攻击。</p>
+<h2 id="查看计算节点OUTPUT链"><a href="#查看计算节点OUTPUT链" class="headerlink" title="查看计算节点OUTPUT链"></a>查看计算节点OUTPUT链</h2><p><strong>总结图：</strong><br><img src="/myimages/compute_output.png" alt="compute_output"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL OUTPUT</div><div class="line">Chain OUTPUT (policy ACCEPT 37285 packets, 8946K bytes)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1     140K   33M nova-filter-top  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">2    34104 8216K nova-compute-OUTPUT  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">3    37285 8946K neutron-filter-top  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">4    37285 8946K neutron-linuxbri-OUTPUT  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">5        0     0 ACCEPT     udp  --  *      virbr0  0.0.0.0/0            0.0.0.0/0            udp dpt:68</div></pre></td></tr></table></figure>
+<h3 id="策略1从OUTPUT跳转到nova-filter-top跳转nova-compute-local"><a href="#策略1从OUTPUT跳转到nova-filter-top跳转nova-compute-local" class="headerlink" title="策略1从OUTPUT跳转到nova-filter-top跳转nova-compute-local"></a>策略1从OUTPUT跳转到nova-filter-top跳转nova-compute-local</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL  nova-filter-top</div><div class="line">Chain nova-filter-top (2 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1    39921 9619K nova-compute-local  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">root@compute:~# iptables --line-numbers -vnL  nova-compute-local</div><div class="line">Chain nova-compute-local (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">nova-compute-local 目前没有什么策略</div></pre></td></tr></table></figure>
+<h3 id="策略2从OUTPUT跳转到nova-compute-OUTPUT"><a href="#策略2从OUTPUT跳转到nova-compute-OUTPUT" class="headerlink" title="策略2从OUTPUT跳转到nova-compute-OUTPUT"></a>策略2从OUTPUT跳转到nova-compute-OUTPUT</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL  nova-compute-OUTPUT</div><div class="line">Chain nova-compute-OUTPUT (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div></pre></td></tr></table></figure>
+<p>nova-compute-OUTPUT没有什么策略</p>
+<h3 id="策略3从OUTPIUT跳转到neutron-filter-top跳转到neutron-linuxbri-local"><a href="#策略3从OUTPIUT跳转到neutron-filter-top跳转到neutron-linuxbri-local" class="headerlink" title="策略3从OUTPIUT跳转到neutron-filter-top跳转到neutron-linuxbri-local"></a>策略3从OUTPIUT跳转到neutron-filter-top跳转到neutron-linuxbri-local</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL  neutron-filter-top</div><div class="line">Chain neutron-filter-top (2 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1     164K   38M neutron-linuxbri-local  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line"></div><div class="line">root@compute:~# iptables --line-numbers -vnL  neutron-linuxbri-local</div><div class="line">Chain neutron-linuxbri-local (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div></pre></td></tr></table></figure>
+<p>neutron-linuxbri-local目前没有什么策略</p>
+<h3 id="策略4从OUTPUT跳转到neutron-linuxbri-OUTPUT"><a href="#策略4从OUTPUT跳转到neutron-linuxbri-OUTPUT" class="headerlink" title="策略4从OUTPUT跳转到neutron-linuxbri-OUTPUT"></a>策略4从OUTPUT跳转到neutron-linuxbri-OUTPUT</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL  neutron-linuxbri-OUTPUT</div><div class="line">Chain neutron-linuxbri-OUTPUT (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div></pre></td></tr></table></figure>
+<p>neutron-linuxbri-OUTPUT目前没有什么策略</p>
+<h3 id="策略5"><a href="#策略5" class="headerlink" title="策略5"></a>策略5</h3><p>桥向68端口发udp包策略默认放开</p>
+<h2 id="查看计算节点FORWARD链"><a href="#查看计算节点FORWARD链" class="headerlink" title="查看计算节点FORWARD链"></a>查看计算节点FORWARD链</h2><p><strong>总结图：</strong><br><img src="/myimages/compute_forward.png" alt="compute_forward"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL FORWARD</div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1        0     0 neutron-filter-top  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">2        0     0 neutron-linuxbri-FORWARD  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">3        0     0 nova-filter-top  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">4        0     0 nova-compute-FORWARD  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">5        0     0 ACCEPT     all  --  *      virbr0  0.0.0.0/0            192.168.122.0/24     ctstate RELATED,ESTABLISHED</div><div class="line">6        0     0 ACCEPT     all  --  virbr0 *       192.168.122.0/24     0.0.0.0/0</div><div class="line">7        0     0 ACCEPT     all  --  virbr0 virbr0  0.0.0.0/0            0.0.0.0/0</div><div class="line">8        0     0 REJECT     all  --  *      virbr0  0.0.0.0/0            0.0.0.0/0            reject-with icmp-port-unreachable</div><div class="line">9        0     0 REJECT     all  --  virbr0 *       0.0.0.0/0            0.0.0.0/0            reject-with icmp-port-unreachable</div></pre></td></tr></table></figure>
+<h3 id="策略1从FORWARD跳转neutron-filter-top跳转到-neutron-linuxbri-local"><a href="#策略1从FORWARD跳转neutron-filter-top跳转到-neutron-linuxbri-local" class="headerlink" title="策略1从FORWARD跳转neutron-filter-top跳转到 neutron-linuxbri-local"></a>策略1从FORWARD跳转neutron-filter-top跳转到 neutron-linuxbri-local</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL neutron-filter-top</div><div class="line">Chain neutron-filter-top (2 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1     165K   38M neutron-linuxbri-local  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">root@compute:~#</div><div class="line">root@compute:~#</div><div class="line">root@compute:~# iptables --line-numbers -vnL neutron-linuxbri-local</div><div class="line">Chain neutron-linuxbri-local (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div></pre></td></tr></table></figure>
+<p>nova-compute-local目前没有什么策略</p>
+<h3 id="策略2从FORWARD跳转到neutron-linuxbri-FORWARD"><a href="#策略2从FORWARD跳转到neutron-linuxbri-FORWARD" class="headerlink" title="策略2从FORWARD跳转到neutron-linuxbri-FORWARD"></a>策略2从FORWARD跳转到neutron-linuxbri-FORWARD</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL neutron-linuxbri-FORWARD</div><div class="line">Chain neutron-linuxbri-FORWARD (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1     1212  112K neutron-linuxbri-sg-chain  all  --  *      *       0.0.0.0/0            0.0.0.0/0            PHYSDEV match --physdev-out tap44a3abfa-12 --physdev-is-bridged /* Direct traffic from the VM interface to the security group chain. */</div><div class="line">2      906  106K neutron-linuxbri-sg-chain  all  --  *      *       0.0.0.0/0            0.0.0.0/0            PHYSDEV match --physdev-in tap44a3abfa-12 --physdev-is-bridged /* Direct traffic from the VM interface to the security group chain. */</div><div class="line">root@compute:~#</div></pre></td></tr></table></figure>
+<p>经过接口tap44a3abfa-12流量全部交给链表neutron-linuxbri-sg-chain处理</p>
+<h4 id="链表neutron-linuxbri-sg-chain策略"><a href="#链表neutron-linuxbri-sg-chain策略" class="headerlink" title="链表neutron-linuxbri-sg-chain策略"></a>链表neutron-linuxbri-sg-chain策略</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL neutron-linuxbri-sg-chain</div><div class="line">Chain neutron-linuxbri-sg-chain (2 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1     1212  112K neutron-linuxbri-i44a3abfa-1  all  --  *      *       0.0.0.0/0            0.0.0.0/0            PHYSDEV match --physdev-out tap44a3abfa-12 --physdev-is-bridged /* Jump to the VM specific chain. */</div><div class="line">2      906  106K neutron-linuxbri-o44a3abfa-1  all  --  *      *       0.0.0.0/0            0.0.0.0/0            PHYSDEV match --physdev-in tap44a3abfa-12 --physdev-is-bridged /* Jump to the VM specific chain. */</div><div class="line">3     2604  267K ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0</div></pre></td></tr></table></figure>
+<ul>
+<li>策略1:经过tap44a3abfa-12发给vm转发流量均由neutron-linuxbri-i44a3abfa-1 处理</li>
+<li>策略2:vm发出到直连桥流量均由neutron-linuxbri-o44a3abfa-1 处理</li>
+</ul>
+<h5 id="neutron-linuxbri-i44a3abfa-1策略"><a href="#neutron-linuxbri-i44a3abfa-1策略" class="headerlink" title="neutron-linuxbri-i44a3abfa-1策略"></a>neutron-linuxbri-i44a3abfa-1策略</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL neutron-linuxbri-i44a3abfa-1</div><div class="line">Chain neutron-linuxbri-i44a3abfa-1 (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1     1194  110K RETURN     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED /* Direct packets associated with a known session to the RETURN chain. */</div><div class="line">2        2   729 RETURN     udp  --  *      *       172.16.1.2           0.0.0.0/0            udp spt:67 udp dpt:68</div><div class="line">3        8   480 RETURN     tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:22</div><div class="line">4        0     0 RETURN     all  --  *      *       0.0.0.0/0            0.0.0.0/0            match-set NIPv4d81fb7c3-1083-4203-8d6c- src</div><div class="line">5        6   504 RETURN     icmp --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">6        0     0 DROP       all  --  *      *       0.0.0.0/0            0.0.0.0/0            state INVALID /* Drop packets that appear related to an existing connection (e.g. TCP ACK/FIN) but do not have an entry in conntrack. */</div><div class="line">7        2   648 neutron-linuxbri-sg-fallback  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* Send unmatched traffic to the fallback chain. */</div></pre></td></tr></table></figure>
+<p> DHCP、ssh、icmp、以及已经建立好会话状态的后续连接流量可发给vm，其它流量一律丢弃</p>
+<h5 id="neutron-linuxbri-o44a3abfa-1策略"><a href="#neutron-linuxbri-o44a3abfa-1策略" class="headerlink" title="neutron-linuxbri-o44a3abfa-1策略"></a>neutron-linuxbri-o44a3abfa-1策略</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL neutron-linuxbri-o44a3abfa-1</div><div class="line">Chain neutron-linuxbri-o44a3abfa-1 (2 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1        2   648 RETURN     udp  --  *      *       0.0.0.0              255.255.255.255      udp spt:68 dpt:67 /* Allow DHCP client traffic. */</div><div class="line">2      904  106K neutron-linuxbri-s44a3abfa-1  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">3        0     0 RETURN     udp  --  *      *       0.0.0.0/0            0.0.0.0/0            udp spt:68 dpt:67 /* Allow DHCP client traffic. */</div><div class="line">4        0     0 DROP       udp  --  *      *       0.0.0.0/0            0.0.0.0/0            udp spt:67 udp dpt:68 /* Prevent DHCP Spoofing by VM. */</div><div class="line">5      865  103K RETURN     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED /* Direct packets associated with a known session to the RETURN chain. */</div><div class="line">6       39  2573 RETURN     all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">7        0     0 DROP       all  --  *      *       0.0.0.0/0            0.0.0.0/0            state INVALID /* Drop packets that appear related to an existing connection (e.g. TCP ACK/FIN) but do not have an entry in conntrack. */</div><div class="line">8        0     0 neutron-linuxbri-sg-fallback  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* Send unmatched traffic to the fallback chain. */</div></pre></td></tr></table></figure>
+<p>DHCP返会流量、vm本机发出去流量均可以正常转发</p>
+<h3 id="策略3-从FORWARD跳转到neutron-filter-top跳转到nova-compute-local"><a href="#策略3-从FORWARD跳转到neutron-filter-top跳转到nova-compute-local" class="headerlink" title="策略3 从FORWARD跳转到neutron-filter-top跳转到nova-compute-local"></a>策略3 从FORWARD跳转到neutron-filter-top跳转到nova-compute-local</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL nova-filter-top</div><div class="line">Chain nova-filter-top (2 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1     4344 1066K nova-compute-local  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">root@compute:~#</div><div class="line">root@compute:~# iptables --line-numbers -vnL nova-compute-local</div><div class="line">Chain nova-compute-local (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">root@compute:~#</div></pre></td></tr></table></figure>
+<p>neutron-linuxbri-local  目前没有什么策略</p>
+<h3 id="策略4-从FORWARD跳转交给neutron-linuxbri-FORWARD处理"><a href="#策略4-从FORWARD跳转交给neutron-linuxbri-FORWARD处理" class="headerlink" title="策略4 从FORWARD跳转交给neutron-linuxbri-FORWARD处理"></a>策略4 从FORWARD跳转交给neutron-linuxbri-FORWARD处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL nova-compute-FORWARD</div><div class="line">Chain nova-compute-FORWARD (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1        0     0 ACCEPT     all  --  brqe47041c9-00 *       0.0.0.0/0            0.0.0.0/0</div><div class="line">2        0     0 ACCEPT     all  --  *      brqe47041c9-00  0.0.0.0/0            0.0.0.0/0</div><div class="line">3        0     0 DROP       all  --  *      brqe47041c9-00  0.0.0.0/0            0.0.0.0/0</div></pre></td></tr></table></figure>
+<h2 id="寻找计算节点vm连接的接口的策略"><a href="#寻找计算节点vm连接的接口的策略" class="headerlink" title="寻找计算节点vm连接的接口的策略"></a>寻找计算节点vm连接的接口的策略</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@compute:~# brctl show</div><div class="line">bridge name bridge id       STP enabled interfaces</div><div class="line">brqe47041c9-00      8000.7a0a01214421   no      tap44a3abfa-12</div><div class="line">                            vxlan-68</div><div class="line">virbr0      8000.000000000000   yes</div><div class="line">root@compute:~#</div><div class="line">root@compute:~#</div><div class="line">root@compute:~# iptables -S|grep tap44a3abfa-12</div><div class="line">-A neutron-linuxbri-FORWARD -m physdev --physdev-out tap44a3abfa-12 --physdev-is-bridged -m comment --comment &quot;Direct traffic from the VM interface to the security group chain.&quot; -j neutron-linuxbri-sg-chain</div><div class="line">-A neutron-linuxbri-FORWARD -m physdev --physdev-in tap44a3abfa-12 --physdev-is-bridged -m comment --comment &quot;Direct traffic from the VM interface to the security group chain.&quot; -j neutron-linuxbri-sg-chain</div><div class="line">-A neutron-linuxbri-INPUT -m physdev --physdev-in tap44a3abfa-12 --physdev-is-bridged -m comment --comment &quot;Direct incoming traffic from VM to the security group chain.&quot; -j neutron-linuxbri-o44a3abfa-1</div><div class="line">-A neutron-linuxbri-sg-chain -m physdev --physdev-out tap44a3abfa-12 --physdev-is-bridged -m comment --comment &quot;Jump to the VM specific chain.&quot; -j neutron-linuxbri-i44a3abfa-1</div><div class="line">-A neutron-linuxbri-sg-chain -m physdev --physdev-in tap44a3abfa-12 --physdev-is-bridged -m comment --comment &quot;Jump to the VM specific chain.&quot; -j neutron-linuxbri-o44a3abfa-1</div><div class="line">root@compute:~#</div></pre></td></tr></table></figure>
+<p>tap44a3abfa-12接口的FORWARD流量均扔给neutron-linuxbri-sg-chain处理，访问虚拟机流量扔给neutron-linuxbri-i44a3abfa-1，从虚拟机出来流量扔给neutron-linuxbri-o44a3abfa-1<br>从vm发出流量到 tap44a3abfa-12接口的INPUT扔给neutron-linuxbri-o44a3abfa-1链处理</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ubuntun16-04/" rel="tag"># ubuntun16.04</a>
+          
+            <a href="/tags/Security-group/" rel="tag"># Security group</a>
+          
+            <a href="/tags/安全组/" rel="tag"># 安全组</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/openvswitch4/" rel="next" title="openvSwitch 基础命令行">
+                <i class="fa fa-chevron-left"></i> openvSwitch 基础命令行
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/h.jpg"
+               alt="vcpu.me" />
+          <p class="site-author-name" itemprop="name">vcpu.me</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">58</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/vcpu/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://ytlm.github.io/" title="CDN张三丰" target="_blank">CDN张三丰</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://io.iwalk.me" title="互联网绝世高手Andy" target="_blank">互联网绝世高手Andy</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Security-group-安全组-概念"><span class="nav-number">1.</span> <span class="nav-text">Security group(安全组)概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#neutron-port-list-列出属于租户的所有接口"><span class="nav-number">2.</span> <span class="nav-text">neutron port-list 列出属于租户的所有接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看计算节点INPUT链"><span class="nav-number">3.</span> <span class="nav-text">查看计算节点INPUT链</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#根据策略1继续查看-nova-compute-INPUT"><span class="nav-number">3.1.</span> <span class="nav-text">根据策略1继续查看 nova-compute-INPUT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#根据策略2继续查看-neutron-linuxbri-INPUT"><span class="nav-number">3.2.</span> <span class="nav-text">根据策略2继续查看 neutron-linuxbri-INPUT</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#根据策略1-继续查看neutron-linuxbri-o44a3abfa-1"><span class="nav-number">3.2.1.</span> <span class="nav-text">根据策略1 继续查看neutron-linuxbri-o44a3abfa-1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#neutron-linuxbri-s44a3abfa-1-检查流量源ip和mac是否为已分配（防止伪装地址攻击）"><span class="nav-number">3.2.2.</span> <span class="nav-text">neutron-linuxbri-s44a3abfa-1 检查流量源ip和mac是否为已分配（防止伪装地址攻击）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看计算节点OUTPUT链"><span class="nav-number">4.</span> <span class="nav-text">查看计算节点OUTPUT链</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#策略1从OUTPUT跳转到nova-filter-top跳转nova-compute-local"><span class="nav-number">4.1.</span> <span class="nav-text">策略1从OUTPUT跳转到nova-filter-top跳转nova-compute-local</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#策略2从OUTPUT跳转到nova-compute-OUTPUT"><span class="nav-number">4.2.</span> <span class="nav-text">策略2从OUTPUT跳转到nova-compute-OUTPUT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#策略3从OUTPIUT跳转到neutron-filter-top跳转到neutron-linuxbri-local"><span class="nav-number">4.3.</span> <span class="nav-text">策略3从OUTPIUT跳转到neutron-filter-top跳转到neutron-linuxbri-local</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#策略4从OUTPUT跳转到neutron-linuxbri-OUTPUT"><span class="nav-number">4.4.</span> <span class="nav-text">策略4从OUTPUT跳转到neutron-linuxbri-OUTPUT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#策略5"><span class="nav-number">4.5.</span> <span class="nav-text">策略5</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查看计算节点FORWARD链"><span class="nav-number">5.</span> <span class="nav-text">查看计算节点FORWARD链</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#策略1从FORWARD跳转neutron-filter-top跳转到-neutron-linuxbri-local"><span class="nav-number">5.1.</span> <span class="nav-text">策略1从FORWARD跳转neutron-filter-top跳转到 neutron-linuxbri-local</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#策略2从FORWARD跳转到neutron-linuxbri-FORWARD"><span class="nav-number">5.2.</span> <span class="nav-text">策略2从FORWARD跳转到neutron-linuxbri-FORWARD</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#链表neutron-linuxbri-sg-chain策略"><span class="nav-number">5.2.1.</span> <span class="nav-text">链表neutron-linuxbri-sg-chain策略</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#neutron-linuxbri-i44a3abfa-1策略"><span class="nav-number">5.2.1.1.</span> <span class="nav-text">neutron-linuxbri-i44a3abfa-1策略</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#neutron-linuxbri-o44a3abfa-1策略"><span class="nav-number">5.2.1.2.</span> <span class="nav-text">neutron-linuxbri-o44a3abfa-1策略</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#策略3-从FORWARD跳转到neutron-filter-top跳转到nova-compute-local"><span class="nav-number">5.3.</span> <span class="nav-text">策略3 从FORWARD跳转到neutron-filter-top跳转到nova-compute-local</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#策略4-从FORWARD跳转交给neutron-linuxbri-FORWARD处理"><span class="nav-number">5.4.</span> <span class="nav-text">策略4 从FORWARD跳转交给neutron-linuxbri-FORWARD处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#寻找计算节点vm连接的接口的策略"><span class="nav-number">6.</span> <span class="nav-text">寻找计算节点vm连接的接口的策略</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">vcpu.me</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "863fca753b274564bc586efc2a6ffbb0",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("l5u4v8AcoPCp9wlPGVJTG6Ny-gzGzoHsz", "RQdYIOd2snvd1muAW65nsn25");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

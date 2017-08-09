@@ -471,6 +471,192 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/secritygroup/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/secritygroup/" itemprop="url">openstack Security group</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-09T18:00:00+08:00">
+                2017-08-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/openstack/" itemprop="url" rel="index">
+                    <span itemprop="name">openstack</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/secritygroup/" class="leancloud_visitors" data-flag-title="openstack Security group">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Security-group-安全组-概念"><a href="#Security-group-安全组-概念" class="headerlink" title="Security group(安全组)概念"></a>Security group(安全组)概念</h2><p>安全组是通过Linux IPtables实现的，安全组对象是虚拟网卡，由L2 Agent（neutron_openvswitch_agent、neutron_linuxbridfe_agent）实现,在计算节点上通过iptables规则限制虚拟网卡流量进出。其容易和FW混淆，FW主要是忘不流量隔离，一般负责跨子网流量不管虚拟网卡间通讯流量。</p>
+<h2 id="neutron-port-list-列出属于租户的所有接口"><a href="#neutron-port-list-列出属于租户的所有接口" class="headerlink" title="neutron port-list 列出属于租户的所有接口"></a>neutron port-list 列出属于租户的所有接口</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">root@controller:~# . demo-openrc</div><div class="line">root@controller:~# neutron port-list</div><div class="line">+--------------------------------------+------+-------------------+--------------------------------------------+</div><div class="line">| id                                   | name | mac_address       | fixed_ips                                  |</div><div class="line">+--------------------------------------+------+-------------------+--------------------------------------------+</div><div class="line">| 44a3abfa-1203-48d8-b83c-0c8657853db9 |      | fa:16:3e:71:34:ed | &#123;&quot;subnet_id&quot;: &quot;f746bd76-5bb3-4432-8fde-    |</div><div class="line">|                                      |      |                   | 66ccf8c59da9&quot;, &quot;ip_address&quot;: &quot;172.16.1.7&quot;&#125; |</div><div class="line">| d879832c-1ec1-429e-8e4f-2e11506435a4 |      | fa:16:3e:2e:09:4b | &#123;&quot;subnet_id&quot;: &quot;f746bd76-5bb3-4432-8fde-    |</div><div class="line">|                                      |      |                   | 66ccf8c59da9&quot;, &quot;ip_address&quot;: &quot;172.16.1.1&quot;&#125; |</div><div class="line">| f804cbf3-c4e8-4f66-ade5-87661591ecca |      | fa:16:3e:f2:22:5d | &#123;&quot;subnet_id&quot;: &quot;f746bd76-5bb3-4432-8fde-    |</div><div class="line">|                                      |      |                   | 66ccf8c59da9&quot;, &quot;ip_address&quot;: &quot;172.16.1.2&quot;&#125; |</div><div class="line">+--------------------------------------+------+-------------------+--------------------------------------------+</div></pre></td></tr></table></figure>
+<h2 id="查看计算节点INPUT链"><a href="#查看计算节点INPUT链" class="headerlink" title="查看计算节点INPUT链"></a>查看计算节点INPUT链</h2><p><strong>总结图：</strong><br><img src="/myimages/compute_input.png" alt="compute_input"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL INPUT</div><div class="line">Chain INPUT (policy ACCEPT 36472 packets, 8475K bytes)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1    33322 7781K nova-compute-INPUT  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">2    36472 8475K neutron-linuxbri-INPUT  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">3        0     0 ACCEPT     udp  --  virbr0 *       0.0.0.0/0            0.0.0.0/0            udp dpt:53</div><div class="line">4        0     0 ACCEPT     tcp  --  virbr0 *       0.0.0.0/0            0.0.0.0/0            tcp dpt:53</div><div class="line">5        0     0 ACCEPT     udp  --  virbr0 *       0.0.0.0/0            0.0.0.0/0            udp dpt:67</div><div class="line">6        0     0 ACCEPT     tcp  --  virbr0 *       0.0.0.0/0            0.0.0.0/0            tcp dpt:67</div></pre></td></tr></table></figure>
+<p>上述3、4、5、6策略放通dns和dhcp流量使用</p>
+<h3 id="根据策略1继续查看-nova-compute-INPUT"><a href="#根据策略1继续查看-nova-compute-INPUT" class="headerlink" title="根据策略1继续查看 nova-compute-INPUT"></a>根据策略1继续查看 nova-compute-INPUT</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL nova-compute-INPUT</div><div class="line">Chain nova-compute-INPUT (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div></pre></td></tr></table></figure>
+<h3 id="根据策略2继续查看-neutron-linuxbri-INPUT"><a href="#根据策略2继续查看-neutron-linuxbri-INPUT" class="headerlink" title="根据策略2继续查看 neutron-linuxbri-INPUT"></a>根据策略2继续查看 neutron-linuxbri-INPUT</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Chain neutron-linuxbri-INPUT (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1        0     0 neutron-linuxbri-o44a3abfa-1  all  --  *      *       0.0.0.0/0            0.0.0.0/0            PHYSDEV match --physdev-in tap44a3abfa-12 --physdev-is-bridged /* Direct incoming traffic from VM to the security group chain. */</div></pre></td></tr></table></figure>
+<p>linux桥和vm互联接口为tap44a3abfa-12，vm发出流量，查找INPUT链最终会查找neutron-linuxbri-o44a3abfa-1</p>
+<h4 id="根据策略1-继续查看neutron-linuxbri-o44a3abfa-1"><a href="#根据策略1-继续查看neutron-linuxbri-o44a3abfa-1" class="headerlink" title="根据策略1 继续查看neutron-linuxbri-o44a3abfa-1"></a>根据策略1 继续查看neutron-linuxbri-o44a3abfa-1</h4><p>root@compute:~# iptables –line-numbers -vnL  neutron-linuxbri-o44a3abfa-1<br>Chain neutron-linuxbri-o44a3abfa-1 (2 references)<br>num   pkts bytes target     prot opt in     out     source               destination<br>1        2   648 RETURN     udp  –  <em>      </em>       0.0.0.0              255.255.255.255      udp spt:68 dpt:67 /<em> Allow DHCP client traffic. </em>/<br>2      904  106K neutron-linuxbri-s44a3abfa-1  all  –  <em>      </em>       0.0.0.0/0            0.0.0.0/0<br>3        0     0 RETURN     udp  –  <em>      </em>       0.0.0.0/0            0.0.0.0/0            udp spt:68 dpt:67 /<em> Allow DHCP client traffic. </em>/<br>4        0     0 DROP       udp  –  <em>      </em>       0.0.0.0/0            0.0.0.0/0            udp spt:67 udp dpt:68 /<em> Prevent DHCP Spoofing by VM. </em>/<br>5      865  103K RETURN     all  –  <em>      </em>       0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED /<em> Direct packets associated with a known session to the RETURN chain. </em>/<br>6       39  2573 RETURN     all  –  <em>      </em>       0.0.0.0/0            0.0.0.0/0<br>7        0     0 DROP       all  –  <em>      </em>       0.0.0.0/0            0.0.0.0/0            state INVALID /<em> Drop packets that appear related to an existing connection (e.g. TCP ACK/FIN) but do not have an entry in conntrack. </em>/<br>8        0     0 neutron-linuxbri-sg-fallback  all  –  <em>      </em>       0.0.0.0/0            0.0.0.0/0            /<em> Send unmatched traffic to the fallback chain. </em>/</p>
+<p>DHCP广播地址、vm发包的ip和mac必须是vm分配的</p>
+<h4 id="neutron-linuxbri-s44a3abfa-1-检查流量源ip和mac是否为已分配（防止伪装地址攻击）"><a href="#neutron-linuxbri-s44a3abfa-1-检查流量源ip和mac是否为已分配（防止伪装地址攻击）" class="headerlink" title="neutron-linuxbri-s44a3abfa-1 检查流量源ip和mac是否为已分配（防止伪装地址攻击）"></a>neutron-linuxbri-s44a3abfa-1 检查流量源ip和mac是否为已分配（防止伪装地址攻击）</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL  neutron-linuxbri-s44a3abfa-1</div><div class="line">Chain neutron-linuxbri-s44a3abfa-1 (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1      904  106K RETURN     all  --  *      *       172.16.1.7           0.0.0.0/0            MAC FA:16:3E:71:34:ED /* Allow traffic from defined IP/MAC pairs. */</div><div class="line">2        0     0 DROP       all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* Drop traffic without an IP/MAC allow rule. */</div><div class="line">root@compute:~#</div></pre></td></tr></table></figure>
+<p>该链表主要检查从vm发出来的数据包，是否是openstack所分配的IP和MAC，如果不匹配，禁止通过。此处是为了防止利用VM上进行一些伪装地址的攻击。</p>
+<h2 id="查看计算节点OUTPUT链"><a href="#查看计算节点OUTPUT链" class="headerlink" title="查看计算节点OUTPUT链"></a>查看计算节点OUTPUT链</h2><p><strong>总结图：</strong><br><img src="/myimages/compute_output.png" alt="compute_output"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL OUTPUT</div><div class="line">Chain OUTPUT (policy ACCEPT 37285 packets, 8946K bytes)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1     140K   33M nova-filter-top  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">2    34104 8216K nova-compute-OUTPUT  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">3    37285 8946K neutron-filter-top  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">4    37285 8946K neutron-linuxbri-OUTPUT  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">5        0     0 ACCEPT     udp  --  *      virbr0  0.0.0.0/0            0.0.0.0/0            udp dpt:68</div></pre></td></tr></table></figure>
+<h3 id="策略1从OUTPUT跳转到nova-filter-top跳转nova-compute-local"><a href="#策略1从OUTPUT跳转到nova-filter-top跳转nova-compute-local" class="headerlink" title="策略1从OUTPUT跳转到nova-filter-top跳转nova-compute-local"></a>策略1从OUTPUT跳转到nova-filter-top跳转nova-compute-local</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL  nova-filter-top</div><div class="line">Chain nova-filter-top (2 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1    39921 9619K nova-compute-local  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">root@compute:~# iptables --line-numbers -vnL  nova-compute-local</div><div class="line">Chain nova-compute-local (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">nova-compute-local 目前没有什么策略</div></pre></td></tr></table></figure>
+<h3 id="策略2从OUTPUT跳转到nova-compute-OUTPUT"><a href="#策略2从OUTPUT跳转到nova-compute-OUTPUT" class="headerlink" title="策略2从OUTPUT跳转到nova-compute-OUTPUT"></a>策略2从OUTPUT跳转到nova-compute-OUTPUT</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL  nova-compute-OUTPUT</div><div class="line">Chain nova-compute-OUTPUT (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div></pre></td></tr></table></figure>
+<p>nova-compute-OUTPUT没有什么策略</p>
+<h3 id="策略3从OUTPIUT跳转到neutron-filter-top跳转到neutron-linuxbri-local"><a href="#策略3从OUTPIUT跳转到neutron-filter-top跳转到neutron-linuxbri-local" class="headerlink" title="策略3从OUTPIUT跳转到neutron-filter-top跳转到neutron-linuxbri-local"></a>策略3从OUTPIUT跳转到neutron-filter-top跳转到neutron-linuxbri-local</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL  neutron-filter-top</div><div class="line">Chain neutron-filter-top (2 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1     164K   38M neutron-linuxbri-local  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line"></div><div class="line">root@compute:~# iptables --line-numbers -vnL  neutron-linuxbri-local</div><div class="line">Chain neutron-linuxbri-local (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div></pre></td></tr></table></figure>
+<p>neutron-linuxbri-local目前没有什么策略</p>
+<h3 id="策略4从OUTPUT跳转到neutron-linuxbri-OUTPUT"><a href="#策略4从OUTPUT跳转到neutron-linuxbri-OUTPUT" class="headerlink" title="策略4从OUTPUT跳转到neutron-linuxbri-OUTPUT"></a>策略4从OUTPUT跳转到neutron-linuxbri-OUTPUT</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL  neutron-linuxbri-OUTPUT</div><div class="line">Chain neutron-linuxbri-OUTPUT (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div></pre></td></tr></table></figure>
+<p>neutron-linuxbri-OUTPUT目前没有什么策略</p>
+<h3 id="策略5"><a href="#策略5" class="headerlink" title="策略5"></a>策略5</h3><p>桥向68端口发udp包策略默认放开</p>
+<h2 id="查看计算节点FORWARD链"><a href="#查看计算节点FORWARD链" class="headerlink" title="查看计算节点FORWARD链"></a>查看计算节点FORWARD链</h2><p><strong>总结图：</strong><br><img src="/myimages/compute_forward.png" alt="compute_forward"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL FORWARD</div><div class="line">Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1        0     0 neutron-filter-top  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">2        0     0 neutron-linuxbri-FORWARD  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">3        0     0 nova-filter-top  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">4        0     0 nova-compute-FORWARD  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">5        0     0 ACCEPT     all  --  *      virbr0  0.0.0.0/0            192.168.122.0/24     ctstate RELATED,ESTABLISHED</div><div class="line">6        0     0 ACCEPT     all  --  virbr0 *       192.168.122.0/24     0.0.0.0/0</div><div class="line">7        0     0 ACCEPT     all  --  virbr0 virbr0  0.0.0.0/0            0.0.0.0/0</div><div class="line">8        0     0 REJECT     all  --  *      virbr0  0.0.0.0/0            0.0.0.0/0            reject-with icmp-port-unreachable</div><div class="line">9        0     0 REJECT     all  --  virbr0 *       0.0.0.0/0            0.0.0.0/0            reject-with icmp-port-unreachable</div></pre></td></tr></table></figure>
+<h3 id="策略1从FORWARD跳转neutron-filter-top跳转到-neutron-linuxbri-local"><a href="#策略1从FORWARD跳转neutron-filter-top跳转到-neutron-linuxbri-local" class="headerlink" title="策略1从FORWARD跳转neutron-filter-top跳转到 neutron-linuxbri-local"></a>策略1从FORWARD跳转neutron-filter-top跳转到 neutron-linuxbri-local</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL neutron-filter-top</div><div class="line">Chain neutron-filter-top (2 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1     165K   38M neutron-linuxbri-local  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">root@compute:~#</div><div class="line">root@compute:~#</div><div class="line">root@compute:~# iptables --line-numbers -vnL neutron-linuxbri-local</div><div class="line">Chain neutron-linuxbri-local (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div></pre></td></tr></table></figure>
+<p>nova-compute-local目前没有什么策略</p>
+<h3 id="策略2从FORWARD跳转到neutron-linuxbri-FORWARD"><a href="#策略2从FORWARD跳转到neutron-linuxbri-FORWARD" class="headerlink" title="策略2从FORWARD跳转到neutron-linuxbri-FORWARD"></a>策略2从FORWARD跳转到neutron-linuxbri-FORWARD</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL neutron-linuxbri-FORWARD</div><div class="line">Chain neutron-linuxbri-FORWARD (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1     1212  112K neutron-linuxbri-sg-chain  all  --  *      *       0.0.0.0/0            0.0.0.0/0            PHYSDEV match --physdev-out tap44a3abfa-12 --physdev-is-bridged /* Direct traffic from the VM interface to the security group chain. */</div><div class="line">2      906  106K neutron-linuxbri-sg-chain  all  --  *      *       0.0.0.0/0            0.0.0.0/0            PHYSDEV match --physdev-in tap44a3abfa-12 --physdev-is-bridged /* Direct traffic from the VM interface to the security group chain. */</div><div class="line">root@compute:~#</div></pre></td></tr></table></figure>
+<p>经过接口tap44a3abfa-12流量全部交给链表neutron-linuxbri-sg-chain处理</p>
+<h4 id="链表neutron-linuxbri-sg-chain策略"><a href="#链表neutron-linuxbri-sg-chain策略" class="headerlink" title="链表neutron-linuxbri-sg-chain策略"></a>链表neutron-linuxbri-sg-chain策略</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL neutron-linuxbri-sg-chain</div><div class="line">Chain neutron-linuxbri-sg-chain (2 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1     1212  112K neutron-linuxbri-i44a3abfa-1  all  --  *      *       0.0.0.0/0            0.0.0.0/0            PHYSDEV match --physdev-out tap44a3abfa-12 --physdev-is-bridged /* Jump to the VM specific chain. */</div><div class="line">2      906  106K neutron-linuxbri-o44a3abfa-1  all  --  *      *       0.0.0.0/0            0.0.0.0/0            PHYSDEV match --physdev-in tap44a3abfa-12 --physdev-is-bridged /* Jump to the VM specific chain. */</div><div class="line">3     2604  267K ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0</div></pre></td></tr></table></figure>
+<ul>
+<li>策略1:经过tap44a3abfa-12发给vm转发流量均由neutron-linuxbri-i44a3abfa-1 处理</li>
+<li>策略2:vm发出到直连桥流量均由neutron-linuxbri-o44a3abfa-1 处理</li>
+</ul>
+<h5 id="neutron-linuxbri-i44a3abfa-1策略"><a href="#neutron-linuxbri-i44a3abfa-1策略" class="headerlink" title="neutron-linuxbri-i44a3abfa-1策略"></a>neutron-linuxbri-i44a3abfa-1策略</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL neutron-linuxbri-i44a3abfa-1</div><div class="line">Chain neutron-linuxbri-i44a3abfa-1 (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1     1194  110K RETURN     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED /* Direct packets associated with a known session to the RETURN chain. */</div><div class="line">2        2   729 RETURN     udp  --  *      *       172.16.1.2           0.0.0.0/0            udp spt:67 udp dpt:68</div><div class="line">3        8   480 RETURN     tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            tcp dpt:22</div><div class="line">4        0     0 RETURN     all  --  *      *       0.0.0.0/0            0.0.0.0/0            match-set NIPv4d81fb7c3-1083-4203-8d6c- src</div><div class="line">5        6   504 RETURN     icmp --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">6        0     0 DROP       all  --  *      *       0.0.0.0/0            0.0.0.0/0            state INVALID /* Drop packets that appear related to an existing connection (e.g. TCP ACK/FIN) but do not have an entry in conntrack. */</div><div class="line">7        2   648 neutron-linuxbri-sg-fallback  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* Send unmatched traffic to the fallback chain. */</div></pre></td></tr></table></figure>
+<p> DHCP、ssh、icmp、以及已经建立好会话状态的后续连接流量可发给vm，其它流量一律丢弃</p>
+<h5 id="neutron-linuxbri-o44a3abfa-1策略"><a href="#neutron-linuxbri-o44a3abfa-1策略" class="headerlink" title="neutron-linuxbri-o44a3abfa-1策略"></a>neutron-linuxbri-o44a3abfa-1策略</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL neutron-linuxbri-o44a3abfa-1</div><div class="line">Chain neutron-linuxbri-o44a3abfa-1 (2 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1        2   648 RETURN     udp  --  *      *       0.0.0.0              255.255.255.255      udp spt:68 dpt:67 /* Allow DHCP client traffic. */</div><div class="line">2      904  106K neutron-linuxbri-s44a3abfa-1  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">3        0     0 RETURN     udp  --  *      *       0.0.0.0/0            0.0.0.0/0            udp spt:68 dpt:67 /* Allow DHCP client traffic. */</div><div class="line">4        0     0 DROP       udp  --  *      *       0.0.0.0/0            0.0.0.0/0            udp spt:67 udp dpt:68 /* Prevent DHCP Spoofing by VM. */</div><div class="line">5      865  103K RETURN     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED /* Direct packets associated with a known session to the RETURN chain. */</div><div class="line">6       39  2573 RETURN     all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">7        0     0 DROP       all  --  *      *       0.0.0.0/0            0.0.0.0/0            state INVALID /* Drop packets that appear related to an existing connection (e.g. TCP ACK/FIN) but do not have an entry in conntrack. */</div><div class="line">8        0     0 neutron-linuxbri-sg-fallback  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* Send unmatched traffic to the fallback chain. */</div></pre></td></tr></table></figure>
+<p>DHCP返会流量、vm本机发出去流量均可以正常转发</p>
+<h3 id="策略3-从FORWARD跳转到neutron-filter-top跳转到nova-compute-local"><a href="#策略3-从FORWARD跳转到neutron-filter-top跳转到nova-compute-local" class="headerlink" title="策略3 从FORWARD跳转到neutron-filter-top跳转到nova-compute-local"></a>策略3 从FORWARD跳转到neutron-filter-top跳转到nova-compute-local</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL nova-filter-top</div><div class="line">Chain nova-filter-top (2 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1     4344 1066K nova-compute-local  all  --  *      *       0.0.0.0/0            0.0.0.0/0</div><div class="line">root@compute:~#</div><div class="line">root@compute:~# iptables --line-numbers -vnL nova-compute-local</div><div class="line">Chain nova-compute-local (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">root@compute:~#</div></pre></td></tr></table></figure>
+<p>neutron-linuxbri-local  目前没有什么策略</p>
+<h3 id="策略4-从FORWARD跳转交给neutron-linuxbri-FORWARD处理"><a href="#策略4-从FORWARD跳转交给neutron-linuxbri-FORWARD处理" class="headerlink" title="策略4 从FORWARD跳转交给neutron-linuxbri-FORWARD处理"></a>策略4 从FORWARD跳转交给neutron-linuxbri-FORWARD处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">root@compute:~# iptables --line-numbers -vnL nova-compute-FORWARD</div><div class="line">Chain nova-compute-FORWARD (1 references)</div><div class="line">num   pkts bytes target     prot opt in     out     source               destination</div><div class="line">1        0     0 ACCEPT     all  --  brqe47041c9-00 *       0.0.0.0/0            0.0.0.0/0</div><div class="line">2        0     0 ACCEPT     all  --  *      brqe47041c9-00  0.0.0.0/0            0.0.0.0/0</div><div class="line">3        0     0 DROP       all  --  *      brqe47041c9-00  0.0.0.0/0            0.0.0.0/0</div></pre></td></tr></table></figure>
+<h2 id="寻找计算节点vm连接的接口的策略"><a href="#寻找计算节点vm连接的接口的策略" class="headerlink" title="寻找计算节点vm连接的接口的策略"></a>寻找计算节点vm连接的接口的策略</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@compute:~# brctl show</div><div class="line">bridge name bridge id       STP enabled interfaces</div><div class="line">brqe47041c9-00      8000.7a0a01214421   no      tap44a3abfa-12</div><div class="line">                            vxlan-68</div><div class="line">virbr0      8000.000000000000   yes</div><div class="line">root@compute:~#</div><div class="line">root@compute:~#</div><div class="line">root@compute:~# iptables -S|grep tap44a3abfa-12</div><div class="line">-A neutron-linuxbri-FORWARD -m physdev --physdev-out tap44a3abfa-12 --physdev-is-bridged -m comment --comment &quot;Direct traffic from the VM interface to the security group chain.&quot; -j neutron-linuxbri-sg-chain</div><div class="line">-A neutron-linuxbri-FORWARD -m physdev --physdev-in tap44a3abfa-12 --physdev-is-bridged -m comment --comment &quot;Direct traffic from the VM interface to the security group chain.&quot; -j neutron-linuxbri-sg-chain</div><div class="line">-A neutron-linuxbri-INPUT -m physdev --physdev-in tap44a3abfa-12 --physdev-is-bridged -m comment --comment &quot;Direct incoming traffic from VM to the security group chain.&quot; -j neutron-linuxbri-o44a3abfa-1</div><div class="line">-A neutron-linuxbri-sg-chain -m physdev --physdev-out tap44a3abfa-12 --physdev-is-bridged -m comment --comment &quot;Jump to the VM specific chain.&quot; -j neutron-linuxbri-i44a3abfa-1</div><div class="line">-A neutron-linuxbri-sg-chain -m physdev --physdev-in tap44a3abfa-12 --physdev-is-bridged -m comment --comment &quot;Jump to the VM specific chain.&quot; -j neutron-linuxbri-o44a3abfa-1</div><div class="line">root@compute:~#</div></pre></td></tr></table></figure>
+<p>tap44a3abfa-12接口的FORWARD流量均扔给neutron-linuxbri-sg-chain处理，访问虚拟机流量扔给neutron-linuxbri-i44a3abfa-1，从虚拟机出来流量扔给neutron-linuxbri-o44a3abfa-1<br>从vm发出流量到 tap44a3abfa-12接口的INPUT扔给neutron-linuxbri-o44a3abfa-1链处理</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://vcpu.me/openvswitch4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1682,159 +1868,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/cmd1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/cmd1/" itemprop="url"> 网络基本命令</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-13T18:00:00+08:00">
-                2017-07-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/网络/" itemprop="url" rel="index">
-                    <span itemprop="name">网络</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/cmd1/" class="leancloud_visitors" data-flag-title=" 网络基本命令">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="ARP相关命令"><a href="#ARP相关命令" class="headerlink" title="ARP相关命令"></a>ARP相关命令</h2><h3 id="ip-n显示ARP表"><a href="#ip-n显示ARP表" class="headerlink" title="ip n显示ARP表"></a>ip n显示ARP表</h3><h3 id="全部清除linux-arp表项"><a href="#全部清除linux-arp表项" class="headerlink" title="全部清除linux arp表项"></a>全部清除linux arp表项</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">arp -n|awk &apos;/^[1-9]/&#123;system(&quot;arp -d &quot;$1)&#125;&apos;</div></pre></td></tr></table></figure>
-<h3 id="清除接口eth0所有的mac"><a href="#清除接口eth0所有的mac" class="headerlink" title="清除接口eth0所有的mac"></a>清除接口eth0所有的mac</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ip neigh flush  dev eth0</div></pre></td></tr></table></figure>
-<h3 id="arp-v-额外显示接口类型和arp表项统计信息"><a href="#arp-v-额外显示接口类型和arp表项统计信息" class="headerlink" title="arp -v 额外显示接口类型和arp表项统计信息"></a>arp -v 额外显示接口类型和arp表项统计信息</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:/home/controller# arp -v</div><div class="line">Address                  HWtype  HWaddress           Flags Mask            Iface</div><div class="line">10.0.1.2                 ether   22:dc:c1:9c:8c:b4   C                     eth0</div><div class="line">Entries: 1	Skipped: 0	Found: 1</div></pre></td></tr></table></figure>
-<h3 id="arp-a-显示全部ARP缓存"><a href="#arp-a-显示全部ARP缓存" class="headerlink" title="arp -a 显示全部ARP缓存"></a>arp -a 显示全部ARP缓存</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:/home/controller# arp -a</div><div class="line">? (10.0.1.2) at 22:dc:c1:9c:8c:b4 [ether] on eth0</div></pre></td></tr></table></figure>
-<h3 id="arp-n-可快速查询ARP缓存"><a href="#arp-n-可快速查询ARP缓存" class="headerlink" title="arp -n 可快速查询ARP缓存"></a>arp -n 可快速查询ARP缓存</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:/home/controller# arp -n</div><div class="line">Address                  HWtype  HWaddress           Flags Mask            Iface</div><div class="line">10.0.1.2                 ether   22:dc:c1:9c:8c:b4   C                     eth0</div><div class="line">root@controller-VirtualBox:/home/controller#</div></pre></td></tr></table></figure>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/cmd1/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1884,7 +1917,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1895,7 +1928,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">8</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -1906,7 +1939,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">56</span>
+                <span class="site-state-item-count">58</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
