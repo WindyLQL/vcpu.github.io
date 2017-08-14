@@ -471,6 +471,185 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/fwaas/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/fwaas/" itemprop="url">fwaas</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-14T18:00:00+08:00">
+                2017-08-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/openstack/" itemprop="url" rel="index">
+                    <span itemprop="name">openstack</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/fwaas/" class="leancloud_visitors" data-flag-title="fwaas">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="openstack配置安装环境"><a href="#openstack配置安装环境" class="headerlink" title="openstack配置安装环境"></a>openstack配置安装环境</h2><ul>
+<li>ubuntun版本<br>root@controller:~# lsb_release -a<br>No LSB modules are available.<br>Distributor ID:    Ubuntu<br>Description:    Ubuntu 16.04.2 LTS<br>Release:    16.04<br>Codename:    xenial</li>
+<li><p>openstack newton版本<br>root@controller:~# openstack –version<br>openstack 3.2.0</p>
+</li>
+<li><p>安装环境<br>osx 下的vbox两台虚拟机（controller和compute）<br>openstack网络节点和控制节点安装到controller机器上，计算节点安装到compute节点上</p>
+</li>
+<li><p>组网信息<br><img src="/myimages/fwaasnetwork.png" alt="fwaasnetwork"></p>
+</li>
+</ul>
+<h2 id="配置模块"><a href="#配置模块" class="headerlink" title="配置模块"></a>配置模块</h2><h3 id="配置详情"><a href="#配置详情" class="headerlink" title="配置详情"></a>配置详情</h3><p>/etc/neutron/neutron.conf<br>[DEFAULT]<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">service_plugins = router,firewall</div></pre></td></tr></table></figure></p>
+<p>[service_providers]<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">service_provider = FIREWALL:Iptables:neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver:default</div></pre></td></tr></table></figure></p>
+<p>注意：如果没有[service_providers]标签就在配置最后新增<br>[fwaas]<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">agent_version = v1</div><div class="line">driver = iptables</div><div class="line">enabled = True</div></pre></td></tr></table></figure></p>
+<p>注意：如果没有[service_providers]标签就在配置最后新增</p>
+<p>/etc/neutron/fwaas_driver.ini<br>[fwaas]<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">driver = neutron_fwaas.services.firewall.drivers.linux.iptables_fwaas.IptablesFwaasDriver</div><div class="line">enabled = True</div></pre></td></tr></table></figure></p>
+<p>/etc/neutron/l3_agent.ini<br>[AGENT]<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">extensions = fwaas</div></pre></td></tr></table></figure></p>
+<p>将配置加载到数据库中<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">neutron-db-manage --subproject neutron-fwaas upgrade head</div></pre></td></tr></table></figure></p>
+<h3 id="配置完成重启neutron-server和neutron-l3-agent服务让配置生效"><a href="#配置完成重启neutron-server和neutron-l3-agent服务让配置生效" class="headerlink" title="配置完成重启neutron-server和neutron-l3-agent服务让配置生效"></a>配置完成重启neutron-server和neutron-l3-agent服务让配置生效</h3><p>service neutron-server restart<br>service neutron-l3-agent restart</p>
+<h2 id="添加FW策略默认不含邮rule策略"><a href="#添加FW策略默认不含邮rule策略" class="headerlink" title="添加FW策略默认不含邮rule策略"></a>添加FW策略默认不含邮rule策略</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">neutron firewall-policy-create  myfwallpolicy</div><div class="line">neutron firewall-create myfwallpolicy --name myfw</div></pre></td></tr></table></figure>
+<h3 id="确定fw开启成功"><a href="#确定fw开启成功" class="headerlink" title="确定fw开启成功"></a>确定fw开启成功</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@controller:~# neutron firewall-show myfw</div><div class="line">+--------------------+--------------------------------------+</div><div class="line">| Field              | Value                                |</div><div class="line">+--------------------+--------------------------------------+</div><div class="line">| admin_state_up     | True                                 |</div><div class="line">| description        |                                      |</div><div class="line">| firewall_policy_id | 4a1e2adb-ac2c-44d2-8622-65bcc9982c05 |</div><div class="line">| id                 | 47e900ef-6baf-4958-902a-77ba20f9791f |</div><div class="line">| name               | myfw                                 |</div><div class="line">| project_id         | 2aba7c0d74a54b9a9acf1e2810ef996e     |</div><div class="line">| router_ids         | 444e3a9e-1011-46fd-af5c-bcad004e236b |</div><div class="line">| status             | ACTIVE                               |</div><div class="line">| tenant_id          | 2aba7c0d74a54b9a9acf1e2810ef996e     |</div><div class="line">+--------------------+--------------------------------------+</div></pre></td></tr></table></figure>
+<p>说明：实验中newton版本的openstackPENDING_CREATE状态包含fw没有关联router，也是配置错误或则因为没有重启neutron-l3-agent和neutron-server 而导致的配置没有生效<br>哎，在这里废了很大劲。</p>
+<h3 id="查看fwaas-iptables-策略"><a href="#查看fwaas-iptables-策略" class="headerlink" title="查看fwaas iptables 策略"></a>查看fwaas iptables 策略</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">root@controller:~# ip netns</div><div class="line">qdhcp-0dbb735a-ab82-4658-a544-1e91cc7f68db (id: 3)</div><div class="line">qdhcp-e47041c9-008c-4c1b-8fe5-99120d8765b8 (id: 1)</div><div class="line">qdhcp-0ad9b398-b0ac-476a-b1bc-b1f58bf8eff4 (id: 2)</div><div class="line">qrouter-444e3a9e-1011-46fd-af5c-bcad004e236b (id: 0)</div><div class="line">root@controller:~# ip netns exec qrouter-444e3a9e-1011-46fd-af5c-bcad004e236b iptables -S</div><div class="line">-P INPUT ACCEPT</div><div class="line">-P FORWARD ACCEPT</div><div class="line">-P OUTPUT ACCEPT</div><div class="line">-N neutron-filter-top</div><div class="line">-N neutron-l3-agent-FORWARD</div><div class="line">-N neutron-l3-agent-INPUT</div><div class="line">-N neutron-l3-agent-OUTPUT</div><div class="line">-N neutron-l3-agent-fwaas-defau</div><div class="line">-N neutron-l3-agent-iv4ec95c473</div><div class="line">-N neutron-l3-agent-local</div><div class="line">-N neutron-l3-agent-ov4ec95c473</div><div class="line">-N neutron-l3-agent-scope</div><div class="line">-A INPUT -j neutron-l3-agent-INPUT</div><div class="line">-A FORWARD -j neutron-filter-top</div><div class="line">-A FORWARD -j neutron-l3-agent-FORWARD</div><div class="line">-A OUTPUT -j neutron-filter-top</div><div class="line">-A OUTPUT -j neutron-l3-agent-OUTPUT</div><div class="line">-A neutron-filter-top -j neutron-l3-agent-local</div><div class="line">-A neutron-l3-agent-FORWARD -j neutron-l3-agent-scope</div><div class="line">-A neutron-l3-agent-FORWARD -o qr-+ -j neutron-l3-agent-iv4ec95c473</div><div class="line">-A neutron-l3-agent-FORWARD -i qr-+ -j neutron-l3-agent-ov4ec95c473</div><div class="line">-A neutron-l3-agent-FORWARD -o qr-+ -j neutron-l3-agent-fwaas-defau</div><div class="line">-A neutron-l3-agent-FORWARD -i qr-+ -j neutron-l3-agent-fwaas-defau</div><div class="line">-A neutron-l3-agent-INPUT -m mark --mark 0x1/0xffff -j ACCEPT</div><div class="line">-A neutron-l3-agent-INPUT -p tcp -m tcp --dport 9697 -j DROP</div><div class="line">-A neutron-l3-agent-fwaas-defau -j DROP</div><div class="line">-A neutron-l3-agent-iv4ec95c473 -m state --state INVALID -j DROP</div><div class="line">-A neutron-l3-agent-iv4ec95c473 -m state --state RELATED,ESTABLISHED -j ACCEPT</div><div class="line">-A neutron-l3-agent-ov4ec95c473 -m state --state INVALID -j DROP</div><div class="line">-A neutron-l3-agent-ov4ec95c473 -m state --state RELATED,ESTABLISHED -j ACCEPT</div><div class="line">-A neutron-l3-agent-scope -o qr-4346328d-f4 -m mark ! --mark 0x4000000/0xffff0000 -j DROP</div><div class="line">-A neutron-l3-agent-scope -o qr-d879832c-1e -m mark ! --mark 0x4000000/0xffff0000 -j DROP</div></pre></td></tr></table></figure>
+<h3 id="放通两个子网跨网时候icmp"><a href="#放通两个子网跨网时候icmp" class="headerlink" title="放通两个子网跨网时候icmp"></a>放通两个子网跨网时候icmp</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">root@controller:~# neutron firewall-rule-create --protocol icmp --action allow --name myrule</div><div class="line">Created a new firewall_rule:</div><div class="line">+------------------------+--------------------------------------+</div><div class="line">| Field                  | Value                                |</div><div class="line">+------------------------+--------------------------------------+</div><div class="line">| action                 | allow                                |</div><div class="line">| description            |                                      |</div><div class="line">| destination_ip_address |                                      |</div><div class="line">| destination_port       |                                      |</div><div class="line">| enabled                | True                                 |</div><div class="line">| firewall_policy_id     |                                      |</div><div class="line">| id                     | 77e7d0b6-d9b3-453e-a0c1-833faae5cd48 |</div><div class="line">| ip_version             | 4                                    |</div><div class="line">| name                   | myrule                               |</div><div class="line">| position               |                                      |</div><div class="line">| project_id             | 2aba7c0d74a54b9a9acf1e2810ef996e     |</div><div class="line">| protocol               | icmp                                 |</div><div class="line">| shared                 | False                                |</div><div class="line">| source_ip_address      |                                      |</div><div class="line">| source_port            |                                      |</div><div class="line">| tenant_id              | 2aba7c0d74a54b9a9acf1e2810ef996e     |</div><div class="line">+------------------------+--------------------------------------+</div><div class="line">root@controller:~# neutron firewall-policy-insert-rule   myfwallpolicy myrule</div><div class="line">Inserted firewall rule in firewall policy myfwallpolicy</div></pre></td></tr></table></figure>
+<h3 id="查看放通icmp后策略"><a href="#查看放通icmp后策略" class="headerlink" title="查看放通icmp后策略"></a>查看放通icmp后策略</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">root@controller:~# ip netns exec qrouter-444e3a9e-1011-46fd-af5c-bcad004e236b iptables -S</div><div class="line">-P INPUT ACCEPT</div><div class="line">-P FORWARD ACCEPT</div><div class="line">-P OUTPUT ACCEPT</div><div class="line">-N neutron-filter-top</div><div class="line">-N neutron-l3-agent-FORWARD</div><div class="line">-N neutron-l3-agent-INPUT</div><div class="line">-N neutron-l3-agent-OUTPUT</div><div class="line">-N neutron-l3-agent-fwaas-defau</div><div class="line">-N neutron-l3-agent-iv4ec95c473</div><div class="line">-N neutron-l3-agent-local</div><div class="line">-N neutron-l3-agent-ov4ec95c473</div><div class="line">-N neutron-l3-agent-scope</div><div class="line">-A INPUT -j neutron-l3-agent-INPUT</div><div class="line">-A FORWARD -j neutron-filter-top</div><div class="line">-A FORWARD -j neutron-l3-agent-FORWARD</div><div class="line">-A OUTPUT -j neutron-filter-top</div><div class="line">-A OUTPUT -j neutron-l3-agent-OUTPUT</div><div class="line">-A neutron-filter-top -j neutron-l3-agent-local</div><div class="line">-A neutron-l3-agent-FORWARD -j neutron-l3-agent-scope</div><div class="line">-A neutron-l3-agent-FORWARD -o qr-+ -j neutron-l3-agent-iv4ec95c473</div><div class="line">-A neutron-l3-agent-FORWARD -i qr-+ -j neutron-l3-agent-ov4ec95c473</div><div class="line">-A neutron-l3-agent-FORWARD -o qr-+ -j neutron-l3-agent-fwaas-defau</div><div class="line">-A neutron-l3-agent-FORWARD -i qr-+ -j neutron-l3-agent-fwaas-defau</div><div class="line">-A neutron-l3-agent-INPUT -m mark --mark 0x1/0xffff -j ACCEPT</div><div class="line">-A neutron-l3-agent-INPUT -p tcp -m tcp --dport 9697 -j DROP</div><div class="line">-A neutron-l3-agent-fwaas-defau -j DROP</div><div class="line">-A neutron-l3-agent-iv4ec95c473 -m state --state INVALID -j DROP</div><div class="line">-A neutron-l3-agent-iv4ec95c473 -m state --state RELATED,ESTABLISHED -j ACCEPT</div><div class="line">-A neutron-l3-agent-iv4ec95c473 -p icmp -j ACCEPT</div><div class="line">-A neutron-l3-agent-ov4ec95c473 -m state --state INVALID -j DROP</div><div class="line">-A neutron-l3-agent-ov4ec95c473 -m state --state RELATED,ESTABLISHED -j ACCEPT</div><div class="line">-A neutron-l3-agent-ov4ec95c473 -p icmp -j ACCEPT</div><div class="line">-A neutron-l3-agent-scope -o qr-4346328d-f4 -m mark ! --mark 0x4000000/0xffff0000 -j DROP</div><div class="line">-A neutron-l3-agent-scope -o qr-d879832c-1e -m mark ! --mark 0x4000000/0xffff0000 -j DROP</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">-A FORWARD -j neutron-l3-agent-FORWARD</div><div class="line">-A neutron-l3-agent-FORWARD -o qr-+ -j neutron-l3-agent-iv4ec95c473</div><div class="line">-A neutron-l3-agent-FORWARD -i qr-+ -j neutron-l3-agent-ov4ec95c473</div><div class="line">-A neutron-l3-agent-FORWARD -o qr-+ -j neutron-l3-agent-fwaas-defau</div><div class="line">-A neutron-l3-agent-FORWARD -i qr-+ -j neutron-l3-agent-fwaas-defau</div></pre></td></tr></table></figure>
+<p>router namespace转发表处理交给neutron-l3-agent-FORWARD表处理<br>具体策略为：<br>    -A neutron-l3-agent-FORWARD -o qr-+ -j neutron-l3-agent-iv4ec95c473<br>    -A neutron-l3-agent-FORWARD -o qr-+ -j neutron-l3-agent-fwaas-defau<br>FORWARD最终交给neutron-l3-agent-iv4ec95c473和neutron-l3-agent-fwaas-defau处理<br>-A neutron-l3-agent-iv4ec95c473 -m state –state INVALID -j DROP<br>-A neutron-l3-agent-iv4ec95c473 -m state –state RELATED,ESTABLISHED -j ACCEPT<br>-A neutron-l3-agent-fwaas-defau -j DROP</p>
+<p>默认情况下所由经过router qr接口数据包进行转发的全部丢弃</p>
+<h3 id="放通规则后新增规则分析"><a href="#放通规则后新增规则分析" class="headerlink" title="放通规则后新增规则分析"></a>放通规则后新增规则分析</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">-A neutron-l3-agent-iv4ec95c473 -p icmp -j ACCEPT</div><div class="line">-A neutron-l3-agent-ov4ec95c473 -p icmp -j ACCEPT</div></pre></td></tr></table></figure>
+<p>新增icmp放通策略，此时候跨越router ping流量可放通了</p>
+<h2 id="开启fw情况下如何使得vm上网"><a href="#开启fw情况下如何使得vm上网" class="headerlink" title="开启fw情况下如何使得vm上网"></a>开启fw情况下如何使得vm上网</h2><ul>
+<li>开通dns限制<br>neutron firewall-rule-create –protocol udp –destination-port 53 –action allow  –name dns</li>
+<li>开通tcp协议限制<br>neutron firewall-rule-create –protocol tcp  –action allow  –name myrul</li>
+</ul>
+<p>如果在未开启fw前可以上外网，开fw后不能上外网后，经过上述策略放通就可以实现vm上外网需求</p>
+<h2 id="查看所有策略"><a href="#查看所有策略" class="headerlink" title="查看所有策略"></a>查看所有策略</h2><p>查看rule<br>neutron firewall-rule-list<br>查看pllicy<br>neutron firewall-policy-list<br>查看fw墙<br>neutron firewall-list</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">root@controller:~# neutron firewall-rule-list</div><div class="line"></div><div class="line">+------------------------------------+--------+------------------------------------+----------------------+---------+</div><div class="line">| id                                 | name   | firewall_policy_id                 | summary              | enabled |</div><div class="line">+------------------------------------+--------+------------------------------------+----------------------+---------+</div><div class="line">| 69912a17-e462-40ce-b30e-           | myrule | 7f3539bb-145c-                     | ICMP,                | True    |</div><div class="line">| b547f0673dbd                       |        | 4f59-b374-83abbb9729b0             |  source: none(none), |         |</div><div class="line">|                                    |        |                                    |  dest: none(none),   |         |</div><div class="line">|                                    |        |                                    |  allow               |         |</div><div class="line">+------------------------------------+--------+------------------------------------+----------------------+---------+</div><div class="line">root@controller:~# neutron firewall-policy-list</div><div class="line">+--------------------------------------+---------------+----------------------------------------+</div><div class="line">| id                                   | name          | firewall_rules                         |</div><div class="line">+--------------------------------------+---------------+----------------------------------------+</div><div class="line">| 7f3539bb-145c-4f59-b374-83abbb9729b0 | myfwallpolicy | [69912a17-e462-40ce-b30e-b547f0673dbd] |</div><div class="line">+--------------------------------------+---------------+----------------------------------------+</div><div class="line">root@controller:~# neutron firewall-list</div><div class="line">+--------------------------------------+------+--------------------------------------+</div><div class="line">| id                                   | name | firewall_policy_id                   |</div><div class="line">+--------------------------------------+------+--------------------------------------+</div><div class="line">| 532f3f7a-376d-485a-a8db-2e3598fc9b86 | myfw | 7f3539bb-145c-4f59-b374-83abbb9729b0 |</div><div class="line">+--------------------------------------+------+--------------------------------------+</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://vcpu.me/secritygroup/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1680,157 +1859,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/network1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/network1/" itemprop="url"> 虚拟网络</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-14T18:00:00+08:00">
-                2017-07-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/网络/" itemprop="url" rel="index">
-                    <span itemprop="name">网络</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/network1/" class="leancloud_visitors" data-flag-title=" 虚拟网络">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="network-namespace"><a href="#network-namespace" class="headerlink" title="network namespace"></a>network namespace</h1><h2 id="是什么？"><a href="#是什么？" class="headerlink" title="是什么？"></a>是什么？</h2><p>当前系统的网络空间，拥有单独的网络协议栈，网络设备、网卡、路由表、转发表、ARP表、ip地址表、iptables、socket等与网络有关的组建均独立，就像进入了另一个网络环境<br>且该网络空间可以实现交换机、路由器、防火墙等功能</p>
-<h2 id="使用netns在linux系统上搭建网络"><a href="#使用netns在linux系统上搭建网络" class="headerlink" title="使用netns在linux系统上搭建网络"></a>使用netns在linux系统上搭建网络</h2><p><img src="/myimages/bridge1.png" alt="bridge1"><br><strong>网络描述</strong>：<br>   该网络由四部分组成：外网、虚拟网络空间net0、虚拟网络空间net1、虚拟网络空间net2<br>   net0和net2分别为网段10.0.1.0/24 10.0.2.0/24的网络空间，并且接入网桥<br>   net1为网络空间，分别以接口eth0和eth1接入虚拟网桥，分别和net0和net2同一个网段<br>   net1为网络空间，以eth2接入网桥，和物理接口enp0s8同一个网段<br>   enp0s8为虚拟机的桥接物理网卡（虚拟机接口混杂模式开启）<br>   192.168.55.165物理机器，接入虚拟机虚拟bridge另外一端均属于ubuntun虚拟机上搭建虚拟网络<br>   淡黄色部分属于虚拟网桥<br>   net0和net2的默认网关是net1<br>   net1的默认网关是办公网络交换机192.168.55.254<br>   经过net1出去流量做snat</p>
-<p><strong>搭建网络最终效果</strong>：<br>    net0和net1和net2 网络空间中均可以上外网<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/network1/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1880,7 +1908,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">32</span>
+                <span class="site-state-item-count">33</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1902,7 +1930,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">58</span>
+                <span class="site-state-item-count">60</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

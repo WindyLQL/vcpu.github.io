@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://vcpu.me/"/>
-  <updated>2017-08-09T06:59:00.000Z</updated>
+  <updated>2017-08-14T06:46:45.000Z</updated>
   <id>http://vcpu.me/</id>
   
   <author>
@@ -14,6 +14,68 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>fwaas</title>
+    <link href="http://vcpu.me/fwaas/"/>
+    <id>http://vcpu.me/fwaas/</id>
+    <published>2017-08-14T10:00:00.000Z</published>
+    <updated>2017-08-14T06:46:45.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="openstack配置安装环境"><a href="#openstack配置安装环境" class="headerlink" title="openstack配置安装环境"></a>openstack配置安装环境</h2><ul>
+<li>ubuntun版本<br>root@controller:~# lsb_release -a<br>No LSB modules are available.<br>Distributor ID:    Ubuntu<br>Description:    Ubuntu 16.04.2 LTS<br>Release:    16.04<br>Codename:    xenial</li>
+<li><p>openstack newton版本<br>root@controller:~# openstack –version<br>openstack 3.2.0</p>
+</li>
+<li><p>安装环境<br>osx 下的vbox两台虚拟机（controller和compute）<br>openstack网络节点和控制节点安装到controller机器上，计算节点安装到compute节点上</p>
+</li>
+<li><p>组网信息<br><img src="/myimages/fwaasnetwork.png" alt="fwaasnetwork"></p>
+</li>
+</ul>
+<h2 id="配置模块"><a href="#配置模块" class="headerlink" title="配置模块"></a>配置模块</h2><h3 id="配置详情"><a href="#配置详情" class="headerlink" title="配置详情"></a>配置详情</h3><p>/etc/neutron/neutron.conf<br>[DEFAULT]<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">service_plugins = router,firewall</div></pre></td></tr></table></figure></p>
+<p>[service_providers]<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">service_provider = FIREWALL:Iptables:neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver:default</div></pre></td></tr></table></figure></p>
+<p>注意：如果没有[service_providers]标签就在配置最后新增<br>[fwaas]<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">agent_version = v1</div><div class="line">driver = iptables</div><div class="line">enabled = True</div></pre></td></tr></table></figure></p>
+<p>注意：如果没有[service_providers]标签就在配置最后新增</p>
+<p>/etc/neutron/fwaas_driver.ini<br>[fwaas]<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">driver = neutron_fwaas.services.firewall.drivers.linux.iptables_fwaas.IptablesFwaasDriver</div><div class="line">enabled = True</div></pre></td></tr></table></figure></p>
+<p>/etc/neutron/l3_agent.ini<br>[AGENT]<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">extensions = fwaas</div></pre></td></tr></table></figure></p>
+<p>将配置加载到数据库中<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">neutron-db-manage --subproject neutron-fwaas upgrade head</div></pre></td></tr></table></figure></p>
+<h3 id="配置完成重启neutron-server和neutron-l3-agent服务让配置生效"><a href="#配置完成重启neutron-server和neutron-l3-agent服务让配置生效" class="headerlink" title="配置完成重启neutron-server和neutron-l3-agent服务让配置生效"></a>配置完成重启neutron-server和neutron-l3-agent服务让配置生效</h3><p>service neutron-server restart<br>service neutron-l3-agent restart</p>
+<h2 id="添加FW策略默认不含邮rule策略"><a href="#添加FW策略默认不含邮rule策略" class="headerlink" title="添加FW策略默认不含邮rule策略"></a>添加FW策略默认不含邮rule策略</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">neutron firewall-policy-create  myfwallpolicy</div><div class="line">neutron firewall-create myfwallpolicy --name myfw</div></pre></td></tr></table></figure>
+<h3 id="确定fw开启成功"><a href="#确定fw开启成功" class="headerlink" title="确定fw开启成功"></a>确定fw开启成功</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@controller:~# neutron firewall-show myfw</div><div class="line">+--------------------+--------------------------------------+</div><div class="line">| Field              | Value                                |</div><div class="line">+--------------------+--------------------------------------+</div><div class="line">| admin_state_up     | True                                 |</div><div class="line">| description        |                                      |</div><div class="line">| firewall_policy_id | 4a1e2adb-ac2c-44d2-8622-65bcc9982c05 |</div><div class="line">| id                 | 47e900ef-6baf-4958-902a-77ba20f9791f |</div><div class="line">| name               | myfw                                 |</div><div class="line">| project_id         | 2aba7c0d74a54b9a9acf1e2810ef996e     |</div><div class="line">| router_ids         | 444e3a9e-1011-46fd-af5c-bcad004e236b |</div><div class="line">| status             | ACTIVE                               |</div><div class="line">| tenant_id          | 2aba7c0d74a54b9a9acf1e2810ef996e     |</div><div class="line">+--------------------+--------------------------------------+</div></pre></td></tr></table></figure>
+<p>说明：实验中newton版本的openstackPENDING_CREATE状态包含fw没有关联router，也是配置错误或则因为没有重启neutron-l3-agent和neutron-server 而导致的配置没有生效<br>哎，在这里废了很大劲。</p>
+<h3 id="查看fwaas-iptables-策略"><a href="#查看fwaas-iptables-策略" class="headerlink" title="查看fwaas iptables 策略"></a>查看fwaas iptables 策略</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">root@controller:~# ip netns</div><div class="line">qdhcp-0dbb735a-ab82-4658-a544-1e91cc7f68db (id: 3)</div><div class="line">qdhcp-e47041c9-008c-4c1b-8fe5-99120d8765b8 (id: 1)</div><div class="line">qdhcp-0ad9b398-b0ac-476a-b1bc-b1f58bf8eff4 (id: 2)</div><div class="line">qrouter-444e3a9e-1011-46fd-af5c-bcad004e236b (id: 0)</div><div class="line">root@controller:~# ip netns exec qrouter-444e3a9e-1011-46fd-af5c-bcad004e236b iptables -S</div><div class="line">-P INPUT ACCEPT</div><div class="line">-P FORWARD ACCEPT</div><div class="line">-P OUTPUT ACCEPT</div><div class="line">-N neutron-filter-top</div><div class="line">-N neutron-l3-agent-FORWARD</div><div class="line">-N neutron-l3-agent-INPUT</div><div class="line">-N neutron-l3-agent-OUTPUT</div><div class="line">-N neutron-l3-agent-fwaas-defau</div><div class="line">-N neutron-l3-agent-iv4ec95c473</div><div class="line">-N neutron-l3-agent-local</div><div class="line">-N neutron-l3-agent-ov4ec95c473</div><div class="line">-N neutron-l3-agent-scope</div><div class="line">-A INPUT -j neutron-l3-agent-INPUT</div><div class="line">-A FORWARD -j neutron-filter-top</div><div class="line">-A FORWARD -j neutron-l3-agent-FORWARD</div><div class="line">-A OUTPUT -j neutron-filter-top</div><div class="line">-A OUTPUT -j neutron-l3-agent-OUTPUT</div><div class="line">-A neutron-filter-top -j neutron-l3-agent-local</div><div class="line">-A neutron-l3-agent-FORWARD -j neutron-l3-agent-scope</div><div class="line">-A neutron-l3-agent-FORWARD -o qr-+ -j neutron-l3-agent-iv4ec95c473</div><div class="line">-A neutron-l3-agent-FORWARD -i qr-+ -j neutron-l3-agent-ov4ec95c473</div><div class="line">-A neutron-l3-agent-FORWARD -o qr-+ -j neutron-l3-agent-fwaas-defau</div><div class="line">-A neutron-l3-agent-FORWARD -i qr-+ -j neutron-l3-agent-fwaas-defau</div><div class="line">-A neutron-l3-agent-INPUT -m mark --mark 0x1/0xffff -j ACCEPT</div><div class="line">-A neutron-l3-agent-INPUT -p tcp -m tcp --dport 9697 -j DROP</div><div class="line">-A neutron-l3-agent-fwaas-defau -j DROP</div><div class="line">-A neutron-l3-agent-iv4ec95c473 -m state --state INVALID -j DROP</div><div class="line">-A neutron-l3-agent-iv4ec95c473 -m state --state RELATED,ESTABLISHED -j ACCEPT</div><div class="line">-A neutron-l3-agent-ov4ec95c473 -m state --state INVALID -j DROP</div><div class="line">-A neutron-l3-agent-ov4ec95c473 -m state --state RELATED,ESTABLISHED -j ACCEPT</div><div class="line">-A neutron-l3-agent-scope -o qr-4346328d-f4 -m mark ! --mark 0x4000000/0xffff0000 -j DROP</div><div class="line">-A neutron-l3-agent-scope -o qr-d879832c-1e -m mark ! --mark 0x4000000/0xffff0000 -j DROP</div></pre></td></tr></table></figure>
+<h3 id="放通两个子网跨网时候icmp"><a href="#放通两个子网跨网时候icmp" class="headerlink" title="放通两个子网跨网时候icmp"></a>放通两个子网跨网时候icmp</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">root@controller:~# neutron firewall-rule-create --protocol icmp --action allow --name myrule</div><div class="line">Created a new firewall_rule:</div><div class="line">+------------------------+--------------------------------------+</div><div class="line">| Field                  | Value                                |</div><div class="line">+------------------------+--------------------------------------+</div><div class="line">| action                 | allow                                |</div><div class="line">| description            |                                      |</div><div class="line">| destination_ip_address |                                      |</div><div class="line">| destination_port       |                                      |</div><div class="line">| enabled                | True                                 |</div><div class="line">| firewall_policy_id     |                                      |</div><div class="line">| id                     | 77e7d0b6-d9b3-453e-a0c1-833faae5cd48 |</div><div class="line">| ip_version             | 4                                    |</div><div class="line">| name                   | myrule                               |</div><div class="line">| position               |                                      |</div><div class="line">| project_id             | 2aba7c0d74a54b9a9acf1e2810ef996e     |</div><div class="line">| protocol               | icmp                                 |</div><div class="line">| shared                 | False                                |</div><div class="line">| source_ip_address      |                                      |</div><div class="line">| source_port            |                                      |</div><div class="line">| tenant_id              | 2aba7c0d74a54b9a9acf1e2810ef996e     |</div><div class="line">+------------------------+--------------------------------------+</div><div class="line">root@controller:~# neutron firewall-policy-insert-rule   myfwallpolicy myrule</div><div class="line">Inserted firewall rule in firewall policy myfwallpolicy</div></pre></td></tr></table></figure>
+<h3 id="查看放通icmp后策略"><a href="#查看放通icmp后策略" class="headerlink" title="查看放通icmp后策略"></a>查看放通icmp后策略</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">root@controller:~# ip netns exec qrouter-444e3a9e-1011-46fd-af5c-bcad004e236b iptables -S</div><div class="line">-P INPUT ACCEPT</div><div class="line">-P FORWARD ACCEPT</div><div class="line">-P OUTPUT ACCEPT</div><div class="line">-N neutron-filter-top</div><div class="line">-N neutron-l3-agent-FORWARD</div><div class="line">-N neutron-l3-agent-INPUT</div><div class="line">-N neutron-l3-agent-OUTPUT</div><div class="line">-N neutron-l3-agent-fwaas-defau</div><div class="line">-N neutron-l3-agent-iv4ec95c473</div><div class="line">-N neutron-l3-agent-local</div><div class="line">-N neutron-l3-agent-ov4ec95c473</div><div class="line">-N neutron-l3-agent-scope</div><div class="line">-A INPUT -j neutron-l3-agent-INPUT</div><div class="line">-A FORWARD -j neutron-filter-top</div><div class="line">-A FORWARD -j neutron-l3-agent-FORWARD</div><div class="line">-A OUTPUT -j neutron-filter-top</div><div class="line">-A OUTPUT -j neutron-l3-agent-OUTPUT</div><div class="line">-A neutron-filter-top -j neutron-l3-agent-local</div><div class="line">-A neutron-l3-agent-FORWARD -j neutron-l3-agent-scope</div><div class="line">-A neutron-l3-agent-FORWARD -o qr-+ -j neutron-l3-agent-iv4ec95c473</div><div class="line">-A neutron-l3-agent-FORWARD -i qr-+ -j neutron-l3-agent-ov4ec95c473</div><div class="line">-A neutron-l3-agent-FORWARD -o qr-+ -j neutron-l3-agent-fwaas-defau</div><div class="line">-A neutron-l3-agent-FORWARD -i qr-+ -j neutron-l3-agent-fwaas-defau</div><div class="line">-A neutron-l3-agent-INPUT -m mark --mark 0x1/0xffff -j ACCEPT</div><div class="line">-A neutron-l3-agent-INPUT -p tcp -m tcp --dport 9697 -j DROP</div><div class="line">-A neutron-l3-agent-fwaas-defau -j DROP</div><div class="line">-A neutron-l3-agent-iv4ec95c473 -m state --state INVALID -j DROP</div><div class="line">-A neutron-l3-agent-iv4ec95c473 -m state --state RELATED,ESTABLISHED -j ACCEPT</div><div class="line">-A neutron-l3-agent-iv4ec95c473 -p icmp -j ACCEPT</div><div class="line">-A neutron-l3-agent-ov4ec95c473 -m state --state INVALID -j DROP</div><div class="line">-A neutron-l3-agent-ov4ec95c473 -m state --state RELATED,ESTABLISHED -j ACCEPT</div><div class="line">-A neutron-l3-agent-ov4ec95c473 -p icmp -j ACCEPT</div><div class="line">-A neutron-l3-agent-scope -o qr-4346328d-f4 -m mark ! --mark 0x4000000/0xffff0000 -j DROP</div><div class="line">-A neutron-l3-agent-scope -o qr-d879832c-1e -m mark ! --mark 0x4000000/0xffff0000 -j DROP</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">-A FORWARD -j neutron-l3-agent-FORWARD</div><div class="line">-A neutron-l3-agent-FORWARD -o qr-+ -j neutron-l3-agent-iv4ec95c473</div><div class="line">-A neutron-l3-agent-FORWARD -i qr-+ -j neutron-l3-agent-ov4ec95c473</div><div class="line">-A neutron-l3-agent-FORWARD -o qr-+ -j neutron-l3-agent-fwaas-defau</div><div class="line">-A neutron-l3-agent-FORWARD -i qr-+ -j neutron-l3-agent-fwaas-defau</div></pre></td></tr></table></figure>
+<p>router namespace转发表处理交给neutron-l3-agent-FORWARD表处理<br>具体策略为：<br>    -A neutron-l3-agent-FORWARD -o qr-+ -j neutron-l3-agent-iv4ec95c473<br>    -A neutron-l3-agent-FORWARD -o qr-+ -j neutron-l3-agent-fwaas-defau<br>FORWARD最终交给neutron-l3-agent-iv4ec95c473和neutron-l3-agent-fwaas-defau处理<br>-A neutron-l3-agent-iv4ec95c473 -m state –state INVALID -j DROP<br>-A neutron-l3-agent-iv4ec95c473 -m state –state RELATED,ESTABLISHED -j ACCEPT<br>-A neutron-l3-agent-fwaas-defau -j DROP</p>
+<p>默认情况下所由经过router qr接口数据包进行转发的全部丢弃</p>
+<h3 id="放通规则后新增规则分析"><a href="#放通规则后新增规则分析" class="headerlink" title="放通规则后新增规则分析"></a>放通规则后新增规则分析</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">-A neutron-l3-agent-iv4ec95c473 -p icmp -j ACCEPT</div><div class="line">-A neutron-l3-agent-ov4ec95c473 -p icmp -j ACCEPT</div></pre></td></tr></table></figure>
+<p>新增icmp放通策略，此时候跨越router ping流量可放通了</p>
+<h2 id="开启fw情况下如何使得vm上网"><a href="#开启fw情况下如何使得vm上网" class="headerlink" title="开启fw情况下如何使得vm上网"></a>开启fw情况下如何使得vm上网</h2><ul>
+<li>开通dns限制<br>neutron firewall-rule-create –protocol udp –destination-port 53 –action allow  –name dns</li>
+<li>开通tcp协议限制<br>neutron firewall-rule-create –protocol tcp  –action allow  –name myrul</li>
+</ul>
+<p>如果在未开启fw前可以上外网，开fw后不能上外网后，经过上述策略放通就可以实现vm上外网需求</p>
+<h2 id="查看所有策略"><a href="#查看所有策略" class="headerlink" title="查看所有策略"></a>查看所有策略</h2><p>查看rule<br>neutron firewall-rule-list<br>查看pllicy<br>neutron firewall-policy-list<br>查看fw墙<br>neutron firewall-list</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">root@controller:~# neutron firewall-rule-list</div><div class="line"></div><div class="line">+------------------------------------+--------+------------------------------------+----------------------+---------+</div><div class="line">| id                                 | name   | firewall_policy_id                 | summary              | enabled |</div><div class="line">+------------------------------------+--------+------------------------------------+----------------------+---------+</div><div class="line">| 69912a17-e462-40ce-b30e-           | myrule | 7f3539bb-145c-                     | ICMP,                | True    |</div><div class="line">| b547f0673dbd                       |        | 4f59-b374-83abbb9729b0             |  source: none(none), |         |</div><div class="line">|                                    |        |                                    |  dest: none(none),   |         |</div><div class="line">|                                    |        |                                    |  allow               |         |</div><div class="line">+------------------------------------+--------+------------------------------------+----------------------+---------+</div><div class="line">root@controller:~# neutron firewall-policy-list</div><div class="line">+--------------------------------------+---------------+----------------------------------------+</div><div class="line">| id                                   | name          | firewall_rules                         |</div><div class="line">+--------------------------------------+---------------+----------------------------------------+</div><div class="line">| 7f3539bb-145c-4f59-b374-83abbb9729b0 | myfwallpolicy | [69912a17-e462-40ce-b30e-b547f0673dbd] |</div><div class="line">+--------------------------------------+---------------+----------------------------------------+</div><div class="line">root@controller:~# neutron firewall-list</div><div class="line">+--------------------------------------+------+--------------------------------------+</div><div class="line">| id                                   | name | firewall_policy_id                   |</div><div class="line">+--------------------------------------+------+--------------------------------------+</div><div class="line">| 532f3f7a-376d-485a-a8db-2e3598fc9b86 | myfw | 7f3539bb-145c-4f59-b374-83abbb9729b0 |</div><div class="line">+--------------------------------------+------+--------------------------------------+</div></pre></td></tr></table></figure>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;openstack配置安装环境&quot;&gt;&lt;a href=&quot;#openstack配置安装环境&quot; class=&quot;headerlink&quot; title=&quot;openstack配置安装环境&quot;&gt;&lt;/a&gt;openstack配置安装环境&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;ubuntun版本&lt;br
+    
+    </summary>
+    
+      <category term="openstack" scheme="http://vcpu.me/categories/openstack/"/>
+    
+    
+      <category term="openstack" scheme="http://vcpu.me/tags/openstack/"/>
+    
+      <category term="fwaas" scheme="http://vcpu.me/tags/fwaas/"/>
+    
+      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
+    
+  </entry>
   
   <entry>
     <title>openstack Security group</title>
@@ -126,11 +188,11 @@
       <category term="网络" scheme="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
     
     
+      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
+    
       <category term="ovs" scheme="http://vcpu.me/tags/ovs/"/>
     
       <category term="虚拟交换机" scheme="http://vcpu.me/tags/%E8%99%9A%E6%8B%9F%E4%BA%A4%E6%8D%A2%E6%9C%BA/"/>
-    
-      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
     
       <category term="cmd" scheme="http://vcpu.me/tags/cmd/"/>
     
@@ -248,13 +310,95 @@
       <category term="网络" scheme="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
     
     
+      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
+    
       <category term="ovs" scheme="http://vcpu.me/tags/ovs/"/>
     
       <category term="虚拟交换机" scheme="http://vcpu.me/tags/%E8%99%9A%E6%8B%9F%E4%BA%A4%E6%8D%A2%E6%9C%BA/"/>
     
+      <category term="ovs-ofctl" scheme="http://vcpu.me/tags/ovs-ofctl/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>openvSwitch tunnel</title>
+    <link href="http://vcpu.me/openvswitch2/"/>
+    <id>http://vcpu.me/openvswitch2/</id>
+    <published>2017-08-03T10:00:00.000Z</published>
+    <updated>2017-08-07T09:45:44.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="ovs-tunnel"><a href="#ovs-tunnel" class="headerlink" title="ovs tunnel"></a>ovs tunnel</h2><h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><p><img src="/myimages/tunnel.png" alt="tunnel"></p>
+<h3 id="实验拓扑搭建基础脚本"><a href="#实验拓扑搭建基础脚本" class="headerlink" title="实验拓扑搭建基础脚本"></a>实验拓扑搭建基础脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">#vbox虚拟机1</div><div class="line">ip netns add left</div><div class="line">ip link add name veth1 type veth peer name sw1-p1</div><div class="line">ip link set dev veth1 netns left</div><div class="line">ip netns exec left ifconfig veth1 10.0.0.1/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw1</div><div class="line">ovs-vsctl add-port sw1 sw1-p1</div><div class="line">ip link set sw1-p1 up</div><div class="line"></div><div class="line">#vbox虚拟机2</div><div class="line">ip netns add right</div><div class="line">ip link add name veth1 type veth peer name sw2-p1</div><div class="line">ip link set dev veth1 netns right</div><div class="line">ip netns exec right ifconfig veth1 10.0.0.2/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw2</div><div class="line">ovs-vsctl add-port sw2 sw2-p1</div><div class="line">ip link set sw2-p1 up</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<h3 id="GRE-TUNNEL-配置"><a href="#GRE-TUNNEL-配置" class="headerlink" title="GRE TUNNEL 配置"></a>GRE TUNNEL 配置</h3><ul>
+<li><p>vbox虚拟机1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set Interface tun0 type=gre options:remote_ip=10.30.10.141</div></pre></td></tr></table></figure>
+</li>
+<li><p>vbox虚拟机2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set Interface tun0 type=gre options:remote_ip=10.30.10.145</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="查看配置"><a href="#查看配置" class="headerlink" title="查看配置"></a>查看配置</h4><ul>
+<li><p>vbox虚拟机1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">29c5cc05-2a31-4f14-a304-3a697698f96a</div><div class="line">    Bridge &quot;sw1&quot;</div><div class="line">        Port &quot;sw1&quot;</div><div class="line">            Interface &quot;sw1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;sw1-p1&quot;</div><div class="line">            Interface &quot;sw1-p1&quot;</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: gre</div><div class="line">                options: &#123;remote_ip=&quot;10.30.10.141&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div></pre></td></tr></table></figure>
+</li>
+<li><p>vbox虚拟机2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">0f92aaa0-5385-48f5-a54a-644e05652f59</div><div class="line">    Bridge &quot;sw2&quot;</div><div class="line">        Port &quot;sw2-p1&quot;</div><div class="line">            Interface &quot;sw2-p1&quot;</div><div class="line">        Port &quot;sw2&quot;</div><div class="line">            Interface &quot;sw2&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: gre</div><div class="line">                options: &#123;remote_ip=&quot;10.30.10.145&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div><div class="line">root@controller-VirtualBox</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right"><a href="#连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right" class="headerlink" title="连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right"></a>连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ip netns exec left ping 10.0.0.2</div><div class="line">PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.953 ms</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.609 ms</div></pre></td></tr></table></figure>
+<h3 id="VXLAN-TUNNEL配置"><a href="#VXLAN-TUNNEL配置" class="headerlink" title="VXLAN TUNNEL配置"></a>VXLAN TUNNEL配置</h3><ul>
+<li><p>vbox虚拟机1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set Interface tun0 type=vxlan options:local_ip=10.30.10.145 options:remote_ip=10.30.10.141</div></pre></td></tr></table></figure>
+</li>
+<li><p>vbbox虚拟机2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set Interface tun0 type=vxlan options:local_ip=10.30.10.141 options:remote_ip=10.30.10.145</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="查看配置-1"><a href="#查看配置-1" class="headerlink" title="查看配置"></a>查看配置</h4><ul>
+<li><p>vbox虚拟机1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">29c5cc05-2a31-4f14-a304-3a697698f96a</div><div class="line">    Bridge &quot;sw1&quot;</div><div class="line">        Port &quot;sw1&quot;</div><div class="line">            Interface &quot;sw1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;sw1-p1&quot;</div><div class="line">            Interface &quot;sw1-p1&quot;</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: vxlan</div><div class="line">                options: &#123;local_ip=&quot;10.30.10.145&quot;, remote_ip=&quot;10.30.10.141&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div></pre></td></tr></table></figure>
+</li>
+<li><p>vbox虚拟机2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">0f92aaa0-5385-48f5-a54a-644e05652f59</div><div class="line">    Bridge &quot;sw2&quot;</div><div class="line">        Port &quot;sw2-p1&quot;</div><div class="line">            Interface &quot;sw2-p1&quot;</div><div class="line">        Port &quot;sw2&quot;</div><div class="line">            Interface &quot;sw2&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: vxlan</div><div class="line">                options: &#123;local_ip=&quot;10.30.10.141&quot;, remote_ip=&quot;10.30.10.145&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div><div class="line">root@controller-VirtualBox:~#</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right-1"><a href="#连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right-1" class="headerlink" title="连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right"></a>连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ip netns exec left ping 10.0.0.2</div><div class="line">PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.905 ms</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.490 ms</div><div class="line">2 packets transmitted, 2 received, 0% packet loss, time 1001ms</div><div class="line">rtt min/avg/max/mdev = 0.490/0.697/0.905/0.209 ms</div></pre></td></tr></table></figure>
+<h3 id="ipsec-gre配置"><a href="#ipsec-gre配置" class="headerlink" title="ipsec_gre配置"></a>ipsec_gre配置</h3><p>如果运行失败或则无法创建接口，首先安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">apt-get install openvswitch* -y</div></pre></td></tr></table></figure></p>
+<ul>
+<li><p>vbox虚拟机1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set interface tun0 type=ipsec_gre options:remote_ip=10.30.10.141 options:psk=test123</div></pre></td></tr></table></figure>
+</li>
+<li><p>vbbox虚拟机2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set interface tun0 type=ipsec_gre options:remote_ip=10.30.10.145 options:psk=test123</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>在ipsec gre tunnel情况下，我的环境中并没有完成连通，而且日志中也没有报错；具体原因还需要探究。当然我已经翻阅论坛，然并卵，哎。。。，暂且未解之谜吧</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;ovs-tunnel&quot;&gt;&lt;a href=&quot;#ovs-tunnel&quot; class=&quot;headerlink&quot; title=&quot;ovs tunnel&quot;&gt;&lt;/a&gt;ovs tunnel&lt;/h2&gt;&lt;h3 id=&quot;实验拓扑&quot;&gt;&lt;a href=&quot;#实验拓扑&quot; class=&quot;headerlink&quot; title=&quot;实验拓扑&quot;&gt;&lt;/a&gt;实验拓扑&lt;/h3&gt;&lt;p&gt;&lt;img src=&quot;/myimages/tunnel.png&quot; alt=&quot;tunnel&quot;&gt;&lt;/p&gt;
+&lt;h3 id=&quot;实验拓扑搭建基础脚本&quot;&gt;&lt;a href=&quot;#实验拓扑搭建基础脚本&quot; class=&quot;headerlink&quot; title=&quot;实验拓扑搭建基础脚本&quot;&gt;&lt;/a&gt;实验拓扑搭建基础脚本&lt;/h3&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;8&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;9&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;10&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;11&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;12&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;13&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;14&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;15&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;16&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;17&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;18&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;19&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;#vbox虚拟机1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns add left&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link add name veth1 type veth peer name sw1-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set dev veth1 netns left&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns exec left ifconfig veth1 10.0.0.1/24 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-br sw1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-port sw1 sw1-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set sw1-p1 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;#vbox虚拟机2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns add right&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link add name veth1 type veth peer name sw2-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set dev veth1 netns right&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns exec right ifconfig veth1 10.0.0.2/24 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-br sw2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-port sw2 sw2-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set sw2-p1 up&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+    
+    </summary>
+    
+      <category term="网络" scheme="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+    
+    
       <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
     
-      <category term="ovs-ofctl" scheme="http://vcpu.me/tags/ovs-ofctl/"/>
+      <category term="ovs" scheme="http://vcpu.me/tags/ovs/"/>
+    
+      <category term="虚拟交换机" scheme="http://vcpu.me/tags/%E8%99%9A%E6%8B%9F%E4%BA%A4%E6%8D%A2%E6%9C%BA/"/>
+    
+      <category term="gre" scheme="http://vcpu.me/tags/gre/"/>
+    
+      <category term="vxlan" scheme="http://vcpu.me/tags/vxlan/"/>
+    
+      <category term="ovx tunnel" scheme="http://vcpu.me/tags/ovx-tunnel/"/>
+    
+      <category term="ipsec gre" scheme="http://vcpu.me/tags/ipsec-gre/"/>
     
   </entry>
   
@@ -396,99 +540,17 @@
       <category term="网络" scheme="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
     
     
+      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
+    
       <category term="ovs" scheme="http://vcpu.me/tags/ovs/"/>
     
       <category term="虚拟交换机" scheme="http://vcpu.me/tags/%E8%99%9A%E6%8B%9F%E4%BA%A4%E6%8D%A2%E6%9C%BA/"/>
-    
-      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
     
       <category term="mirror" scheme="http://vcpu.me/tags/mirror/"/>
     
       <category term="Qos" scheme="http://vcpu.me/tags/Qos/"/>
     
       <category term="STP" scheme="http://vcpu.me/tags/STP/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>openvSwitch tunnel</title>
-    <link href="http://vcpu.me/openvswitch2/"/>
-    <id>http://vcpu.me/openvswitch2/</id>
-    <published>2017-08-03T10:00:00.000Z</published>
-    <updated>2017-08-07T09:45:44.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="ovs-tunnel"><a href="#ovs-tunnel" class="headerlink" title="ovs tunnel"></a>ovs tunnel</h2><h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><p><img src="/myimages/tunnel.png" alt="tunnel"></p>
-<h3 id="实验拓扑搭建基础脚本"><a href="#实验拓扑搭建基础脚本" class="headerlink" title="实验拓扑搭建基础脚本"></a>实验拓扑搭建基础脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">#vbox虚拟机1</div><div class="line">ip netns add left</div><div class="line">ip link add name veth1 type veth peer name sw1-p1</div><div class="line">ip link set dev veth1 netns left</div><div class="line">ip netns exec left ifconfig veth1 10.0.0.1/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw1</div><div class="line">ovs-vsctl add-port sw1 sw1-p1</div><div class="line">ip link set sw1-p1 up</div><div class="line"></div><div class="line">#vbox虚拟机2</div><div class="line">ip netns add right</div><div class="line">ip link add name veth1 type veth peer name sw2-p1</div><div class="line">ip link set dev veth1 netns right</div><div class="line">ip netns exec right ifconfig veth1 10.0.0.2/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw2</div><div class="line">ovs-vsctl add-port sw2 sw2-p1</div><div class="line">ip link set sw2-p1 up</div></pre></td></tr></table></figure>
-<a id="more"></a>
-<h3 id="GRE-TUNNEL-配置"><a href="#GRE-TUNNEL-配置" class="headerlink" title="GRE TUNNEL 配置"></a>GRE TUNNEL 配置</h3><ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set Interface tun0 type=gre options:remote_ip=10.30.10.141</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set Interface tun0 type=gre options:remote_ip=10.30.10.145</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="查看配置"><a href="#查看配置" class="headerlink" title="查看配置"></a>查看配置</h4><ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">29c5cc05-2a31-4f14-a304-3a697698f96a</div><div class="line">    Bridge &quot;sw1&quot;</div><div class="line">        Port &quot;sw1&quot;</div><div class="line">            Interface &quot;sw1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;sw1-p1&quot;</div><div class="line">            Interface &quot;sw1-p1&quot;</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: gre</div><div class="line">                options: &#123;remote_ip=&quot;10.30.10.141&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">0f92aaa0-5385-48f5-a54a-644e05652f59</div><div class="line">    Bridge &quot;sw2&quot;</div><div class="line">        Port &quot;sw2-p1&quot;</div><div class="line">            Interface &quot;sw2-p1&quot;</div><div class="line">        Port &quot;sw2&quot;</div><div class="line">            Interface &quot;sw2&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: gre</div><div class="line">                options: &#123;remote_ip=&quot;10.30.10.145&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div><div class="line">root@controller-VirtualBox</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right"><a href="#连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right" class="headerlink" title="连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right"></a>连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ip netns exec left ping 10.0.0.2</div><div class="line">PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.953 ms</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.609 ms</div></pre></td></tr></table></figure>
-<h3 id="VXLAN-TUNNEL配置"><a href="#VXLAN-TUNNEL配置" class="headerlink" title="VXLAN TUNNEL配置"></a>VXLAN TUNNEL配置</h3><ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set Interface tun0 type=vxlan options:local_ip=10.30.10.145 options:remote_ip=10.30.10.141</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set Interface tun0 type=vxlan options:local_ip=10.30.10.141 options:remote_ip=10.30.10.145</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="查看配置-1"><a href="#查看配置-1" class="headerlink" title="查看配置"></a>查看配置</h4><ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">29c5cc05-2a31-4f14-a304-3a697698f96a</div><div class="line">    Bridge &quot;sw1&quot;</div><div class="line">        Port &quot;sw1&quot;</div><div class="line">            Interface &quot;sw1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;sw1-p1&quot;</div><div class="line">            Interface &quot;sw1-p1&quot;</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: vxlan</div><div class="line">                options: &#123;local_ip=&quot;10.30.10.145&quot;, remote_ip=&quot;10.30.10.141&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">0f92aaa0-5385-48f5-a54a-644e05652f59</div><div class="line">    Bridge &quot;sw2&quot;</div><div class="line">        Port &quot;sw2-p1&quot;</div><div class="line">            Interface &quot;sw2-p1&quot;</div><div class="line">        Port &quot;sw2&quot;</div><div class="line">            Interface &quot;sw2&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: vxlan</div><div class="line">                options: &#123;local_ip=&quot;10.30.10.141&quot;, remote_ip=&quot;10.30.10.145&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div><div class="line">root@controller-VirtualBox:~#</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right-1"><a href="#连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right-1" class="headerlink" title="连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right"></a>连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ip netns exec left ping 10.0.0.2</div><div class="line">PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.905 ms</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.490 ms</div><div class="line">2 packets transmitted, 2 received, 0% packet loss, time 1001ms</div><div class="line">rtt min/avg/max/mdev = 0.490/0.697/0.905/0.209 ms</div></pre></td></tr></table></figure>
-<h3 id="ipsec-gre配置"><a href="#ipsec-gre配置" class="headerlink" title="ipsec_gre配置"></a>ipsec_gre配置</h3><p>如果运行失败或则无法创建接口，首先安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">apt-get install openvswitch* -y</div></pre></td></tr></table></figure></p>
-<ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set interface tun0 type=ipsec_gre options:remote_ip=10.30.10.141 options:psk=test123</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set interface tun0 type=ipsec_gre options:remote_ip=10.30.10.145 options:psk=test123</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>在ipsec gre tunnel情况下，我的环境中并没有完成连通，而且日志中也没有报错；具体原因还需要探究。当然我已经翻阅论坛，然并卵，哎。。。，暂且未解之谜吧</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;ovs-tunnel&quot;&gt;&lt;a href=&quot;#ovs-tunnel&quot; class=&quot;headerlink&quot; title=&quot;ovs tunnel&quot;&gt;&lt;/a&gt;ovs tunnel&lt;/h2&gt;&lt;h3 id=&quot;实验拓扑&quot;&gt;&lt;a href=&quot;#实验拓扑&quot; class=&quot;headerlink&quot; title=&quot;实验拓扑&quot;&gt;&lt;/a&gt;实验拓扑&lt;/h3&gt;&lt;p&gt;&lt;img src=&quot;/myimages/tunnel.png&quot; alt=&quot;tunnel&quot;&gt;&lt;/p&gt;
-&lt;h3 id=&quot;实验拓扑搭建基础脚本&quot;&gt;&lt;a href=&quot;#实验拓扑搭建基础脚本&quot; class=&quot;headerlink&quot; title=&quot;实验拓扑搭建基础脚本&quot;&gt;&lt;/a&gt;实验拓扑搭建基础脚本&lt;/h3&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;8&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;9&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;10&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;11&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;12&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;13&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;14&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;15&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;16&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;17&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;18&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;19&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;#vbox虚拟机1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns add left&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link add name veth1 type veth peer name sw1-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set dev veth1 netns left&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns exec left ifconfig veth1 10.0.0.1/24 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-br sw1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-port sw1 sw1-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set sw1-p1 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;#vbox虚拟机2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns add right&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link add name veth1 type veth peer name sw2-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set dev veth1 netns right&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns exec right ifconfig veth1 10.0.0.2/24 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-br sw2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-port sw2 sw2-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set sw2-p1 up&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-    
-    </summary>
-    
-      <category term="网络" scheme="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
-    
-    
-      <category term="ovs" scheme="http://vcpu.me/tags/ovs/"/>
-    
-      <category term="虚拟交换机" scheme="http://vcpu.me/tags/%E8%99%9A%E6%8B%9F%E4%BA%A4%E6%8D%A2%E6%9C%BA/"/>
-    
-      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
-    
-      <category term="gre" scheme="http://vcpu.me/tags/gre/"/>
-    
-      <category term="vxlan" scheme="http://vcpu.me/tags/vxlan/"/>
-    
-      <category term="ovx tunnel" scheme="http://vcpu.me/tags/ovx-tunnel/"/>
-    
-      <category term="ipsec gre" scheme="http://vcpu.me/tags/ipsec-gre/"/>
     
   </entry>
   
@@ -653,11 +715,11 @@
       <category term="网络" scheme="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
     
     
+      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
+    
       <category term="ovs" scheme="http://vcpu.me/tags/ovs/"/>
     
       <category term="虚拟交换机" scheme="http://vcpu.me/tags/%E8%99%9A%E6%8B%9F%E4%BA%A4%E6%8D%A2%E6%9C%BA/"/>
-    
-      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
     
   </entry>
   
@@ -1165,9 +1227,9 @@
       <category term="TCP" scheme="http://vcpu.me/categories/TCP/"/>
     
     
-      <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
-    
       <category term="拥塞控制" scheme="http://vcpu.me/tags/%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6/"/>
+    
+      <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
     
       <category term="Linux拥塞控制基本概念" scheme="http://vcpu.me/tags/Linux%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/"/>
     

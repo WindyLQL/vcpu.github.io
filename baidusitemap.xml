@@ -4,6 +4,30 @@
 
     
   <url>
+    <loc>http://vcpu.me/fwaas/</loc>
+    <lastmod>2017-08-14T06:46:45.000Z</lastmod>
+    <data>
+        <display>
+        <title>fwaas</title>
+        <pubTime>2017-08-14T10:00:00.000Z</pubTime>
+        
+        <tag>openstack</tag>
+         
+        <tag>fwaas</tag>
+         
+        <tag>ubuntun16.04</tag>
+         
+         
+           
+             
+              <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/secritygroup/</loc>
     <lastmod>2017-08-09T06:59:00.000Z</lastmod>
     <data>
@@ -59,11 +83,11 @@
         <title>openvSwitch tunnel</title>
         <pubTime>2017-08-03T10:00:00.000Z</pubTime>
         
+        <tag>ubuntun16.04</tag>
+         
         <tag>ovs</tag>
          
         <tag>虚拟交换机</tag>
-         
-        <tag>ubuntun16.04</tag>
          
         <tag>gre</tag>
          
@@ -91,11 +115,11 @@
         <title>openvSwitch 基础命令行</title>
         <pubTime>2017-08-08T10:00:00.000Z</pubTime>
         
+        <tag>ubuntun16.04</tag>
+         
         <tag>ovs</tag>
          
         <tag>虚拟交换机</tag>
-         
-        <tag>ubuntun16.04</tag>
          
         <tag>cmd</tag>
          
@@ -117,11 +141,11 @@
         <title>openvSwitch flow</title>
         <pubTime>2017-08-07T10:00:00.000Z</pubTime>
         
+        <tag>ubuntun16.04</tag>
+         
         <tag>ovs</tag>
          
         <tag>虚拟交换机</tag>
-         
-        <tag>ubuntun16.04</tag>
          
         <tag>ovs-ofctl</tag>
          
@@ -143,11 +167,11 @@
         <title>openvSwitch mirror、Qos、STP</title>
         <pubTime>2017-08-03T10:00:00.000Z</pubTime>
         
+        <tag>ubuntun16.04</tag>
+         
         <tag>ovs</tag>
          
         <tag>虚拟交换机</tag>
-         
-        <tag>ubuntun16.04</tag>
          
         <tag>mirror</tag>
          
@@ -173,11 +197,11 @@
         <title>openvSwitch</title>
         <pubTime>2017-07-31T10:00:00.000Z</pubTime>
         
+        <tag>ubuntun16.04</tag>
+         
         <tag>ovs</tag>
          
         <tag>虚拟交换机</tag>
-         
-        <tag>ubuntun16.04</tag>
          
          
            
@@ -339,9 +363,9 @@
         <title>拥塞控制</title>
         <pubTime>2017-07-04T10:00:00.000Z</pubTime>
         
-        <tag>tcp/ip</tag>
-         
         <tag>拥塞控制</tag>
+         
+        <tag>tcp/ip</tag>
          
         <tag>Linux拥塞控制基本概念</tag>
          
