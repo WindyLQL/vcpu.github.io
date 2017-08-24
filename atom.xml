@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://vcpu.me/"/>
-  <updated>2017-08-14T06:46:45.000Z</updated>
+  <updated>2017-08-24T09:52:12.000Z</updated>
   <id>http://vcpu.me/</id>
   
   <author>
@@ -14,6 +14,54 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>metadata</title>
+    <link href="http://vcpu.me/metadata/"/>
+    <id>http://vcpu.me/metadata/</id>
+    <published>2017-08-24T10:00:00.000Z</published>
+    <updated>2017-08-24T09:52:12.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="metadata基本概念"><a href="#metadata基本概念" class="headerlink" title="metadata基本概念"></a>metadata基本概念</h1><p>在创建虚拟机的时候，用户往往需要对虚拟机进行一些配置，比如：开启一些服务、安装某些包、添加 SSH 秘钥、配置 hostname 等等。</p>
+<p>在 OpenStack 中，这些配置信息被分成两类：metadata 和 user data。</p>
+<ul>
+<li><p>Metadata 主要包括虚拟机自身的一些常用属性，如 hostname、网络配置信息、SSH 登陆秘钥等，主要的形式为键值对。而 user data 主要包括一些命令、脚本等。</p>
+</li>
+<li><p>User data 通过文件传递，并支持多种文件格式，包括 gzip 压缩文件、shell 脚本、cloud-init 配置文件等。虽然 metadata 和 user data 并不相同，但是 OpenStack 向虚拟机提供这两种信息的机制是一致的，只是虚拟机在获取到信息后，对两者的处理方式不同罢了。所以下文统一用 matadata 来描述。</p>
+</li>
+</ul>
+<p>在 OpenStack 中，虚拟机获取 Metadata 信息的方式有两种：<br>Config drive 和 metadata RESTful 服务。此文只关注解析metadata RESTful 方式</p>
+<h1 id="Metadata-RESTful-工作原理"><a href="#Metadata-RESTful-工作原理" class="headerlink" title="Metadata RESTful 工作原理"></a>Metadata RESTful 工作原理</h1><p><img src="/myimages/metadata.png" alt="metadata"></p>
+<h1 id="meta作用"><a href="#meta作用" class="headerlink" title="meta作用"></a>meta作用</h1><p>可以使用metadata技术实现用户个性的配置</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>Metadata 服务为用户自定义配置虚拟机提供了有效的解决方案。本文剖析了 OpenStack 提供 metadata 服务的RESTful机制。那么Config drive 和RESTful机制差别在哪？</p>
+<ul>
+<li>Config drive 机制主要用于配置虚拟机的网络信息，包括 IP、子网掩码、网关等。当虚拟机无法通过 DHCP 正确获取网络信息时，config drive 是获取 metadata 信息的必要方式。</li>
+<li>如果虚拟机能够自动正确配置网络，那么可以通过 RESTful 服务的方式获取 metadata 信息。</li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;metadata基本概念&quot;&gt;&lt;a href=&quot;#metadata基本概念&quot; class=&quot;headerlink&quot; title=&quot;metadata基本概念&quot;&gt;&lt;/a&gt;metadata基本概念&lt;/h1&gt;&lt;p&gt;在创建虚拟机的时候，用户往往需要对虚拟机进行一些配置，比如：
+    
+    </summary>
+    
+      <category term="openstack" scheme="http://vcpu.me/categories/openstack/"/>
+    
+    
+      <category term="openstack" scheme="http://vcpu.me/tags/openstack/"/>
+    
+      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
+    
+      <category term="metadata" scheme="http://vcpu.me/tags/metadata/"/>
+    
+      <category term="nova-api-metadata" scheme="http://vcpu.me/tags/nova-api-metadata/"/>
+    
+      <category term="Neutron-ns-metadata-proxy" scheme="http://vcpu.me/tags/Neutron-ns-metadata-proxy/"/>
+    
+      <category term="Neutron-metadata-agent" scheme="http://vcpu.me/tags/Neutron-metadata-agent/"/>
+    
+  </entry>
   
   <entry>
     <title>fwaas</title>

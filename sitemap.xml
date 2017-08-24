@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://vcpu.me/metadata/</loc>
+    
+    <lastmod>2017-08-24T09:52:12.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://vcpu.me/fwaas/</loc>
     
     <lastmod>2017-08-14T06:46:45.000Z</lastmod>
