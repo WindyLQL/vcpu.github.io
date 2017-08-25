@@ -4,14 +4,16 @@
 
     
   <url>
-    <loc>http://vcpu.me/vmcreate/</loc>
-    <lastmod>2017-08-25T07:39:08.000Z</lastmod>
+    <loc>http://vcpu.me/fwaas/</loc>
+    <lastmod>2017-08-25T07:57:47.000Z</lastmod>
     <data>
         <display>
-        <title>图示openstack -组件间基本关系和虚拟机创建</title>
-        <pubTime>2017-08-24T10:00:00.000Z</pubTime>
+        <title>fwaas</title>
+        <pubTime>2017-08-14T10:00:00.000Z</pubTime>
         
         <tag>openstack</tag>
+         
+        <tag>fwaas</tag>
          
         <tag>ubuntun16.04</tag>
          
@@ -27,7 +29,7 @@
     
   <url>
     <loc>http://vcpu.me/metadata/</loc>
-    <lastmod>2017-08-24T09:52:12.000Z</lastmod>
+    <lastmod>2017-08-25T07:57:18.000Z</lastmod>
     <data>
         <display>
         <title>metadata</title>
@@ -56,16 +58,14 @@
 
     
   <url>
-    <loc>http://vcpu.me/fwaas/</loc>
-    <lastmod>2017-08-14T06:46:45.000Z</lastmod>
+    <loc>http://vcpu.me/vmcreate/</loc>
+    <lastmod>2017-08-25T07:57:08.000Z</lastmod>
     <data>
         <display>
-        <title>fwaas</title>
-        <pubTime>2017-08-14T10:00:00.000Z</pubTime>
+        <title>图示openstack -组件间基本关系和虚拟机创建</title>
+        <pubTime>2017-08-24T10:00:00.000Z</pubTime>
         
         <tag>openstack</tag>
-         
-        <tag>fwaas</tag>
          
         <tag>ubuntun16.04</tag>
          

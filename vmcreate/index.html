@@ -105,7 +105,7 @@
 <meta property="og:image" content="http://vcpu.me/myimages/openstack-plugin.png">
 <meta property="og:image" content="http://vcpu.me/myimages/openstack-nova.png">
 <meta property="og:image" content="http://vcpu.me/myimages/openstack-create.png">
-<meta property="og:updated_time" content="2017-08-25T07:39:08.000Z">
+<meta property="og:updated_time" content="2017-08-25T07:57:08.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="图示openstack -组件间基本关系和虚拟机创建">
 <meta name="twitter:description" content="openstack核心组件逻辑关系 horizon控制台提供WEB操作界面，用来创建虚拟机、增加网络、创建fw和负载均衡策略等 nova  响应虚拟机创建请求、调度、销毁云主机 glance  提供虚拟机创建镜像服务 cinyder  虚拟机块存储，供操作系统使用 swift  对象存储，数据备份和镜像存储 neutron 创建管理虚拟网络，供虚拟机使用 keytone 认证授权,属于共享组件 c">
@@ -441,9 +441,9 @@
 <li>swift<br>  对象存储，数据备份和镜像存储</li>
 <li>neutron<br> 创建管理虚拟网络，供虚拟机使用</li>
 <li>keytone<br> 认证授权,属于共享组件</li>
-<li>ceilometer<br> 监控计费服务<br><img src="/myimages/openstack-plugin.png" alt="openstack-plugin"></li>
-</ul>
-<h2 id="keystone"><a href="#keystone" class="headerlink" title="keystone"></a>keystone</h2><ul>
+<li><p>ceilometer<br> 监控计费服务<br><img src="/myimages/openstack-plugin.png" alt="openstack-plugin"></p>
+<a id="more"></a>
+<h2 id="keystone"><a href="#keystone" class="headerlink" title="keystone"></a>keystone</h2></li>
 <li><p>User(用户)：<br>  指使用Openstack service的用户，可以是人、服务、系统，但凡使用了Openstack service的对象都可以称为User。</p>
 </li>
 <li><p>Project(Tenant)：<br>  可以理解为一个人、或服务所拥有的 资源集合 。在一个Project(Tenant)中可以包含多个User，每一个User都会根据权限的划分来使用Project(Tenant)中的资源。比如通过Nova创建虚拟机时要指定到某个Project中，在Cinder创建卷也要指定到某个Project中。User访问Project的资源前，必须要与该Project关联，并且指定User在Project下的Role。</p>

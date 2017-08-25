@@ -103,7 +103,7 @@
 <meta property="og:site_name" content="i博客">
 <meta property="og:description" content="openstack配置安装环境 ubuntun版本root@controller:~# lsb_release -aNo LSB modules are available.Distributor ID:    UbuntuDescription:    Ubuntu 16.04.2 LTSRelease:    16.04Codename:    xenial openstack newton版">
 <meta property="og:image" content="http://vcpu.me/myimages/fwaasnetwork.png">
-<meta property="og:updated_time" content="2017-08-14T06:46:45.000Z">
+<meta property="og:updated_time" content="2017-08-25T07:57:47.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="fwaas">
 <meta name="twitter:description" content="openstack配置安装环境 ubuntun版本root@controller:~# lsb_release -aNo LSB modules are available.Distributor ID:    UbuntuDescription:    Ubuntu 16.04.2 LTSRelease:    16.04Codename:    xenial openstack newton版">
@@ -438,9 +438,10 @@
 <li><p>安装环境<br>osx 下的vbox两台虚拟机（controller和compute）<br>openstack网络节点和控制节点安装到controller机器上，计算节点安装到compute节点上</p>
 </li>
 <li><p>组网信息<br><img src="/myimages/fwaasnetwork.png" alt="fwaasnetwork"></p>
-</li>
+<a id="more"></a>
+<h2 id="配置模块"><a href="#配置模块" class="headerlink" title="配置模块"></a>配置模块</h2></li>
 </ul>
-<h2 id="配置模块"><a href="#配置模块" class="headerlink" title="配置模块"></a>配置模块</h2><h3 id="配置详情"><a href="#配置详情" class="headerlink" title="配置详情"></a>配置详情</h3><p>/etc/neutron/neutron.conf<br>[DEFAULT]<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">service_plugins = router,firewall</div></pre></td></tr></table></figure></p>
+<h3 id="配置详情"><a href="#配置详情" class="headerlink" title="配置详情"></a>配置详情</h3><p>/etc/neutron/neutron.conf<br>[DEFAULT]<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">service_plugins = router,firewall</div></pre></td></tr></table></figure></p>
 <p>[service_providers]<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">service_provider = FIREWALL:Iptables:neutron.agent.linux.iptables_firewall.OVSHybridIptablesFirewallDriver:default</div></pre></td></tr></table></figure></p>
 <p>注意：如果没有[service_providers]标签就在配置最后新增<br>[fwaas]<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">agent_version = v1</div><div class="line">driver = iptables</div><div class="line">enabled = True</div></pre></td></tr></table></figure></p>
 <p>注意：如果没有[service_providers]标签就在配置最后新增</p>

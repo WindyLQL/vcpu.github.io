@@ -103,7 +103,7 @@
 <meta property="og:site_name" content="i博客">
 <meta property="og:description" content="metadata基本概念在创建虚拟机的时候，用户往往需要对虚拟机进行一些配置，比如：开启一些服务、安装某些包、添加 SSH 秘钥、配置 hostname 等等。 在 OpenStack 中，这些配置信息被分成两类：metadata 和 user data。  Metadata 主要包括虚拟机自身的一些常用属性，如 hostname、网络配置信息、SSH 登陆秘钥等，主要的形式为键值对。而 user">
 <meta property="og:image" content="http://vcpu.me/myimages/metadata.png">
-<meta property="og:updated_time" content="2017-08-24T09:52:12.000Z">
+<meta property="og:updated_time" content="2017-08-25T07:57:18.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="metadata">
 <meta name="twitter:description" content="metadata基本概念在创建虚拟机的时候，用户往往需要对虚拟机进行一些配置，比如：开启一些服务、安装某些包、添加 SSH 秘钥、配置 hostname 等等。 在 OpenStack 中，这些配置信息被分成两类：metadata 和 user data。  Metadata 主要包括虚拟机自身的一些常用属性，如 hostname、网络配置信息、SSH 登陆秘钥等，主要的形式为键值对。而 user">
@@ -439,7 +439,7 @@
 <li><p>User data 通过文件传递，并支持多种文件格式，包括 gzip 压缩文件、shell 脚本、cloud-init 配置文件等。虽然 metadata 和 user data 并不相同，但是 OpenStack 向虚拟机提供这两种信息的机制是一致的，只是虚拟机在获取到信息后，对两者的处理方式不同罢了。所以下文统一用 matadata 来描述。</p>
 </li>
 </ul>
-<p>在 OpenStack 中，虚拟机获取 Metadata 信息的方式有两种：<br>Config drive 和 metadata RESTful 服务。此文只关注解析metadata RESTful 方式</p>
+<p>在 OpenStack 中，虚拟机获取 Metadata 信息的方式有两种：<br>Config drive 和 metadata RESTful 服务。此文只关注解析metadata RESTful 方式<br><a id="more"></a></p>
 <h1 id="Metadata-RESTful-工作原理"><a href="#Metadata-RESTful-工作原理" class="headerlink" title="Metadata RESTful 工作原理"></a>Metadata RESTful 工作原理</h1><p><img src="/myimages/metadata.png" alt="metadata"></p>
 <h1 id="meta作用"><a href="#meta作用" class="headerlink" title="meta作用"></a>meta作用</h1><p>可以使用metadata技术实现用户个性的配置</p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>Metadata 服务为用户自定义配置虚拟机提供了有效的解决方案。本文剖析了 OpenStack 提供 metadata 服务的RESTful机制。那么Config drive 和RESTful机制差别在哪？</p>
