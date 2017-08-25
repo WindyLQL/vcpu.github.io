@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="ubuntun16.04,ovs,虚拟交换机,gre,vxlan,ovx tunnel,ipsec gre," />
+  <meta name="keywords" content="openstack,ubuntun16.04," />
 
 
 
@@ -95,19 +95,21 @@
 
 
 
-<meta name="description" content="ovs tunnel实验拓扑 实验拓扑搭建基础脚本12345678910111213141516171819#vbox虚拟机1ip netns add leftip link add name veth1 type veth peer name sw1-p1ip link set dev veth1 netns leftip netns exec left ifconfig veth1 10.0.">
-<meta name="keywords" content="ubuntun16.04,ovs,虚拟交换机,gre,vxlan,ovx tunnel,ipsec gre">
+<meta name="description" content="openstack核心组件逻辑关系 horizon控制台提供WEB操作界面，用来创建虚拟机、增加网络、创建fw和负载均衡策略等 nova  响应虚拟机创建请求、调度、销毁云主机 glance  提供虚拟机创建镜像服务 cinyder  虚拟机块存储，供操作系统使用 swift  对象存储，数据备份和镜像存储 neutron 创建管理虚拟网络，供虚拟机使用 keytone 认证授权,属于共享组件 c">
+<meta name="keywords" content="openstack,ubuntun16.04">
 <meta property="og:type" content="article">
-<meta property="og:title" content="openvSwitch tunnel">
-<meta property="og:url" content="http://vcpu.me/openvswitch2/index.html">
+<meta property="og:title" content="图示openstack -组件间基本关系和虚拟机创建">
+<meta property="og:url" content="http://vcpu.me/vmcreate/index.html">
 <meta property="og:site_name" content="i博客">
-<meta property="og:description" content="ovs tunnel实验拓扑 实验拓扑搭建基础脚本12345678910111213141516171819#vbox虚拟机1ip netns add leftip link add name veth1 type veth peer name sw1-p1ip link set dev veth1 netns leftip netns exec left ifconfig veth1 10.0.">
-<meta property="og:image" content="http://vcpu.me/myimages/tunnel.png">
-<meta property="og:updated_time" content="2017-08-07T09:45:44.000Z">
+<meta property="og:description" content="openstack核心组件逻辑关系 horizon控制台提供WEB操作界面，用来创建虚拟机、增加网络、创建fw和负载均衡策略等 nova  响应虚拟机创建请求、调度、销毁云主机 glance  提供虚拟机创建镜像服务 cinyder  虚拟机块存储，供操作系统使用 swift  对象存储，数据备份和镜像存储 neutron 创建管理虚拟网络，供虚拟机使用 keytone 认证授权,属于共享组件 c">
+<meta property="og:image" content="http://vcpu.me/myimages/openstack-plugin.png">
+<meta property="og:image" content="http://vcpu.me/myimages/openstack-nova.png">
+<meta property="og:image" content="http://vcpu.me/myimages/openstack-create.png">
+<meta property="og:updated_time" content="2017-08-25T07:39:08.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="openvSwitch tunnel">
-<meta name="twitter:description" content="ovs tunnel实验拓扑 实验拓扑搭建基础脚本12345678910111213141516171819#vbox虚拟机1ip netns add leftip link add name veth1 type veth peer name sw1-p1ip link set dev veth1 netns leftip netns exec left ifconfig veth1 10.0.">
-<meta name="twitter:image" content="http://vcpu.me/myimages/tunnel.png">
+<meta name="twitter:title" content="图示openstack -组件间基本关系和虚拟机创建">
+<meta name="twitter:description" content="openstack核心组件逻辑关系 horizon控制台提供WEB操作界面，用来创建虚拟机、增加网络、创建fw和负载均衡策略等 nova  响应虚拟机创建请求、调度、销毁云主机 glance  提供虚拟机创建镜像服务 cinyder  虚拟机块存储，供操作系统使用 swift  对象存储，数据备份和镜像存储 neutron 创建管理虚拟网络，供虚拟机使用 keytone 认证授权,属于共享组件 c">
+<meta name="twitter:image" content="http://vcpu.me/myimages/openstack-plugin.png">
 
 
 
@@ -135,13 +137,13 @@
 
 
 
-  <link rel="canonical" href="http://vcpu.me/openvswitch2/"/>
+  <link rel="canonical" href="http://vcpu.me/vmcreate/"/>
 
 
 
 
 
-  <title>openvSwitch tunnel | i博客</title>
+  <title>图示openstack -组件间基本关系和虚拟机创建 | i博客</title>
   
 
 
@@ -324,7 +326,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/openvswitch2/">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/vmcreate/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="vcpu.me">
@@ -341,7 +343,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">openvSwitch tunnel</h1>
+          <h1 class="post-title" itemprop="name headline">图示openstack -组件间基本关系和虚拟机创建</h1>
         
 
         <div class="post-meta">
@@ -353,8 +355,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T18:00:00+08:00">
-                2017-08-03
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-24T18:00:00+08:00">
+                2017-08-24
               </time>
             
 
@@ -376,8 +378,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/网络/" itemprop="url" rel="index">
-                    <span itemprop="name">网络</span>
+                  <a href="/categories/openstack/" itemprop="url" rel="index">
+                    <span itemprop="name">openstack</span>
                   </a>
                 </span>
 
@@ -394,7 +396,7 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a class="cloud-tie-join-count" href="/openvswitch2/#comments" itemprop="discussionUrl">
+                <a class="cloud-tie-join-count" href="/vmcreate/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count join-count" itemprop="commentCount"></span>
                 </a>
               </span>
@@ -403,7 +405,7 @@
 
           
           
-             <span id="/openvswitch2/" class="leancloud_visitors" data-flag-title="openvSwitch tunnel">
+             <span id="/vmcreate/" class="leancloud_visitors" data-flag-title="图示openstack -组件间基本关系和虚拟机创建">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -431,53 +433,47 @@
       
 
       
-        <h2 id="ovs-tunnel"><a href="#ovs-tunnel" class="headerlink" title="ovs tunnel"></a>ovs tunnel</h2><h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><p><img src="/myimages/tunnel.png" alt="tunnel"></p>
-<h3 id="实验拓扑搭建基础脚本"><a href="#实验拓扑搭建基础脚本" class="headerlink" title="实验拓扑搭建基础脚本"></a>实验拓扑搭建基础脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">#vbox虚拟机1</div><div class="line">ip netns add left</div><div class="line">ip link add name veth1 type veth peer name sw1-p1</div><div class="line">ip link set dev veth1 netns left</div><div class="line">ip netns exec left ifconfig veth1 10.0.0.1/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw1</div><div class="line">ovs-vsctl add-port sw1 sw1-p1</div><div class="line">ip link set sw1-p1 up</div><div class="line"></div><div class="line">#vbox虚拟机2</div><div class="line">ip netns add right</div><div class="line">ip link add name veth1 type veth peer name sw2-p1</div><div class="line">ip link set dev veth1 netns right</div><div class="line">ip netns exec right ifconfig veth1 10.0.0.2/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw2</div><div class="line">ovs-vsctl add-port sw2 sw2-p1</div><div class="line">ip link set sw2-p1 up</div></pre></td></tr></table></figure>
-<a id="more"></a>
-<h3 id="GRE-TUNNEL-配置"><a href="#GRE-TUNNEL-配置" class="headerlink" title="GRE TUNNEL 配置"></a>GRE TUNNEL 配置</h3><ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set Interface tun0 type=gre options:remote_ip=10.30.10.141</div></pre></td></tr></table></figure>
+        <h2 id="openstack核心组件逻辑关系"><a href="#openstack核心组件逻辑关系" class="headerlink" title="openstack核心组件逻辑关系"></a>openstack核心组件逻辑关系</h2><ul>
+<li>horizon控制台<br>提供WEB操作界面，用来创建虚拟机、增加网络、创建fw和负载均衡策略等</li>
+<li>nova<br>  响应虚拟机创建请求、调度、销毁云主机</li>
+<li>glance<br>  提供虚拟机创建镜像服务</li>
+<li>cinyder<br>  虚拟机块存储，供操作系统使用</li>
+<li>swift<br>  对象存储，数据备份和镜像存储</li>
+<li>neutron<br> 创建管理虚拟网络，供虚拟机使用</li>
+<li>keytone<br> 认证授权,属于共享组件</li>
+<li>ceilometer<br> 监控计费服务<br><img src="/myimages/openstack-plugin.png" alt="openstack-plugin"></li>
+</ul>
+<h2 id="keystone"><a href="#keystone" class="headerlink" title="keystone"></a>keystone</h2><ul>
+<li><p>User(用户)：<br>  指使用Openstack service的用户，可以是人、服务、系统，但凡使用了Openstack service的对象都可以称为User。</p>
 </li>
-<li><p>vbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set Interface tun0 type=gre options:remote_ip=10.30.10.145</div></pre></td></tr></table></figure>
+<li><p>Project(Tenant)：<br>  可以理解为一个人、或服务所拥有的 资源集合 。在一个Project(Tenant)中可以包含多个User，每一个User都会根据权限的划分来使用Project(Tenant)中的资源。比如通过Nova创建虚拟机时要指定到某个Project中，在Cinder创建卷也要指定到某个Project中。User访问Project的资源前，必须要与该Project关联，并且指定User在Project下的Role。</p>
+</li>
+<li><p>Role(角色)：<br>  用于划分权限。可以通过给User指定Role，使User获得Role对应的操作权限。Keystone返回给User的Token包含了Role列表，被访问的Services会判断访问它的User和User提供的Token中所包含的Role。系统默认使用管理Role admin和成员Role <em>member</em> 。</p>
+</li>
+<li><p>Policy(规则)：<br>OpenStack对User的验证除了OpenStack的身份验证以外，还需要鉴别User对某个Service是否有访问权限。Policy机制就是用来控制User对Tenant中资源(包括Services)的操作权限。对于Keystone service来说，Policy就是一个JSON文件，默认是/etc/keystone/policy.json。通过配置这个文件，Keystone Service实现了对User基于Role的权限管理。</p>
+</li>
+<li><p>Token：<br>  是一个字符串表示，作为访问资源的令牌。Token包含了在 指定范围和有效时间内 可以被访问的资源。EG. 在Nova中一个tenant可以是一些虚拟机，在Swift和Glance中一个tenant可以是一些镜像存储，在Network中一个tenant可以是一些网络资源。Token一般被User持有。</p>
 </li>
 </ul>
-<h4 id="查看配置"><a href="#查看配置" class="headerlink" title="查看配置"></a>查看配置</h4><ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">29c5cc05-2a31-4f14-a304-3a697698f96a</div><div class="line">    Bridge &quot;sw1&quot;</div><div class="line">        Port &quot;sw1&quot;</div><div class="line">            Interface &quot;sw1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;sw1-p1&quot;</div><div class="line">            Interface &quot;sw1-p1&quot;</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: gre</div><div class="line">                options: &#123;remote_ip=&quot;10.30.10.141&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">0f92aaa0-5385-48f5-a54a-644e05652f59</div><div class="line">    Bridge &quot;sw2&quot;</div><div class="line">        Port &quot;sw2-p1&quot;</div><div class="line">            Interface &quot;sw2-p1&quot;</div><div class="line">        Port &quot;sw2&quot;</div><div class="line">            Interface &quot;sw2&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: gre</div><div class="line">                options: &#123;remote_ip=&quot;10.30.10.145&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div><div class="line">root@controller-VirtualBox</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right"><a href="#连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right" class="headerlink" title="连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right"></a>连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ip netns exec left ping 10.0.0.2</div><div class="line">PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.953 ms</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.609 ms</div></pre></td></tr></table></figure>
-<h3 id="VXLAN-TUNNEL配置"><a href="#VXLAN-TUNNEL配置" class="headerlink" title="VXLAN TUNNEL配置"></a>VXLAN TUNNEL配置</h3><ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set Interface tun0 type=vxlan options:local_ip=10.30.10.145 options:remote_ip=10.30.10.141</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set Interface tun0 type=vxlan options:local_ip=10.30.10.141 options:remote_ip=10.30.10.145</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="查看配置-1"><a href="#查看配置-1" class="headerlink" title="查看配置"></a>查看配置</h4><ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">29c5cc05-2a31-4f14-a304-3a697698f96a</div><div class="line">    Bridge &quot;sw1&quot;</div><div class="line">        Port &quot;sw1&quot;</div><div class="line">            Interface &quot;sw1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;sw1-p1&quot;</div><div class="line">            Interface &quot;sw1-p1&quot;</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: vxlan</div><div class="line">                options: &#123;local_ip=&quot;10.30.10.145&quot;, remote_ip=&quot;10.30.10.141&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">0f92aaa0-5385-48f5-a54a-644e05652f59</div><div class="line">    Bridge &quot;sw2&quot;</div><div class="line">        Port &quot;sw2-p1&quot;</div><div class="line">            Interface &quot;sw2-p1&quot;</div><div class="line">        Port &quot;sw2&quot;</div><div class="line">            Interface &quot;sw2&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: vxlan</div><div class="line">                options: &#123;local_ip=&quot;10.30.10.141&quot;, remote_ip=&quot;10.30.10.145&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div><div class="line">root@controller-VirtualBox:~#</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right-1"><a href="#连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right-1" class="headerlink" title="连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right"></a>连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ip netns exec left ping 10.0.0.2</div><div class="line">PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.905 ms</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.490 ms</div><div class="line">2 packets transmitted, 2 received, 0% packet loss, time 1001ms</div><div class="line">rtt min/avg/max/mdev = 0.490/0.697/0.905/0.209 ms</div></pre></td></tr></table></figure>
-<h3 id="ipsec-gre配置"><a href="#ipsec-gre配置" class="headerlink" title="ipsec_gre配置"></a>ipsec_gre配置</h3><p>如果运行失败或则无法创建接口，首先安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">apt-get install openvswitch* -y</div></pre></td></tr></table></figure></p>
 <ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set interface tun0 type=ipsec_gre options:remote_ip=10.30.10.141 options:psk=test123</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set interface tun0 type=ipsec_gre options:remote_ip=10.30.10.145 options:psk=test123</div></pre></td></tr></table></figure>
-</li>
+<li>Endpoint：<br>  一个可以通过网络来访问和定位某个Openstack service的地址，通常是一个URL。比如，当Nova需要访问Glance服务去获取image 时，Nova通过访问Keystone拿到Glance的endpoint，然后通过访问该endpoint去获取Glance服务。我们可以通过Endpoint的region属性去定义多个region。</li>
 </ul>
-<p>在ipsec gre tunnel情况下，我的环境中并没有完成连通，而且日志中也没有报错；具体原因还需要探究。当然我已经翻阅论坛，然并卵，哎。。。，暂且未解之谜吧</p>
+<h3 id="Endpoint-该使用对象分为三类："><a href="#Endpoint-该使用对象分为三类：" class="headerlink" title="Endpoint 该使用对象分为三类："></a>Endpoint 该使用对象分为三类：</h3><p>admin url –&gt; 给admin用户使用，Post：35357  —-&gt;管理员<br>internal url –&gt; OpenStack内部服务使用来跟别的服务通信，Port：5000 —-&gt;内部员工<br>public url –&gt; 其它用户可以访问的地址，Post：5000 —-&gt;外部访问</p>
+<p>角色,决定了你的权限.只和role有关.不论你从那个入口进入.你的权限,并不会改变.假如,就算管理员走internal url  ,管理员的权限并不会改变<br>有没有权限和endpoint没有关系</p>
+<h3 id="组件之间通信基于rest-api"><a href="#组件之间通信基于rest-api" class="headerlink" title="组件之间通信基于rest api"></a>组件之间通信基于rest api</h3><p>创建完service后创建API EndPoint. 在openstack中，每一个service都有三种end points. Admin, public, internal。 Admin是用作管理用途的，如它能够修改user/tenant(project)。 public 是让客户调用的，比如可以部署在外网上让客户可以管理自己的云。internal是openstack内部调用的。三种endpoints 在网络上开放的权限一般也不同。Admin通常只能对内网开放，public通常可以对外网开放internal通常只能对安装有openstack对服务的机器开放。</p>
+<h3 id="V3新增"><a href="#V3新增" class="headerlink" title="V3新增"></a>V3新增</h3><p>Tenant 重命名为 Project<br>添加了 Domain 的概念—-&gt;一堆project的集合<br>添加了 Group 的概念(用户授权针对组来实现)</p>
+<h3 id="keystone作用"><a href="#keystone作用" class="headerlink" title="keystone作用:"></a>keystone作用:</h3><p>论证用户权限<br>分发rest api</p>
+<h2 id="neutron"><a href="#neutron" class="headerlink" title="neutron"></a>neutron</h2><ul>
+<li>neutron-server<br>  Neutron REST API 掌门人</li>
+<li>neutron-plugin<br>  不同网络功能实现的入口，各个厂商可以开发自己的plugin </li>
+<li>neutron-agent<br>  插件具体动作执行</li>
+<li>service-plugin:<br>  实现L3-L7的网络服务(l3 router、firewall、loadbalancer、VPN、metering等) </li>
+<li>core-plugin:<br>  负责管理L2的网络连接（Modular Layer 2）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">+-------------+        +--------------+        +-----------------+</div><div class="line">|             |        |              |        |                 |</div><div class="line">|neutron server+-----&gt; |neutron plugin+------&gt; |neutron agent    |</div><div class="line">|             |        |              |        |                 |</div><div class="line">+-------------+        +--------------+        +-----------------+</div></pre></td></tr></table></figure>
+<h2 id="nova"><a href="#nova" class="headerlink" title="nova"></a>nova</h2><p><img src="/myimages/openstack-nova.png" alt="openstack-nova"></p>
+<h2 id="创建虚拟机流程"><a href="#创建虚拟机流程" class="headerlink" title="创建虚拟机流程"></a>创建虚拟机流程</h2><p><img src="/myimages/openstack-create.png" alt="openstack-create"></p>
+<p>1.界面或命令行通过RESTful API向keystone获取认证信息。<br>2.keystone通过用户请求认证信息，并生成auth-token返回给对应的认证请求。<br>3.界面或命令行通过RESTful API向nova-api发送一个boot instance的请求（携带auth-token）。<br>4.nova-api接受请求后向keystone发送认证请求，查看token是否为有效用户和token。<br>5.keystone验证token是否有效，如有效则返回有效的认证和对应的角色（注：有些操作需要有角色权限才能操作）。<br>6.通过认证后nova-api和数据库通讯。<br>7.初始化新建虚拟机的数据库记录。<br>8.nova-api通过rpc.call向nova-scheduler请求是否有创建虚拟机的资源(Host ID)。<br>9.nova-scheduler进程侦听消息队列，获取nova-api的请求。<br>10.nova-scheduler通过查询nova数据库中计算资源的情况，并通过调度算法计算符合虚拟机创建需要的主机。<br>11.对于有符合虚拟机创建的主机，nova-scheduler更新数据库中虚拟机对应的物理主机信息。<br>12.nova-scheduler通过rpc.cast向nova-compute发送对应的创建虚拟机请求的消息。<br>13.nova-compute会从对应的消息队列中获取创建虚拟机请求的消息。<br>14.nova-compute通过rpc.call向nova-conductor请求获取虚拟机消息。（Flavor）<br>15.nova-conductor从消息队队列中拿到nova-compute请求消息。<br>16.nova-conductor根据消息查询虚拟机对应的信息。<br>17.nova-conductor从数据库中获得虚拟机对应信息。<br>18nova-conductor把虚拟机信息通过消息的方式发送到消息队列中。<br>19.nova-compute从对应的消息队列中获取虚拟机信息消息。<br>20.nova-compute通过keystone的RESTfull API拿到认证的token，并通过HTTP请求glance-api获取创建虚拟机所需要镜像。<br>21.glance-api向keystone认证token是否有效，并返回验证结果。<br>22.token验证通过，nova-compute获得虚拟机镜像信息(URL)。<br>23.nova-compute通过keystone的RESTfull API拿到认证k的token，并通过HTTP请求neutron-server获取创建虚拟机所需要的网络信息。<br>24.neutron-server向keystone认证token是否有效，并返回验证结果。<br>25.token验证通过，nova-compute获得虚拟机网络信息。<br>26.nova-compute通过keystone的RESTfull API拿到认证的token，并通过HTTP请求cinder-api获取创建虚拟机所需要的持久化存储信息。<br>17.cinder-api向keystone认证token是否有效，并返回验证结果。<br>28.token验证通过，nova-compute获得虚拟机持久化存储信息。<br>29.nova-compute根据instance的信息调用配置的虚拟化驱动来创建虚拟机。</p>
 
       
     </div>
@@ -507,19 +503,9 @@
       
         <div class="post-tags">
           
+            <a href="/tags/openstack/" rel="tag"># openstack</a>
+          
             <a href="/tags/ubuntun16-04/" rel="tag"># ubuntun16.04</a>
-          
-            <a href="/tags/ovs/" rel="tag"># ovs</a>
-          
-            <a href="/tags/虚拟交换机/" rel="tag"># 虚拟交换机</a>
-          
-            <a href="/tags/gre/" rel="tag"># gre</a>
-          
-            <a href="/tags/vxlan/" rel="tag"># vxlan</a>
-          
-            <a href="/tags/ovx-tunnel/" rel="tag"># ovx tunnel</a>
-          
-            <a href="/tags/ipsec-gre/" rel="tag"># ipsec gre</a>
           
         </div>
       
@@ -532,8 +518,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/openvswitch1/" rel="next" title="openvSwitch mirror、Qos、STP">
-                <i class="fa fa-chevron-left"></i> openvSwitch mirror、Qos、STP
+              <a href="/metadata/" rel="next" title="metadata">
+                <i class="fa fa-chevron-left"></i> metadata
               </a>
             
           </div>
@@ -541,10 +527,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/openvswitch3/" rel="prev" title="openvSwitch flow">
-                openvSwitch flow <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -711,7 +693,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ovs-tunnel"><span class="nav-number">1.</span> <span class="nav-text">ovs tunnel</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实验拓扑"><span class="nav-number">1.1.</span> <span class="nav-text">实验拓扑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验拓扑搭建基础脚本"><span class="nav-number">1.2.</span> <span class="nav-text">实验拓扑搭建基础脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GRE-TUNNEL-配置"><span class="nav-number">1.3.</span> <span class="nav-text">GRE TUNNEL 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#查看配置"><span class="nav-number">1.3.1.</span> <span class="nav-text">查看配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right"><span class="nav-number">1.3.2.</span> <span class="nav-text">连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#VXLAN-TUNNEL配置"><span class="nav-number">1.4.</span> <span class="nav-text">VXLAN TUNNEL配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#查看配置-1"><span class="nav-number">1.4.1.</span> <span class="nav-text">查看配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right-1"><span class="nav-number">1.4.2.</span> <span class="nav-text">连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ipsec-gre配置"><span class="nav-number">1.5.</span> <span class="nav-text">ipsec_gre配置</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#openstack核心组件逻辑关系"><span class="nav-number">1.</span> <span class="nav-text">openstack核心组件逻辑关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#keystone"><span class="nav-number">2.</span> <span class="nav-text">keystone</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Endpoint-该使用对象分为三类："><span class="nav-number">2.1.</span> <span class="nav-text">Endpoint 该使用对象分为三类：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#组件之间通信基于rest-api"><span class="nav-number">2.2.</span> <span class="nav-text">组件之间通信基于rest api</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#V3新增"><span class="nav-number">2.3.</span> <span class="nav-text">V3新增</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#keystone作用"><span class="nav-number">2.4.</span> <span class="nav-text">keystone作用:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#neutron"><span class="nav-number">3.</span> <span class="nav-text">neutron</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nova"><span class="nav-number">4.</span> <span class="nav-text">nova</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建虚拟机流程"><span class="nav-number">5.</span> <span class="nav-text">创建虚拟机流程</span></a></li></ol></div>
             
 
           </div>

@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://vcpu.me/"/>
-  <updated>2017-08-24T09:52:12.000Z</updated>
+  <updated>2017-08-25T07:39:08.000Z</updated>
   <id>http://vcpu.me/</id>
   
   <author>
@@ -14,6 +14,72 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>图示openstack -组件间基本关系和虚拟机创建</title>
+    <link href="http://vcpu.me/vmcreate/"/>
+    <id>http://vcpu.me/vmcreate/</id>
+    <published>2017-08-24T10:00:00.000Z</published>
+    <updated>2017-08-25T07:39:08.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="openstack核心组件逻辑关系"><a href="#openstack核心组件逻辑关系" class="headerlink" title="openstack核心组件逻辑关系"></a>openstack核心组件逻辑关系</h2><ul>
+<li>horizon控制台<br>提供WEB操作界面，用来创建虚拟机、增加网络、创建fw和负载均衡策略等</li>
+<li>nova<br>  响应虚拟机创建请求、调度、销毁云主机</li>
+<li>glance<br>  提供虚拟机创建镜像服务</li>
+<li>cinyder<br>  虚拟机块存储，供操作系统使用</li>
+<li>swift<br>  对象存储，数据备份和镜像存储</li>
+<li>neutron<br> 创建管理虚拟网络，供虚拟机使用</li>
+<li>keytone<br> 认证授权,属于共享组件</li>
+<li>ceilometer<br> 监控计费服务<br><img src="/myimages/openstack-plugin.png" alt="openstack-plugin"></li>
+</ul>
+<h2 id="keystone"><a href="#keystone" class="headerlink" title="keystone"></a>keystone</h2><ul>
+<li><p>User(用户)：<br>  指使用Openstack service的用户，可以是人、服务、系统，但凡使用了Openstack service的对象都可以称为User。</p>
+</li>
+<li><p>Project(Tenant)：<br>  可以理解为一个人、或服务所拥有的 资源集合 。在一个Project(Tenant)中可以包含多个User，每一个User都会根据权限的划分来使用Project(Tenant)中的资源。比如通过Nova创建虚拟机时要指定到某个Project中，在Cinder创建卷也要指定到某个Project中。User访问Project的资源前，必须要与该Project关联，并且指定User在Project下的Role。</p>
+</li>
+<li><p>Role(角色)：<br>  用于划分权限。可以通过给User指定Role，使User获得Role对应的操作权限。Keystone返回给User的Token包含了Role列表，被访问的Services会判断访问它的User和User提供的Token中所包含的Role。系统默认使用管理Role admin和成员Role <em>member</em> 。</p>
+</li>
+<li><p>Policy(规则)：<br>OpenStack对User的验证除了OpenStack的身份验证以外，还需要鉴别User对某个Service是否有访问权限。Policy机制就是用来控制User对Tenant中资源(包括Services)的操作权限。对于Keystone service来说，Policy就是一个JSON文件，默认是/etc/keystone/policy.json。通过配置这个文件，Keystone Service实现了对User基于Role的权限管理。</p>
+</li>
+<li><p>Token：<br>  是一个字符串表示，作为访问资源的令牌。Token包含了在 指定范围和有效时间内 可以被访问的资源。EG. 在Nova中一个tenant可以是一些虚拟机，在Swift和Glance中一个tenant可以是一些镜像存储，在Network中一个tenant可以是一些网络资源。Token一般被User持有。</p>
+</li>
+</ul>
+<ul>
+<li>Endpoint：<br>  一个可以通过网络来访问和定位某个Openstack service的地址，通常是一个URL。比如，当Nova需要访问Glance服务去获取image 时，Nova通过访问Keystone拿到Glance的endpoint，然后通过访问该endpoint去获取Glance服务。我们可以通过Endpoint的region属性去定义多个region。</li>
+</ul>
+<h3 id="Endpoint-该使用对象分为三类："><a href="#Endpoint-该使用对象分为三类：" class="headerlink" title="Endpoint 该使用对象分为三类："></a>Endpoint 该使用对象分为三类：</h3><p>admin url –&gt; 给admin用户使用，Post：35357  —-&gt;管理员<br>internal url –&gt; OpenStack内部服务使用来跟别的服务通信，Port：5000 —-&gt;内部员工<br>public url –&gt; 其它用户可以访问的地址，Post：5000 —-&gt;外部访问</p>
+<p>角色,决定了你的权限.只和role有关.不论你从那个入口进入.你的权限,并不会改变.假如,就算管理员走internal url  ,管理员的权限并不会改变<br>有没有权限和endpoint没有关系</p>
+<h3 id="组件之间通信基于rest-api"><a href="#组件之间通信基于rest-api" class="headerlink" title="组件之间通信基于rest api"></a>组件之间通信基于rest api</h3><p>创建完service后创建API EndPoint. 在openstack中，每一个service都有三种end points. Admin, public, internal。 Admin是用作管理用途的，如它能够修改user/tenant(project)。 public 是让客户调用的，比如可以部署在外网上让客户可以管理自己的云。internal是openstack内部调用的。三种endpoints 在网络上开放的权限一般也不同。Admin通常只能对内网开放，public通常可以对外网开放internal通常只能对安装有openstack对服务的机器开放。</p>
+<h3 id="V3新增"><a href="#V3新增" class="headerlink" title="V3新增"></a>V3新增</h3><p>Tenant 重命名为 Project<br>添加了 Domain 的概念—-&gt;一堆project的集合<br>添加了 Group 的概念(用户授权针对组来实现)</p>
+<h3 id="keystone作用"><a href="#keystone作用" class="headerlink" title="keystone作用:"></a>keystone作用:</h3><p>论证用户权限<br>分发rest api</p>
+<h2 id="neutron"><a href="#neutron" class="headerlink" title="neutron"></a>neutron</h2><ul>
+<li>neutron-server<br>  Neutron REST API 掌门人</li>
+<li>neutron-plugin<br>  不同网络功能实现的入口，各个厂商可以开发自己的plugin </li>
+<li>neutron-agent<br>  插件具体动作执行</li>
+<li>service-plugin:<br>  实现L3-L7的网络服务(l3 router、firewall、loadbalancer、VPN、metering等) </li>
+<li>core-plugin:<br>  负责管理L2的网络连接（Modular Layer 2）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">+-------------+        +--------------+        +-----------------+</div><div class="line">|             |        |              |        |                 |</div><div class="line">|neutron server+-----&gt; |neutron plugin+------&gt; |neutron agent    |</div><div class="line">|             |        |              |        |                 |</div><div class="line">+-------------+        +--------------+        +-----------------+</div></pre></td></tr></table></figure>
+<h2 id="nova"><a href="#nova" class="headerlink" title="nova"></a>nova</h2><p><img src="/myimages/openstack-nova.png" alt="openstack-nova"></p>
+<h2 id="创建虚拟机流程"><a href="#创建虚拟机流程" class="headerlink" title="创建虚拟机流程"></a>创建虚拟机流程</h2><p><img src="/myimages/openstack-create.png" alt="openstack-create"></p>
+<p>1.界面或命令行通过RESTful API向keystone获取认证信息。<br>2.keystone通过用户请求认证信息，并生成auth-token返回给对应的认证请求。<br>3.界面或命令行通过RESTful API向nova-api发送一个boot instance的请求（携带auth-token）。<br>4.nova-api接受请求后向keystone发送认证请求，查看token是否为有效用户和token。<br>5.keystone验证token是否有效，如有效则返回有效的认证和对应的角色（注：有些操作需要有角色权限才能操作）。<br>6.通过认证后nova-api和数据库通讯。<br>7.初始化新建虚拟机的数据库记录。<br>8.nova-api通过rpc.call向nova-scheduler请求是否有创建虚拟机的资源(Host ID)。<br>9.nova-scheduler进程侦听消息队列，获取nova-api的请求。<br>10.nova-scheduler通过查询nova数据库中计算资源的情况，并通过调度算法计算符合虚拟机创建需要的主机。<br>11.对于有符合虚拟机创建的主机，nova-scheduler更新数据库中虚拟机对应的物理主机信息。<br>12.nova-scheduler通过rpc.cast向nova-compute发送对应的创建虚拟机请求的消息。<br>13.nova-compute会从对应的消息队列中获取创建虚拟机请求的消息。<br>14.nova-compute通过rpc.call向nova-conductor请求获取虚拟机消息。（Flavor）<br>15.nova-conductor从消息队队列中拿到nova-compute请求消息。<br>16.nova-conductor根据消息查询虚拟机对应的信息。<br>17.nova-conductor从数据库中获得虚拟机对应信息。<br>18nova-conductor把虚拟机信息通过消息的方式发送到消息队列中。<br>19.nova-compute从对应的消息队列中获取虚拟机信息消息。<br>20.nova-compute通过keystone的RESTfull API拿到认证的token，并通过HTTP请求glance-api获取创建虚拟机所需要镜像。<br>21.glance-api向keystone认证token是否有效，并返回验证结果。<br>22.token验证通过，nova-compute获得虚拟机镜像信息(URL)。<br>23.nova-compute通过keystone的RESTfull API拿到认证k的token，并通过HTTP请求neutron-server获取创建虚拟机所需要的网络信息。<br>24.neutron-server向keystone认证token是否有效，并返回验证结果。<br>25.token验证通过，nova-compute获得虚拟机网络信息。<br>26.nova-compute通过keystone的RESTfull API拿到认证的token，并通过HTTP请求cinder-api获取创建虚拟机所需要的持久化存储信息。<br>17.cinder-api向keystone认证token是否有效，并返回验证结果。<br>28.token验证通过，nova-compute获得虚拟机持久化存储信息。<br>29.nova-compute根据instance的信息调用配置的虚拟化驱动来创建虚拟机。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;openstack核心组件逻辑关系&quot;&gt;&lt;a href=&quot;#openstack核心组件逻辑关系&quot; class=&quot;headerlink&quot; title=&quot;openstack核心组件逻辑关系&quot;&gt;&lt;/a&gt;openstack核心组件逻辑关系&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;hori
+    
+    </summary>
+    
+      <category term="openstack" scheme="http://vcpu.me/categories/openstack/"/>
+    
+    
+      <category term="openstack" scheme="http://vcpu.me/tags/openstack/"/>
+    
+      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
+    
+  </entry>
   
   <entry>
     <title>metadata</title>

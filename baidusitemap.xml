@@ -4,6 +4,28 @@
 
     
   <url>
+    <loc>http://vcpu.me/vmcreate/</loc>
+    <lastmod>2017-08-25T07:39:08.000Z</lastmod>
+    <data>
+        <display>
+        <title>图示openstack -组件间基本关系和虚拟机创建</title>
+        <pubTime>2017-08-24T10:00:00.000Z</pubTime>
+        
+        <tag>openstack</tag>
+         
+        <tag>ubuntun16.04</tag>
+         
+         
+           
+             
+              <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/metadata/</loc>
     <lastmod>2017-08-24T09:52:12.000Z</lastmod>
     <data>
