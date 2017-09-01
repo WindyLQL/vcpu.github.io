@@ -4,6 +4,32 @@
 
     
   <url>
+    <loc>http://vcpu.me/openvswitch4/</loc>
+    <lastmod>2017-09-01T09:02:28.000Z</lastmod>
+    <data>
+        <display>
+        <title>openvSwitch 基础命令行</title>
+        <pubTime>2017-08-08T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntun16.04</tag>
+         
+        <tag>ovs</tag>
+         
+        <tag>虚拟交换机</tag>
+         
+        <tag>cmd</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/fwaas/</loc>
     <lastmod>2017-08-25T07:57:47.000Z</lastmod>
     <data>
@@ -148,32 +174,6 @@
         <tag>ovx tunnel</tag>
          
         <tag>ipsec gre</tag>
-         
-         
-           
-             
-              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://vcpu.me/openvswitch4/</loc>
-    <lastmod>2017-08-07T08:25:06.000Z</lastmod>
-    <data>
-        <display>
-        <title>openvSwitch 基础命令行</title>
-        <pubTime>2017-08-08T10:00:00.000Z</pubTime>
-        
-        <tag>ubuntun16.04</tag>
-         
-        <tag>ovs</tag>
-         
-        <tag>虚拟交换机</tag>
-         
-        <tag>cmd</tag>
          
          
            
