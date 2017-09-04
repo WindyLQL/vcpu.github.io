@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://vcpu.me/openstackenv/</loc>
+    
+    <lastmod>2017-09-04T08:12:02.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://vcpu.me/4node-flowtable/</loc>
     
     <lastmod>2017-09-04T07:27:59.000Z</lastmod>
