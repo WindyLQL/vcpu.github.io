@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://vcpu.me/"/>
-  <updated>2017-08-25T07:57:18.000Z</updated>
+  <updated>2017-09-04T07:25:26.000Z</updated>
   <id>http://vcpu.me/</id>
   
   <author>
@@ -16,41 +16,77 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>metadata</title>
-    <link href="http://vcpu.me/metadata/"/>
-    <id>http://vcpu.me/metadata/</id>
-    <published>2017-08-24T10:00:00.000Z</published>
-    <updated>2017-08-25T07:57:18.000Z</updated>
+    <title>openstack DVR openvswitch流表分析</title>
+    <link href="http://vcpu.me/4node-flowtable/"/>
+    <id>http://vcpu.me/4node-flowtable/</id>
+    <published>2017-09-04T10:00:00.000Z</published>
+    <updated>2017-09-04T07:25:26.000Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="metadata基本概念"><a href="#metadata基本概念" class="headerlink" title="metadata基本概念"></a>metadata基本概念</h1><p>在创建虚拟机的时候，用户往往需要对虚拟机进行一些配置，比如：开启一些服务、安装某些包、添加 SSH 秘钥、配置 hostname 等等。</p>
-<p>在 OpenStack 中，这些配置信息被分成两类：metadata 和 user data。</p>
+    <content type="html"><![CDATA[<h1 id="openstack-DVR环境组网"><a href="#openstack-DVR环境组网" class="headerlink" title="openstack DVR环境组网"></a>openstack DVR环境组网</h1><p><img src="/myimages/4node-twoselfnetwork.png" alt="4node-twoselfnetwork"><br>如上图：</p>
 <ul>
-<li><p>Metadata 主要包括虚拟机自身的一些常用属性，如 hostname、网络配置信息、SSH 登陆秘钥等，主要的形式为键值对。而 user data 主要包括一些命令、脚本等。</p>
+<li>2计算节点 + 1 网络节点 +1控制节点</li>
+<li>DVR配置计算节点无floating ip</li>
+<li>主要分析计算节点的ovs 流表策略</li>
+</ul>
+<h1 id="计算节点compute的ovs流表"><a href="#计算节点compute的ovs流表" class="headerlink" title="计算节点compute的ovs流表"></a>计算节点compute的ovs流表</h1><p>在此安装环境下计算节点共有3个ovs bridge(br-ex,br-int,br-tun)</p>
+<ul>
+<li>br-ex:负责计算节点连接外网使用，需在dvr环境下配置floating ip vm数据流量才走此桥出外网</li>
+<li>br-int:负责连接虚拟机所接入的linux bridge、router namespace</li>
+<li>br-tun: 隧道所有的虚拟交换机，通过此隧道连接网络节点（dhcp、router、snat）、计算节点（虚拟机、router）；完成大二层的需求</li>
+</ul>
+<p>在对流表分析前，我们先了解网络拓扑，并获取接口和接口索引对应关系；</p>
+<ul>
+<li><p>查看compute br-int接口和接口索引映射关系</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">root@compute:~# ovs-ofctl show br-int</div><div class="line">OFPT_FEATURES_REPLY (xid=0x2): dpid:00005278ead35849</div><div class="line">n_tables:254, n_buffers:256</div><div class="line">capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP</div><div class="line">actions: output enqueue set_vlan_vid set_vlan_pcp strip_vlan mod_dl_src mod_dl_dst mod_nw_src mod_nw_dst mod_nw_tos mod_tp_src mod_tp_dst</div><div class="line"> 1(patch-tun): addr:8e:c4:54:26:0f:46</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> 2(qvo06ec6270-33): addr:0a:7f:a0:b5:1f:b8</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     current:    10GB-FD COPPER</div><div class="line">     speed: 10000 Mbps now, 0 Mbps max</div><div class="line"> 3(qr-6474fe2d-84): addr:00:00:00:00:0e:00</div><div class="line">     config:     PORT_DOWN</div><div class="line">     state:      LINK_DOWN</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> 4(qvo2118dc24-92): addr:6e:1b:a5:df:d7:77</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     current:    10GB-FD COPPER</div><div class="line">     speed: 10000 Mbps now, 0 Mbps max</div><div class="line"> 5(int-br-ex): addr:aa:83:f4:ae:aa:41</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> 6(qr-d2e6fcc5-c7): addr:00:00:00:00:0e:00</div><div class="line">     config:     PORT_DOWN</div><div class="line">     state:      LINK_DOWN</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> LOCAL(br-int): addr:52:78:ea:d3:58:49</div><div class="line">     config:     PORT_DOWN</div><div class="line">     state:      LINK_DOWN</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line">OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0</div><div class="line">root@compute:~#</div></pre></td></tr></table></figure>
 </li>
-<li><p>User data 通过文件传递，并支持多种文件格式，包括 gzip 压缩文件、shell 脚本、cloud-init 配置文件等。虽然 metadata 和 user data 并不相同，但是 OpenStack 向虚拟机提供这两种信息的机制是一致的，只是虚拟机在获取到信息后，对两者的处理方式不同罢了。所以下文统一用 matadata 来描述。</p>
+<li><p>查看compute br-tun接口和接口索引映射关系</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">root@compute:~# ovs-ofctl show br-tun</div><div class="line">OFPT_FEATURES_REPLY (xid=0x2): dpid:00005222d0a63e4f</div><div class="line">n_tables:254, n_buffers:256</div><div class="line">capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP</div><div class="line">actions: output enqueue set_vlan_vid set_vlan_pcp strip_vlan mod_dl_src mod_dl_dst mod_nw_src mod_nw_dst mod_nw_tos mod_tp_src mod_tp_dst</div><div class="line"> 1(patch-int): addr:ae:2b:47:4b:15:6a</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> 2(vxlan-0a1e0aa0): addr:06:2d:8c:b2:d2:64</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> 3(vxlan-0a1e0a9a): addr:4e:7d:65:8d:09:09</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> LOCAL(br-tun): addr:52:22:d0:a6:3e:4f</div><div class="line">     config:     PORT_DOWN</div><div class="line">     state:      LINK_DOWN</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line">OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0</div><div class="line">root@compute:~#</div></pre></td></tr></table></figure>
 </li>
 </ul>
-<p>在 OpenStack 中，虚拟机获取 Metadata 信息的方式有两种：<br>Config drive 和 metadata RESTful 服务。此文只关注解析metadata RESTful 方式<br><a id="more"></a></p>
-<h1 id="Metadata-RESTful-工作原理"><a href="#Metadata-RESTful-工作原理" class="headerlink" title="Metadata RESTful 工作原理"></a>Metadata RESTful 工作原理</h1><p><img src="/myimages/metadata.png" alt="metadata"></p>
-<h1 id="meta作用"><a href="#meta作用" class="headerlink" title="meta作用"></a>meta作用</h1><p>可以使用metadata技术实现用户个性的配置</p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>Metadata 服务为用户自定义配置虚拟机提供了有效的解决方案。本文剖析了 OpenStack 提供 metadata 服务的RESTful机制。那么Config drive 和RESTful机制差别在哪？</p>
+<p>接口对应关系已经标注在openvswitch DVR环境组网图上，见上图</p>
+<h1 id="分析-br-int流表"><a href="#分析-br-int流表" class="headerlink" title="分析 br-int流表"></a>分析 br-int流表</h1><h2 id="分析结果如图："><a href="#分析结果如图：" class="headerlink" title="分析结果如图："></a>分析结果如图：</h2><p><img src="/myimages/br-int-flow-table.png" alt="br-int-flow-table"></p>
+<h2 id="步骤解析如下："><a href="#步骤解析如下：" class="headerlink" title="步骤解析如下："></a>步骤解析如下：</h2><h3 id="icmp6-协议交给table24处理"><a href="#icmp6-协议交给table24处理" class="headerlink" title="icmp6 协议交给table24处理"></a>icmp6 协议交给table24处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">root@compute:~# ovs-ofctl dump-flows br-int</div><div class="line">NXST_FLOW reply (xid=0x4):</div><div class="line">cookie=0xbc602bf73a053ff8, duration=2944.223s, table=0, n_packets=0, n_bytes=0, idle_age=2944, priority=10,icmp6,in_port=2,icmp_type=136 actions=resubmit(,24)</div><div class="line">cookie=0xbc602bf73a053ff8, duration=2938.510s, table=0, n_packets=0, n_bytes=0, idle_age=2938, priority=10,icmp6,in_port=4,icmp_type=136 actions=resubmit(,24)</div></pre></td></tr></table></figure>
+<h3 id="2和4接口arp交给24表格处理"><a href="#2和4接口arp交给24表格处理" class="headerlink" title="2和4接口arp交给24表格处理"></a>2和4接口arp交给24表格处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie=0xbc602bf73a053ff8, duration=2944.215s, table=0, n_packets=15, n_bytes=630, idle_age=547, priority=10,arp,in_port=2 actions=resubmit(,24)</div><div class="line">cookie=0xbc602bf73a053ff8, duration=2938.505s, table=0, n_packets=10, n_bytes=420, idle_age=6, priority=10,arp,in_port=4 actions=resubmit(,24)</div></pre></td></tr></table></figure>
+<h3 id="5接口流入的数据包全部丢弃"><a href="#5接口流入的数据包全部丢弃" class="headerlink" title="5接口流入的数据包全部丢弃"></a>5接口流入的数据包全部丢弃</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xbc602bf73a053ff8, duration=2968.234s, table=0, n_packets=4699, n_bytes=1348102, idle_age=1, priority=2,in_port=5 actions=drop</div></pre></td></tr></table></figure>
+<h3 id="2和4口其它协议数据包统统交给25表格处理"><a href="#2和4口其它协议数据包统统交给25表格处理" class="headerlink" title="2和4口其它协议数据包统统交给25表格处理"></a>2和4口其它协议数据包统统交给25表格处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie=0xbc602bf73a053ff8, duration=2944.232s, table=0, n_packets=927, n_bytes=106878, idle_age=1, priority=9,in_port=2 actions=resubmit(,25)</div><div class="line">cookie=0xbc602bf73a053ff8, duration=2938.520s, table=0, n_packets=1022, n_bytes=126940, idle_age=1, priority=9,in_port=4 actions=resubmit(,25)</div></pre></td></tr></table></figure>
+<h3 id="其它数据包像正常交换机数据一样转发数据"><a href="#其它数据包像正常交换机数据一样转发数据" class="headerlink" title="其它数据包像正常交换机数据一样转发数据"></a>其它数据包像正常交换机数据一样转发数据</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xbc602bf73a053ff8, duration=2968.576s, table=0, n_packets=2332, n_bytes=240272, idle_age=1, priority=0 actions=NORMAL</div></pre></td></tr></table></figure>
+<h3 id="23表格默认全部丢弃数据包"><a href="#23表格默认全部丢弃数据包" class="headerlink" title="23表格默认全部丢弃数据包"></a>23表格默认全部丢弃数据包</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xbc602bf73a053ff8, duration=2968.580s, table=23, n_packets=0, n_bytes=0, idle_age=2968, priority=0 actions=drop</div></pre></td></tr></table></figure>
+<h3 id="表24-处理ipv6-nd"><a href="#表24-处理ipv6-nd" class="headerlink" title="表24 处理ipv6 nd"></a>表24 处理ipv6 nd</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie=0xbc602bf73a053ff8, duration=2944.226s, table=24, n_packets=0, n_bytes=0, idle_age=2944, priority=2,icmp6,in_port=2,icmp_type=136,nd_target=fe80::f816:3eff:fef3:31f5 actions=NORMAL</div><div class="line">cookie=0xbc602bf73a053ff8, duration=2938.513s, table=24, n_packets=0, n_bytes=0, idle_age=2938, priority=2,icmp6,in_port=4,icmp_type=136,nd_target=fe80::f816:3eff:fe3c:d256 actions=NORMAL</div></pre></td></tr></table></figure>
+<h3 id="表24-接口2或4-收到-172-16-1-3-1-1-1-11-的arp信息交给表25处理"><a href="#表24-接口2或4-收到-172-16-1-3-1-1-1-11-的arp信息交给表25处理" class="headerlink" title="表24 接口2或4 收到 172.16.1.3 1.1.1.11 的arp信息交给表25处理"></a>表24 接口2或4 收到 172.16.1.3 1.1.1.11 的arp信息交给表25处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie=0xbc602bf73a053ff8, duration=2944.219s, table=24, n_packets=15, n_bytes=630, idle_age=547, priority=2,arp,in_port=2,arp_spa=172.16.1.3 actions=resubmit(,25)</div><div class="line">cookie=0xbc602bf73a053ff8, duration=2938.507s, table=24, n_packets=10, n_bytes=420, idle_age=6, priority=2,arp,in_port=4,arp_spa=1.1.1.11 actions=resubmit(,25)</div></pre></td></tr></table></figure>
+<h3 id="表24-如果上述未处理完成，将剩余数据包丢去"><a href="#表24-如果上述未处理完成，将剩余数据包丢去" class="headerlink" title="表24 如果上述未处理完成，将剩余数据包丢去"></a>表24 如果上述未处理完成，将剩余数据包丢去</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xbc602bf73a053ff8, duration=2968.573s, table=24, n_packets=0, n_bytes=0, idle_age=2968, priority=0 actions=drop</div></pre></td></tr></table></figure>
+<h3 id="表25-接口2或则4-源mac是fa-16-3e-f3-31-f5-fa-16-3e-3c-d2-56-的来的数据包正常处理"><a href="#表25-接口2或则4-源mac是fa-16-3e-f3-31-f5-fa-16-3e-3c-d2-56-的来的数据包正常处理" class="headerlink" title="表25 接口2或则4 源mac是fa:16:3e:f3:31:f5 fa:16:3e:3c:d2:56  的来的数据包正常处理"></a>表25 接口2或则4 源mac是fa:16:3e:f3:31:f5 fa:16:3e:3c:d2:56  的来的数据包正常处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie=0xbc602bf73a053ff8, duration=2944.242s, table=25, n_packets=926, n_bytes=106092, idle_age=1, priority=2,in_port=2,dl_src=fa:16:3e:f3:31:f5 actions=NORMAL</div><div class="line">cookie=0xbc602bf73a053ff8, duration=2938.524s, table=25, n_packets=1016, n_bytes=125944, idle_age=1, priority=2,in_port=4,dl_src=fa:16:3e:3c:d2:56 actions=NORMAL</div></pre></td></tr></table></figure>
+<h1 id="分析-br-tun流表"><a href="#分析-br-tun流表" class="headerlink" title="分析 br-tun流表"></a>分析 br-tun流表</h1><h2 id="分析结果如图：-1"><a href="#分析结果如图：-1" class="headerlink" title="分析结果如图："></a>分析结果如图：</h2><p><img src="/myimages/br-tun-flowtabble.png" alt="br-tun-flowtabble"></p>
+<h2 id="步骤解析如下：-1"><a href="#步骤解析如下：-1" class="headerlink" title="步骤解析如下："></a>步骤解析如下：</h2><h3 id="内网接口-交给table2处理"><a href="#内网接口-交给table2处理" class="headerlink" title="内网接口 交给table2处理"></a>内网接口 交给table2处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">root@compute:~# ovs-ofctl dump-flows br-tun</div><div class="line">NXST_FLOW reply (xid=0x4):</div><div class="line"> cookie=0xb9ef2c735af9d49c, duration=2988.059s, table=0, n_packets=299, n_bytes=30921, idle_age=208, priority=1,in_port=1 actions=resubmit(,2)</div></pre></td></tr></table></figure>
+<h3 id="外网接口交给table4处理"><a href="#外网接口交给table4处理" class="headerlink" title="外网接口交给table4处理"></a>外网接口交给table4处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2963.688s, table=0, n_packets=154, n_bytes=12924, idle_age=208, priority=1,in_port=2 actions=resubmit(,4)</div><div class="line">cookie=0xb9ef2c735af9d49c, duration=2963.630s, table=0, n_packets=200, n_bytes=19684, idle_age=210, priority=1,in_port=3 actions=resubmit(,4)</div></pre></td></tr></table></figure>
+<p>其它：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2988.034s, table=0, n_packets=0, n_bytes=0, idle_age=2988, priority=0 actions=drop</div></pre></td></tr></table></figure></p>
+<h3 id="单播交给表20处理"><a href="#单播交给表20处理" class="headerlink" title="单播交给表20处理"></a>单播交给表20处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2988.027s, table=2, n_packets=209, n_bytes=20555, idle_age=208, priority=0,dl_dst=00:00:00:00:00:00/01:00:00:00:00:00 actions=resubmit(,20)</div></pre></td></tr></table></figure>
+<h3 id="多播交给表22处理"><a href="#多播交给表22处理" class="headerlink" title="多播交给表22处理"></a>多播交给表22处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2988.009s, table=2, n_packets=90, n_bytes=10366, idle_age=210, priority=0,dl_dst=01:00:00:00:00:00/01:00:00:00:00:00 actions=resubmit(,22)</div></pre></td></tr></table></figure>
+<p>其它：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2988.006s, table=3, n_packets=0, n_bytes=0, idle_age=2988, priority=0 actions=drop</div></pre></td></tr></table></figure></p>
+<h3 id="从外网过来的数据包，去除tunid添加对应的vlanid后将数据包交给table10处理"><a href="#从外网过来的数据包，去除tunid添加对应的vlanid后将数据包交给table10处理" class="headerlink" title="从外网过来的数据包，去除tunid添加对应的vlanid后将数据包交给table10处理"></a>从外网过来的数据包，去除tunid添加对应的vlanid后将数据包交给table10处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2975.899s, table=4, n_packets=206, n_bytes=19127, idle_age=208, priority=1,tun_id=0x44 actions=mod_vlan_vid:1,resubmit(,10)</div><div class="line">cookie=0xb9ef2c735af9d49c, duration=2963.083s, table=4, n_packets=148, n_bytes=13481, idle_age=208, priority=1,tun_id=0x5b actions=mod_vlan_vid:2,resubmit(,10)</div></pre></td></tr></table></figure>
+<p>其它：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2988.005s, table=4, n_packets=0, n_bytes=0, idle_age=2988, priority=0 actions=drop</div><div class="line">cookie=0xb9ef2c735af9d49c, duration=2987.998s, table=6, n_packets=0, n_bytes=0, idle_age=2987, priority=0 actions=drop</div></pre></td></tr></table></figure></p>
+<h3 id="学习mac等相关信息，将信息放到表20，将数据包从pach-int发出交给内网处理"><a href="#学习mac等相关信息，将信息放到表20，将数据包从pach-int发出交给内网处理" class="headerlink" title="学习mac等相关信息，将信息放到表20，将数据包从pach-int发出交给内网处理"></a>学习mac等相关信息，将信息放到表20，将数据包从pach-int发出交给内网处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2987.994s, table=10, n_packets=354, n_bytes=32608, idle_age=208, priority=1 actions=learn(table=20,hard_timeout=300,priority=1,cookie=0xb9ef2c735af9d49c,NXM_OF_VLAN_TCI[0..11],NXM_OF_ETH_DST[]=NXM_OF_ETH_SRC[],load:0-&gt;NXM_OF_VLAN_TCI[],load:NXM_NX_TUN_ID[]-&gt;NXM_NX_TUN_ID[],output:OXM_OF_IN_PORT[]),output:1</div></pre></td></tr></table></figure>
+<h3 id="发往目的mac为fa-16-3e-3e-69-70-tag为1-（ip为172-16-1-9虚拟机数据包）被去除vlan-加上tunid，交给compute1-连接的隧道接口"><a href="#发往目的mac为fa-16-3e-3e-69-70-tag为1-（ip为172-16-1-9虚拟机数据包）被去除vlan-加上tunid，交给compute1-连接的隧道接口" class="headerlink" title="发往目的mac为fa:16:3e:3e:69:70 tag为1 （ip为172.16.1.9虚拟机数据包）被去除vlan 加上tunid，交给compute1 连接的隧道接口"></a>发往目的mac为fa:16:3e:3e:69:70 tag为1 （ip为172.16.1.9虚拟机数据包）被去除vlan 加上tunid，交给compute1 连接的隧道接口</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2949.737s, table=20, n_packets=66, n_bytes=6977, idle_age=2871, priority=2,dl_vlan=1,dl_dst=fa:16:3e:3e:69:70 actions=strip_vlan,load:0x44-&gt;NXM_NX_TUN_ID[],output:3</div></pre></td></tr></table></figure>
+<h3 id="发给172-16-1-2-dhcp-服务namespace数据包去除vlan后通过隧道交给网络节点"><a href="#发给172-16-1-2-dhcp-服务namespace数据包去除vlan后通过隧道交给网络节点" class="headerlink" title="发给172.16.1.2 dhcp 服务namespace数据包去除vlan后通过隧道交给网络节点"></a>发给172.16.1.2 dhcp 服务namespace数据包去除vlan后通过隧道交给网络节点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2937.625s, table=20, n_packets=1, n_bytes=42, idle_age=2886, priority=2,dl_vlan=1,dl_dst=fa:16:3e:cb:c0:9e actions=strip_vlan,load:0x44-&gt;NXM_NX_TUN_ID[],output:2</div></pre></td></tr></table></figure>
+<h3 id="发给1-1-1-2-dhcp-服务namespace数据包去除vlan后通过隧道交给网络节点"><a href="#发给1-1-1-2-dhcp-服务namespace数据包去除vlan后通过隧道交给网络节点" class="headerlink" title="发给1.1.1.2 dhcp 服务namespace数据包去除vlan后通过隧道交给网络节点"></a>发给1.1.1.2 dhcp 服务namespace数据包去除vlan后通过隧道交给网络节点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2937.136s, table=20, n_packets=1, n_bytes=42, idle_age=2879, priority=2,dl_vlan=2,dl_dst=fa:16:3e:b0:bd:78 actions=strip_vlan,load:0x5b-&gt;NXM_NX_TUN_ID[],output:2</div></pre></td></tr></table></figure>
+<h3 id="发给1-1-1-12的snat中网关数据包去除vlan后通过隧道交给网络节点"><a href="#发给1-1-1-12的snat中网关数据包去除vlan后通过隧道交给网络节点" class="headerlink" title="发给1.1.1.12的snat中网关数据包去除vlan后通过隧道交给网络节点"></a>发给1.1.1.12的snat中网关数据包去除vlan后通过隧道交给网络节点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2926.229s, table=20, n_packets=0, n_bytes=0, idle_age=2958, priority=2,dl_vlan=2,dl_dst=fa:16:3e:6c:ab:eb actions=strip_vlan,load:0x5b-&gt;NXM_NX_TUN_ID[],output:2</div></pre></td></tr></table></figure>
+<h3 id="发往172-16-1-4的snat中网关数据包去除vlan后通过隧道交给网络节点"><a href="#发往172-16-1-4的snat中网关数据包去除vlan后通过隧道交给网络节点" class="headerlink" title="发往172.16.1.4的snat中网关数据包去除vlan后通过隧道交给网络节点"></a>发往172.16.1.4的snat中网关数据包去除vlan后通过隧道交给网络节点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2898.976s, table=20, n_packets=1, n_bytes=42, idle_age=2889, priority=2,dl_vlan=1,dl_dst=fa:16:3e:6b:31:95 actions=strip_vlan,load:0x44-&gt;NXM_NX_TUN_ID[],output:2</div></pre></td></tr></table></figure>
 <ul>
-<li>Config drive 机制主要用于配置虚拟机的网络信息，包括 IP、子网掩码、网关等。当虚拟机无法通过 DHCP 正确获取网络信息时，config drive 是获取 metadata 信息的必要方式。</li>
-<li>如果虚拟机能够自动正确配置网络，那么可以通过 RESTful 服务的方式获取 metadata 信息。</li>
+<li><p>学习到的表项</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=210.599s, table=20, n_packets=2, n_bytes=196, hard_timeout=300, idle_age=209, hard_age=208, priority=1,vlan_tci=0x0002/0x0fff,dl_dst=fa:16:3e:1f:95:2c actions=load:0-&gt;NXM_OF_VLAN_TCI[],load:0x5b-&gt;NXM_NX_TUN_ID[],output:2</div><div class="line">cookie=0xb9ef2c735af9d49c, duration=210.597s, table=20, n_packets=2, n_bytes=264, hard_timeout=300, idle_age=208, hard_age=208, priority=1,vlan_tci=0x0001/0x0fff,dl_dst=fa:16:3e:2c:c3:0d actions=load:0-&gt;NXM_OF_VLAN_TCI[],load:0x44-&gt;NXM_NX_TUN_ID[],output:2</div></pre></td></tr></table></figure>
+</li>
+<li><p>未命中表20其它策略，统统交给流表22处理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2987.986s, table=20, n_packets=5, n_bytes=418, idle_age=210, priority=0 actions=resubmit(,22)</div></pre></td></tr></table></figure>
+</li>
 </ul>
+<h3 id="表22去除vlan-附加上tunid将数据包从隧道发出"><a href="#表22去除vlan-附加上tunid将数据包从隧道发出" class="headerlink" title="表22去除vlan 附加上tunid将数据包从隧道发出"></a>表22去除vlan 附加上tunid将数据包从隧道发出</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2926.237s, table=22, n_packets=18, n_bytes=2034, idle_age=210, priority=1,dl_vlan=2 actions=strip_vlan,load:0x5b-&gt;NXM_NX_TUN_ID[],output:2,output:3</div><div class="line">cookie=0xb9ef2c735af9d49c, duration=2898.979s, table=22, n_packets=23, n_bytes=2374, idle_age=568, priority=1,dl_vlan=1 actions=strip_vlan,load:0x44-&gt;NXM_NX_TUN_ID[],output:2,output:3</div></pre></td></tr></table></figure>
+<p>表22其它：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2987.979s, table=22, n_packets=54, n_bytes=6376, idle_age=2959, priority=0 actions=drop</div></pre></td></tr></table></figure></p>
+<h1 id="分析br-ex流表"><a href="#分析br-ex流表" class="headerlink" title="分析br-ex流表"></a>分析br-ex流表</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">root@compute:~# ovs-ofctl dump-flows br-ex</div><div class="line">NXST_FLOW reply (xid=0x4):</div><div class="line"> cookie=0x92b626c066ab8e9d, duration=13306.841s, table=0, n_packets=224, n_bytes=20652, idle_age=1596, priority=2,in_port=2 actions=drop</div><div class="line"> cookie=0x92b626c066ab8e9d, duration=13306.862s, table=0, n_packets=277292, n_bytes=89976779, idle_age=0, priority=0 actions=NORMAL</div></pre></td></tr></table></figure>
+<p>如上流表：默认2三层转发策略，且丢弃从外网收到的数据包</p>
 ]]></content>
     
     <summary type="html">
     
-      &lt;h1 id=&quot;metadata基本概念&quot;&gt;&lt;a href=&quot;#metadata基本概念&quot; class=&quot;headerlink&quot; title=&quot;metadata基本概念&quot;&gt;&lt;/a&gt;metadata基本概念&lt;/h1&gt;&lt;p&gt;在创建虚拟机的时候，用户往往需要对虚拟机进行一些配置，比如：开启一些服务、安装某些包、添加 SSH 秘钥、配置 hostname 等等。&lt;/p&gt;
-&lt;p&gt;在 OpenStack 中，这些配置信息被分成两类：metadata 和 user data。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Metadata 主要包括虚拟机自身的一些常用属性，如 hostname、网络配置信息、SSH 登陆秘钥等，主要的形式为键值对。而 user data 主要包括一些命令、脚本等。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;User data 通过文件传递，并支持多种文件格式，包括 gzip 压缩文件、shell 脚本、cloud-init 配置文件等。虽然 metadata 和 user data 并不相同，但是 OpenStack 向虚拟机提供这两种信息的机制是一致的，只是虚拟机在获取到信息后，对两者的处理方式不同罢了。所以下文统一用 matadata 来描述。&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;在 OpenStack 中，虚拟机获取 Metadata 信息的方式有两种：&lt;br&gt;Config drive 和 metadata RESTful 服务。此文只关注解析metadata RESTful 方式&lt;br&gt;
+      &lt;h1 id=&quot;openstack-DVR环境组网&quot;&gt;&lt;a href=&quot;#openstack-DVR环境组网&quot; class=&quot;headerlink&quot; title=&quot;openstack DVR环境组网&quot;&gt;&lt;/a&gt;openstack DVR环境组网&lt;/h1&gt;&lt;p&gt;&lt;img src=&quot;
     
     </summary>
     
@@ -59,15 +95,11 @@
     
       <category term="openstack" scheme="http://vcpu.me/tags/openstack/"/>
     
+      <category term="DVR" scheme="http://vcpu.me/tags/DVR/"/>
+    
       <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
     
-      <category term="metadata" scheme="http://vcpu.me/tags/metadata/"/>
-    
-      <category term="nova-api-metadata" scheme="http://vcpu.me/tags/nova-api-metadata/"/>
-    
-      <category term="Neutron-ns-metadata-proxy" scheme="http://vcpu.me/tags/Neutron-ns-metadata-proxy/"/>
-    
-      <category term="Neutron-metadata-agent" scheme="http://vcpu.me/tags/Neutron-metadata-agent/"/>
+      <category term="控制节点、网络节点、2个计算节点" scheme="http://vcpu.me/tags/%E6%8E%A7%E5%88%B6%E8%8A%82%E7%82%B9%E3%80%81%E7%BD%91%E7%BB%9C%E8%8A%82%E7%82%B9%E3%80%812%E4%B8%AA%E8%AE%A1%E7%AE%97%E8%8A%82%E7%82%B9/"/>
     
   </entry>
   
@@ -145,6 +177,62 @@
   </entry>
   
   <entry>
+    <title>metadata</title>
+    <link href="http://vcpu.me/metadata/"/>
+    <id>http://vcpu.me/metadata/</id>
+    <published>2017-08-24T10:00:00.000Z</published>
+    <updated>2017-08-25T07:57:18.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="metadata基本概念"><a href="#metadata基本概念" class="headerlink" title="metadata基本概念"></a>metadata基本概念</h1><p>在创建虚拟机的时候，用户往往需要对虚拟机进行一些配置，比如：开启一些服务、安装某些包、添加 SSH 秘钥、配置 hostname 等等。</p>
+<p>在 OpenStack 中，这些配置信息被分成两类：metadata 和 user data。</p>
+<ul>
+<li><p>Metadata 主要包括虚拟机自身的一些常用属性，如 hostname、网络配置信息、SSH 登陆秘钥等，主要的形式为键值对。而 user data 主要包括一些命令、脚本等。</p>
+</li>
+<li><p>User data 通过文件传递，并支持多种文件格式，包括 gzip 压缩文件、shell 脚本、cloud-init 配置文件等。虽然 metadata 和 user data 并不相同，但是 OpenStack 向虚拟机提供这两种信息的机制是一致的，只是虚拟机在获取到信息后，对两者的处理方式不同罢了。所以下文统一用 matadata 来描述。</p>
+</li>
+</ul>
+<p>在 OpenStack 中，虚拟机获取 Metadata 信息的方式有两种：<br>Config drive 和 metadata RESTful 服务。此文只关注解析metadata RESTful 方式<br><a id="more"></a></p>
+<h1 id="Metadata-RESTful-工作原理"><a href="#Metadata-RESTful-工作原理" class="headerlink" title="Metadata RESTful 工作原理"></a>Metadata RESTful 工作原理</h1><p><img src="/myimages/metadata.png" alt="metadata"></p>
+<h1 id="meta作用"><a href="#meta作用" class="headerlink" title="meta作用"></a>meta作用</h1><p>可以使用metadata技术实现用户个性的配置</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>Metadata 服务为用户自定义配置虚拟机提供了有效的解决方案。本文剖析了 OpenStack 提供 metadata 服务的RESTful机制。那么Config drive 和RESTful机制差别在哪？</p>
+<ul>
+<li>Config drive 机制主要用于配置虚拟机的网络信息，包括 IP、子网掩码、网关等。当虚拟机无法通过 DHCP 正确获取网络信息时，config drive 是获取 metadata 信息的必要方式。</li>
+<li>如果虚拟机能够自动正确配置网络，那么可以通过 RESTful 服务的方式获取 metadata 信息。</li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;metadata基本概念&quot;&gt;&lt;a href=&quot;#metadata基本概念&quot; class=&quot;headerlink&quot; title=&quot;metadata基本概念&quot;&gt;&lt;/a&gt;metadata基本概念&lt;/h1&gt;&lt;p&gt;在创建虚拟机的时候，用户往往需要对虚拟机进行一些配置，比如：开启一些服务、安装某些包、添加 SSH 秘钥、配置 hostname 等等。&lt;/p&gt;
+&lt;p&gt;在 OpenStack 中，这些配置信息被分成两类：metadata 和 user data。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Metadata 主要包括虚拟机自身的一些常用属性，如 hostname、网络配置信息、SSH 登陆秘钥等，主要的形式为键值对。而 user data 主要包括一些命令、脚本等。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;User data 通过文件传递，并支持多种文件格式，包括 gzip 压缩文件、shell 脚本、cloud-init 配置文件等。虽然 metadata 和 user data 并不相同，但是 OpenStack 向虚拟机提供这两种信息的机制是一致的，只是虚拟机在获取到信息后，对两者的处理方式不同罢了。所以下文统一用 matadata 来描述。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在 OpenStack 中，虚拟机获取 Metadata 信息的方式有两种：&lt;br&gt;Config drive 和 metadata RESTful 服务。此文只关注解析metadata RESTful 方式&lt;br&gt;
+    
+    </summary>
+    
+      <category term="openstack" scheme="http://vcpu.me/categories/openstack/"/>
+    
+    
+      <category term="openstack" scheme="http://vcpu.me/tags/openstack/"/>
+    
+      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
+    
+      <category term="metadata" scheme="http://vcpu.me/tags/metadata/"/>
+    
+      <category term="nova-api-metadata" scheme="http://vcpu.me/tags/nova-api-metadata/"/>
+    
+      <category term="Neutron-ns-metadata-proxy" scheme="http://vcpu.me/tags/Neutron-ns-metadata-proxy/"/>
+    
+      <category term="Neutron-metadata-agent" scheme="http://vcpu.me/tags/Neutron-metadata-agent/"/>
+    
+  </entry>
+  
+  <entry>
     <title>fwaas</title>
     <link href="http://vcpu.me/fwaas/"/>
     <id>http://vcpu.me/fwaas/</id>
@@ -206,9 +294,9 @@
     
       <category term="openstack" scheme="http://vcpu.me/tags/openstack/"/>
     
-      <category term="fwaas" scheme="http://vcpu.me/tags/fwaas/"/>
-    
       <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
+    
+      <category term="fwaas" scheme="http://vcpu.me/tags/fwaas/"/>
     
   </entry>
   
@@ -458,6 +546,88 @@
   </entry>
   
   <entry>
+    <title>openvSwitch tunnel</title>
+    <link href="http://vcpu.me/openvswitch2/"/>
+    <id>http://vcpu.me/openvswitch2/</id>
+    <published>2017-08-03T10:00:00.000Z</published>
+    <updated>2017-08-07T09:45:44.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="ovs-tunnel"><a href="#ovs-tunnel" class="headerlink" title="ovs tunnel"></a>ovs tunnel</h2><h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><p><img src="/myimages/tunnel.png" alt="tunnel"></p>
+<h3 id="实验拓扑搭建基础脚本"><a href="#实验拓扑搭建基础脚本" class="headerlink" title="实验拓扑搭建基础脚本"></a>实验拓扑搭建基础脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">#vbox虚拟机1</div><div class="line">ip netns add left</div><div class="line">ip link add name veth1 type veth peer name sw1-p1</div><div class="line">ip link set dev veth1 netns left</div><div class="line">ip netns exec left ifconfig veth1 10.0.0.1/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw1</div><div class="line">ovs-vsctl add-port sw1 sw1-p1</div><div class="line">ip link set sw1-p1 up</div><div class="line"></div><div class="line">#vbox虚拟机2</div><div class="line">ip netns add right</div><div class="line">ip link add name veth1 type veth peer name sw2-p1</div><div class="line">ip link set dev veth1 netns right</div><div class="line">ip netns exec right ifconfig veth1 10.0.0.2/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw2</div><div class="line">ovs-vsctl add-port sw2 sw2-p1</div><div class="line">ip link set sw2-p1 up</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<h3 id="GRE-TUNNEL-配置"><a href="#GRE-TUNNEL-配置" class="headerlink" title="GRE TUNNEL 配置"></a>GRE TUNNEL 配置</h3><ul>
+<li><p>vbox虚拟机1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set Interface tun0 type=gre options:remote_ip=10.30.10.141</div></pre></td></tr></table></figure>
+</li>
+<li><p>vbox虚拟机2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set Interface tun0 type=gre options:remote_ip=10.30.10.145</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="查看配置"><a href="#查看配置" class="headerlink" title="查看配置"></a>查看配置</h4><ul>
+<li><p>vbox虚拟机1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">29c5cc05-2a31-4f14-a304-3a697698f96a</div><div class="line">    Bridge &quot;sw1&quot;</div><div class="line">        Port &quot;sw1&quot;</div><div class="line">            Interface &quot;sw1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;sw1-p1&quot;</div><div class="line">            Interface &quot;sw1-p1&quot;</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: gre</div><div class="line">                options: &#123;remote_ip=&quot;10.30.10.141&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div></pre></td></tr></table></figure>
+</li>
+<li><p>vbox虚拟机2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">0f92aaa0-5385-48f5-a54a-644e05652f59</div><div class="line">    Bridge &quot;sw2&quot;</div><div class="line">        Port &quot;sw2-p1&quot;</div><div class="line">            Interface &quot;sw2-p1&quot;</div><div class="line">        Port &quot;sw2&quot;</div><div class="line">            Interface &quot;sw2&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: gre</div><div class="line">                options: &#123;remote_ip=&quot;10.30.10.145&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div><div class="line">root@controller-VirtualBox</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right"><a href="#连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right" class="headerlink" title="连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right"></a>连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ip netns exec left ping 10.0.0.2</div><div class="line">PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.953 ms</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.609 ms</div></pre></td></tr></table></figure>
+<h3 id="VXLAN-TUNNEL配置"><a href="#VXLAN-TUNNEL配置" class="headerlink" title="VXLAN TUNNEL配置"></a>VXLAN TUNNEL配置</h3><ul>
+<li><p>vbox虚拟机1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set Interface tun0 type=vxlan options:local_ip=10.30.10.145 options:remote_ip=10.30.10.141</div></pre></td></tr></table></figure>
+</li>
+<li><p>vbbox虚拟机2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set Interface tun0 type=vxlan options:local_ip=10.30.10.141 options:remote_ip=10.30.10.145</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="查看配置-1"><a href="#查看配置-1" class="headerlink" title="查看配置"></a>查看配置</h4><ul>
+<li><p>vbox虚拟机1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">29c5cc05-2a31-4f14-a304-3a697698f96a</div><div class="line">    Bridge &quot;sw1&quot;</div><div class="line">        Port &quot;sw1&quot;</div><div class="line">            Interface &quot;sw1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;sw1-p1&quot;</div><div class="line">            Interface &quot;sw1-p1&quot;</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: vxlan</div><div class="line">                options: &#123;local_ip=&quot;10.30.10.145&quot;, remote_ip=&quot;10.30.10.141&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div></pre></td></tr></table></figure>
+</li>
+<li><p>vbox虚拟机2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">0f92aaa0-5385-48f5-a54a-644e05652f59</div><div class="line">    Bridge &quot;sw2&quot;</div><div class="line">        Port &quot;sw2-p1&quot;</div><div class="line">            Interface &quot;sw2-p1&quot;</div><div class="line">        Port &quot;sw2&quot;</div><div class="line">            Interface &quot;sw2&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: vxlan</div><div class="line">                options: &#123;local_ip=&quot;10.30.10.141&quot;, remote_ip=&quot;10.30.10.145&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div><div class="line">root@controller-VirtualBox:~#</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right-1"><a href="#连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right-1" class="headerlink" title="连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right"></a>连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ip netns exec left ping 10.0.0.2</div><div class="line">PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.905 ms</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.490 ms</div><div class="line">2 packets transmitted, 2 received, 0% packet loss, time 1001ms</div><div class="line">rtt min/avg/max/mdev = 0.490/0.697/0.905/0.209 ms</div></pre></td></tr></table></figure>
+<h3 id="ipsec-gre配置"><a href="#ipsec-gre配置" class="headerlink" title="ipsec_gre配置"></a>ipsec_gre配置</h3><p>如果运行失败或则无法创建接口，首先安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">apt-get install openvswitch* -y</div></pre></td></tr></table></figure></p>
+<ul>
+<li><p>vbox虚拟机1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set interface tun0 type=ipsec_gre options:remote_ip=10.30.10.141 options:psk=test123</div></pre></td></tr></table></figure>
+</li>
+<li><p>vbbox虚拟机2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set interface tun0 type=ipsec_gre options:remote_ip=10.30.10.145 options:psk=test123</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>在ipsec gre tunnel情况下，我的环境中并没有完成连通，而且日志中也没有报错；具体原因还需要探究。当然我已经翻阅论坛，然并卵，哎。。。，暂且未解之谜吧</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;ovs-tunnel&quot;&gt;&lt;a href=&quot;#ovs-tunnel&quot; class=&quot;headerlink&quot; title=&quot;ovs tunnel&quot;&gt;&lt;/a&gt;ovs tunnel&lt;/h2&gt;&lt;h3 id=&quot;实验拓扑&quot;&gt;&lt;a href=&quot;#实验拓扑&quot; class=&quot;headerlink&quot; title=&quot;实验拓扑&quot;&gt;&lt;/a&gt;实验拓扑&lt;/h3&gt;&lt;p&gt;&lt;img src=&quot;/myimages/tunnel.png&quot; alt=&quot;tunnel&quot;&gt;&lt;/p&gt;
+&lt;h3 id=&quot;实验拓扑搭建基础脚本&quot;&gt;&lt;a href=&quot;#实验拓扑搭建基础脚本&quot; class=&quot;headerlink&quot; title=&quot;实验拓扑搭建基础脚本&quot;&gt;&lt;/a&gt;实验拓扑搭建基础脚本&lt;/h3&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;8&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;9&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;10&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;11&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;12&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;13&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;14&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;15&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;16&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;17&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;18&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;19&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;#vbox虚拟机1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns add left&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link add name veth1 type veth peer name sw1-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set dev veth1 netns left&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns exec left ifconfig veth1 10.0.0.1/24 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-br sw1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-port sw1 sw1-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set sw1-p1 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;#vbox虚拟机2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns add right&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link add name veth1 type veth peer name sw2-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set dev veth1 netns right&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns exec right ifconfig veth1 10.0.0.2/24 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-br sw2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-port sw2 sw2-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set sw2-p1 up&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+    
+    </summary>
+    
+      <category term="网络" scheme="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+    
+    
+      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
+    
+      <category term="ovs" scheme="http://vcpu.me/tags/ovs/"/>
+    
+      <category term="虚拟交换机" scheme="http://vcpu.me/tags/%E8%99%9A%E6%8B%9F%E4%BA%A4%E6%8D%A2%E6%9C%BA/"/>
+    
+      <category term="gre" scheme="http://vcpu.me/tags/gre/"/>
+    
+      <category term="vxlan" scheme="http://vcpu.me/tags/vxlan/"/>
+    
+      <category term="ovx tunnel" scheme="http://vcpu.me/tags/ovx-tunnel/"/>
+    
+      <category term="ipsec gre" scheme="http://vcpu.me/tags/ipsec-gre/"/>
+    
+  </entry>
+  
+  <entry>
     <title>openvSwitch mirror、Qos、STP</title>
     <link href="http://vcpu.me/openvswitch1/"/>
     <id>http://vcpu.me/openvswitch1/</id>
@@ -606,88 +776,6 @@
       <category term="Qos" scheme="http://vcpu.me/tags/Qos/"/>
     
       <category term="STP" scheme="http://vcpu.me/tags/STP/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>openvSwitch tunnel</title>
-    <link href="http://vcpu.me/openvswitch2/"/>
-    <id>http://vcpu.me/openvswitch2/</id>
-    <published>2017-08-03T10:00:00.000Z</published>
-    <updated>2017-08-07T09:45:44.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="ovs-tunnel"><a href="#ovs-tunnel" class="headerlink" title="ovs tunnel"></a>ovs tunnel</h2><h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><p><img src="/myimages/tunnel.png" alt="tunnel"></p>
-<h3 id="实验拓扑搭建基础脚本"><a href="#实验拓扑搭建基础脚本" class="headerlink" title="实验拓扑搭建基础脚本"></a>实验拓扑搭建基础脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">#vbox虚拟机1</div><div class="line">ip netns add left</div><div class="line">ip link add name veth1 type veth peer name sw1-p1</div><div class="line">ip link set dev veth1 netns left</div><div class="line">ip netns exec left ifconfig veth1 10.0.0.1/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw1</div><div class="line">ovs-vsctl add-port sw1 sw1-p1</div><div class="line">ip link set sw1-p1 up</div><div class="line"></div><div class="line">#vbox虚拟机2</div><div class="line">ip netns add right</div><div class="line">ip link add name veth1 type veth peer name sw2-p1</div><div class="line">ip link set dev veth1 netns right</div><div class="line">ip netns exec right ifconfig veth1 10.0.0.2/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw2</div><div class="line">ovs-vsctl add-port sw2 sw2-p1</div><div class="line">ip link set sw2-p1 up</div></pre></td></tr></table></figure>
-<a id="more"></a>
-<h3 id="GRE-TUNNEL-配置"><a href="#GRE-TUNNEL-配置" class="headerlink" title="GRE TUNNEL 配置"></a>GRE TUNNEL 配置</h3><ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set Interface tun0 type=gre options:remote_ip=10.30.10.141</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set Interface tun0 type=gre options:remote_ip=10.30.10.145</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="查看配置"><a href="#查看配置" class="headerlink" title="查看配置"></a>查看配置</h4><ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">29c5cc05-2a31-4f14-a304-3a697698f96a</div><div class="line">    Bridge &quot;sw1&quot;</div><div class="line">        Port &quot;sw1&quot;</div><div class="line">            Interface &quot;sw1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;sw1-p1&quot;</div><div class="line">            Interface &quot;sw1-p1&quot;</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: gre</div><div class="line">                options: &#123;remote_ip=&quot;10.30.10.141&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">0f92aaa0-5385-48f5-a54a-644e05652f59</div><div class="line">    Bridge &quot;sw2&quot;</div><div class="line">        Port &quot;sw2-p1&quot;</div><div class="line">            Interface &quot;sw2-p1&quot;</div><div class="line">        Port &quot;sw2&quot;</div><div class="line">            Interface &quot;sw2&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: gre</div><div class="line">                options: &#123;remote_ip=&quot;10.30.10.145&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div><div class="line">root@controller-VirtualBox</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right"><a href="#连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right" class="headerlink" title="连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right"></a>连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ip netns exec left ping 10.0.0.2</div><div class="line">PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.953 ms</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.609 ms</div></pre></td></tr></table></figure>
-<h3 id="VXLAN-TUNNEL配置"><a href="#VXLAN-TUNNEL配置" class="headerlink" title="VXLAN TUNNEL配置"></a>VXLAN TUNNEL配置</h3><ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set Interface tun0 type=vxlan options:local_ip=10.30.10.145 options:remote_ip=10.30.10.141</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set Interface tun0 type=vxlan options:local_ip=10.30.10.141 options:remote_ip=10.30.10.145</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="查看配置-1"><a href="#查看配置-1" class="headerlink" title="查看配置"></a>查看配置</h4><ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">29c5cc05-2a31-4f14-a304-3a697698f96a</div><div class="line">    Bridge &quot;sw1&quot;</div><div class="line">        Port &quot;sw1&quot;</div><div class="line">            Interface &quot;sw1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;sw1-p1&quot;</div><div class="line">            Interface &quot;sw1-p1&quot;</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: vxlan</div><div class="line">                options: &#123;local_ip=&quot;10.30.10.145&quot;, remote_ip=&quot;10.30.10.141&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">0f92aaa0-5385-48f5-a54a-644e05652f59</div><div class="line">    Bridge &quot;sw2&quot;</div><div class="line">        Port &quot;sw2-p1&quot;</div><div class="line">            Interface &quot;sw2-p1&quot;</div><div class="line">        Port &quot;sw2&quot;</div><div class="line">            Interface &quot;sw2&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: vxlan</div><div class="line">                options: &#123;local_ip=&quot;10.30.10.141&quot;, remote_ip=&quot;10.30.10.145&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div><div class="line">root@controller-VirtualBox:~#</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right-1"><a href="#连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right-1" class="headerlink" title="连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right"></a>连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ip netns exec left ping 10.0.0.2</div><div class="line">PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.905 ms</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.490 ms</div><div class="line">2 packets transmitted, 2 received, 0% packet loss, time 1001ms</div><div class="line">rtt min/avg/max/mdev = 0.490/0.697/0.905/0.209 ms</div></pre></td></tr></table></figure>
-<h3 id="ipsec-gre配置"><a href="#ipsec-gre配置" class="headerlink" title="ipsec_gre配置"></a>ipsec_gre配置</h3><p>如果运行失败或则无法创建接口，首先安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">apt-get install openvswitch* -y</div></pre></td></tr></table></figure></p>
-<ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set interface tun0 type=ipsec_gre options:remote_ip=10.30.10.141 options:psk=test123</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set interface tun0 type=ipsec_gre options:remote_ip=10.30.10.145 options:psk=test123</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>在ipsec gre tunnel情况下，我的环境中并没有完成连通，而且日志中也没有报错；具体原因还需要探究。当然我已经翻阅论坛，然并卵，哎。。。，暂且未解之谜吧</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;ovs-tunnel&quot;&gt;&lt;a href=&quot;#ovs-tunnel&quot; class=&quot;headerlink&quot; title=&quot;ovs tunnel&quot;&gt;&lt;/a&gt;ovs tunnel&lt;/h2&gt;&lt;h3 id=&quot;实验拓扑&quot;&gt;&lt;a href=&quot;#实验拓扑&quot; class=&quot;headerlink&quot; title=&quot;实验拓扑&quot;&gt;&lt;/a&gt;实验拓扑&lt;/h3&gt;&lt;p&gt;&lt;img src=&quot;/myimages/tunnel.png&quot; alt=&quot;tunnel&quot;&gt;&lt;/p&gt;
-&lt;h3 id=&quot;实验拓扑搭建基础脚本&quot;&gt;&lt;a href=&quot;#实验拓扑搭建基础脚本&quot; class=&quot;headerlink&quot; title=&quot;实验拓扑搭建基础脚本&quot;&gt;&lt;/a&gt;实验拓扑搭建基础脚本&lt;/h3&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;8&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;9&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;10&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;11&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;12&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;13&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;14&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;15&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;16&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;17&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;18&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;19&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;#vbox虚拟机1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns add left&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link add name veth1 type veth peer name sw1-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set dev veth1 netns left&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns exec left ifconfig veth1 10.0.0.1/24 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-br sw1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-port sw1 sw1-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set sw1-p1 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;#vbox虚拟机2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns add right&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link add name veth1 type veth peer name sw2-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set dev veth1 netns right&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns exec right ifconfig veth1 10.0.0.2/24 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-br sw2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-port sw2 sw2-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set sw2-p1 up&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-    
-    </summary>
-    
-      <category term="网络" scheme="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
-    
-    
-      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
-    
-      <category term="ovs" scheme="http://vcpu.me/tags/ovs/"/>
-    
-      <category term="虚拟交换机" scheme="http://vcpu.me/tags/%E8%99%9A%E6%8B%9F%E4%BA%A4%E6%8D%A2%E6%9C%BA/"/>
-    
-      <category term="gre" scheme="http://vcpu.me/tags/gre/"/>
-    
-      <category term="vxlan" scheme="http://vcpu.me/tags/vxlan/"/>
-    
-      <category term="ovx tunnel" scheme="http://vcpu.me/tags/ovx-tunnel/"/>
-    
-      <category term="ipsec gre" scheme="http://vcpu.me/tags/ipsec-gre/"/>
     
   </entry>
   
@@ -1546,44 +1634,6 @@
   </entry>
   
   <entry>
-    <title>socket读写条件</title>
-    <link href="http://vcpu.me/socket_rw_proc/"/>
-    <id>http://vcpu.me/socket_rw_proc/</id>
-    <published>2017-06-26T11:10:34.000Z</published>
-    <updated>2017-06-26T08:55:50.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="概念说明"><a href="#概念说明" class="headerlink" title="概念说明"></a>概念说明</h2><p>1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：<br>每个套接字有一个接收低水位和一个发送低水位。他们由select函数使用。<br>接收低水位标记是让select返回”可读”时套接字接收缓冲区中所需的数据量。对于TCP,其默认值为1。<br>发送低水位标记是让select返回”可写”时套接字发送缓冲区中所需的可用空间。对于TCP，其默认值常为2048</p>
-<p>通俗的解释一下，缓存区我们当成一个大小为 n bytes的空间，那么：<br>接收区缓存的作用就是，接收对面的数据放在缓存区，供应用程序读。当然了，只有当缓存区可读的数据量(接收低水位标记)到达一定程度（eg:1）的时候，我们才能读到数据，不然不就读不到数据了吗。<br>发送区缓存的作用就是，发送应用程序的数据到缓存区，然后一起发给对面。当然了，只有当缓存区剩余一定空间(发送低水位标记)（eg:2048）,你才能写数据进去，不然可能导致空间不够。</p>
-<p>2.FIN: (结束标志,Finish)用来结束一个TCP回话.但对应端口仍处于开放状态,准备接收后续数据.</p>
-<p>特别纠正说明：</p>
-<blockquote>
-<p>经过测试在3.10.0-514.16.1.el7.x86_64 内核情况下SO_SNDLOWAT/SO_RCVLOWAT<br>默认发送和接收最低水位均为1，也就是说默认情况下低水位值可以不考虑，系统缓冲区有数据就读<br>有空闲就写</p>
-</blockquote>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> value =<span class="number">0</span>;</div><div class="line"><span class="keyword">int</span> v_len = <span class="keyword">sizeof</span>(value);</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_SNDLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"snd low at value: %d\n"</span>,value);</div><div class="line">value = <span class="number">0</span>;</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_RCVLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"rcv low at value: %d\n"</span>,value);</div></pre></td></tr></table></figure>
-<h2 id="socket可读的条件"><a href="#socket可读的条件" class="headerlink" title="socket可读的条件"></a>socket可读的条件</h2><p>下列四个条件中的任何一个满足时,socket准备好读:<br>1.socket的接收缓冲区中的数据字节大于等于该socket的接收缓冲区低水位标记的当前大小。对这样的socket的读操作将不阻塞并返回一个大于0的值 {也就是返回准备好读入的数据}。我们可以用SO_RCVLOWATsocket选项来设置该socket的低水位标记。对于TCP和UDP .socket而言，其缺省值为1</p>
-<p>2.该连接的读这一半关闭{也就是接收了FIN的TCP连接}。对这样的socket的读操作将不阻塞并返回0</p>
-<p>3.socket是一个用于监听的socket,并且已经完成的连接数为非0.这样的soocket处于可读状态,是因为socket收到了对方的connect请求,执行了三次握手的第一步:对方发送SYN请求过来,使监听socket处于可读状态;正常情况下,这样的socket上的accept操作不会阻塞;</p>
-<p>4.有一个socket有异常错误条件待处理。对于这样的socket的读操作将不会阻塞,并且返回一个错误-1,errno则设置成明确的错误条件。这些待处理的错误也可通过指定socket选项SO_ERROR调用getsockopt来取得并清除</p>
-<h2 id="socket可写的条件"><a href="#socket可写的条件" class="headerlink" title="socket可写的条件"></a>socket可写的条件</h2><p>1.socket发送缓冲区中数据字节大于等于该socket发送缓冲区低水位大小。写操作不会被阻塞，会直接返回写入的数据大小，SO_SNDLOWAT socket选项设置socket可写低水位大小。经过测试默认大小为1。<br>2.如果你已经关闭连接，或者主动fin半关闭。这种情况下socket再些将要产生SIGPIPE信号，你没有对这个信号处理的话，你的进程将会被关闭。<br>3.有socket异常错误待处理，这种情况下写操作并不会被阻塞会直接返回一个错误-1，想知道错误原因erron可以帮助你。</p>
-<h2 id="参考地址"><a href="#参考地址" class="headerlink" title="参考地址"></a>参考地址</h2><p><a href="http://blog.csdn.net/szcarewell/article/details/51227540" target="_blank" rel="external">http://blog.csdn.net/szcarewell/article/details/51227540</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;概念说明&quot;&gt;&lt;a href=&quot;#概念说明&quot; class=&quot;headerlink&quot; title=&quot;概念说明&quot;&gt;&lt;/a&gt;概念说明&lt;/h2&gt;&lt;p&gt;1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：&lt;br&gt;每个套接字有一个接收低水位和一个发送低水位。他们
-    
-    </summary>
-    
-      <category term="socket" scheme="http://vcpu.me/categories/socket/"/>
-    
-    
-      <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
-    
-      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
-    
-  </entry>
-  
-  <entry>
     <title>socket信号处理</title>
     <link href="http://vcpu.me/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/"/>
     <id>http://vcpu.me/socket信号处理/</id>
@@ -1686,6 +1736,44 @@
       <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
     
       <category term="socket信号处理" scheme="http://vcpu.me/tags/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>socket读写条件</title>
+    <link href="http://vcpu.me/socket_rw_proc/"/>
+    <id>http://vcpu.me/socket_rw_proc/</id>
+    <published>2017-06-26T11:10:34.000Z</published>
+    <updated>2017-06-26T08:55:50.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="概念说明"><a href="#概念说明" class="headerlink" title="概念说明"></a>概念说明</h2><p>1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：<br>每个套接字有一个接收低水位和一个发送低水位。他们由select函数使用。<br>接收低水位标记是让select返回”可读”时套接字接收缓冲区中所需的数据量。对于TCP,其默认值为1。<br>发送低水位标记是让select返回”可写”时套接字发送缓冲区中所需的可用空间。对于TCP，其默认值常为2048</p>
+<p>通俗的解释一下，缓存区我们当成一个大小为 n bytes的空间，那么：<br>接收区缓存的作用就是，接收对面的数据放在缓存区，供应用程序读。当然了，只有当缓存区可读的数据量(接收低水位标记)到达一定程度（eg:1）的时候，我们才能读到数据，不然不就读不到数据了吗。<br>发送区缓存的作用就是，发送应用程序的数据到缓存区，然后一起发给对面。当然了，只有当缓存区剩余一定空间(发送低水位标记)（eg:2048）,你才能写数据进去，不然可能导致空间不够。</p>
+<p>2.FIN: (结束标志,Finish)用来结束一个TCP回话.但对应端口仍处于开放状态,准备接收后续数据.</p>
+<p>特别纠正说明：</p>
+<blockquote>
+<p>经过测试在3.10.0-514.16.1.el7.x86_64 内核情况下SO_SNDLOWAT/SO_RCVLOWAT<br>默认发送和接收最低水位均为1，也就是说默认情况下低水位值可以不考虑，系统缓冲区有数据就读<br>有空闲就写</p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> value =<span class="number">0</span>;</div><div class="line"><span class="keyword">int</span> v_len = <span class="keyword">sizeof</span>(value);</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_SNDLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"snd low at value: %d\n"</span>,value);</div><div class="line">value = <span class="number">0</span>;</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_RCVLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"rcv low at value: %d\n"</span>,value);</div></pre></td></tr></table></figure>
+<h2 id="socket可读的条件"><a href="#socket可读的条件" class="headerlink" title="socket可读的条件"></a>socket可读的条件</h2><p>下列四个条件中的任何一个满足时,socket准备好读:<br>1.socket的接收缓冲区中的数据字节大于等于该socket的接收缓冲区低水位标记的当前大小。对这样的socket的读操作将不阻塞并返回一个大于0的值 {也就是返回准备好读入的数据}。我们可以用SO_RCVLOWATsocket选项来设置该socket的低水位标记。对于TCP和UDP .socket而言，其缺省值为1</p>
+<p>2.该连接的读这一半关闭{也就是接收了FIN的TCP连接}。对这样的socket的读操作将不阻塞并返回0</p>
+<p>3.socket是一个用于监听的socket,并且已经完成的连接数为非0.这样的soocket处于可读状态,是因为socket收到了对方的connect请求,执行了三次握手的第一步:对方发送SYN请求过来,使监听socket处于可读状态;正常情况下,这样的socket上的accept操作不会阻塞;</p>
+<p>4.有一个socket有异常错误条件待处理。对于这样的socket的读操作将不会阻塞,并且返回一个错误-1,errno则设置成明确的错误条件。这些待处理的错误也可通过指定socket选项SO_ERROR调用getsockopt来取得并清除</p>
+<h2 id="socket可写的条件"><a href="#socket可写的条件" class="headerlink" title="socket可写的条件"></a>socket可写的条件</h2><p>1.socket发送缓冲区中数据字节大于等于该socket发送缓冲区低水位大小。写操作不会被阻塞，会直接返回写入的数据大小，SO_SNDLOWAT socket选项设置socket可写低水位大小。经过测试默认大小为1。<br>2.如果你已经关闭连接，或者主动fin半关闭。这种情况下socket再些将要产生SIGPIPE信号，你没有对这个信号处理的话，你的进程将会被关闭。<br>3.有socket异常错误待处理，这种情况下写操作并不会被阻塞会直接返回一个错误-1，想知道错误原因erron可以帮助你。</p>
+<h2 id="参考地址"><a href="#参考地址" class="headerlink" title="参考地址"></a>参考地址</h2><p><a href="http://blog.csdn.net/szcarewell/article/details/51227540" target="_blank" rel="external">http://blog.csdn.net/szcarewell/article/details/51227540</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;概念说明&quot;&gt;&lt;a href=&quot;#概念说明&quot; class=&quot;headerlink&quot; title=&quot;概念说明&quot;&gt;&lt;/a&gt;概念说明&lt;/h2&gt;&lt;p&gt;1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：&lt;br&gt;每个套接字有一个接收低水位和一个发送低水位。他们
+    
+    </summary>
+    
+      <category term="socket" scheme="http://vcpu.me/categories/socket/"/>
+    
+    
+      <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
+    
+      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
     
   </entry>
   

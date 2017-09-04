@@ -4,6 +4,32 @@
 
     
   <url>
+    <loc>http://vcpu.me/4node-flowtable/</loc>
+    <lastmod>2017-09-04T07:25:26.000Z</lastmod>
+    <data>
+        <display>
+        <title>openstack DVR openvswitch流表分析</title>
+        <pubTime>2017-09-04T10:00:00.000Z</pubTime>
+        
+        <tag>openstack</tag>
+         
+        <tag>DVR</tag>
+         
+        <tag>ubuntun16.04</tag>
+         
+        <tag>控制节点、网络节点、2个计算节点</tag>
+         
+         
+           
+             
+              <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/openvswitch4/</loc>
     <lastmod>2017-09-01T09:02:28.000Z</lastmod>
     <data>
@@ -39,9 +65,9 @@
         
         <tag>openstack</tag>
          
-        <tag>fwaas</tag>
-         
         <tag>ubuntun16.04</tag>
+         
+        <tag>fwaas</tag>
          
          
            
