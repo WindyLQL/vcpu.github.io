@@ -109,20 +109,20 @@
     <link href="http://vcpu.me/openstackenv/"/>
     <id>http://vcpu.me/openstackenv/</id>
     <published>2017-08-30T10:00:00.000Z</published>
-    <updated>2017-09-04T08:12:02.000Z</updated>
+    <updated>2017-09-04T08:16:43.000Z</updated>
     
     <content type="html"><![CDATA[<h1 id="本文章简要介绍"><a href="#本文章简要介绍" class="headerlink" title="本文章简要介绍"></a>本文章简要介绍</h1><p>本文章旨在以图形方式记录已经搭建的实验环境中网络组成。都是实践结果并没有过多的理论解释，通过图形勾画出newton组网。<br>实验环境包含如下：</p>
 <ul>
 <li>两个服务器节点搭建openstack 环境<br>一个服务器安装controller和network节点；一个服务器安装计算节点</li>
-<li>3个服务器节点搭建的openstack环境<br>一个服务器安装controller、一个服务器安装network、一个服务器安装计算节点</li>
-<li>4个服务器节点搭建的openstack环境<br>一个服务器安装controller、一个服务器安装network、另外两台服务器分别安装计算节点</li>
+<li>三个服务器节点搭建的openstack环境<br>一个服务器安装controller、一个服务器安装network、一个服务器安装计算节点</li>
+<li>四个服务器节点搭建的openstack环境<br>一个服务器安装controller、一个服务器安装network、另外两台服务器分别安装计算节点</li>
 </ul>
 <h1 id="两个服务器节点搭建openstack-环境"><a href="#两个服务器节点搭建openstack-环境" class="headerlink" title="两个服务器节点搭建openstack 环境"></a>两个服务器节点搭建openstack 环境</h1><h2 id="openstack官方安装环境，未采用openvswitch的组网"><a href="#openstack官方安装环境，未采用openvswitch的组网" class="headerlink" title="openstack官方安装环境，未采用openvswitch的组网"></a>openstack官方安装环境，未采用openvswitch的组网</h2><p><img src="/myimages/self_service.png" alt="self_service"></p>
 <h2 id="替换linuxbridge为openvswitch后的组网"><a href="#替换linuxbridge为openvswitch后的组网" class="headerlink" title="替换linuxbridge为openvswitch后的组网"></a>替换linuxbridge为openvswitch后的组网</h2><p><img src="/myimages/ovs-openstack.png" alt="ovs-openstack"></p>
 <h1 id="三个服务器节点搭建openstack环境"><a href="#三个服务器节点搭建openstack环境" class="headerlink" title="三个服务器节点搭建openstack环境"></a>三个服务器节点搭建openstack环境</h1><h2 id="未采用ovs，按照官方环境分离安装的组网和组件关系合图"><a href="#未采用ovs，按照官方环境分离安装的组网和组件关系合图" class="headerlink" title="未采用ovs，按照官方环境分离安装的组网和组件关系合图"></a>未采用ovs，按照官方环境分离安装的组网和组件关系合图</h2><p><img src="/myimages/3node.png" alt="3node.png"></p>
 <h2 id="采用ovs-组网信息图和组件合图"><a href="#采用ovs-组网信息图和组件合图" class="headerlink" title="采用ovs,组网信息图和组件合图"></a>采用ovs,组网信息图和组件合图</h2><p><img src="/myimages/3node-openvswitch.png" alt="3node-openvswitch.png"></p>
 <h2 id="采用ovs，DVR情况下组件关系图"><a href="#采用ovs，DVR情况下组件关系图" class="headerlink" title="采用ovs，DVR情况下组件关系图"></a>采用ovs，DVR情况下组件关系图</h2><p><img src="/myimages/3node-openvswitch-dvr.png" alt="3node-openvswitch-dvr.png"></p>
-<h1 id="4个服务器节点搭建的openstack环境"><a href="#4个服务器节点搭建的openstack环境" class="headerlink" title="4个服务器节点搭建的openstack环境"></a>4个服务器节点搭建的openstack环境</h1><h2 id="采用ovs，两个计算节点组网图"><a href="#采用ovs，两个计算节点组网图" class="headerlink" title="采用ovs，两个计算节点组网图"></a>采用ovs，两个计算节点组网图</h2><p><img src="/myimages/4node-openvswitch-or.png" alt="4node-openvswitch-or"></p>
+<h1 id="四个服务器节点搭建的openstack环境"><a href="#四个服务器节点搭建的openstack环境" class="headerlink" title="四个服务器节点搭建的openstack环境"></a>四个服务器节点搭建的openstack环境</h1><h2 id="采用ovs，两个计算节点组网图"><a href="#采用ovs，两个计算节点组网图" class="headerlink" title="采用ovs，两个计算节点组网图"></a>采用ovs，两个计算节点组网图</h2><p><img src="/myimages/4node-openvswitch-or.png" alt="4node-openvswitch-or"></p>
 <h2 id="采用ovs，DVR环境东西流量走向图"><a href="#采用ovs，DVR环境东西流量走向图" class="headerlink" title="采用ovs，DVR环境东西流量走向图"></a>采用ovs，DVR环境东西流量走向图</h2><p><img src="/myimages/4node-dvr-ew-ping.png" alt="4node-dvr-ew-ping"></p>
 <h2 id="采用ovs，DVR环境无folating-ip上外网流量走向图"><a href="#采用ovs，DVR环境无folating-ip上外网流量走向图" class="headerlink" title="采用ovs，DVR环境无folating ip上外网流量走向图"></a>采用ovs，DVR环境无folating ip上外网流量走向图</h2><p><img src="/myimages/4node-dvr-nofloatingip-ping8.8.8.8.png" alt="4node-dvr-nofloatingip-ping8.8.8.8"></p>
 <h2 id="采用ovs，DVR环境含有floating-ip上外网流量走向图"><a href="#采用ovs，DVR环境含有floating-ip上外网流量走向图" class="headerlink" title="采用ovs，DVR环境含有floating ip上外网流量走向图"></a>采用ovs，DVR环境含有floating ip上外网流量走向图</h2><p><img src="/myimages/4node-dvr-floatingip-sn.png" alt="4node-dvr-floatingip-sn"></p>

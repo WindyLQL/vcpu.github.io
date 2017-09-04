@@ -780,178 +780,21 @@
             <h1 id="本文章简要介绍"><a href="#本文章简要介绍" class="headerlink" title="本文章简要介绍"></a>本文章简要介绍</h1><p>本文章旨在以图形方式记录已经搭建的实验环境中网络组成。都是实践结果并没有过多的理论解释，通过图形勾画出newton组网。<br>实验环境包含如下：</p>
 <ul>
 <li>两个服务器节点搭建openstack 环境<br>一个服务器安装controller和network节点；一个服务器安装计算节点</li>
-<li>3个服务器节点搭建的openstack环境<br>一个服务器安装controller、一个服务器安装network、一个服务器安装计算节点</li>
-<li>4个服务器节点搭建的openstack环境<br>一个服务器安装controller、一个服务器安装network、另外两台服务器分别安装计算节点</li>
+<li>三个服务器节点搭建的openstack环境<br>一个服务器安装controller、一个服务器安装network、一个服务器安装计算节点</li>
+<li>四个服务器节点搭建的openstack环境<br>一个服务器安装controller、一个服务器安装network、另外两台服务器分别安装计算节点</li>
 </ul>
 <h1 id="两个服务器节点搭建openstack-环境"><a href="#两个服务器节点搭建openstack-环境" class="headerlink" title="两个服务器节点搭建openstack 环境"></a>两个服务器节点搭建openstack 环境</h1><h2 id="openstack官方安装环境，未采用openvswitch的组网"><a href="#openstack官方安装环境，未采用openvswitch的组网" class="headerlink" title="openstack官方安装环境，未采用openvswitch的组网"></a>openstack官方安装环境，未采用openvswitch的组网</h2><p><img src="/myimages/self_service.png" alt="self_service"></p>
 <h2 id="替换linuxbridge为openvswitch后的组网"><a href="#替换linuxbridge为openvswitch后的组网" class="headerlink" title="替换linuxbridge为openvswitch后的组网"></a>替换linuxbridge为openvswitch后的组网</h2><p><img src="/myimages/ovs-openstack.png" alt="ovs-openstack"></p>
 <h1 id="三个服务器节点搭建openstack环境"><a href="#三个服务器节点搭建openstack环境" class="headerlink" title="三个服务器节点搭建openstack环境"></a>三个服务器节点搭建openstack环境</h1><h2 id="未采用ovs，按照官方环境分离安装的组网和组件关系合图"><a href="#未采用ovs，按照官方环境分离安装的组网和组件关系合图" class="headerlink" title="未采用ovs，按照官方环境分离安装的组网和组件关系合图"></a>未采用ovs，按照官方环境分离安装的组网和组件关系合图</h2><p><img src="/myimages/3node.png" alt="3node.png"></p>
 <h2 id="采用ovs-组网信息图和组件合图"><a href="#采用ovs-组网信息图和组件合图" class="headerlink" title="采用ovs,组网信息图和组件合图"></a>采用ovs,组网信息图和组件合图</h2><p><img src="/myimages/3node-openvswitch.png" alt="3node-openvswitch.png"></p>
 <h2 id="采用ovs，DVR情况下组件关系图"><a href="#采用ovs，DVR情况下组件关系图" class="headerlink" title="采用ovs，DVR情况下组件关系图"></a>采用ovs，DVR情况下组件关系图</h2><p><img src="/myimages/3node-openvswitch-dvr.png" alt="3node-openvswitch-dvr.png"></p>
-<h1 id="4个服务器节点搭建的openstack环境"><a href="#4个服务器节点搭建的openstack环境" class="headerlink" title="4个服务器节点搭建的openstack环境"></a>4个服务器节点搭建的openstack环境</h1><h2 id="采用ovs，两个计算节点组网图"><a href="#采用ovs，两个计算节点组网图" class="headerlink" title="采用ovs，两个计算节点组网图"></a>采用ovs，两个计算节点组网图</h2><p><img src="/myimages/4node-openvswitch-or.png" alt="4node-openvswitch-or"></p>
+<h1 id="四个服务器节点搭建的openstack环境"><a href="#四个服务器节点搭建的openstack环境" class="headerlink" title="四个服务器节点搭建的openstack环境"></a>四个服务器节点搭建的openstack环境</h1><h2 id="采用ovs，两个计算节点组网图"><a href="#采用ovs，两个计算节点组网图" class="headerlink" title="采用ovs，两个计算节点组网图"></a>采用ovs，两个计算节点组网图</h2><p><img src="/myimages/4node-openvswitch-or.png" alt="4node-openvswitch-or"></p>
 <h2 id="采用ovs，DVR环境东西流量走向图"><a href="#采用ovs，DVR环境东西流量走向图" class="headerlink" title="采用ovs，DVR环境东西流量走向图"></a>采用ovs，DVR环境东西流量走向图</h2><p><img src="/myimages/4node-dvr-ew-ping.png" alt="4node-dvr-ew-ping"></p>
 <h2 id="采用ovs，DVR环境无folating-ip上外网流量走向图"><a href="#采用ovs，DVR环境无folating-ip上外网流量走向图" class="headerlink" title="采用ovs，DVR环境无folating ip上外网流量走向图"></a>采用ovs，DVR环境无folating ip上外网流量走向图</h2><p><img src="/myimages/4node-dvr-nofloatingip-ping8.8.8.8.png" alt="4node-dvr-nofloatingip-ping8.8.8.8"></p>
 <h2 id="采用ovs，DVR环境含有floating-ip上外网流量走向图"><a href="#采用ovs，DVR环境含有floating-ip上外网流量走向图" class="headerlink" title="采用ovs，DVR环境含有floating ip上外网流量走向图"></a>采用ovs，DVR环境含有floating ip上外网流量走向图</h2><p><img src="/myimages/4node-dvr-floatingip-sn.png" alt="4node-dvr-floatingip-sn"></p>
 <h2 id="采用ovs-DVR环境不同子网东西流量相互ping流量走向图"><a href="#采用ovs-DVR环境不同子网东西流量相互ping流量走向图" class="headerlink" title="采用ovs,DVR环境不同子网东西流量相互ping流量走向图"></a>采用ovs,DVR环境不同子网东西流量相互ping流量走向图</h2><p><img src="/myimages/4node-two-selfnetwork.png" alt="4node-two-selfnetwork"></p>
 
           
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/vmcreate/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/vmcreate/" itemprop="url">图示openstack -组件间基本关系和虚拟机创建</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-24T18:00:00+08:00">
-                2017-08-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/openstack/" itemprop="url" rel="index">
-                    <span itemprop="name">openstack</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/vmcreate/" class="leancloud_visitors" data-flag-title="图示openstack -组件间基本关系和虚拟机创建">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="openstack核心组件逻辑关系"><a href="#openstack核心组件逻辑关系" class="headerlink" title="openstack核心组件逻辑关系"></a>openstack核心组件逻辑关系</h2><ul>
-<li>horizon控制台<br>提供WEB操作界面，用来创建虚拟机、增加网络、创建fw和负载均衡策略等</li>
-<li>nova<br>  响应虚拟机创建请求、调度、销毁云主机</li>
-<li>glance<br>  提供虚拟机创建镜像服务</li>
-<li>cinyder<br>  虚拟机块存储，供操作系统使用</li>
-<li>swift<br>  对象存储，数据备份和镜像存储</li>
-<li>neutron<br> 创建管理虚拟网络，供虚拟机使用</li>
-<li>keytone<br> 认证授权,属于共享组件</li>
-<li><p>ceilometer<br> 监控计费服务<br><img src="/myimages/openstack-plugin.png" alt="openstack-plugin"></p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/vmcreate/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
         
       
     </div>
@@ -1105,6 +948,163 @@
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/metadata/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/vmcreate/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/vmcreate/" itemprop="url">图示openstack -组件间基本关系和虚拟机创建</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-24T18:00:00+08:00">
+                2017-08-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/openstack/" itemprop="url" rel="index">
+                    <span itemprop="name">openstack</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/vmcreate/" class="leancloud_visitors" data-flag-title="图示openstack -组件间基本关系和虚拟机创建">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="openstack核心组件逻辑关系"><a href="#openstack核心组件逻辑关系" class="headerlink" title="openstack核心组件逻辑关系"></a>openstack核心组件逻辑关系</h2><ul>
+<li>horizon控制台<br>提供WEB操作界面，用来创建虚拟机、增加网络、创建fw和负载均衡策略等</li>
+<li>nova<br>  响应虚拟机创建请求、调度、销毁云主机</li>
+<li>glance<br>  提供虚拟机创建镜像服务</li>
+<li>cinyder<br>  虚拟机块存储，供操作系统使用</li>
+<li>swift<br>  对象存储，数据备份和镜像存储</li>
+<li>neutron<br> 创建管理虚拟网络，供虚拟机使用</li>
+<li>keytone<br> 认证授权,属于共享组件</li>
+<li><p>ceilometer<br> 监控计费服务<br><img src="/myimages/openstack-plugin.png" alt="openstack-plugin"></p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/vmcreate/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
