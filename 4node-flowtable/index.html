@@ -95,20 +95,20 @@
 
 
 
-<meta name="description" content="openstack DVR环境组网如上图：  2计算节点 + 1 网络节点 +1控制节点 DVR配置计算节点无floating ip 主要分析计算节点的ovs 流表策略  计算节点compute的ovs流表在此安装环境下计算节点共有3个ovs bridge(br-ex,br-int,br-tun)  br-ex:负责计算节点连接外网使用，需在dvr环境下配置floating ip vm数据流量才走">
+<meta name="description" content="openstack DVR环境组网如上图：  2计算节点 + 1 网络节点 +1控制节点 DVR配置计算节点无floating ip 主要分析计算节点的ovs 流表策略 ubuntun 16.04 + openstack newton版本  计算节点compute的ovs流表在此安装环境下计算节点共有3个ovs bridge(br-ex,br-int,br-tun)  br-ex:负责计算节点连接">
 <meta name="keywords" content="openstack,DVR,ubuntun16.04,控制节点、网络节点、2个计算节点">
 <meta property="og:type" content="article">
 <meta property="og:title" content="openstack DVR openvswitch流表分析">
 <meta property="og:url" content="http://vcpu.me/4node-flowtable/index.html">
 <meta property="og:site_name" content="i博客">
-<meta property="og:description" content="openstack DVR环境组网如上图：  2计算节点 + 1 网络节点 +1控制节点 DVR配置计算节点无floating ip 主要分析计算节点的ovs 流表策略  计算节点compute的ovs流表在此安装环境下计算节点共有3个ovs bridge(br-ex,br-int,br-tun)  br-ex:负责计算节点连接外网使用，需在dvr环境下配置floating ip vm数据流量才走">
+<meta property="og:description" content="openstack DVR环境组网如上图：  2计算节点 + 1 网络节点 +1控制节点 DVR配置计算节点无floating ip 主要分析计算节点的ovs 流表策略 ubuntun 16.04 + openstack newton版本  计算节点compute的ovs流表在此安装环境下计算节点共有3个ovs bridge(br-ex,br-int,br-tun)  br-ex:负责计算节点连接">
 <meta property="og:image" content="http://vcpu.me/myimages/4node-twoselfnetwork.png">
 <meta property="og:image" content="http://vcpu.me/myimages/br-int-flow-table.png">
 <meta property="og:image" content="http://vcpu.me/myimages/br-tun-flowtabble.png">
-<meta property="og:updated_time" content="2017-09-04T07:25:26.000Z">
+<meta property="og:updated_time" content="2017-09-04T07:27:59.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="openstack DVR openvswitch流表分析">
-<meta name="twitter:description" content="openstack DVR环境组网如上图：  2计算节点 + 1 网络节点 +1控制节点 DVR配置计算节点无floating ip 主要分析计算节点的ovs 流表策略  计算节点compute的ovs流表在此安装环境下计算节点共有3个ovs bridge(br-ex,br-int,br-tun)  br-ex:负责计算节点连接外网使用，需在dvr环境下配置floating ip vm数据流量才走">
+<meta name="twitter:description" content="openstack DVR环境组网如上图：  2计算节点 + 1 网络节点 +1控制节点 DVR配置计算节点无floating ip 主要分析计算节点的ovs 流表策略 ubuntun 16.04 + openstack newton版本  计算节点compute的ovs流表在此安装环境下计算节点共有3个ovs bridge(br-ex,br-int,br-tun)  br-ex:负责计算节点连接">
 <meta name="twitter:image" content="http://vcpu.me/myimages/4node-twoselfnetwork.png">
 
 
@@ -438,6 +438,7 @@
 <li>2计算节点 + 1 网络节点 +1控制节点</li>
 <li>DVR配置计算节点无floating ip</li>
 <li>主要分析计算节点的ovs 流表策略</li>
+<li>ubuntun 16.04 + openstack newton版本</li>
 </ul>
 <h1 id="计算节点compute的ovs流表"><a href="#计算节点compute的ovs流表" class="headerlink" title="计算节点compute的ovs流表"></a>计算节点compute的ovs流表</h1><p>在此安装环境下计算节点共有3个ovs bridge(br-ex,br-int,br-tun)</p>
 <ul>
