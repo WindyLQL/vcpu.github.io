@@ -319,7 +319,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/openvswitch1/">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/openvswitch3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="vcpu.me">
@@ -338,7 +338,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/openvswitch1/" itemprop="url">openvSwitch mirror、Qos、STP</a></h1>
+                <a class="post-title-link" href="/openvswitch3/" itemprop="url">openvSwitch flow</a></h1>
         
 
         <div class="post-meta">
@@ -350,8 +350,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T18:00:00+08:00">
-                2017-08-03
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-07T18:00:00+08:00">
+                2017-08-07
               </time>
             
 
@@ -390,7 +390,7 @@
 
           
           
-             <span id="/openvswitch1/" class="leancloud_visitors" data-flag-title="openvSwitch mirror、Qos、STP">
+             <span id="/openvswitch3/" class="leancloud_visitors" data-flag-title="openvSwitch flow">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -419,17 +419,12 @@
 
       
         
-          <h2 id="ovs-mirror"><a href="#ovs-mirror" class="headerlink" title="ovs mirror"></a>ovs mirror</h2><h3 id="ovs-mirror介绍"><a href="#ovs-mirror介绍" class="headerlink" title="ovs mirror介绍"></a>ovs mirror介绍</h3><p>mirror可以将虚拟交换机把数据包发给的接口或则vlan</p>
-<ul>
-<li><p>命令中对数据包选择选项：<br>select_all，所有的包<br>select_dst_port<br>select_src_port<br>select_vlan</p>
-</li>
-<li><p>将数据包镜像的命令：<br>output_port (SPAN Switched Port ANalyzer 本地流量)<br>output_vlan (RSPAN Remote Switched Port ANalyzer 远程流量)</p>
-</li>
-</ul>
-<h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><p><img src="/myimages/ovsmirror.png" alt="ovsmirror"></p>
+          <h2 id="OpenvSwitch-flow"><a href="#OpenvSwitch-flow" class="headerlink" title="OpenvSwitch  flow"></a>OpenvSwitch  flow</h2><p>OpenFlow 是用于管理交换机流表的协议，ovs-ofctl 则是 OVS 提供的命令行工具。在没有配置 OpenFlow 控制器的模式下，可以使用 ovs-ofctl 命令通过 OpenFlow 协议去连接 OVS，创建、修改或删除 OVS 中的流表项，并对 OVS 的运行状况进行动态监控。</p>
+<h2 id="ovs-ofctl流表操作命令"><a href="#ovs-ofctl流表操作命令" class="headerlink" title="ovs-ofctl流表操作命令"></a>ovs-ofctl流表操作命令</h2><p>ovs-ofctl add−flow／add−flows／mod−flows “流表匹配条件,actions=[target][,target…]”</p>
+<h3 id="流表匹配条件"><a href="#流表匹配条件" class="headerlink" title="流表匹配条件"></a>流表匹配条件</h3><p>在 OVS 中，流表项作为 ovs-ofctl 的参数，采用如下的格式：字段=值。如果有多个字段，可以用逗号或者空格分开<br><img src="/myimages/flow.png" alt="flow"><br>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/openvswitch1/#more" rel="contents">
+            <a class="btn" href="/openvswitch3/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -580,6 +575,162 @@
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/openvswitch2/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/openvswitch1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/openvswitch1/" itemprop="url">openvSwitch mirror、Qos、STP</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T18:00:00+08:00">
+                2017-08-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络/" itemprop="url" rel="index">
+                    <span itemprop="name">网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/openvswitch1/" class="leancloud_visitors" data-flag-title="openvSwitch mirror、Qos、STP">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="ovs-mirror"><a href="#ovs-mirror" class="headerlink" title="ovs mirror"></a>ovs mirror</h2><h3 id="ovs-mirror介绍"><a href="#ovs-mirror介绍" class="headerlink" title="ovs mirror介绍"></a>ovs mirror介绍</h3><p>mirror可以将虚拟交换机把数据包发给的接口或则vlan</p>
+<ul>
+<li><p>命令中对数据包选择选项：<br>select_all，所有的包<br>select_dst_port<br>select_src_port<br>select_vlan</p>
+</li>
+<li><p>将数据包镜像的命令：<br>output_port (SPAN Switched Port ANalyzer 本地流量)<br>output_vlan (RSPAN Remote Switched Port ANalyzer 远程流量)</p>
+</li>
+</ul>
+<h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><p><img src="/myimages/ovsmirror.png" alt="ovsmirror"></p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/openvswitch1/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1684,161 +1835,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/TCP拥塞控制/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/TCP拥塞控制/" itemprop="url">拥塞控制</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-04T18:00:00+08:00">
-                2017-07-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/TCP/" itemprop="url" rel="index">
-                    <span itemprop="name">TCP</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/TCP拥塞控制/" class="leancloud_visitors" data-flag-title="拥塞控制">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="TCP拥塞控制设计概念"><a href="#TCP拥塞控制设计概念" class="headerlink" title="TCP拥塞控制设计概念"></a>TCP拥塞控制设计概念</h2><h3 id="延迟确认定时器"><a href="#延迟确认定时器" class="headerlink" title="延迟确认定时器"></a>延迟确认定时器</h3><blockquote>
-<p>TCP延时确认定时器是指在一个TCP连接中，当一方收到另一端的数据后，并不是立刻ACK确认，而是等待200ms（2.6内核 40ms），如果这段时间内有新的数据要发往对方，本地奖ACK和数据封装在一个数据包中捎带发送；如果这段时间内没有新的数据要发往对方，200ms后ack确认。</p>
-</blockquote>
-<p>优点：减少传输消耗<br>缺点：增加了延迟    </p>
-<h3 id="超时重传定时器"><a href="#超时重传定时器" class="headerlink" title="超时重传定时器"></a>超时重传定时器</h3><p>超时重传是TCP协议栈保障数据可靠性的一个重要机制<br>原理：</p>
-<blockquote>
-<p>发送一个数据后同时开启定时器，在一定时间内如果没有收到对方确认，定时器激活重新发送数据包，直到发送成功或者到达最大重传次数。<br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/TCP拥塞控制/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1888,7 +1884,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">38</span>
+                <span class="site-state-item-count">39</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1910,7 +1906,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">68</span>
+                <span class="site-state-item-count">70</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

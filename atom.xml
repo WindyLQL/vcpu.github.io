@@ -51,6 +51,154 @@
   </entry>
   
   <entry>
+    <title>linux arp机制解析</title>
+    <link href="http://vcpu.me/linuxarp/"/>
+    <id>http://vcpu.me/linuxarp/</id>
+    <published>2017-10-01T10:00:00.000Z</published>
+    <updated>2017-10-11T04:19:16.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="一-问题"><a href="#一-问题" class="headerlink" title="一.问题"></a>一.问题</h2><h3 id="1-使用keepalived进行热备份的系统需要一个虚拟的IP地址，然而该虚拟IP地址到底属于哪台机器是根据热备群的主备来决定的，因此主机器在获得该虚拟IP的时候，必须要广播一个免费的arp，起初人们认为这没有必要，理由是不这么做，热备群也工作的很好，然而事实证明，这是必须的；"><a href="#1-使用keepalived进行热备份的系统需要一个虚拟的IP地址，然而该虚拟IP地址到底属于哪台机器是根据热备群的主备来决定的，因此主机器在获得该虚拟IP的时候，必须要广播一个免费的arp，起初人们认为这没有必要，理由是不这么做，热备群也工作的很好，然而事实证明，这是必须的；" class="headerlink" title="1.使用keepalived进行热备份的系统需要一个虚拟的IP地址，然而该虚拟IP地址到底属于哪台机器是根据热备群的主备来决定的，因此主机器在获得该虚拟IP的时候，必须要广播一个免费的arp，起初人们认为这没有必要，理由是不这么做，热备群也工作的很好，然而事实证明，这是必须的；"></a>1.使用keepalived进行热备份的系统需要一个虚拟的IP地址，然而该虚拟IP地址到底属于哪台机器是根据热备群的主备来决定的，因此主机器在获得该虚拟IP的时候，必须要广播一个免费的arp，起初人们认为这没有必要，理由是不这么做，热备群也工作的很好，然而事实证明，这是必须的；</h3><h3 id="2-ARP缓存表项都有一个老化时间，然而在linux系统中却没有给出具体如何来设置这个老化时间。那么到底怎么设置这个老化时间呢？"><a href="#2-ARP缓存表项都有一个老化时间，然而在linux系统中却没有给出具体如何来设置这个老化时间。那么到底怎么设置这个老化时间呢？" class="headerlink" title="2.ARP缓存表项都有一个老化时间，然而在linux系统中却没有给出具体如何来设置这个老化时间。那么到底怎么设置这个老化时间呢？"></a>2.ARP缓存表项都有一个老化时间，然而在linux系统中却没有给出具体如何来设置这个老化时间。那么到底怎么设置这个老化时间呢？</h3><h2 id="二-解答问题前的说明"><a href="#二-解答问题前的说明" class="headerlink" title="二.解答问题前的说明"></a>二.解答问题前的说明</h2><p>ARP协议的规范只是阐述了地址解析的细节，然而并没有规定协议栈的实现如何去维护ARP缓存。ARP缓存需要有一个到期时间，这是必要的，因为ARP缓存并不维护映射的状态，也不进行认证，因此协议本身不能保证这种映射永远都是正确的，它只能保证该映射在得到arp应答之后的一定时间内是有效的。这也给了ARP欺骗以可乘之机，不过本文不讨论这种欺骗。<br> 像Cisco或者基于VRP的华为设备都有明确的配置来配置arp缓存的到期时间，然而Linux系统中却没有这样的配置，起码可以说没有这样的直接配置。Linux用户都知道如果需要配置什么系统行为，那么使用sysctl工具配置procfs下的sys接口是一个方法，然而当我们google了好久，终于发现关于ARP的配置处在/proc/sys/net/ipv4/neigh/ethX的时候，我们最终又迷茫于该目录下的N多文件，即使去查询Linux内核的Documents也不能清晰的明了这些文件的具体含义。对于Linux这样的成熟系统，一定有办法来配置ARP缓存的到期时间，但是具体到操作上，到底怎么配置呢？这还得从Linux实现的ARP状态机说起。<br> 如果你看过<strong><em>《Understading Linux Networking Internals》</em></strong>并且真的做到深入理解的话，那么本文讲的基本就是废话，但是很多人是没有看过那本书的，因此本文的内容还是有一定价值的。<br> Linux协议栈实现为ARP缓存维护了一个状态机，在理解具体的行为之前，先看一下下面的图(该图基于<strong><em>《Understading Linux Networking Internals》</em></strong>里面的图26-13修改，在第二十六章)：<br><img src="/myimages/arp1.png" alt="arp1"><br>在上图中，我们看到只有arp缓存项的reachable状态对于外发包是可用的，对于stale状态的arp缓存项而言，它实际上是不可用的。如果此时有人要发包，那么需要进行重新解析，对于常规的理解，重新解析意味着要重新发送arp请求，然后事实上却不一定这样，因为Linux为arp增加了一个“事件点”来“不用发送arp请求”而对arp协议生成的缓存维护的优化措施，事实上，这种措施十分有效。这就是arp的“确认”机制，也就是说，如果说从一个邻居主动发来一个数据包到本机，那么就可以确认该包的“上一跳”这个邻居是有效的，然而为何只有到达本机的包才能确认“上一跳”这个邻居的有效性呢？因为Linux并不想为IP层的处理增加负担，也即不想改变IP层的原始语义。<br> Linux维护一个stale状态其实就是为了保留一个neighbour结构体，在其状态改变时只是个别字段得到修改或者填充。如果按照简单的实现，只保存一个reachable状态即可，其到期则删除arp缓存表项。Linux的做法只是做了很多的优化，但是如果你为这些优化而绞尽脑汁，那就悲剧了…</p>
+<h2 id="三-Linux如何来维护这个stale状态"><a href="#三-Linux如何来维护这个stale状态" class="headerlink" title="三.Linux如何来维护这个stale状态"></a>三.Linux如何来维护这个stale状态</h2><p>在Linux实现的ARP状态机中，最复杂的就是stale状态了，在此状态中的arp缓存表项面临着生死抉择，抉择者就是本地发出的包，如果本地发出的包使用了这个stale状态的arp缓存表项，那么就将状态机推进到delay状态，如果在“垃圾收集”定时器到期后还没有人使用该邻居，那么就有可能删除这个表项了，到底删除吗？这样看看有木有其它路径使用它，关键是看路由缓存，路由缓存虽然是一个第三层的概念，然而却保留了该路由的下一条的ARP缓存表项，这个意义上，Linux的路由缓存实则一个转发表而不是一个路由表。<br> 如果有外发包使用了这个表项，那么该表项的ARP状态机将进入delay状态，在delay状态中，只要有“本地”确认的到来(本地接收包的上一跳来自该邻居)，linux还是不会发送ARP请求的，但是如果一直都没有本地确认，那么Linux就将发送真正的ARP请求了，进入probe状态。因此可以看到，从stale状态开始，所有的状态只是为一种优化措施而存在的，stale状态的ARP缓存表项就是一个缓存的缓存，如果Linux只是将过期的reachable状态的arp缓存表项删除，语义是一样的，但是实现看起来以及理解起来会简单得多！<br> 再次强调，reachable过期进入stale状态而不是直接删除，是为了保留neighbour结构体，优化内存以及CPU利用，实际上进入stale状态的arp缓存表项时不可用的，要想使其可用，要么在delay状态定时器到期前本地给予了确认，比如tcp收到了一个包，要么delay状态到期进入probe状态后arp请求得到了回应。否则还是会被删除。</p>
+<h2 id="四-Linux的ARP缓存实现要点"><a href="#四-Linux的ARP缓存实现要点" class="headerlink" title="四.Linux的ARP缓存实现要点"></a>四.Linux的ARP缓存实现要点</h2><p>在blog中分析源码是儿时的记忆了，现在不再浪费版面了。只要知道Linux在实现arp时维护的几个定时器的要点即可。<br>1.Reachable状态定时器<br>每当有arp回应到达或者其它能证明该ARP表项表示的邻居真的可达时，启动该定时器。到期时根据配置的时间将对应的ARP缓存表项转换到下一个状态。<br>2.垃圾回收定时器<br>定时启动该定时器，具体下一次什么到期，是根据配置的base_reachable_time来决定的，具体见下面的代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">neigh_periodic_timer</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">long</span> arg)</span></span></div><div class="line">&#123;</div><div class="line">    ...</div><div class="line">    <span class="keyword">if</span> (time_after(now, tbl-&gt;last_rand + <span class="number">300</span> * HZ)) &#123; <span class="comment">//内核每5分钟重新进行一次配置</span></div><div class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">neigh_parms</span> *<span class="title">p</span>;</span></div><div class="line">        tbl-&gt;last_rand = now;</div><div class="line">        <span class="keyword">for</span> (p = &amp;tbl-&gt;parms; p; p = p-&gt;next)</div><div class="line">            p-&gt;reachable_time =</div><div class="line">                neigh_rand_reach_time(p-&gt;base_reachable_time);</div><div class="line">    &#125;</div><div class="line">    ...</div><div class="line"></div><div class="line">     <span class="comment">/* Cycle through all hash buckets every base_reachable_time/2 ticks.</span></div><div class="line">      * ARP entry timeouts range from 1/2 base_reachable_time to 3/2</div><div class="line">      * base_reachable_time.</div><div class="line">     */</div><div class="line">    expire = tbl-&gt;parms.base_reachable_time &gt;&gt; <span class="number">1</span>;</div><div class="line">    expire /= (tbl-&gt;hash_mask + <span class="number">1</span>);</div><div class="line">    <span class="keyword">if</span> (!expire)</div><div class="line">        expire = <span class="number">1</span>;</div><div class="line">    <span class="comment">//下次何时到期完全基于base_reachable_time);</span></div><div class="line">     mod_timer(&amp;tbl-&gt;gc_timer, now + expire);</div><div class="line">    ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>一旦这个定时器到期，将执行neigh_periodic_timer回调函数，里面有以下的逻辑，也即上面的…省略的部分：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (atomic_read(&amp;n-&gt;refcnt) == <span class="number">1</span> &amp;&amp; <span class="comment">//n-&gt;used可能会因为“本地确认”机制而向前推进</span></div><div class="line">    (state == NUD_FAILED ||    time_after(now, n-&gt;used + n-&gt;parms-&gt;gc_staletime))) &#123;</div><div class="line">    *np = n-&gt;next;</div><div class="line">    n-&gt;dead = <span class="number">1</span>;</div><div class="line">    write_unlock(&amp;n-&gt;lock);</div><div class="line">    neigh_release(n);</div><div class="line">    <span class="keyword">continue</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>如果在实验中，你的处于stale状态的表项没有被及时删除，那么试着执行一下下面的命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ip route flush cache</div></pre></td></tr></table></figure>
+<p>然后再看看ip neigh ls all的结果，注意，不要指望马上会被删除，因为此时垃圾回收定时器还没有到期呢…但是我敢保证，不长的时间之后，该缓存表项将被删除。</p>
+<h2 id="五-第一个问题的解决"><a href="#五-第一个问题的解决" class="headerlink" title="五.第一个问题的解决"></a>五.第一个问题的解决</h2><p>在启用keepalived进行基于vrrp热备份的群组上，很多同学认为根本不需要在进入master状态时重新绑定自己的MAC地址和虚拟IP地址，然而这是根本错误的，如果说没有出现什么问题，那也是侥幸，因为各个路由器上默认配置的arp超时时间一般很短，然而我们不能依赖这种配置。请看下面的图示：<br><img src="/myimages/arp2.png" alt="arp2"><br>如果发生了切换，假设路由器上的arp缓存超时时间为1小时，那么在将近一小时内，单向数据将无法通信(假设群组中的主机不会发送数据通过路由器，排出“本地确认”，毕竟我不知道路由器是不是在运行Linux)，路由器上的数据将持续不断的法往原来的master，然而原始的matser已经不再持有虚拟IP地址。<br> 因此，为了使得数据行为不再依赖路由器的配置，必须在vrrp协议下切换到master时手动绑定虚拟IP地址和自己的MAC地址，在Linux上使用方便的arping则是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">arping -i ethX -S 1.1.1.1 -B -c 1</div></pre></td></tr></table></figure>
+<p>这样一来，获得1.1.1.1这个IP地址的master主机将IP地址为255.255.255.255的ARP请求广播到全网，假设路由器运行Linux，则路由器接收到该ARP请求后将根据来源IP地址更新其本地的ARP缓存表项(如果有的话)，然而问题是，该表项更新的结果状态却是stale，这只是ARP的规定，具体在代码中体现是这样的，在arp_process函数的最后：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (arp-&gt;ar_op != htons(ARPOP_REPLY) || skb-&gt;pkt_type != PACKET_HOST)</div><div class="line">    state = NUD_STALE;</div><div class="line">neigh_update(n, sha, state, override ? NEIGH_UPDATE_F_OVERRIDE : <span class="number">0</span>);</div></pre></td></tr></table></figure></p>
+<p>由此可见，只有实际的外发包的下一跳是1.1.1.1时，才会通过“本地确认”机制或者实际发送ARP请求的方式将对应的MAC地址映射reachable状态。</p>
+<p>更正：在看了keepalived的源码之后，发现这个担心是多余的，毕竟keepalived已经很成熟了，不应该犯“如此低级的错误”，keepalived在某主机切换到master之后，会主动发送免费arp，在keepalived中有代码如是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">vrrp_send_update(vrrp_rt * vrrp, ip_address * ipaddress, <span class="keyword">int</span> idx)</div><div class="line">&#123;</div><div class="line">    <span class="keyword">char</span> *msg;</div><div class="line">    <span class="keyword">char</span> addr_str[<span class="number">41</span>];</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (!IP_IS6(ipaddress)) &#123;</div><div class="line">        msg = <span class="string">"gratuitous ARPs"</span>;</div><div class="line">        inet_ntop(AF_INET, &amp;ipaddress-&gt;u.<span class="built_in">sin</span>.sin_addr, addr_str, <span class="number">41</span>);</div><div class="line">        send_gratuitous_arp(ipaddress);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        msg = <span class="string">"Unsolicited Neighbour Adverts"</span>;</div><div class="line">        inet_ntop(AF_INET6, &amp;ipaddress-&gt;u.sin6_addr, addr_str, <span class="number">41</span>);</div><div class="line">        ndisc_send_unsolicited_na(ipaddress);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (<span class="number">0</span> == idx &amp;&amp; debug &amp; <span class="number">32</span>) &#123;</div><div class="line">        log_message(LOG_INFO, <span class="string">"VRRP_Instance(%s) Sending %s on %s for %s"</span>,</div><div class="line">                vrrp-&gt;iname, msg, IF_NAME(ipaddress-&gt;ifp), addr_str);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="六-第二个问题的解决"><a href="#六-第二个问题的解决" class="headerlink" title="六.第二个问题的解决"></a>六.第二个问题的解决</h2><p>扯了这么多，在Linux上到底怎么设置ARP缓存的老化时间呢？<br>我们看到/proc/sys/net/ipv4/neigh/ethX目录下面有多个文件，到底哪个是ARP缓存的老化时间呢？实际上，直接点说，就是base_reachable_time这个文件。其它的都只是优化行为的措施。比如gc_stale_time这个文件记录的是“ARP缓存表项的缓存”的存活时间，该时间只是一个缓存的缓存的存活时间，在该时间内，如果需要用到该邻居，那么直接使用表项记录的数据作为ARP请求的内容即可，或者得到“本地确认”后直接将其置为reachable状态，而不用再通过路由查找，ARP查找，ARP邻居创建，ARP邻居解析这种慢速的方式。<br> 默认情况下，reachable状态的超时时间是30秒，超过30秒，ARP缓存表项将改为stale状态，此时，你可以认为该表项已经老化到期了，只是Linux的实现中并没有将其删除罢了，再过了gc_stale_time时间，表项才被删除。在ARP缓存表项成为非reachable之后，垃圾回收器负责执行“再过了gc_stale_time时间，表项才被删除”这件事，这个定时器的下次到期时间是根据base_reachable_time计算出来的，具体就是在neigh_periodic_timer中：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">if</span> (time_after(now, tbl-&gt;last_rand + <span class="number">300</span> * HZ)) &#123;</div><div class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">neigh_parms</span> *<span class="title">p</span>;</span></div><div class="line">    tbl-&gt;last_rand = now;</div><div class="line">    <span class="keyword">for</span> (p = &amp;tbl-&gt;parms; p; p = p-&gt;next)</div><div class="line">        <span class="comment">//随计化很重要，防止“共振行为”引发的ARP解析风暴</span></div><div class="line">        p-&gt;reachable_time =　neigh_rand_reach_time(p-&gt;base_reachable_time);</div><div class="line">&#125;</div><div class="line">...</div><div class="line">expire = tbl-&gt;parms.base_reachable_time &gt;&gt; <span class="number">1</span>;</div><div class="line">expire /= (tbl-&gt;hash_mask + <span class="number">1</span>);</div><div class="line"><span class="keyword">if</span> (!expire)</div><div class="line">    expire = <span class="number">1</span>;</div><div class="line">mod_timer(&amp;tbl-&gt;gc_timer, now + expire);</div></pre></td></tr></table></figure>
+<p>可见一斑啊！适当地，我们可以通过看代码注释来理解这一点，好心人都会写上注释的。为了实验的条理清晰，我们设计以下两个场景：<br><strong>1.使用iptables禁止一切本地接收，从而屏蔽arp本地确认，使用sysctl将base_reachable_time设置为5秒，将gc_stale_time为5秒。<br>2.关闭iptables的禁止策略，使用TCP下载外部网络一个超大文件或者进行持续短连接，使用sysctl将base_reachable_time设置为5秒，将gc_stale_time为5秒。</strong><br>在两个场景下都使用ping命令来ping本地局域网的默认网关，然后迅速Ctrl-C掉这个ping，用ip neigh show all可以看到默认网关的arp表项，然而在场景1下，大约5秒之内，arp表项将变为stale之后不再改变，再ping的话，表项先变为delay再变为probe，然后为reachable，5秒之内再次成为stale.</p>
+<p>而在场景2下，arp表项持续为reachable以及dealy，这说明了Linux中的ARP状态机。那么为何场景1中，当表项成为stale之后很久都不会被删除呢？其实这是因为还有路由缓存项在使用它，此时你删除路由缓存之后，arp表项很快被删除。</p>
+<h2 id="七-总结"><a href="#七-总结" class="headerlink" title="七.总结"></a>七.总结</h2><p><strong>1.在Linux上如果你想设置你的ARP缓存老化时间，那么执行sysctl -w net.ipv4.neigh.ethX=Y即可，如果设置别的，只是影响了性能，在Linux中，ARP缓存老化以其变为stale状态为准，而不是以其表项被删除为准，stale状态只是对缓存又进行了缓存；<br>2.永远记住，在将一个IP地址更换到另一台本网段设备时，尽可能快地广播免费ARP，在Linux上可以使用arping来玩小技巧。</strong></p>
+<h2 id="八-linux系统默认的ARP老化时间"><a href="#八-linux系统默认的ARP老化时间" class="headerlink" title="八.linux系统默认的ARP老化时间"></a>八.linux系统默认的ARP老化时间</h2><p>root@compute:~# cat /proc/sys/net/ipv4/neigh/enp0s3/gc_stale_time</p>
+<p>60</p>
+<p>root@compute:~# cat /proc/sys/net/ipv4/neigh/enp0s3/base_reachable_time</p>
+<p>30</p>
+<p>在没有有路由缓存和别人使用情况下，30 s 维持在reachable状态，然后变更称为STALE状态，再经过60 s 删除此表项。</p>
+<p>如果处于STALE状态过期后，主机主动单播ARP确认是否延长表项时间。</p>
+<h2 id="九-ARP机制实验验证"><a href="#九-ARP机制实验验证" class="headerlink" title="九.ARP机制实验验证"></a>九.ARP机制实验验证</h2><p>上述涩难懂的ARP机制讲解来自网络，具体博文由谁书写，已经难觅其源，在此引用下作为本博文基础部分，感谢作者奉献；笔者因ARP机制问题困扰了许久，因此下文从实验事实角度探究linux APR状态机的变化和网络连通性的关系，解惑罢了。</p>
+<h3 id="实验背景"><a href="#实验背景" class="headerlink" title="实验背景"></a>实验背景</h3><hr>
+<p><img src="/myimages/arp3.png" alt="arp3"></p>
+<ul>
+<li>两台ubuntu16.04 机器接入交换机二层互联</li>
+<li>ubuntun 均安装arptables，用来控制arp流量</li>
+<li>ubuntu使用iptables控制ip流量</li>
+<li>通过ping和arping产生arp和ip流量</li>
+</ul>
+<h3 id="实验命令汇总"><a href="#实验命令汇总" class="headerlink" title="实验命令汇总"></a>实验命令汇总</h3><hr>
+<ul>
+<li>ping 10.30.10.141</li>
+<li>arping 10.30.10.141</li>
+<li>arptables -A INPUT -s 10.30.10.141 –opcode 1 -j DROP</li>
+<li>arptables -D INPUT -s 10.30.10.141 –opcode 1 -j DROP</li>
+<li>iptables -I INPUT 1 -s 10.30.10.141 -j DROP</li>
+<li>iptables -D INPUT -s 10.30.10.141 -j DROP</li>
+<li>cat /proc/sys/net/ipv4/neigh/enp0s3/base_reachable_time</li>
+<li>cat /proc/sys/net/ipv4/neigh/enp0s3/gc_stale_time</li>
+<li>echo 10 > /proc/sys/net/ipv4/neigh/enp0s3/base_reachable_time</li>
+<li>echo 5 > /proc/sys/net/ipv4/neigh/enp0s3/gc_stale_time</li>
+<li>watch -d -n 1 ip neigh show</li>
+</ul>
+<h3 id="实验情况1"><a href="#实验情况1" class="headerlink" title="实验情况1"></a>实验情况1</h3><p>主机B无主机A的ARP表项，主机A 一直arping主机B，查看主机B中主机A arp表项的变化情况</p>
+<p>主机A arping 主机 B</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">root@controller:~<span class="comment"># arping 10.30.10.141 -I enp0s8</span></div><div class="line">ARPING <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> enp0s8</div><div class="line">Unicast reply <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> [<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:B7]  <span class="number">1.048</span>ms</div><div class="line">Unicast reply <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> [<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:B7]  <span class="number">1.179</span>ms</div><div class="line">Unicast reply <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> [<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:B7]  <span class="number">1.038</span>ms</div><div class="line">Unicast reply <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> [<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:B7]  <span class="number">1.113</span>ms</div><div class="line">Unicast reply <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> [<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:B7]  <span class="number">1.057</span>ms</div><div class="line">Unicast reply <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> [<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:B7]  <span class="number">0.894</span>ms</div><div class="line">Unicast reply <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> [<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:B7]  <span class="number">3.004</span>ms</div><div class="line">Unicast reply <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> [<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:B7]  <span class="number">0.833</span>ms</div></pre></td></tr></table></figure>
+<p>主机B 长时间抓取ARP packet，发现主机B一直收到主机A ARP请求，主机B一直没有主动请求主机A 的ARP</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">root@compute:~<span class="comment"># tcpdump -i enp0s3 arp -ne  and host 10.30.10.145</span></div><div class="line">tcpdump: verbose output suppressed, use -v <span class="keyword">or</span> -vv <span class="keyword">for</span> full protocol decode</div><div class="line">listening on enp0s3, link-type EN10MB (Ethernet), capture size <span class="number">262144</span> bytes</div><div class="line"><span class="number">12</span>:<span class="number">12</span>:<span class="number">31.733125</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9 &gt; ff:ff:ff:ff:ff:ff, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">60</span>: Request who-has <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> (ff:ff:ff:ff:ff:ff) tell <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span>, length <span class="number">46</span></div><div class="line"><span class="number">12</span>:<span class="number">12</span>:<span class="number">31.733166</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">42</span>: Reply <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> <span class="keyword">is</span>-at <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, length <span class="number">28</span></div><div class="line"><span class="number">12</span>:<span class="number">12</span>:<span class="number">32.734890</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">60</span>: Request who-has <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> (<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7) tell <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span>, length <span class="number">46</span></div><div class="line"><span class="number">12</span>:<span class="number">12</span>:<span class="number">32.734922</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">42</span>: Reply <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> <span class="keyword">is</span>-at <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, length <span class="number">28</span></div><div class="line"><span class="number">12</span>:<span class="number">12</span>:<span class="number">33.735815</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">60</span>: Request who-has <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> (<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7) tell <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span>, length <span class="number">46</span></div><div class="line"><span class="number">12</span>:<span class="number">12</span>:<span class="number">33.735838</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">42</span>: Reply <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> <span class="keyword">is</span>-at <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, length <span class="number">28</span></div><div class="line"><span class="number">12</span>:<span class="number">12</span>:<span class="number">34.736497</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">60</span>: Request who-has <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> (<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7) tell <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span>, length <span class="number">46</span></div></pre></td></tr></table></figure>
+<p>主机B 查询 arp表 arp -n</p>
+<p>10.30.10.145 ether 08:00:27:5f:1b:a9 C enp0s3</p>
+<p>主机B 查询watch -d -n 1 ip neigh show</p>
+<p>10.30.10.145 dev enp0s3 lladdr 08:00:27:5f:1b:a9 STALE</p>
+<p><strong>结论：</strong></p>
+<ul>
+<li>主机B新增主机A的arp表项</li>
+<li>主机B中ip neigh show显示主机A 新增表项且一直处于STALE状态</li>
+<li>主机B在主机A一直请求ARP给主机B情况下，主机B就不会主动向主机A请求ARP了</li>
+</ul>
+<h3 id="实验情况2"><a href="#实验情况2" class="headerlink" title="实验情况2"></a>实验情况2</h3><p>主机A 持续ping 主机B，观察主机B ARP表项变化</p>
+<p>主机A ping主机B</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">root@controller:~<span class="comment"># ping 10.30.10.141</span></div><div class="line">PING <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> (<span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>) <span class="number">56</span>(<span class="number">84</span>) bytes of data.</div><div class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>: icmp_seq=<span class="number">1</span> ttl=<span class="number">64</span> time=<span class="number">0.297</span> ms</div><div class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>: icmp_seq=<span class="number">2</span> ttl=<span class="number">64</span> time=<span class="number">0.402</span> ms</div></pre></td></tr></table></figure>
+<p>查看主机B配置时间</p>
+<p>root@compute:~# cat /proc/sys/net/ipv4/neigh/enp0s3/gc_stale_time</p>
+<p>5</p>
+<p>root@compute:~# cat /proc/sys/net/ipv4/neigh/enp0s3/base_reachable_time</p>
+<p>10</p>
+<p>主机B抓取主动请求主机A的ARP，约每15s发一次</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@compute:~<span class="comment"># tcpdump -i enp0s3 arp -ne  and host 10.30.10.145</span></div><div class="line">tcpdump: verbose output suppressed, use -v <span class="keyword">or</span> -vv <span class="keyword">for</span> full protocol decode</div><div class="line">listening on enp0s3, link-type EN10MB (Ethernet), capture size <span class="number">262144</span> bytes</div><div class="line"></div><div class="line"><span class="number">15</span>:<span class="number">03</span>:<span class="number">37.286996</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">42</span>: Request who-has <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> tell <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>, length <span class="number">28</span></div><div class="line"><span class="number">15</span>:<span class="number">03</span>:<span class="number">37.287388</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">60</span>: Reply <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> <span class="keyword">is</span>-at <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, length <span class="number">46</span></div><div class="line"><span class="number">15</span>:<span class="number">03</span>:<span class="number">53.673456</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">42</span>: Request who-has <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> tell <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>, length <span class="number">28</span></div><div class="line"><span class="number">15</span>:<span class="number">03</span>:<span class="number">53.673875</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">60</span>: Reply <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> <span class="keyword">is</span>-at <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, length <span class="number">46</span></div><div class="line"><span class="number">15</span>:<span class="number">04</span>:<span class="number">10.055035</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">42</span>: Request who-has <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> tell <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>, length <span class="number">28</span></div><div class="line"><span class="number">15</span>:<span class="number">04</span>:<span class="number">10.055524</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">60</span>: Reply <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> <span class="keyword">is</span>-at <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, length <span class="number">46</span></div><div class="line"><span class="number">15</span>:<span class="number">04</span>:<span class="number">26.439254</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">42</span>: Request who-has <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> tell <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>, length <span class="number">28</span></div><div class="line"><span class="number">15</span>:<span class="number">04</span>:<span class="number">26.439720</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">60</span>: Reply <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> <span class="keyword">is</span>-at <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, length <span class="number">46</span></div><div class="line"><span class="number">15</span>:<span class="number">04</span>:<span class="number">42.823208</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">42</span>: Request who-has <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> tell <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>, length <span class="number">28</span></div><div class="line"><span class="number">15</span>:<span class="number">04</span>:<span class="number">42.823664</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">60</span>: Reply <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> <span class="keyword">is</span>-at <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, length <span class="number">46</span></div></pre></td></tr></table></figure>
+<p>观察现象：主机B 10.30.10.145neigh表项，从建立reachable 10s后到STALE，然后过约5s后，重新变为reachable状态，且循环往复。STALE变为主机reachable状态时，主机B都会主动请求主机A ARP</p>
+<p><strong>结论推演：</strong></p>
+<ul>
+<li>主机A ping 主机B 主机B学习到主机A ARP表项达到reachable状态，约base_reachable_time时间后，变为STALE状态</li>
+<li>约gc_stale_time后主机B主动发ARP请求主机A，主机A确认后，表项状态重新回到reachable</li>
+</ul>
+<h3 id="实验情况3"><a href="#实验情况3" class="headerlink" title="实验情况3"></a>实验情况3</h3><p>主机A 持续ping 主机B，且在主机A禁止主机B的主动ARP请求（arptables -A INPUT -s 10.30.10.141 –opcode 1 -j DROP），观察主机B ARP表项变化</p>
+<p><strong>主机A现象1</strong></p>
+<p>主机A ping主机B，无法收到主机B的回复数据包，主机B 中 ARP状态从FAILD变更到INCOMPLETE 循环往复</p>
+<p><strong>主机A现象2</strong></p>
+<p>主机A ping 主机B，ping通约10个数据包后又不通，主机B中ARP状态从DELAY - PROB - FAILD</p>
+<p><strong>结论推演：</strong></p>
+<p>主机A ping 主机B 不通，因主机A限制主机B ARP请求，导致主机B无法获取到主机A的ARP，主机B无法回复icmp给主机A</p>
+<p>主机A 能ping 通主机B，因主机A主的请求主机B 的ARP，使得主机B学习到主机A的ARP，主机B可正常回复主机A数据包，但是主机B收到主机A 主动请求ARP学习到的表项处于DELAY，因DELAY过期后主机B主动请求主机A ARP没有得到回复，因此</p>
+<p>主机B中ARP状态从DELAY - PROB - FAILD ，表项最终失效后，主机A又无法ping通主机B了</p>
+<h3 id="实验情况4"><a href="#实验情况4" class="headerlink" title="实验情况4"></a>实验情况4</h3><p>主机A 持续ping 主机B，且在主机A禁止主机B的主动ARP请求（arptables -A INPUT -s 10.30.10.141 –opcode 1 -j DROP），主机A 持续arping 主机B，观察主机B ARP表项变化以及连通情况</p>
+<p><strong>现象描述：</strong></p>
+<ol>
+<li>主机A可以一直ping通主机B,没有出现任何丢包</li>
+<li>主机B查看主机A 对应ARP表项 arp -n ARP表象一直存在</li>
+<li>主机Aping主机B偶尔出现大的延迟</li>
+<li>主机B ip neigh show 查看ARP学习状态，主机B学习的主机A表项，一直处于STALE->DELAY->PROBE->FAILED</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">root@controller:~<span class="comment"># ping 10.30.10.141</span></div><div class="line">PING <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> (<span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>) <span class="number">56</span>(<span class="number">84</span>) bytes of data.</div><div class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>: icmp_seq=<span class="number">510</span> ttl=<span class="number">64</span> time=<span class="number">0.304</span> ms</div><div class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>: icmp_seq=<span class="number">511</span> ttl=<span class="number">64</span> time=<span class="number">61.3</span> ms</div><div class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>: icmp_seq=<span class="number">512</span> ttl=<span class="number">64</span> time=<span class="number">0.584</span> ms</div><div class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>: icmp_seq=<span class="number">513</span> ttl=<span class="number">64</span> time=<span class="number">0.330</span> ms</div><div class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>: icmp_seq=<span class="number">514</span> ttl=<span class="number">64</span> time=<span class="number">0.326</span> ms</div><div class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>: icmp_seq=<span class="number">515</span> ttl=<span class="number">64</span> time=<span class="number">0.309</span> ms</div><div class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>: icmp_seq=<span class="number">516</span> ttl=<span class="number">64</span> time=<span class="number">0.317</span> ms</div></pre></td></tr></table></figure>
+<p><strong>结论推演**</strong>：**</p>
+<p> 实验3和实验4差别在于，实验4的主机A会主动ARPping 主机B，因此主机B可以实时获取到主机A的MAC，因此其通讯是连通的ping服务不会出现丢包</p>
+<p>但是主机B在ARP学习时候STALE->DELAY->PROBE->FAILED状态变化幅度较大，会出现回应主机A ping数据包不及时情况，这是ping延迟的根本原因</p>
+<p><strong>额外结论：</strong></p>
+<p> STALE->DELAY->PROBE->FAILED 主机B ARP表象状态从DELAY->PROBE会连续发送3个ARP单播请求，因为主机A不会回应所以状态可能直接刷新成FAILED；为什么说可能刷新？</p>
+<p>因为主机A没有ARPING 主机B或则主动ARP请求主机B时候，主机B被动学习到主机A ARP表现也会导致ARP表项刷新，使主机B记录主机A ARP邻居状态直接落果FAILED状态重新回到STALE状态。</p>
+<p><strong>附带发现：</strong></p>
+<p> 主机B什么时候发ARP广播请求，什么时候发ARP单播请求？ </p>
+<p> FAILED - > incomplete 状态时候发的是广播请求</p>
+<p>10:51:54.106151 08:00:27:99:81:b7 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 10.30.10.145 tell 10.30.10.141, length 28</p>
+<p> DELAY -> PRPBE 状态时候发的是ARP单播请求</p>
+<p>10:51:52.258761 08:00:27:99:81:b7 > 08:00:27:5f:1b:a9, ethertype ARP (0x0806), length 42: Request who-has 10.30.10.145 tell 10.30.10.141, length 28</p>
+<p> 这其实也很好理解，FAILED - > incomplete属于重新开始状态，因此是广播；DELAY -> PRPBE 是属于已经知道主机A MAC但是要进行老化判断，因此发生ARP单播确认。</p>
+<p><strong>感性的推演将来判别网络问题时使用：</strong></p>
+<p> 如果主机B中主机A ip neigh show 邻居表处于reachable状态，或则总能及时回到reachable状态，主机B 向主机A的ARP通道时顺畅的（主机B发出的ARP请求主机A可以及时回复）</p>
+<p> 如果主机B中主机A ip neigh show邻居表从未处于reachable状态，一直于STALE、PROBE、DELAY、FAILED切换，说明该主机B到主机A的ARP通道有问题（主机A无法回应主机B的ARP请求），主机B可以回应主机A的ARP请求触发被动更新</p>
+<h3 id="实验情况5"><a href="#实验情况5" class="headerlink" title="实验情况5"></a>实验情况5</h3><p>主机A 中ARP表项绑定主机B的ARP(arp -s 10.30.10.141 08:00:27:99:81:b7)，主机B 中 ARP表项绑定主机A的ARP( arp -s 10.30.10.145 08:00:27:5f:1b:a9)，主机A ping 主机B，观察连通情况，并在主机B抓取数据包观察是否有ARP交互</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ip neigh show</div><div class="line"><span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> dev enp0s3 lladdr <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9 PERMANENT</div></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">arp -n</div><div class="line"><span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span>             ether   <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9   CM                    enp0s3</div></pre></td></tr></table></figure>
+<p><strong>现象描述：</strong></p>
+<p>主机A可持续ping通主机B，在主机B上没有抓取到主机A和主机B ARP交互数据包</p>
+<p><strong>结论推演：</strong></p>
+<p><strong> 经过在主机B查看主机A ip neigh show得知，其ARP状态不在变化而是固定在</strong>PERMANENT状态，所以其不再进行ARP交互就很容易理解了，因为是静态永久地址，因此不需要主动学习。</p>
+<p><strong>感性的推演将来判别网络问题时使用：</strong></p>
+<p> 可以使用此种方法固定住ARP，排除主机学习ARP的问题，把网络问题聚焦在3层转发路由关系上，待3层转发网络问题解决后再行解决此问题。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;一-问题&quot;&gt;&lt;a href=&quot;#一-问题&quot; class=&quot;headerlink&quot; title=&quot;一.问题&quot;&gt;&lt;/a&gt;一.问题&lt;/h2&gt;&lt;h3 id=&quot;1-使用keepalived进行热备份的系统需要一个虚拟的IP地址，然而该虚拟IP地址到底属于哪台机器是根据热备群
+    
+    </summary>
+    
+      <category term="linux" scheme="http://vcpu.me/categories/linux/"/>
+    
+    
+      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
+    
+      <category term="arp机制实验验证" scheme="http://vcpu.me/tags/arp%E6%9C%BA%E5%88%B6%E5%AE%9E%E9%AA%8C%E9%AA%8C%E8%AF%81/"/>
+    
+      <category term="arp机制" scheme="http://vcpu.me/tags/arp%E6%9C%BA%E5%88%B6/"/>
+    
+  </entry>
+  
+  <entry>
     <title>openstack DVR openvswitch流表分析</title>
     <link href="http://vcpu.me/4node-flowtable/"/>
     <id>http://vcpu.me/4node-flowtable/</id>
@@ -643,88 +791,6 @@
   </entry>
   
   <entry>
-    <title>openvSwitch tunnel</title>
-    <link href="http://vcpu.me/openvswitch2/"/>
-    <id>http://vcpu.me/openvswitch2/</id>
-    <published>2017-08-03T10:00:00.000Z</published>
-    <updated>2017-08-07T09:45:44.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="ovs-tunnel"><a href="#ovs-tunnel" class="headerlink" title="ovs tunnel"></a>ovs tunnel</h2><h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><p><img src="/myimages/tunnel.png" alt="tunnel"></p>
-<h3 id="实验拓扑搭建基础脚本"><a href="#实验拓扑搭建基础脚本" class="headerlink" title="实验拓扑搭建基础脚本"></a>实验拓扑搭建基础脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">#vbox虚拟机1</div><div class="line">ip netns add left</div><div class="line">ip link add name veth1 type veth peer name sw1-p1</div><div class="line">ip link set dev veth1 netns left</div><div class="line">ip netns exec left ifconfig veth1 10.0.0.1/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw1</div><div class="line">ovs-vsctl add-port sw1 sw1-p1</div><div class="line">ip link set sw1-p1 up</div><div class="line"></div><div class="line">#vbox虚拟机2</div><div class="line">ip netns add right</div><div class="line">ip link add name veth1 type veth peer name sw2-p1</div><div class="line">ip link set dev veth1 netns right</div><div class="line">ip netns exec right ifconfig veth1 10.0.0.2/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw2</div><div class="line">ovs-vsctl add-port sw2 sw2-p1</div><div class="line">ip link set sw2-p1 up</div></pre></td></tr></table></figure>
-<a id="more"></a>
-<h3 id="GRE-TUNNEL-配置"><a href="#GRE-TUNNEL-配置" class="headerlink" title="GRE TUNNEL 配置"></a>GRE TUNNEL 配置</h3><ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set Interface tun0 type=gre options:remote_ip=10.30.10.141</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set Interface tun0 type=gre options:remote_ip=10.30.10.145</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="查看配置"><a href="#查看配置" class="headerlink" title="查看配置"></a>查看配置</h4><ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">29c5cc05-2a31-4f14-a304-3a697698f96a</div><div class="line">    Bridge &quot;sw1&quot;</div><div class="line">        Port &quot;sw1&quot;</div><div class="line">            Interface &quot;sw1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;sw1-p1&quot;</div><div class="line">            Interface &quot;sw1-p1&quot;</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: gre</div><div class="line">                options: &#123;remote_ip=&quot;10.30.10.141&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">0f92aaa0-5385-48f5-a54a-644e05652f59</div><div class="line">    Bridge &quot;sw2&quot;</div><div class="line">        Port &quot;sw2-p1&quot;</div><div class="line">            Interface &quot;sw2-p1&quot;</div><div class="line">        Port &quot;sw2&quot;</div><div class="line">            Interface &quot;sw2&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: gre</div><div class="line">                options: &#123;remote_ip=&quot;10.30.10.145&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div><div class="line">root@controller-VirtualBox</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right"><a href="#连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right" class="headerlink" title="连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right"></a>连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ip netns exec left ping 10.0.0.2</div><div class="line">PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.953 ms</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.609 ms</div></pre></td></tr></table></figure>
-<h3 id="VXLAN-TUNNEL配置"><a href="#VXLAN-TUNNEL配置" class="headerlink" title="VXLAN TUNNEL配置"></a>VXLAN TUNNEL配置</h3><ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set Interface tun0 type=vxlan options:local_ip=10.30.10.145 options:remote_ip=10.30.10.141</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set Interface tun0 type=vxlan options:local_ip=10.30.10.141 options:remote_ip=10.30.10.145</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="查看配置-1"><a href="#查看配置-1" class="headerlink" title="查看配置"></a>查看配置</h4><ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">29c5cc05-2a31-4f14-a304-3a697698f96a</div><div class="line">    Bridge &quot;sw1&quot;</div><div class="line">        Port &quot;sw1&quot;</div><div class="line">            Interface &quot;sw1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;sw1-p1&quot;</div><div class="line">            Interface &quot;sw1-p1&quot;</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: vxlan</div><div class="line">                options: &#123;local_ip=&quot;10.30.10.145&quot;, remote_ip=&quot;10.30.10.141&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">0f92aaa0-5385-48f5-a54a-644e05652f59</div><div class="line">    Bridge &quot;sw2&quot;</div><div class="line">        Port &quot;sw2-p1&quot;</div><div class="line">            Interface &quot;sw2-p1&quot;</div><div class="line">        Port &quot;sw2&quot;</div><div class="line">            Interface &quot;sw2&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: vxlan</div><div class="line">                options: &#123;local_ip=&quot;10.30.10.141&quot;, remote_ip=&quot;10.30.10.145&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div><div class="line">root@controller-VirtualBox:~#</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right-1"><a href="#连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right-1" class="headerlink" title="连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right"></a>连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ip netns exec left ping 10.0.0.2</div><div class="line">PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.905 ms</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.490 ms</div><div class="line">2 packets transmitted, 2 received, 0% packet loss, time 1001ms</div><div class="line">rtt min/avg/max/mdev = 0.490/0.697/0.905/0.209 ms</div></pre></td></tr></table></figure>
-<h3 id="ipsec-gre配置"><a href="#ipsec-gre配置" class="headerlink" title="ipsec_gre配置"></a>ipsec_gre配置</h3><p>如果运行失败或则无法创建接口，首先安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">apt-get install openvswitch* -y</div></pre></td></tr></table></figure></p>
-<ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set interface tun0 type=ipsec_gre options:remote_ip=10.30.10.141 options:psk=test123</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set interface tun0 type=ipsec_gre options:remote_ip=10.30.10.145 options:psk=test123</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>在ipsec gre tunnel情况下，我的环境中并没有完成连通，而且日志中也没有报错；具体原因还需要探究。当然我已经翻阅论坛，然并卵，哎。。。，暂且未解之谜吧</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;ovs-tunnel&quot;&gt;&lt;a href=&quot;#ovs-tunnel&quot; class=&quot;headerlink&quot; title=&quot;ovs tunnel&quot;&gt;&lt;/a&gt;ovs tunnel&lt;/h2&gt;&lt;h3 id=&quot;实验拓扑&quot;&gt;&lt;a href=&quot;#实验拓扑&quot; class=&quot;headerlink&quot; title=&quot;实验拓扑&quot;&gt;&lt;/a&gt;实验拓扑&lt;/h3&gt;&lt;p&gt;&lt;img src=&quot;/myimages/tunnel.png&quot; alt=&quot;tunnel&quot;&gt;&lt;/p&gt;
-&lt;h3 id=&quot;实验拓扑搭建基础脚本&quot;&gt;&lt;a href=&quot;#实验拓扑搭建基础脚本&quot; class=&quot;headerlink&quot; title=&quot;实验拓扑搭建基础脚本&quot;&gt;&lt;/a&gt;实验拓扑搭建基础脚本&lt;/h3&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;8&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;9&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;10&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;11&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;12&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;13&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;14&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;15&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;16&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;17&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;18&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;19&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;#vbox虚拟机1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns add left&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link add name veth1 type veth peer name sw1-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set dev veth1 netns left&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns exec left ifconfig veth1 10.0.0.1/24 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-br sw1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-port sw1 sw1-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set sw1-p1 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;#vbox虚拟机2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns add right&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link add name veth1 type veth peer name sw2-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set dev veth1 netns right&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns exec right ifconfig veth1 10.0.0.2/24 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-br sw2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-port sw2 sw2-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set sw2-p1 up&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-    
-    </summary>
-    
-      <category term="网络" scheme="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
-    
-    
-      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
-    
-      <category term="ovs" scheme="http://vcpu.me/tags/ovs/"/>
-    
-      <category term="虚拟交换机" scheme="http://vcpu.me/tags/%E8%99%9A%E6%8B%9F%E4%BA%A4%E6%8D%A2%E6%9C%BA/"/>
-    
-      <category term="gre" scheme="http://vcpu.me/tags/gre/"/>
-    
-      <category term="vxlan" scheme="http://vcpu.me/tags/vxlan/"/>
-    
-      <category term="ovx tunnel" scheme="http://vcpu.me/tags/ovx-tunnel/"/>
-    
-      <category term="ipsec gre" scheme="http://vcpu.me/tags/ipsec-gre/"/>
-    
-  </entry>
-  
-  <entry>
     <title>openvSwitch mirror、Qos、STP</title>
     <link href="http://vcpu.me/openvswitch1/"/>
     <id>http://vcpu.me/openvswitch1/</id>
@@ -873,6 +939,88 @@
       <category term="Qos" scheme="http://vcpu.me/tags/Qos/"/>
     
       <category term="STP" scheme="http://vcpu.me/tags/STP/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>openvSwitch tunnel</title>
+    <link href="http://vcpu.me/openvswitch2/"/>
+    <id>http://vcpu.me/openvswitch2/</id>
+    <published>2017-08-03T10:00:00.000Z</published>
+    <updated>2017-08-07T09:45:44.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="ovs-tunnel"><a href="#ovs-tunnel" class="headerlink" title="ovs tunnel"></a>ovs tunnel</h2><h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><p><img src="/myimages/tunnel.png" alt="tunnel"></p>
+<h3 id="实验拓扑搭建基础脚本"><a href="#实验拓扑搭建基础脚本" class="headerlink" title="实验拓扑搭建基础脚本"></a>实验拓扑搭建基础脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">#vbox虚拟机1</div><div class="line">ip netns add left</div><div class="line">ip link add name veth1 type veth peer name sw1-p1</div><div class="line">ip link set dev veth1 netns left</div><div class="line">ip netns exec left ifconfig veth1 10.0.0.1/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw1</div><div class="line">ovs-vsctl add-port sw1 sw1-p1</div><div class="line">ip link set sw1-p1 up</div><div class="line"></div><div class="line">#vbox虚拟机2</div><div class="line">ip netns add right</div><div class="line">ip link add name veth1 type veth peer name sw2-p1</div><div class="line">ip link set dev veth1 netns right</div><div class="line">ip netns exec right ifconfig veth1 10.0.0.2/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw2</div><div class="line">ovs-vsctl add-port sw2 sw2-p1</div><div class="line">ip link set sw2-p1 up</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<h3 id="GRE-TUNNEL-配置"><a href="#GRE-TUNNEL-配置" class="headerlink" title="GRE TUNNEL 配置"></a>GRE TUNNEL 配置</h3><ul>
+<li><p>vbox虚拟机1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set Interface tun0 type=gre options:remote_ip=10.30.10.141</div></pre></td></tr></table></figure>
+</li>
+<li><p>vbox虚拟机2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set Interface tun0 type=gre options:remote_ip=10.30.10.145</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="查看配置"><a href="#查看配置" class="headerlink" title="查看配置"></a>查看配置</h4><ul>
+<li><p>vbox虚拟机1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">29c5cc05-2a31-4f14-a304-3a697698f96a</div><div class="line">    Bridge &quot;sw1&quot;</div><div class="line">        Port &quot;sw1&quot;</div><div class="line">            Interface &quot;sw1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;sw1-p1&quot;</div><div class="line">            Interface &quot;sw1-p1&quot;</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: gre</div><div class="line">                options: &#123;remote_ip=&quot;10.30.10.141&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div></pre></td></tr></table></figure>
+</li>
+<li><p>vbox虚拟机2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">0f92aaa0-5385-48f5-a54a-644e05652f59</div><div class="line">    Bridge &quot;sw2&quot;</div><div class="line">        Port &quot;sw2-p1&quot;</div><div class="line">            Interface &quot;sw2-p1&quot;</div><div class="line">        Port &quot;sw2&quot;</div><div class="line">            Interface &quot;sw2&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: gre</div><div class="line">                options: &#123;remote_ip=&quot;10.30.10.145&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div><div class="line">root@controller-VirtualBox</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right"><a href="#连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right" class="headerlink" title="连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right"></a>连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ip netns exec left ping 10.0.0.2</div><div class="line">PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.953 ms</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.609 ms</div></pre></td></tr></table></figure>
+<h3 id="VXLAN-TUNNEL配置"><a href="#VXLAN-TUNNEL配置" class="headerlink" title="VXLAN TUNNEL配置"></a>VXLAN TUNNEL配置</h3><ul>
+<li><p>vbox虚拟机1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set Interface tun0 type=vxlan options:local_ip=10.30.10.145 options:remote_ip=10.30.10.141</div></pre></td></tr></table></figure>
+</li>
+<li><p>vbbox虚拟机2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set Interface tun0 type=vxlan options:local_ip=10.30.10.141 options:remote_ip=10.30.10.145</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="查看配置-1"><a href="#查看配置-1" class="headerlink" title="查看配置"></a>查看配置</h4><ul>
+<li><p>vbox虚拟机1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">29c5cc05-2a31-4f14-a304-3a697698f96a</div><div class="line">    Bridge &quot;sw1&quot;</div><div class="line">        Port &quot;sw1&quot;</div><div class="line">            Interface &quot;sw1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;sw1-p1&quot;</div><div class="line">            Interface &quot;sw1-p1&quot;</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: vxlan</div><div class="line">                options: &#123;local_ip=&quot;10.30.10.145&quot;, remote_ip=&quot;10.30.10.141&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div></pre></td></tr></table></figure>
+</li>
+<li><p>vbox虚拟机2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">0f92aaa0-5385-48f5-a54a-644e05652f59</div><div class="line">    Bridge &quot;sw2&quot;</div><div class="line">        Port &quot;sw2-p1&quot;</div><div class="line">            Interface &quot;sw2-p1&quot;</div><div class="line">        Port &quot;sw2&quot;</div><div class="line">            Interface &quot;sw2&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: vxlan</div><div class="line">                options: &#123;local_ip=&quot;10.30.10.141&quot;, remote_ip=&quot;10.30.10.145&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div><div class="line">root@controller-VirtualBox:~#</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right-1"><a href="#连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right-1" class="headerlink" title="连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right"></a>连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ip netns exec left ping 10.0.0.2</div><div class="line">PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.905 ms</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.490 ms</div><div class="line">2 packets transmitted, 2 received, 0% packet loss, time 1001ms</div><div class="line">rtt min/avg/max/mdev = 0.490/0.697/0.905/0.209 ms</div></pre></td></tr></table></figure>
+<h3 id="ipsec-gre配置"><a href="#ipsec-gre配置" class="headerlink" title="ipsec_gre配置"></a>ipsec_gre配置</h3><p>如果运行失败或则无法创建接口，首先安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">apt-get install openvswitch* -y</div></pre></td></tr></table></figure></p>
+<ul>
+<li><p>vbox虚拟机1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set interface tun0 type=ipsec_gre options:remote_ip=10.30.10.141 options:psk=test123</div></pre></td></tr></table></figure>
+</li>
+<li><p>vbbox虚拟机2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set interface tun0 type=ipsec_gre options:remote_ip=10.30.10.145 options:psk=test123</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>在ipsec gre tunnel情况下，我的环境中并没有完成连通，而且日志中也没有报错；具体原因还需要探究。当然我已经翻阅论坛，然并卵，哎。。。，暂且未解之谜吧</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;ovs-tunnel&quot;&gt;&lt;a href=&quot;#ovs-tunnel&quot; class=&quot;headerlink&quot; title=&quot;ovs tunnel&quot;&gt;&lt;/a&gt;ovs tunnel&lt;/h2&gt;&lt;h3 id=&quot;实验拓扑&quot;&gt;&lt;a href=&quot;#实验拓扑&quot; class=&quot;headerlink&quot; title=&quot;实验拓扑&quot;&gt;&lt;/a&gt;实验拓扑&lt;/h3&gt;&lt;p&gt;&lt;img src=&quot;/myimages/tunnel.png&quot; alt=&quot;tunnel&quot;&gt;&lt;/p&gt;
+&lt;h3 id=&quot;实验拓扑搭建基础脚本&quot;&gt;&lt;a href=&quot;#实验拓扑搭建基础脚本&quot; class=&quot;headerlink&quot; title=&quot;实验拓扑搭建基础脚本&quot;&gt;&lt;/a&gt;实验拓扑搭建基础脚本&lt;/h3&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;8&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;9&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;10&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;11&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;12&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;13&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;14&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;15&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;16&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;17&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;18&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;19&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;#vbox虚拟机1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns add left&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link add name veth1 type veth peer name sw1-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set dev veth1 netns left&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns exec left ifconfig veth1 10.0.0.1/24 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-br sw1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-port sw1 sw1-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set sw1-p1 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;#vbox虚拟机2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns add right&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link add name veth1 type veth peer name sw2-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set dev veth1 netns right&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns exec right ifconfig veth1 10.0.0.2/24 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-br sw2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-port sw2 sw2-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set sw2-p1 up&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+    
+    </summary>
+    
+      <category term="网络" scheme="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+    
+    
+      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
+    
+      <category term="ovs" scheme="http://vcpu.me/tags/ovs/"/>
+    
+      <category term="虚拟交换机" scheme="http://vcpu.me/tags/%E8%99%9A%E6%8B%9F%E4%BA%A4%E6%8D%A2%E6%9C%BA/"/>
+    
+      <category term="gre" scheme="http://vcpu.me/tags/gre/"/>
+    
+      <category term="vxlan" scheme="http://vcpu.me/tags/vxlan/"/>
+    
+      <category term="ovx tunnel" scheme="http://vcpu.me/tags/ovx-tunnel/"/>
+    
+      <category term="ipsec gre" scheme="http://vcpu.me/tags/ipsec-gre/"/>
     
   </entry>
   
@@ -1549,9 +1697,9 @@
       <category term="TCP" scheme="http://vcpu.me/categories/TCP/"/>
     
     
-      <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
-    
       <category term="拥塞控制" scheme="http://vcpu.me/tags/%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6/"/>
+    
+      <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
     
       <category term="Linux拥塞控制基本概念" scheme="http://vcpu.me/tags/Linux%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/"/>
     
@@ -1731,6 +1879,44 @@
   </entry>
   
   <entry>
+    <title>socket读写条件</title>
+    <link href="http://vcpu.me/socket_rw_proc/"/>
+    <id>http://vcpu.me/socket_rw_proc/</id>
+    <published>2017-06-26T11:10:34.000Z</published>
+    <updated>2017-06-26T08:55:50.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="概念说明"><a href="#概念说明" class="headerlink" title="概念说明"></a>概念说明</h2><p>1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：<br>每个套接字有一个接收低水位和一个发送低水位。他们由select函数使用。<br>接收低水位标记是让select返回”可读”时套接字接收缓冲区中所需的数据量。对于TCP,其默认值为1。<br>发送低水位标记是让select返回”可写”时套接字发送缓冲区中所需的可用空间。对于TCP，其默认值常为2048</p>
+<p>通俗的解释一下，缓存区我们当成一个大小为 n bytes的空间，那么：<br>接收区缓存的作用就是，接收对面的数据放在缓存区，供应用程序读。当然了，只有当缓存区可读的数据量(接收低水位标记)到达一定程度（eg:1）的时候，我们才能读到数据，不然不就读不到数据了吗。<br>发送区缓存的作用就是，发送应用程序的数据到缓存区，然后一起发给对面。当然了，只有当缓存区剩余一定空间(发送低水位标记)（eg:2048）,你才能写数据进去，不然可能导致空间不够。</p>
+<p>2.FIN: (结束标志,Finish)用来结束一个TCP回话.但对应端口仍处于开放状态,准备接收后续数据.</p>
+<p>特别纠正说明：</p>
+<blockquote>
+<p>经过测试在3.10.0-514.16.1.el7.x86_64 内核情况下SO_SNDLOWAT/SO_RCVLOWAT<br>默认发送和接收最低水位均为1，也就是说默认情况下低水位值可以不考虑，系统缓冲区有数据就读<br>有空闲就写</p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> value =<span class="number">0</span>;</div><div class="line"><span class="keyword">int</span> v_len = <span class="keyword">sizeof</span>(value);</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_SNDLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"snd low at value: %d\n"</span>,value);</div><div class="line">value = <span class="number">0</span>;</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_RCVLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"rcv low at value: %d\n"</span>,value);</div></pre></td></tr></table></figure>
+<h2 id="socket可读的条件"><a href="#socket可读的条件" class="headerlink" title="socket可读的条件"></a>socket可读的条件</h2><p>下列四个条件中的任何一个满足时,socket准备好读:<br>1.socket的接收缓冲区中的数据字节大于等于该socket的接收缓冲区低水位标记的当前大小。对这样的socket的读操作将不阻塞并返回一个大于0的值 {也就是返回准备好读入的数据}。我们可以用SO_RCVLOWATsocket选项来设置该socket的低水位标记。对于TCP和UDP .socket而言，其缺省值为1</p>
+<p>2.该连接的读这一半关闭{也就是接收了FIN的TCP连接}。对这样的socket的读操作将不阻塞并返回0</p>
+<p>3.socket是一个用于监听的socket,并且已经完成的连接数为非0.这样的soocket处于可读状态,是因为socket收到了对方的connect请求,执行了三次握手的第一步:对方发送SYN请求过来,使监听socket处于可读状态;正常情况下,这样的socket上的accept操作不会阻塞;</p>
+<p>4.有一个socket有异常错误条件待处理。对于这样的socket的读操作将不会阻塞,并且返回一个错误-1,errno则设置成明确的错误条件。这些待处理的错误也可通过指定socket选项SO_ERROR调用getsockopt来取得并清除</p>
+<h2 id="socket可写的条件"><a href="#socket可写的条件" class="headerlink" title="socket可写的条件"></a>socket可写的条件</h2><p>1.socket发送缓冲区中数据字节大于等于该socket发送缓冲区低水位大小。写操作不会被阻塞，会直接返回写入的数据大小，SO_SNDLOWAT socket选项设置socket可写低水位大小。经过测试默认大小为1。<br>2.如果你已经关闭连接，或者主动fin半关闭。这种情况下socket再些将要产生SIGPIPE信号，你没有对这个信号处理的话，你的进程将会被关闭。<br>3.有socket异常错误待处理，这种情况下写操作并不会被阻塞会直接返回一个错误-1，想知道错误原因erron可以帮助你。</p>
+<h2 id="参考地址"><a href="#参考地址" class="headerlink" title="参考地址"></a>参考地址</h2><p><a href="http://blog.csdn.net/szcarewell/article/details/51227540" target="_blank" rel="external">http://blog.csdn.net/szcarewell/article/details/51227540</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;概念说明&quot;&gt;&lt;a href=&quot;#概念说明&quot; class=&quot;headerlink&quot; title=&quot;概念说明&quot;&gt;&lt;/a&gt;概念说明&lt;/h2&gt;&lt;p&gt;1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：&lt;br&gt;每个套接字有一个接收低水位和一个发送低水位。他们
+    
+    </summary>
+    
+      <category term="socket" scheme="http://vcpu.me/categories/socket/"/>
+    
+    
+      <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
+    
+      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
+    
+  </entry>
+  
+  <entry>
     <title>socket信号处理</title>
     <link href="http://vcpu.me/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/"/>
     <id>http://vcpu.me/socket信号处理/</id>
@@ -1833,44 +2019,6 @@
       <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
     
       <category term="socket信号处理" scheme="http://vcpu.me/tags/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>socket读写条件</title>
-    <link href="http://vcpu.me/socket_rw_proc/"/>
-    <id>http://vcpu.me/socket_rw_proc/</id>
-    <published>2017-06-26T11:10:34.000Z</published>
-    <updated>2017-06-26T08:55:50.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="概念说明"><a href="#概念说明" class="headerlink" title="概念说明"></a>概念说明</h2><p>1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：<br>每个套接字有一个接收低水位和一个发送低水位。他们由select函数使用。<br>接收低水位标记是让select返回”可读”时套接字接收缓冲区中所需的数据量。对于TCP,其默认值为1。<br>发送低水位标记是让select返回”可写”时套接字发送缓冲区中所需的可用空间。对于TCP，其默认值常为2048</p>
-<p>通俗的解释一下，缓存区我们当成一个大小为 n bytes的空间，那么：<br>接收区缓存的作用就是，接收对面的数据放在缓存区，供应用程序读。当然了，只有当缓存区可读的数据量(接收低水位标记)到达一定程度（eg:1）的时候，我们才能读到数据，不然不就读不到数据了吗。<br>发送区缓存的作用就是，发送应用程序的数据到缓存区，然后一起发给对面。当然了，只有当缓存区剩余一定空间(发送低水位标记)（eg:2048）,你才能写数据进去，不然可能导致空间不够。</p>
-<p>2.FIN: (结束标志,Finish)用来结束一个TCP回话.但对应端口仍处于开放状态,准备接收后续数据.</p>
-<p>特别纠正说明：</p>
-<blockquote>
-<p>经过测试在3.10.0-514.16.1.el7.x86_64 内核情况下SO_SNDLOWAT/SO_RCVLOWAT<br>默认发送和接收最低水位均为1，也就是说默认情况下低水位值可以不考虑，系统缓冲区有数据就读<br>有空闲就写</p>
-</blockquote>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> value =<span class="number">0</span>;</div><div class="line"><span class="keyword">int</span> v_len = <span class="keyword">sizeof</span>(value);</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_SNDLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"snd low at value: %d\n"</span>,value);</div><div class="line">value = <span class="number">0</span>;</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_RCVLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"rcv low at value: %d\n"</span>,value);</div></pre></td></tr></table></figure>
-<h2 id="socket可读的条件"><a href="#socket可读的条件" class="headerlink" title="socket可读的条件"></a>socket可读的条件</h2><p>下列四个条件中的任何一个满足时,socket准备好读:<br>1.socket的接收缓冲区中的数据字节大于等于该socket的接收缓冲区低水位标记的当前大小。对这样的socket的读操作将不阻塞并返回一个大于0的值 {也就是返回准备好读入的数据}。我们可以用SO_RCVLOWATsocket选项来设置该socket的低水位标记。对于TCP和UDP .socket而言，其缺省值为1</p>
-<p>2.该连接的读这一半关闭{也就是接收了FIN的TCP连接}。对这样的socket的读操作将不阻塞并返回0</p>
-<p>3.socket是一个用于监听的socket,并且已经完成的连接数为非0.这样的soocket处于可读状态,是因为socket收到了对方的connect请求,执行了三次握手的第一步:对方发送SYN请求过来,使监听socket处于可读状态;正常情况下,这样的socket上的accept操作不会阻塞;</p>
-<p>4.有一个socket有异常错误条件待处理。对于这样的socket的读操作将不会阻塞,并且返回一个错误-1,errno则设置成明确的错误条件。这些待处理的错误也可通过指定socket选项SO_ERROR调用getsockopt来取得并清除</p>
-<h2 id="socket可写的条件"><a href="#socket可写的条件" class="headerlink" title="socket可写的条件"></a>socket可写的条件</h2><p>1.socket发送缓冲区中数据字节大于等于该socket发送缓冲区低水位大小。写操作不会被阻塞，会直接返回写入的数据大小，SO_SNDLOWAT socket选项设置socket可写低水位大小。经过测试默认大小为1。<br>2.如果你已经关闭连接，或者主动fin半关闭。这种情况下socket再些将要产生SIGPIPE信号，你没有对这个信号处理的话，你的进程将会被关闭。<br>3.有socket异常错误待处理，这种情况下写操作并不会被阻塞会直接返回一个错误-1，想知道错误原因erron可以帮助你。</p>
-<h2 id="参考地址"><a href="#参考地址" class="headerlink" title="参考地址"></a>参考地址</h2><p><a href="http://blog.csdn.net/szcarewell/article/details/51227540" target="_blank" rel="external">http://blog.csdn.net/szcarewell/article/details/51227540</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;概念说明&quot;&gt;&lt;a href=&quot;#概念说明&quot; class=&quot;headerlink&quot; title=&quot;概念说明&quot;&gt;&lt;/a&gt;概念说明&lt;/h2&gt;&lt;p&gt;1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：&lt;br&gt;每个套接字有一个接收低水位和一个发送低水位。他们
-    
-    </summary>
-    
-      <category term="socket" scheme="http://vcpu.me/categories/socket/"/>
-    
-    
-      <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
-    
-      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
     
   </entry>
   
@@ -2158,9 +2306,9 @@
     
       <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
     
-      <category term="socket" scheme="http://vcpu.me/tags/socket/"/>
-    
       <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
+    
+      <category term="socket" scheme="http://vcpu.me/tags/socket/"/>
     
   </entry>
   
@@ -2270,9 +2418,9 @@
       <category term="linux kernel" scheme="http://vcpu.me/categories/linux-kernel/"/>
     
     
-      <category term="socket" scheme="http://vcpu.me/tags/socket/"/>
-    
       <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
+    
+      <category term="socket" scheme="http://vcpu.me/tags/socket/"/>
     
       <category term="systemtap" scheme="http://vcpu.me/tags/systemtap/"/>
     
@@ -2664,9 +2812,9 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
     
       <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
     
-      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
-    
       <category term="bind" scheme="http://vcpu.me/tags/bind/"/>
+    
+      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
     
   </entry>
   
@@ -2772,9 +2920,9 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
     
       <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
     
-      <category term="socket" scheme="http://vcpu.me/tags/socket/"/>
-    
       <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
+    
+      <category term="socket" scheme="http://vcpu.me/tags/socket/"/>
     
   </entry>
   
@@ -2909,9 +3057,9 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
     
       <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
     
-      <category term="socket" scheme="http://vcpu.me/tags/socket/"/>
-    
       <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
+    
+      <category term="socket" scheme="http://vcpu.me/tags/socket/"/>
     
   </entry>
   
