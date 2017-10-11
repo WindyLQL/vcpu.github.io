@@ -4,8 +4,32 @@
 
     
   <url>
+    <loc>http://vcpu.me/ovspatch/</loc>
+    <lastmod>2017-10-11T03:21:29.000Z</lastmod>
+    <data>
+        <display>
+        <title>ovs patch port 连接方法</title>
+        <pubTime>2017-10-11T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntun16.04</tag>
+         
+        <tag>ovs</tag>
+         
+        <tag>patch port</tag>
+         
+         
+           
+             
+              <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/openstackenv/</loc>
-    <lastmod>2017-09-04T08:16:43.000Z</lastmod>
+    <lastmod>2017-10-11T03:20:48.000Z</lastmod>
     <data>
         <display>
         <title>openstack多种组网环境下组网信息记录和插件组成</title>
@@ -29,7 +53,7 @@
     
   <url>
     <loc>http://vcpu.me/4node-flowtable/</loc>
-    <lastmod>2017-09-04T07:27:59.000Z</lastmod>
+    <lastmod>2017-10-11T03:16:42.000Z</lastmod>
     <data>
         <display>
         <title>openstack DVR openvswitch流表分析</title>
@@ -465,9 +489,9 @@
         <title>拥塞控制</title>
         <pubTime>2017-07-04T10:00:00.000Z</pubTime>
         
-        <tag>拥塞控制</tag>
-         
         <tag>tcp/ip</tag>
+         
+        <tag>拥塞控制</tag>
          
         <tag>Linux拥塞控制基本概念</tag>
          
@@ -634,9 +658,9 @@
         
         <tag>tcp/ip</tag>
          
-        <tag>kernel3.10.0-514.16.1</tag>
-         
         <tag>socket</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
          
          
            
@@ -679,9 +703,9 @@
         
         <tag>tcp/ip</tag>
          
-        <tag>kernel3.10.0-514.16.1</tag>
-         
         <tag>socket</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
          
          
            
@@ -723,9 +747,9 @@
         
         <tag>tcp/ip</tag>
          
-        <tag>kernel3.10.0-514.16.1</tag>
-         
         <tag>socket</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
          
          
            
@@ -791,9 +815,9 @@
         <title>systemtap使用调试记录（二）</title>
         <pubTime>2017-06-20T06:52:23.000Z</pubTime>
         
-        <tag>kernel3.10.0-514.16.1</tag>
-         
         <tag>socket</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
          
         <tag>systemtap</tag>
          
@@ -869,9 +893,9 @@
         
         <tag>tcp/ip</tag>
          
-        <tag>bind</tag>
-         
         <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>bind</tag>
          
          
            

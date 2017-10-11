@@ -2,16 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://vcpu.me/ovspatch/</loc>
+    
+    <lastmod>2017-10-11T03:21:29.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://vcpu.me/openstackenv/</loc>
     
-    <lastmod>2017-09-04T08:16:43.000Z</lastmod>
+    <lastmod>2017-10-11T03:20:48.000Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://vcpu.me/4node-flowtable/</loc>
     
-    <lastmod>2017-09-04T07:27:59.000Z</lastmod>
+    <lastmod>2017-10-11T03:16:42.000Z</lastmod>
     
   </url>
   

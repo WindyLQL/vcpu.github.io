@@ -471,6 +471,156 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/ovspatch/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/ovspatch/" itemprop="url">ovs patch port 连接方法</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-11T18:00:00+08:00">
+                2017-10-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/openstack/" itemprop="url" rel="index">
+                    <span itemprop="name">openstack</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/ovspatch/" class="leancloud_visitors" data-flag-title="ovs patch port 连接方法">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="创建patch-port连接ovs两个桥"><a href="#创建patch-port连接ovs两个桥" class="headerlink" title="创建patch port连接ovs两个桥"></a>创建patch port连接ovs两个桥</h1><p>patch port用于连接openvswitch桥</p>
+<h1 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">          patch-ovs-1       patch-ovs-2</div><div class="line"></div><div class="line">+-----------------+         +----------------------+</div><div class="line">|                 |         |                      |</div><div class="line">| br1             +----------+              br2    |</div><div class="line">|                 |         |                      |</div><div class="line">+-----------------+         +----------------------+</div><div class="line">       |                                 |</div><div class="line">       |                                 |</div><div class="line"> +-------------+                 +--------------+</div><div class="line"> |             |                 | ns2          |</div><div class="line"> | ns1         |                 |              |</div><div class="line"> |             |                 | 1.1.1.2/24   |</div><div class="line"> | 1.1.1.1/24  |                 | tap2         |</div><div class="line"> | tap1        |                 |              |</div><div class="line"> +-------------+                 +--------------+</div></pre></td></tr></table></figure>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/ovspatch/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://vcpu.me/4node-flowtable/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -571,8 +721,7 @@
 
       
         
-          
-            <h1 id="openstack-DVR环境组网"><a href="#openstack-DVR环境组网" class="headerlink" title="openstack DVR环境组网"></a>openstack DVR环境组网</h1><p><img src="/myimages/4node-twoselfnetwork.png" alt="4node-twoselfnetwork"><br>如上图：</p>
+          <h1 id="openstack-DVR环境组网"><a href="#openstack-DVR环境组网" class="headerlink" title="openstack DVR环境组网"></a>openstack DVR环境组网</h1><p><img src="/myimages/4node-twoselfnetwork.png" alt="4node-twoselfnetwork"><br>如上图：</p>
 <ul>
 <li>2计算节点 + 1 网络节点 +1控制节点</li>
 <li>DVR配置计算节点无floating ip</li>
@@ -586,55 +735,13 @@
 <li>br-tun: 隧道所有的虚拟交换机，通过此隧道连接网络节点（dhcp、router、snat）、计算节点（虚拟机、router）；完成大二层的需求</li>
 </ul>
 <p>在对流表分析前，我们先了解网络拓扑，并获取接口和接口索引对应关系；</p>
-<ul>
-<li><p>查看compute br-int接口和接口索引映射关系</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">root@compute:~# ovs-ofctl show br-int</div><div class="line">OFPT_FEATURES_REPLY (xid=0x2): dpid:00005278ead35849</div><div class="line">n_tables:254, n_buffers:256</div><div class="line">capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP</div><div class="line">actions: output enqueue set_vlan_vid set_vlan_pcp strip_vlan mod_dl_src mod_dl_dst mod_nw_src mod_nw_dst mod_nw_tos mod_tp_src mod_tp_dst</div><div class="line"> 1(patch-tun): addr:8e:c4:54:26:0f:46</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> 2(qvo06ec6270-33): addr:0a:7f:a0:b5:1f:b8</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     current:    10GB-FD COPPER</div><div class="line">     speed: 10000 Mbps now, 0 Mbps max</div><div class="line"> 3(qr-6474fe2d-84): addr:00:00:00:00:0e:00</div><div class="line">     config:     PORT_DOWN</div><div class="line">     state:      LINK_DOWN</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> 4(qvo2118dc24-92): addr:6e:1b:a5:df:d7:77</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     current:    10GB-FD COPPER</div><div class="line">     speed: 10000 Mbps now, 0 Mbps max</div><div class="line"> 5(int-br-ex): addr:aa:83:f4:ae:aa:41</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> 6(qr-d2e6fcc5-c7): addr:00:00:00:00:0e:00</div><div class="line">     config:     PORT_DOWN</div><div class="line">     state:      LINK_DOWN</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> LOCAL(br-int): addr:52:78:ea:d3:58:49</div><div class="line">     config:     PORT_DOWN</div><div class="line">     state:      LINK_DOWN</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line">OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0</div><div class="line">root@compute:~#</div></pre></td></tr></table></figure>
-</li>
-<li><p>查看compute br-tun接口和接口索引映射关系</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">root@compute:~# ovs-ofctl show br-tun</div><div class="line">OFPT_FEATURES_REPLY (xid=0x2): dpid:00005222d0a63e4f</div><div class="line">n_tables:254, n_buffers:256</div><div class="line">capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP</div><div class="line">actions: output enqueue set_vlan_vid set_vlan_pcp strip_vlan mod_dl_src mod_dl_dst mod_nw_src mod_nw_dst mod_nw_tos mod_tp_src mod_tp_dst</div><div class="line"> 1(patch-int): addr:ae:2b:47:4b:15:6a</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> 2(vxlan-0a1e0aa0): addr:06:2d:8c:b2:d2:64</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> 3(vxlan-0a1e0a9a): addr:4e:7d:65:8d:09:09</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> LOCAL(br-tun): addr:52:22:d0:a6:3e:4f</div><div class="line">     config:     PORT_DOWN</div><div class="line">     state:      LINK_DOWN</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line">OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0</div><div class="line">root@compute:~#</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>接口对应关系已经标注在openvswitch DVR环境组网图上，见上图</p>
-<h1 id="分析-br-int流表"><a href="#分析-br-int流表" class="headerlink" title="分析 br-int流表"></a>分析 br-int流表</h1><h2 id="分析结果如图："><a href="#分析结果如图：" class="headerlink" title="分析结果如图："></a>分析结果如图：</h2><p><img src="/myimages/br-int-flow-table.png" alt="br-int-flow-table"></p>
-<h2 id="步骤解析如下："><a href="#步骤解析如下：" class="headerlink" title="步骤解析如下："></a>步骤解析如下：</h2><h3 id="icmp6-协议交给table24处理"><a href="#icmp6-协议交给table24处理" class="headerlink" title="icmp6 协议交给table24处理"></a>icmp6 协议交给table24处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">root@compute:~# ovs-ofctl dump-flows br-int</div><div class="line">NXST_FLOW reply (xid=0x4):</div><div class="line">cookie=0xbc602bf73a053ff8, duration=2944.223s, table=0, n_packets=0, n_bytes=0, idle_age=2944, priority=10,icmp6,in_port=2,icmp_type=136 actions=resubmit(,24)</div><div class="line">cookie=0xbc602bf73a053ff8, duration=2938.510s, table=0, n_packets=0, n_bytes=0, idle_age=2938, priority=10,icmp6,in_port=4,icmp_type=136 actions=resubmit(,24)</div></pre></td></tr></table></figure>
-<h3 id="2和4接口arp交给24表格处理"><a href="#2和4接口arp交给24表格处理" class="headerlink" title="2和4接口arp交给24表格处理"></a>2和4接口arp交给24表格处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie=0xbc602bf73a053ff8, duration=2944.215s, table=0, n_packets=15, n_bytes=630, idle_age=547, priority=10,arp,in_port=2 actions=resubmit(,24)</div><div class="line">cookie=0xbc602bf73a053ff8, duration=2938.505s, table=0, n_packets=10, n_bytes=420, idle_age=6, priority=10,arp,in_port=4 actions=resubmit(,24)</div></pre></td></tr></table></figure>
-<h3 id="5接口流入的数据包全部丢弃"><a href="#5接口流入的数据包全部丢弃" class="headerlink" title="5接口流入的数据包全部丢弃"></a>5接口流入的数据包全部丢弃</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xbc602bf73a053ff8, duration=2968.234s, table=0, n_packets=4699, n_bytes=1348102, idle_age=1, priority=2,in_port=5 actions=drop</div></pre></td></tr></table></figure>
-<h3 id="2和4口其它协议数据包统统交给25表格处理"><a href="#2和4口其它协议数据包统统交给25表格处理" class="headerlink" title="2和4口其它协议数据包统统交给25表格处理"></a>2和4口其它协议数据包统统交给25表格处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie=0xbc602bf73a053ff8, duration=2944.232s, table=0, n_packets=927, n_bytes=106878, idle_age=1, priority=9,in_port=2 actions=resubmit(,25)</div><div class="line">cookie=0xbc602bf73a053ff8, duration=2938.520s, table=0, n_packets=1022, n_bytes=126940, idle_age=1, priority=9,in_port=4 actions=resubmit(,25)</div></pre></td></tr></table></figure>
-<h3 id="其它数据包像正常交换机数据一样转发数据"><a href="#其它数据包像正常交换机数据一样转发数据" class="headerlink" title="其它数据包像正常交换机数据一样转发数据"></a>其它数据包像正常交换机数据一样转发数据</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xbc602bf73a053ff8, duration=2968.576s, table=0, n_packets=2332, n_bytes=240272, idle_age=1, priority=0 actions=NORMAL</div></pre></td></tr></table></figure>
-<h3 id="23表格默认全部丢弃数据包"><a href="#23表格默认全部丢弃数据包" class="headerlink" title="23表格默认全部丢弃数据包"></a>23表格默认全部丢弃数据包</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xbc602bf73a053ff8, duration=2968.580s, table=23, n_packets=0, n_bytes=0, idle_age=2968, priority=0 actions=drop</div></pre></td></tr></table></figure>
-<h3 id="表24-处理ipv6-nd"><a href="#表24-处理ipv6-nd" class="headerlink" title="表24 处理ipv6 nd"></a>表24 处理ipv6 nd</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie=0xbc602bf73a053ff8, duration=2944.226s, table=24, n_packets=0, n_bytes=0, idle_age=2944, priority=2,icmp6,in_port=2,icmp_type=136,nd_target=fe80::f816:3eff:fef3:31f5 actions=NORMAL</div><div class="line">cookie=0xbc602bf73a053ff8, duration=2938.513s, table=24, n_packets=0, n_bytes=0, idle_age=2938, priority=2,icmp6,in_port=4,icmp_type=136,nd_target=fe80::f816:3eff:fe3c:d256 actions=NORMAL</div></pre></td></tr></table></figure>
-<h3 id="表24-接口2或4-收到-172-16-1-3-1-1-1-11-的arp信息交给表25处理"><a href="#表24-接口2或4-收到-172-16-1-3-1-1-1-11-的arp信息交给表25处理" class="headerlink" title="表24 接口2或4 收到 172.16.1.3 1.1.1.11 的arp信息交给表25处理"></a>表24 接口2或4 收到 172.16.1.3 1.1.1.11 的arp信息交给表25处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie=0xbc602bf73a053ff8, duration=2944.219s, table=24, n_packets=15, n_bytes=630, idle_age=547, priority=2,arp,in_port=2,arp_spa=172.16.1.3 actions=resubmit(,25)</div><div class="line">cookie=0xbc602bf73a053ff8, duration=2938.507s, table=24, n_packets=10, n_bytes=420, idle_age=6, priority=2,arp,in_port=4,arp_spa=1.1.1.11 actions=resubmit(,25)</div></pre></td></tr></table></figure>
-<h3 id="表24-如果上述未处理完成，将剩余数据包丢去"><a href="#表24-如果上述未处理完成，将剩余数据包丢去" class="headerlink" title="表24 如果上述未处理完成，将剩余数据包丢去"></a>表24 如果上述未处理完成，将剩余数据包丢去</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xbc602bf73a053ff8, duration=2968.573s, table=24, n_packets=0, n_bytes=0, idle_age=2968, priority=0 actions=drop</div></pre></td></tr></table></figure>
-<h3 id="表25-接口2或则4-源mac是fa-16-3e-f3-31-f5-fa-16-3e-3c-d2-56-的来的数据包正常处理"><a href="#表25-接口2或则4-源mac是fa-16-3e-f3-31-f5-fa-16-3e-3c-d2-56-的来的数据包正常处理" class="headerlink" title="表25 接口2或则4 源mac是fa:16:3e:f3:31:f5 fa:16:3e:3c:d2:56  的来的数据包正常处理"></a>表25 接口2或则4 源mac是fa:16:3e:f3:31:f5 fa:16:3e:3c:d2:56  的来的数据包正常处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie=0xbc602bf73a053ff8, duration=2944.242s, table=25, n_packets=926, n_bytes=106092, idle_age=1, priority=2,in_port=2,dl_src=fa:16:3e:f3:31:f5 actions=NORMAL</div><div class="line">cookie=0xbc602bf73a053ff8, duration=2938.524s, table=25, n_packets=1016, n_bytes=125944, idle_age=1, priority=2,in_port=4,dl_src=fa:16:3e:3c:d2:56 actions=NORMAL</div></pre></td></tr></table></figure>
-<h1 id="分析-br-tun流表"><a href="#分析-br-tun流表" class="headerlink" title="分析 br-tun流表"></a>分析 br-tun流表</h1><h2 id="分析结果如图：-1"><a href="#分析结果如图：-1" class="headerlink" title="分析结果如图："></a>分析结果如图：</h2><p><img src="/myimages/br-tun-flowtabble.png" alt="br-tun-flowtabble"></p>
-<h2 id="步骤解析如下：-1"><a href="#步骤解析如下：-1" class="headerlink" title="步骤解析如下："></a>步骤解析如下：</h2><h3 id="内网接口-交给table2处理"><a href="#内网接口-交给table2处理" class="headerlink" title="内网接口 交给table2处理"></a>内网接口 交给table2处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">root@compute:~# ovs-ofctl dump-flows br-tun</div><div class="line">NXST_FLOW reply (xid=0x4):</div><div class="line"> cookie=0xb9ef2c735af9d49c, duration=2988.059s, table=0, n_packets=299, n_bytes=30921, idle_age=208, priority=1,in_port=1 actions=resubmit(,2)</div></pre></td></tr></table></figure>
-<h3 id="外网接口交给table4处理"><a href="#外网接口交给table4处理" class="headerlink" title="外网接口交给table4处理"></a>外网接口交给table4处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2963.688s, table=0, n_packets=154, n_bytes=12924, idle_age=208, priority=1,in_port=2 actions=resubmit(,4)</div><div class="line">cookie=0xb9ef2c735af9d49c, duration=2963.630s, table=0, n_packets=200, n_bytes=19684, idle_age=210, priority=1,in_port=3 actions=resubmit(,4)</div></pre></td></tr></table></figure>
-<p>其它：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2988.034s, table=0, n_packets=0, n_bytes=0, idle_age=2988, priority=0 actions=drop</div></pre></td></tr></table></figure></p>
-<h3 id="单播交给表20处理"><a href="#单播交给表20处理" class="headerlink" title="单播交给表20处理"></a>单播交给表20处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2988.027s, table=2, n_packets=209, n_bytes=20555, idle_age=208, priority=0,dl_dst=00:00:00:00:00:00/01:00:00:00:00:00 actions=resubmit(,20)</div></pre></td></tr></table></figure>
-<h3 id="多播交给表22处理"><a href="#多播交给表22处理" class="headerlink" title="多播交给表22处理"></a>多播交给表22处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2988.009s, table=2, n_packets=90, n_bytes=10366, idle_age=210, priority=0,dl_dst=01:00:00:00:00:00/01:00:00:00:00:00 actions=resubmit(,22)</div></pre></td></tr></table></figure>
-<p>其它：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2988.006s, table=3, n_packets=0, n_bytes=0, idle_age=2988, priority=0 actions=drop</div></pre></td></tr></table></figure></p>
-<h3 id="从外网过来的数据包，去除tunid添加对应的vlanid后将数据包交给table10处理"><a href="#从外网过来的数据包，去除tunid添加对应的vlanid后将数据包交给table10处理" class="headerlink" title="从外网过来的数据包，去除tunid添加对应的vlanid后将数据包交给table10处理"></a>从外网过来的数据包，去除tunid添加对应的vlanid后将数据包交给table10处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2975.899s, table=4, n_packets=206, n_bytes=19127, idle_age=208, priority=1,tun_id=0x44 actions=mod_vlan_vid:1,resubmit(,10)</div><div class="line">cookie=0xb9ef2c735af9d49c, duration=2963.083s, table=4, n_packets=148, n_bytes=13481, idle_age=208, priority=1,tun_id=0x5b actions=mod_vlan_vid:2,resubmit(,10)</div></pre></td></tr></table></figure>
-<p>其它：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2988.005s, table=4, n_packets=0, n_bytes=0, idle_age=2988, priority=0 actions=drop</div><div class="line">cookie=0xb9ef2c735af9d49c, duration=2987.998s, table=6, n_packets=0, n_bytes=0, idle_age=2987, priority=0 actions=drop</div></pre></td></tr></table></figure></p>
-<h3 id="学习mac等相关信息，将信息放到表20，将数据包从pach-int发出交给内网处理"><a href="#学习mac等相关信息，将信息放到表20，将数据包从pach-int发出交给内网处理" class="headerlink" title="学习mac等相关信息，将信息放到表20，将数据包从pach-int发出交给内网处理"></a>学习mac等相关信息，将信息放到表20，将数据包从pach-int发出交给内网处理</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2987.994s, table=10, n_packets=354, n_bytes=32608, idle_age=208, priority=1 actions=learn(table=20,hard_timeout=300,priority=1,cookie=0xb9ef2c735af9d49c,NXM_OF_VLAN_TCI[0..11],NXM_OF_ETH_DST[]=NXM_OF_ETH_SRC[],load:0-&gt;NXM_OF_VLAN_TCI[],load:NXM_NX_TUN_ID[]-&gt;NXM_NX_TUN_ID[],output:OXM_OF_IN_PORT[]),output:1</div></pre></td></tr></table></figure>
-<h3 id="发往目的mac为fa-16-3e-3e-69-70-tag为1-（ip为172-16-1-9虚拟机数据包）被去除vlan-加上tunid，交给compute1-连接的隧道接口"><a href="#发往目的mac为fa-16-3e-3e-69-70-tag为1-（ip为172-16-1-9虚拟机数据包）被去除vlan-加上tunid，交给compute1-连接的隧道接口" class="headerlink" title="发往目的mac为fa:16:3e:3e:69:70 tag为1 （ip为172.16.1.9虚拟机数据包）被去除vlan 加上tunid，交给compute1 连接的隧道接口"></a>发往目的mac为fa:16:3e:3e:69:70 tag为1 （ip为172.16.1.9虚拟机数据包）被去除vlan 加上tunid，交给compute1 连接的隧道接口</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2949.737s, table=20, n_packets=66, n_bytes=6977, idle_age=2871, priority=2,dl_vlan=1,dl_dst=fa:16:3e:3e:69:70 actions=strip_vlan,load:0x44-&gt;NXM_NX_TUN_ID[],output:3</div></pre></td></tr></table></figure>
-<h3 id="发给172-16-1-2-dhcp-服务namespace数据包去除vlan后通过隧道交给网络节点"><a href="#发给172-16-1-2-dhcp-服务namespace数据包去除vlan后通过隧道交给网络节点" class="headerlink" title="发给172.16.1.2 dhcp 服务namespace数据包去除vlan后通过隧道交给网络节点"></a>发给172.16.1.2 dhcp 服务namespace数据包去除vlan后通过隧道交给网络节点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2937.625s, table=20, n_packets=1, n_bytes=42, idle_age=2886, priority=2,dl_vlan=1,dl_dst=fa:16:3e:cb:c0:9e actions=strip_vlan,load:0x44-&gt;NXM_NX_TUN_ID[],output:2</div></pre></td></tr></table></figure>
-<h3 id="发给1-1-1-2-dhcp-服务namespace数据包去除vlan后通过隧道交给网络节点"><a href="#发给1-1-1-2-dhcp-服务namespace数据包去除vlan后通过隧道交给网络节点" class="headerlink" title="发给1.1.1.2 dhcp 服务namespace数据包去除vlan后通过隧道交给网络节点"></a>发给1.1.1.2 dhcp 服务namespace数据包去除vlan后通过隧道交给网络节点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2937.136s, table=20, n_packets=1, n_bytes=42, idle_age=2879, priority=2,dl_vlan=2,dl_dst=fa:16:3e:b0:bd:78 actions=strip_vlan,load:0x5b-&gt;NXM_NX_TUN_ID[],output:2</div></pre></td></tr></table></figure>
-<h3 id="发给1-1-1-12的snat中网关数据包去除vlan后通过隧道交给网络节点"><a href="#发给1-1-1-12的snat中网关数据包去除vlan后通过隧道交给网络节点" class="headerlink" title="发给1.1.1.12的snat中网关数据包去除vlan后通过隧道交给网络节点"></a>发给1.1.1.12的snat中网关数据包去除vlan后通过隧道交给网络节点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2926.229s, table=20, n_packets=0, n_bytes=0, idle_age=2958, priority=2,dl_vlan=2,dl_dst=fa:16:3e:6c:ab:eb actions=strip_vlan,load:0x5b-&gt;NXM_NX_TUN_ID[],output:2</div></pre></td></tr></table></figure>
-<h3 id="发往172-16-1-4的snat中网关数据包去除vlan后通过隧道交给网络节点"><a href="#发往172-16-1-4的snat中网关数据包去除vlan后通过隧道交给网络节点" class="headerlink" title="发往172.16.1.4的snat中网关数据包去除vlan后通过隧道交给网络节点"></a>发往172.16.1.4的snat中网关数据包去除vlan后通过隧道交给网络节点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2898.976s, table=20, n_packets=1, n_bytes=42, idle_age=2889, priority=2,dl_vlan=1,dl_dst=fa:16:3e:6b:31:95 actions=strip_vlan,load:0x44-&gt;NXM_NX_TUN_ID[],output:2</div></pre></td></tr></table></figure>
-<ul>
-<li><p>学习到的表项</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=210.599s, table=20, n_packets=2, n_bytes=196, hard_timeout=300, idle_age=209, hard_age=208, priority=1,vlan_tci=0x0002/0x0fff,dl_dst=fa:16:3e:1f:95:2c actions=load:0-&gt;NXM_OF_VLAN_TCI[],load:0x5b-&gt;NXM_NX_TUN_ID[],output:2</div><div class="line">cookie=0xb9ef2c735af9d49c, duration=210.597s, table=20, n_packets=2, n_bytes=264, hard_timeout=300, idle_age=208, hard_age=208, priority=1,vlan_tci=0x0001/0x0fff,dl_dst=fa:16:3e:2c:c3:0d actions=load:0-&gt;NXM_OF_VLAN_TCI[],load:0x44-&gt;NXM_NX_TUN_ID[],output:2</div></pre></td></tr></table></figure>
-</li>
-<li><p>未命中表20其它策略，统统交给流表22处理</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2987.986s, table=20, n_packets=5, n_bytes=418, idle_age=210, priority=0 actions=resubmit(,22)</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h3 id="表22去除vlan-附加上tunid将数据包从隧道发出"><a href="#表22去除vlan-附加上tunid将数据包从隧道发出" class="headerlink" title="表22去除vlan 附加上tunid将数据包从隧道发出"></a>表22去除vlan 附加上tunid将数据包从隧道发出</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2926.237s, table=22, n_packets=18, n_bytes=2034, idle_age=210, priority=1,dl_vlan=2 actions=strip_vlan,load:0x5b-&gt;NXM_NX_TUN_ID[],output:2,output:3</div><div class="line">cookie=0xb9ef2c735af9d49c, duration=2898.979s, table=22, n_packets=23, n_bytes=2374, idle_age=568, priority=1,dl_vlan=1 actions=strip_vlan,load:0x44-&gt;NXM_NX_TUN_ID[],output:2,output:3</div></pre></td></tr></table></figure>
-<p>表22其它：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie=0xb9ef2c735af9d49c, duration=2987.979s, table=22, n_packets=54, n_bytes=6376, idle_age=2959, priority=0 actions=drop</div></pre></td></tr></table></figure></p>
-<h1 id="分析br-ex流表"><a href="#分析br-ex流表" class="headerlink" title="分析br-ex流表"></a>分析br-ex流表</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">root@compute:~# ovs-ofctl dump-flows br-ex</div><div class="line">NXST_FLOW reply (xid=0x4):</div><div class="line"> cookie=0x92b626c066ab8e9d, duration=13306.841s, table=0, n_packets=224, n_bytes=20652, idle_age=1596, priority=2,in_port=2 actions=drop</div><div class="line"> cookie=0x92b626c066ab8e9d, duration=13306.862s, table=0, n_packets=277292, n_bytes=89976779, idle_age=0, priority=0 actions=NORMAL</div></pre></td></tr></table></figure>
-<p>如上流表：默认2三层转发策略，且丢弃从外网收到的数据包</p>
-
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/4node-flowtable/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -776,178 +883,14 @@
 
       
         
-          
-            <h1 id="本文章简要介绍"><a href="#本文章简要介绍" class="headerlink" title="本文章简要介绍"></a>本文章简要介绍</h1><p>本文章旨在以图形方式记录已经搭建的实验环境中网络组成。都是实践结果并没有过多的理论解释，通过图形勾画出newton组网。<br>实验环境包含如下：</p>
+          <h1 id="本文章简要介绍"><a href="#本文章简要介绍" class="headerlink" title="本文章简要介绍"></a>本文章简要介绍</h1><p>本文章旨在以图形方式记录已经搭建的实验环境中网络组成。都是实践结果并没有过多的理论解释，通过图形勾画出newton组网。<br>实验环境包含如下：</p>
 <ul>
 <li>两个服务器节点搭建openstack 环境<br>一个服务器安装controller和network节点；一个服务器安装计算节点</li>
 <li>三个服务器节点搭建的openstack环境<br>一个服务器安装controller、一个服务器安装network、一个服务器安装计算节点</li>
-<li>四个服务器节点搭建的openstack环境<br>一个服务器安装controller、一个服务器安装network、另外两台服务器分别安装计算节点</li>
-</ul>
-<h1 id="两个服务器节点搭建openstack-环境"><a href="#两个服务器节点搭建openstack-环境" class="headerlink" title="两个服务器节点搭建openstack 环境"></a>两个服务器节点搭建openstack 环境</h1><h2 id="openstack官方安装环境，未采用openvswitch的组网"><a href="#openstack官方安装环境，未采用openvswitch的组网" class="headerlink" title="openstack官方安装环境，未采用openvswitch的组网"></a>openstack官方安装环境，未采用openvswitch的组网</h2><p><img src="/myimages/self_service.png" alt="self_service"></p>
-<h2 id="替换linuxbridge为openvswitch后的组网"><a href="#替换linuxbridge为openvswitch后的组网" class="headerlink" title="替换linuxbridge为openvswitch后的组网"></a>替换linuxbridge为openvswitch后的组网</h2><p><img src="/myimages/ovs-openstack.png" alt="ovs-openstack"></p>
-<h1 id="三个服务器节点搭建openstack环境"><a href="#三个服务器节点搭建openstack环境" class="headerlink" title="三个服务器节点搭建openstack环境"></a>三个服务器节点搭建openstack环境</h1><h2 id="未采用ovs，按照官方环境分离安装的组网和组件关系合图"><a href="#未采用ovs，按照官方环境分离安装的组网和组件关系合图" class="headerlink" title="未采用ovs，按照官方环境分离安装的组网和组件关系合图"></a>未采用ovs，按照官方环境分离安装的组网和组件关系合图</h2><p><img src="/myimages/3node.png" alt="3node.png"></p>
-<h2 id="采用ovs-组网信息图和组件合图"><a href="#采用ovs-组网信息图和组件合图" class="headerlink" title="采用ovs,组网信息图和组件合图"></a>采用ovs,组网信息图和组件合图</h2><p><img src="/myimages/3node-openvswitch.png" alt="3node-openvswitch.png"></p>
-<h2 id="采用ovs，DVR情况下组件关系图"><a href="#采用ovs，DVR情况下组件关系图" class="headerlink" title="采用ovs，DVR情况下组件关系图"></a>采用ovs，DVR情况下组件关系图</h2><p><img src="/myimages/3node-openvswitch-dvr.png" alt="3node-openvswitch-dvr.png"></p>
-<h1 id="四个服务器节点搭建的openstack环境"><a href="#四个服务器节点搭建的openstack环境" class="headerlink" title="四个服务器节点搭建的openstack环境"></a>四个服务器节点搭建的openstack环境</h1><h2 id="采用ovs，两个计算节点组网图"><a href="#采用ovs，两个计算节点组网图" class="headerlink" title="采用ovs，两个计算节点组网图"></a>采用ovs，两个计算节点组网图</h2><p><img src="/myimages/4node-openvswitch-or.png" alt="4node-openvswitch-or"></p>
-<h2 id="采用ovs，DVR环境东西流量走向图"><a href="#采用ovs，DVR环境东西流量走向图" class="headerlink" title="采用ovs，DVR环境东西流量走向图"></a>采用ovs，DVR环境东西流量走向图</h2><p><img src="/myimages/4node-dvr-ew-ping.png" alt="4node-dvr-ew-ping"></p>
-<h2 id="采用ovs，DVR环境无folating-ip上外网流量走向图"><a href="#采用ovs，DVR环境无folating-ip上外网流量走向图" class="headerlink" title="采用ovs，DVR环境无folating ip上外网流量走向图"></a>采用ovs，DVR环境无folating ip上外网流量走向图</h2><p><img src="/myimages/4node-dvr-nofloatingip-ping8.8.8.8.png" alt="4node-dvr-nofloatingip-ping8.8.8.8"></p>
-<h2 id="采用ovs，DVR环境含有floating-ip上外网流量走向图"><a href="#采用ovs，DVR环境含有floating-ip上外网流量走向图" class="headerlink" title="采用ovs，DVR环境含有floating ip上外网流量走向图"></a>采用ovs，DVR环境含有floating ip上外网流量走向图</h2><p><img src="/myimages/4node-dvr-floatingip-sn.png" alt="4node-dvr-floatingip-sn"></p>
-<h2 id="采用ovs-DVR环境不同子网东西流量相互ping流量走向图"><a href="#采用ovs-DVR环境不同子网东西流量相互ping流量走向图" class="headerlink" title="采用ovs,DVR环境不同子网东西流量相互ping流量走向图"></a>采用ovs,DVR环境不同子网东西流量相互ping流量走向图</h2><p><img src="/myimages/4node-two-selfnetwork.png" alt="4node-two-selfnetwork"></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/metadata/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/metadata/" itemprop="url">metadata</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-24T18:00:00+08:00">
-                2017-08-24
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/openstack/" itemprop="url" rel="index">
-                    <span itemprop="name">openstack</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/metadata/" class="leancloud_visitors" data-flag-title="metadata">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="metadata基本概念"><a href="#metadata基本概念" class="headerlink" title="metadata基本概念"></a>metadata基本概念</h1><p>在创建虚拟机的时候，用户往往需要对虚拟机进行一些配置，比如：开启一些服务、安装某些包、添加 SSH 秘钥、配置 hostname 等等。</p>
-<p>在 OpenStack 中，这些配置信息被分成两类：metadata 和 user data。</p>
-<ul>
-<li><p>Metadata 主要包括虚拟机自身的一些常用属性，如 hostname、网络配置信息、SSH 登陆秘钥等，主要的形式为键值对。而 user data 主要包括一些命令、脚本等。</p>
-</li>
-<li><p>User data 通过文件传递，并支持多种文件格式，包括 gzip 压缩文件、shell 脚本、cloud-init 配置文件等。虽然 metadata 和 user data 并不相同，但是 OpenStack 向虚拟机提供这两种信息的机制是一致的，只是虚拟机在获取到信息后，对两者的处理方式不同罢了。所以下文统一用 matadata 来描述。</p>
-</li>
-</ul>
-<p>在 OpenStack 中，虚拟机获取 Metadata 信息的方式有两种：<br>Config drive 和 metadata RESTful 服务。此文只关注解析metadata RESTful 方式<br>
+<li>四个服务器节点搭建的openstack环境<br>一个服务器安装controller、一个服务器安装network、另外两台服务器分别安装计算节点
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/metadata/#more" rel="contents">
+            <a class="btn" href="/openstackenv/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1105,6 +1048,163 @@
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/vmcreate/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/metadata/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/metadata/" itemprop="url">metadata</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-24T18:00:00+08:00">
+                2017-08-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/openstack/" itemprop="url" rel="index">
+                    <span itemprop="name">openstack</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/metadata/" class="leancloud_visitors" data-flag-title="metadata">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="metadata基本概念"><a href="#metadata基本概念" class="headerlink" title="metadata基本概念"></a>metadata基本概念</h1><p>在创建虚拟机的时候，用户往往需要对虚拟机进行一些配置，比如：开启一些服务、安装某些包、添加 SSH 秘钥、配置 hostname 等等。</p>
+<p>在 OpenStack 中，这些配置信息被分成两类：metadata 和 user data。</p>
+<ul>
+<li><p>Metadata 主要包括虚拟机自身的一些常用属性，如 hostname、网络配置信息、SSH 登陆秘钥等，主要的形式为键值对。而 user data 主要包括一些命令、脚本等。</p>
+</li>
+<li><p>User data 通过文件传递，并支持多种文件格式，包括 gzip 压缩文件、shell 脚本、cloud-init 配置文件等。虽然 metadata 和 user data 并不相同，但是 OpenStack 向虚拟机提供这两种信息的机制是一致的，只是虚拟机在获取到信息后，对两者的处理方式不同罢了。所以下文统一用 matadata 来描述。</p>
+</li>
+</ul>
+<p>在 OpenStack 中，虚拟机获取 Metadata 信息的方式有两种：<br>Config drive 和 metadata RESTful 服务。此文只关注解析metadata RESTful 方式<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/metadata/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1748,162 +1848,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/openvswitch1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/openvswitch1/" itemprop="url">openvSwitch mirror、Qos、STP</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T18:00:00+08:00">
-                2017-08-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/网络/" itemprop="url" rel="index">
-                    <span itemprop="name">网络</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/openvswitch1/" class="leancloud_visitors" data-flag-title="openvSwitch mirror、Qos、STP">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="ovs-mirror"><a href="#ovs-mirror" class="headerlink" title="ovs mirror"></a>ovs mirror</h2><h3 id="ovs-mirror介绍"><a href="#ovs-mirror介绍" class="headerlink" title="ovs mirror介绍"></a>ovs mirror介绍</h3><p>mirror可以将虚拟交换机把数据包发给的接口或则vlan</p>
-<ul>
-<li><p>命令中对数据包选择选项：<br>select_all，所有的包<br>select_dst_port<br>select_src_port<br>select_vlan</p>
-</li>
-<li><p>将数据包镜像的命令：<br>output_port (SPAN Switched Port ANalyzer 本地流量)<br>output_vlan (RSPAN Remote Switched Port ANalyzer 远程流量)</p>
-</li>
-</ul>
-<h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><p><img src="/myimages/ovsmirror.png" alt="ovsmirror"></p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/openvswitch1/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1953,7 +1897,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">37</span>
+                <span class="site-state-item-count">38</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1975,7 +1919,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">67</span>
+                <span class="site-state-item-count">68</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

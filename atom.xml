@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://vcpu.me/"/>
-  <updated>2017-09-04T07:27:59.000Z</updated>
+  <updated>2017-10-11T03:21:29.000Z</updated>
   <id>http://vcpu.me/</id>
   
   <author>
@@ -16,11 +16,46 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>ovs patch port 连接方法</title>
+    <link href="http://vcpu.me/ovspatch/"/>
+    <id>http://vcpu.me/ovspatch/</id>
+    <published>2017-10-11T10:00:00.000Z</published>
+    <updated>2017-10-11T03:21:29.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="创建patch-port连接ovs两个桥"><a href="#创建patch-port连接ovs两个桥" class="headerlink" title="创建patch port连接ovs两个桥"></a>创建patch port连接ovs两个桥</h1><p>patch port用于连接openvswitch桥</p>
+<h1 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">          patch-ovs-1       patch-ovs-2</div><div class="line"></div><div class="line">+-----------------+         +----------------------+</div><div class="line">|                 |         |                      |</div><div class="line">| br1             +----------+              br2    |</div><div class="line">|                 |         |                      |</div><div class="line">+-----------------+         +----------------------+</div><div class="line">       |                                 |</div><div class="line">       |                                 |</div><div class="line"> +-------------+                 +--------------+</div><div class="line"> |             |                 | ns2          |</div><div class="line"> | ns1         |                 |              |</div><div class="line"> |             |                 | 1.1.1.2/24   |</div><div class="line"> | 1.1.1.1/24  |                 | tap2         |</div><div class="line"> | tap1        |                 |              |</div><div class="line"> +-------------+                 +--------------+</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<h1 id="创建脚本"><a href="#创建脚本" class="headerlink" title="创建脚本"></a>创建脚本</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-br br1</div><div class="line">ovs-vsctl add-br br2</div><div class="line"></div><div class="line">ovs-vsctl add-port br1 tap1 -- set Interface tap1 type=internal</div><div class="line">ovs-vsctl add-port br2 tap2 -- set Interface tap2 type=internal</div><div class="line"></div><div class="line">ip netns add ns1</div><div class="line">ip netns add ns2</div><div class="line"></div><div class="line">ip link set tap1 netns ns1</div><div class="line">ip link set tap2 netns ns2</div><div class="line"></div><div class="line">ip netns exec ns1 ip addr add 1.1.1.1/24 dev tap1  </div><div class="line">ip netns exec ns1 ip link set tap1 up  </div><div class="line">ip netns exec ns1 ip link set lo up</div><div class="line"></div><div class="line">ip netns exec ns2 ip addr add 1.1.1.2/24 dev tap2  </div><div class="line">ip netns exec ns2 ip link set tap2 up  </div><div class="line">ip netns exec ns2 ip link set lo up  </div><div class="line"></div><div class="line">ovs-vsctl add-port br1 patch-ovs-1 -- set Interface patch-ovs-1 type=patch options:peer=patch-ovs-2</div><div class="line"></div><div class="line">ovs-vsctl add-port br2 patch-ovs-2 -- set Interface patch-ovs-2 type=patch options:peer=patch-ovs-1</div></pre></td></tr></table></figure>
+<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ip netns exec ns1 ping 1.1.1.2</div></pre></td></tr></table></figure>
+<h1 id="实验配置查看"><a href="#实验配置查看" class="headerlink" title="实验配置查看"></a>实验配置查看</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">root@compute:~# ovs-vsctl show</div><div class="line">0f92aaa0-5385-48f5-a54a-644e05652f59</div><div class="line">    Manager &quot;ptcp:6640:127.0.0.1&quot;</div><div class="line">        is_connected: true</div><div class="line">    Bridge &quot;br2&quot;</div><div class="line">        Port &quot;tap2&quot;</div><div class="line">            Interface &quot;tap2&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;patch-ovs-2&quot;</div><div class="line">            Interface &quot;patch-ovs-2&quot;</div><div class="line">                type: patch</div><div class="line">                options: &#123;peer=&quot;patch-ovs-1&quot;&#125;</div><div class="line">        Port &quot;br2&quot;</div><div class="line">            Interface &quot;br2&quot;</div><div class="line">                type: internal</div><div class="line">    Bridge &quot;br1&quot;</div><div class="line">        Port &quot;br1&quot;</div><div class="line">            Interface &quot;br1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;tap1&quot;</div><div class="line">            Interface &quot;tap1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;patch-ovs-1&quot;</div><div class="line">            Interface &quot;patch-ovs-1&quot;</div><div class="line">                type: patch</div><div class="line">                options: &#123;peer=&quot;patch-ovs-2&quot;&#125;</div></pre></td></tr></table></figure>
+<h1 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h1><p>ns1 可以ping 通 ns2 ip</p>
+<h1 id="重点解析"><a href="#重点解析" class="headerlink" title="重点解析"></a>重点解析</h1><p>两个ovs bridge间连接分别在两个桥上执行下面命令使用patch port互联<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port br1 patch-ovs-1 -- set Interface patch-ovs-1 type=patch options:peer=patch-ovs-2</div><div class="line"></div><div class="line">ovs-vsctl add-port br2 patch-ovs-2 -- set Interface patch-ovs-2 type=patch options:peer=patch-ovs-1</div></pre></td></tr></table></figure></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;创建patch-port连接ovs两个桥&quot;&gt;&lt;a href=&quot;#创建patch-port连接ovs两个桥&quot; class=&quot;headerlink&quot; title=&quot;创建patch port连接ovs两个桥&quot;&gt;&lt;/a&gt;创建patch port连接ovs两个桥&lt;/h1&gt;&lt;p&gt;patch port用于连接openvswitch桥&lt;/p&gt;
+&lt;h1 id=&quot;实验环境&quot;&gt;&lt;a href=&quot;#实验环境&quot; class=&quot;headerlink&quot; title=&quot;实验环境&quot;&gt;&lt;/a&gt;实验环境&lt;/h1&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;8&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;9&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;10&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;11&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;12&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;13&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;14&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;15&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;16&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;          patch-ovs-1       patch-ovs-2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;+-----------------+         +----------------------+&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;|                 |         |                      |&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;| br1             +----------+              br2    |&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;|                 |         |                      |&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;+-----------------+         +----------------------+&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;       |                                 |&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;       |                                 |&lt;/div&gt;&lt;div class=&quot;line&quot;&gt; +-------------+                 +--------------+&lt;/div&gt;&lt;div class=&quot;line&quot;&gt; |             |                 | ns2          |&lt;/div&gt;&lt;div class=&quot;line&quot;&gt; | ns1         |                 |              |&lt;/div&gt;&lt;div class=&quot;line&quot;&gt; |             |                 | 1.1.1.2/24   |&lt;/div&gt;&lt;div class=&quot;line&quot;&gt; | 1.1.1.1/24  |                 | tap2         |&lt;/div&gt;&lt;div class=&quot;line&quot;&gt; | tap1        |                 |              |&lt;/div&gt;&lt;div class=&quot;line&quot;&gt; +-------------+                 +--------------+&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+    
+    </summary>
+    
+      <category term="openstack" scheme="http://vcpu.me/categories/openstack/"/>
+    
+    
+      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
+    
+      <category term="ovs" scheme="http://vcpu.me/tags/ovs/"/>
+    
+      <category term="patch port" scheme="http://vcpu.me/tags/patch-port/"/>
+    
+  </entry>
+  
+  <entry>
     <title>openstack DVR openvswitch流表分析</title>
     <link href="http://vcpu.me/4node-flowtable/"/>
     <id>http://vcpu.me/4node-flowtable/</id>
     <published>2017-09-04T10:00:00.000Z</published>
-    <updated>2017-09-04T07:27:59.000Z</updated>
+    <updated>2017-10-11T03:16:42.000Z</updated>
     
     <content type="html"><![CDATA[<h1 id="openstack-DVR环境组网"><a href="#openstack-DVR环境组网" class="headerlink" title="openstack DVR环境组网"></a>openstack DVR环境组网</h1><p><img src="/myimages/4node-twoselfnetwork.png" alt="4node-twoselfnetwork"><br>如上图：</p>
 <ul>
@@ -36,6 +71,7 @@
 <li>br-tun: 隧道所有的虚拟交换机，通过此隧道连接网络节点（dhcp、router、snat）、计算节点（虚拟机、router）；完成大二层的需求</li>
 </ul>
 <p>在对流表分析前，我们先了解网络拓扑，并获取接口和接口索引对应关系；</p>
+<a id="more"></a>
 <ul>
 <li><p>查看compute br-int接口和接口索引映射关系</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">root@compute:~# ovs-ofctl show br-int</div><div class="line">OFPT_FEATURES_REPLY (xid=0x2): dpid:00005278ead35849</div><div class="line">n_tables:254, n_buffers:256</div><div class="line">capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP</div><div class="line">actions: output enqueue set_vlan_vid set_vlan_pcp strip_vlan mod_dl_src mod_dl_dst mod_nw_src mod_nw_dst mod_nw_tos mod_tp_src mod_tp_dst</div><div class="line"> 1(patch-tun): addr:8e:c4:54:26:0f:46</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> 2(qvo06ec6270-33): addr:0a:7f:a0:b5:1f:b8</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     current:    10GB-FD COPPER</div><div class="line">     speed: 10000 Mbps now, 0 Mbps max</div><div class="line"> 3(qr-6474fe2d-84): addr:00:00:00:00:0e:00</div><div class="line">     config:     PORT_DOWN</div><div class="line">     state:      LINK_DOWN</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> 4(qvo2118dc24-92): addr:6e:1b:a5:df:d7:77</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     current:    10GB-FD COPPER</div><div class="line">     speed: 10000 Mbps now, 0 Mbps max</div><div class="line"> 5(int-br-ex): addr:aa:83:f4:ae:aa:41</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> 6(qr-d2e6fcc5-c7): addr:00:00:00:00:0e:00</div><div class="line">     config:     PORT_DOWN</div><div class="line">     state:      LINK_DOWN</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> LOCAL(br-int): addr:52:78:ea:d3:58:49</div><div class="line">     config:     PORT_DOWN</div><div class="line">     state:      LINK_DOWN</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line">OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0</div><div class="line">root@compute:~#</div></pre></td></tr></table></figure>
@@ -87,7 +123,20 @@
     
     <summary type="html">
     
-      &lt;h1 id=&quot;openstack-DVR环境组网&quot;&gt;&lt;a href=&quot;#openstack-DVR环境组网&quot; class=&quot;headerlink&quot; title=&quot;openstack DVR环境组网&quot;&gt;&lt;/a&gt;openstack DVR环境组网&lt;/h1&gt;&lt;p&gt;&lt;img src=&quot;
+      &lt;h1 id=&quot;openstack-DVR环境组网&quot;&gt;&lt;a href=&quot;#openstack-DVR环境组网&quot; class=&quot;headerlink&quot; title=&quot;openstack DVR环境组网&quot;&gt;&lt;/a&gt;openstack DVR环境组网&lt;/h1&gt;&lt;p&gt;&lt;img src=&quot;/myimages/4node-twoselfnetwork.png&quot; alt=&quot;4node-twoselfnetwork&quot;&gt;&lt;br&gt;如上图：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;2计算节点 + 1 网络节点 +1控制节点&lt;/li&gt;
+&lt;li&gt;DVR配置计算节点无floating ip&lt;/li&gt;
+&lt;li&gt;主要分析计算节点的ovs 流表策略&lt;/li&gt;
+&lt;li&gt;ubuntun 16.04 + openstack newton版本&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&quot;计算节点compute的ovs流表&quot;&gt;&lt;a href=&quot;#计算节点compute的ovs流表&quot; class=&quot;headerlink&quot; title=&quot;计算节点compute的ovs流表&quot;&gt;&lt;/a&gt;计算节点compute的ovs流表&lt;/h1&gt;&lt;p&gt;在此安装环境下计算节点共有3个ovs bridge(br-ex,br-int,br-tun)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;br-ex:负责计算节点连接外网使用，需在dvr环境下配置floating ip vm数据流量才走此桥出外网&lt;/li&gt;
+&lt;li&gt;br-int:负责连接虚拟机所接入的linux bridge、router namespace&lt;/li&gt;
+&lt;li&gt;br-tun: 隧道所有的虚拟交换机，通过此隧道连接网络节点（dhcp、router、snat）、计算节点（虚拟机、router）；完成大二层的需求&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在对流表分析前，我们先了解网络拓扑，并获取接口和接口索引对应关系；&lt;/p&gt;
     
     </summary>
     
@@ -109,13 +158,14 @@
     <link href="http://vcpu.me/openstackenv/"/>
     <id>http://vcpu.me/openstackenv/</id>
     <published>2017-08-30T10:00:00.000Z</published>
-    <updated>2017-09-04T08:16:43.000Z</updated>
+    <updated>2017-10-11T03:20:48.000Z</updated>
     
     <content type="html"><![CDATA[<h1 id="本文章简要介绍"><a href="#本文章简要介绍" class="headerlink" title="本文章简要介绍"></a>本文章简要介绍</h1><p>本文章旨在以图形方式记录已经搭建的实验环境中网络组成。都是实践结果并没有过多的理论解释，通过图形勾画出newton组网。<br>实验环境包含如下：</p>
 <ul>
 <li>两个服务器节点搭建openstack 环境<br>一个服务器安装controller和network节点；一个服务器安装计算节点</li>
 <li>三个服务器节点搭建的openstack环境<br>一个服务器安装controller、一个服务器安装network、一个服务器安装计算节点</li>
-<li>四个服务器节点搭建的openstack环境<br>一个服务器安装controller、一个服务器安装network、另外两台服务器分别安装计算节点</li>
+<li>四个服务器节点搭建的openstack环境<br>一个服务器安装controller、一个服务器安装network、另外两台服务器分别安装计算节点<a id="more"></a>
+</li>
 </ul>
 <h1 id="两个服务器节点搭建openstack-环境"><a href="#两个服务器节点搭建openstack-环境" class="headerlink" title="两个服务器节点搭建openstack 环境"></a>两个服务器节点搭建openstack 环境</h1><h2 id="openstack官方安装环境，未采用openvswitch的组网"><a href="#openstack官方安装环境，未采用openvswitch的组网" class="headerlink" title="openstack官方安装环境，未采用openvswitch的组网"></a>openstack官方安装环境，未采用openvswitch的组网</h2><p><img src="/myimages/self_service.png" alt="self_service"></p>
 <h2 id="替换linuxbridge为openvswitch后的组网"><a href="#替换linuxbridge为openvswitch后的组网" class="headerlink" title="替换linuxbridge为openvswitch后的组网"></a>替换linuxbridge为openvswitch后的组网</h2><p><img src="/myimages/ovs-openstack.png" alt="ovs-openstack"></p>
@@ -131,7 +181,11 @@
     
     <summary type="html">
     
-      &lt;h1 id=&quot;本文章简要介绍&quot;&gt;&lt;a href=&quot;#本文章简要介绍&quot; class=&quot;headerlink&quot; title=&quot;本文章简要介绍&quot;&gt;&lt;/a&gt;本文章简要介绍&lt;/h1&gt;&lt;p&gt;本文章旨在以图形方式记录已经搭建的实验环境中网络组成。都是实践结果并没有过多的理论解释，通过图形勾画
+      &lt;h1 id=&quot;本文章简要介绍&quot;&gt;&lt;a href=&quot;#本文章简要介绍&quot; class=&quot;headerlink&quot; title=&quot;本文章简要介绍&quot;&gt;&lt;/a&gt;本文章简要介绍&lt;/h1&gt;&lt;p&gt;本文章旨在以图形方式记录已经搭建的实验环境中网络组成。都是实践结果并没有过多的理论解释，通过图形勾画出newton组网。&lt;br&gt;实验环境包含如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;两个服务器节点搭建openstack 环境&lt;br&gt;一个服务器安装controller和network节点；一个服务器安装计算节点&lt;/li&gt;
+&lt;li&gt;三个服务器节点搭建的openstack环境&lt;br&gt;一个服务器安装controller、一个服务器安装network、一个服务器安装计算节点&lt;/li&gt;
+&lt;li&gt;四个服务器节点搭建的openstack环境&lt;br&gt;一个服务器安装controller、一个服务器安装network、另外两台服务器分别安装计算节点
     
     </summary>
     
@@ -1495,9 +1549,9 @@
       <category term="TCP" scheme="http://vcpu.me/categories/TCP/"/>
     
     
-      <category term="拥塞控制" scheme="http://vcpu.me/tags/%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6/"/>
-    
       <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
+    
+      <category term="拥塞控制" scheme="http://vcpu.me/tags/%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6/"/>
     
       <category term="Linux拥塞控制基本概念" scheme="http://vcpu.me/tags/Linux%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/"/>
     
@@ -2104,9 +2158,9 @@
     
       <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
     
-      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
-    
       <category term="socket" scheme="http://vcpu.me/tags/socket/"/>
+    
+      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
     
   </entry>
   
@@ -2216,9 +2270,9 @@
       <category term="linux kernel" scheme="http://vcpu.me/categories/linux-kernel/"/>
     
     
-      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
-    
       <category term="socket" scheme="http://vcpu.me/tags/socket/"/>
+    
+      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
     
       <category term="systemtap" scheme="http://vcpu.me/tags/systemtap/"/>
     
@@ -2610,9 +2664,9 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
     
       <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
     
-      <category term="bind" scheme="http://vcpu.me/tags/bind/"/>
-    
       <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
+    
+      <category term="bind" scheme="http://vcpu.me/tags/bind/"/>
     
   </entry>
   
@@ -2718,9 +2772,9 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
     
       <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
     
-      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
-    
       <category term="socket" scheme="http://vcpu.me/tags/socket/"/>
+    
+      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
     
   </entry>
   
@@ -2855,9 +2909,9 @@ printf(&quot;now,sendbuf:%d\n&quot;, sendbuflen);
     
       <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
     
-      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
-    
       <category term="socket" scheme="http://vcpu.me/tags/socket/"/>
+    
+      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
     
   </entry>
   

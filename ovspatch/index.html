@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="tcp/ip,kernel3.10.0-514.16.1," />
+  <meta name="keywords" content="ubuntun16.04,ovs,patch port," />
 
 
 
@@ -95,17 +95,17 @@
 
 
 
-<meta name="description" content="概念说明1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：每个套接字有一个接收低水位和一个发送低水位。他们由select函数使用。接收低水位标记是让select返回”可读”时套接字接收缓冲区中所需的数据量。对于TCP,其默认值为1。发送低水位标记是让select返回”可写”时套接字发送缓冲区中所需的可用空间。对于TCP，其默认值常为2048 通俗的解释一下，缓存区我们当成一个大小">
-<meta name="keywords" content="tcp&#x2F;ip,kernel3.10.0-514.16.1">
+<meta name="description" content="创建patch port连接ovs两个桥patch port用于连接openvswitch桥 实验环境12345678910111213141516          patch-ovs-1       patch-ovs-2+-----------------+         +----------------------+|                 |         |">
+<meta name="keywords" content="ubuntun16.04,ovs,patch port">
 <meta property="og:type" content="article">
-<meta property="og:title" content="socket读写条件">
-<meta property="og:url" content="http://vcpu.me/socket_rw_proc/index.html">
+<meta property="og:title" content="ovs patch port 连接方法">
+<meta property="og:url" content="http://vcpu.me/ovspatch/index.html">
 <meta property="og:site_name" content="i博客">
-<meta property="og:description" content="概念说明1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：每个套接字有一个接收低水位和一个发送低水位。他们由select函数使用。接收低水位标记是让select返回”可读”时套接字接收缓冲区中所需的数据量。对于TCP,其默认值为1。发送低水位标记是让select返回”可写”时套接字发送缓冲区中所需的可用空间。对于TCP，其默认值常为2048 通俗的解释一下，缓存区我们当成一个大小">
-<meta property="og:updated_time" content="2017-06-26T08:55:50.000Z">
+<meta property="og:description" content="创建patch port连接ovs两个桥patch port用于连接openvswitch桥 实验环境12345678910111213141516          patch-ovs-1       patch-ovs-2+-----------------+         +----------------------+|                 |         |">
+<meta property="og:updated_time" content="2017-10-11T03:21:29.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="socket读写条件">
-<meta name="twitter:description" content="概念说明1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：每个套接字有一个接收低水位和一个发送低水位。他们由select函数使用。接收低水位标记是让select返回”可读”时套接字接收缓冲区中所需的数据量。对于TCP,其默认值为1。发送低水位标记是让select返回”可写”时套接字发送缓冲区中所需的可用空间。对于TCP，其默认值常为2048 通俗的解释一下，缓存区我们当成一个大小">
+<meta name="twitter:title" content="ovs patch port 连接方法">
+<meta name="twitter:description" content="创建patch port连接ovs两个桥patch port用于连接openvswitch桥 实验环境12345678910111213141516          patch-ovs-1       patch-ovs-2+-----------------+         +----------------------+|                 |         |">
 
 
 
@@ -133,13 +133,13 @@
 
 
 
-  <link rel="canonical" href="http://vcpu.me/socket_rw_proc/"/>
+  <link rel="canonical" href="http://vcpu.me/ovspatch/"/>
 
 
 
 
 
-  <title>socket读写条件 | i博客</title>
+  <title>ovs patch port 连接方法 | i博客</title>
   
 
 
@@ -322,7 +322,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/socket_rw_proc/">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/ovspatch/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="vcpu.me">
@@ -339,7 +339,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">socket读写条件</h1>
+          <h1 class="post-title" itemprop="name headline">ovs patch port 连接方法</h1>
         
 
         <div class="post-meta">
@@ -351,8 +351,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-26T19:10:34+08:00">
-                2017-06-26
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-11T18:00:00+08:00">
+                2017-10-11
               </time>
             
 
@@ -374,8 +374,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/socket/" itemprop="url" rel="index">
-                    <span itemprop="name">socket</span>
+                  <a href="/categories/openstack/" itemprop="url" rel="index">
+                    <span itemprop="name">openstack</span>
                   </a>
                 </span>
 
@@ -392,7 +392,7 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a class="cloud-tie-join-count" href="/socket_rw_proc/#comments" itemprop="discussionUrl">
+                <a class="cloud-tie-join-count" href="/ovspatch/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count join-count" itemprop="commentCount"></span>
                 </a>
               </span>
@@ -401,7 +401,7 @@
 
           
           
-             <span id="/socket_rw_proc/" class="leancloud_visitors" data-flag-title="socket读写条件">
+             <span id="/ovspatch/" class="leancloud_visitors" data-flag-title="ovs patch port 连接方法">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -429,20 +429,14 @@
       
 
       
-        <h2 id="概念说明"><a href="#概念说明" class="headerlink" title="概念说明"></a>概念说明</h2><p>1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：<br>每个套接字有一个接收低水位和一个发送低水位。他们由select函数使用。<br>接收低水位标记是让select返回”可读”时套接字接收缓冲区中所需的数据量。对于TCP,其默认值为1。<br>发送低水位标记是让select返回”可写”时套接字发送缓冲区中所需的可用空间。对于TCP，其默认值常为2048</p>
-<p>通俗的解释一下，缓存区我们当成一个大小为 n bytes的空间，那么：<br>接收区缓存的作用就是，接收对面的数据放在缓存区，供应用程序读。当然了，只有当缓存区可读的数据量(接收低水位标记)到达一定程度（eg:1）的时候，我们才能读到数据，不然不就读不到数据了吗。<br>发送区缓存的作用就是，发送应用程序的数据到缓存区，然后一起发给对面。当然了，只有当缓存区剩余一定空间(发送低水位标记)（eg:2048）,你才能写数据进去，不然可能导致空间不够。</p>
-<p>2.FIN: (结束标志,Finish)用来结束一个TCP回话.但对应端口仍处于开放状态,准备接收后续数据.</p>
-<p>特别纠正说明：</p>
-<blockquote>
-<p>经过测试在3.10.0-514.16.1.el7.x86_64 内核情况下SO_SNDLOWAT/SO_RCVLOWAT<br>默认发送和接收最低水位均为1，也就是说默认情况下低水位值可以不考虑，系统缓冲区有数据就读<br>有空闲就写</p>
-</blockquote>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> value =<span class="number">0</span>;</div><div class="line"><span class="keyword">int</span> v_len = <span class="keyword">sizeof</span>(value);</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_SNDLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"snd low at value: %d\n"</span>,value);</div><div class="line">value = <span class="number">0</span>;</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_RCVLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"rcv low at value: %d\n"</span>,value);</div></pre></td></tr></table></figure>
-<h2 id="socket可读的条件"><a href="#socket可读的条件" class="headerlink" title="socket可读的条件"></a>socket可读的条件</h2><p>下列四个条件中的任何一个满足时,socket准备好读:<br>1.socket的接收缓冲区中的数据字节大于等于该socket的接收缓冲区低水位标记的当前大小。对这样的socket的读操作将不阻塞并返回一个大于0的值 {也就是返回准备好读入的数据}。我们可以用SO_RCVLOWATsocket选项来设置该socket的低水位标记。对于TCP和UDP .socket而言，其缺省值为1</p>
-<p>2.该连接的读这一半关闭{也就是接收了FIN的TCP连接}。对这样的socket的读操作将不阻塞并返回0</p>
-<p>3.socket是一个用于监听的socket,并且已经完成的连接数为非0.这样的soocket处于可读状态,是因为socket收到了对方的connect请求,执行了三次握手的第一步:对方发送SYN请求过来,使监听socket处于可读状态;正常情况下,这样的socket上的accept操作不会阻塞;</p>
-<p>4.有一个socket有异常错误条件待处理。对于这样的socket的读操作将不会阻塞,并且返回一个错误-1,errno则设置成明确的错误条件。这些待处理的错误也可通过指定socket选项SO_ERROR调用getsockopt来取得并清除</p>
-<h2 id="socket可写的条件"><a href="#socket可写的条件" class="headerlink" title="socket可写的条件"></a>socket可写的条件</h2><p>1.socket发送缓冲区中数据字节大于等于该socket发送缓冲区低水位大小。写操作不会被阻塞，会直接返回写入的数据大小，SO_SNDLOWAT socket选项设置socket可写低水位大小。经过测试默认大小为1。<br>2.如果你已经关闭连接，或者主动fin半关闭。这种情况下socket再些将要产生SIGPIPE信号，你没有对这个信号处理的话，你的进程将会被关闭。<br>3.有socket异常错误待处理，这种情况下写操作并不会被阻塞会直接返回一个错误-1，想知道错误原因erron可以帮助你。</p>
-<h2 id="参考地址"><a href="#参考地址" class="headerlink" title="参考地址"></a>参考地址</h2><p><a href="http://blog.csdn.net/szcarewell/article/details/51227540" target="_blank" rel="external">http://blog.csdn.net/szcarewell/article/details/51227540</a></p>
+        <h1 id="创建patch-port连接ovs两个桥"><a href="#创建patch-port连接ovs两个桥" class="headerlink" title="创建patch port连接ovs两个桥"></a>创建patch port连接ovs两个桥</h1><p>patch port用于连接openvswitch桥</p>
+<h1 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">          patch-ovs-1       patch-ovs-2</div><div class="line"></div><div class="line">+-----------------+         +----------------------+</div><div class="line">|                 |         |                      |</div><div class="line">| br1             +----------+              br2    |</div><div class="line">|                 |         |                      |</div><div class="line">+-----------------+         +----------------------+</div><div class="line">       |                                 |</div><div class="line">       |                                 |</div><div class="line"> +-------------+                 +--------------+</div><div class="line"> |             |                 | ns2          |</div><div class="line"> | ns1         |                 |              |</div><div class="line"> |             |                 | 1.1.1.2/24   |</div><div class="line"> | 1.1.1.1/24  |                 | tap2         |</div><div class="line"> | tap1        |                 |              |</div><div class="line"> +-------------+                 +--------------+</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<h1 id="创建脚本"><a href="#创建脚本" class="headerlink" title="创建脚本"></a>创建脚本</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-br br1</div><div class="line">ovs-vsctl add-br br2</div><div class="line"></div><div class="line">ovs-vsctl add-port br1 tap1 -- set Interface tap1 type=internal</div><div class="line">ovs-vsctl add-port br2 tap2 -- set Interface tap2 type=internal</div><div class="line"></div><div class="line">ip netns add ns1</div><div class="line">ip netns add ns2</div><div class="line"></div><div class="line">ip link set tap1 netns ns1</div><div class="line">ip link set tap2 netns ns2</div><div class="line"></div><div class="line">ip netns exec ns1 ip addr add 1.1.1.1/24 dev tap1  </div><div class="line">ip netns exec ns1 ip link set tap1 up  </div><div class="line">ip netns exec ns1 ip link set lo up</div><div class="line"></div><div class="line">ip netns exec ns2 ip addr add 1.1.1.2/24 dev tap2  </div><div class="line">ip netns exec ns2 ip link set tap2 up  </div><div class="line">ip netns exec ns2 ip link set lo up  </div><div class="line"></div><div class="line">ovs-vsctl add-port br1 patch-ovs-1 -- set Interface patch-ovs-1 type=patch options:peer=patch-ovs-2</div><div class="line"></div><div class="line">ovs-vsctl add-port br2 patch-ovs-2 -- set Interface patch-ovs-2 type=patch options:peer=patch-ovs-1</div></pre></td></tr></table></figure>
+<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ip netns exec ns1 ping 1.1.1.2</div></pre></td></tr></table></figure>
+<h1 id="实验配置查看"><a href="#实验配置查看" class="headerlink" title="实验配置查看"></a>实验配置查看</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">root@compute:~# ovs-vsctl show</div><div class="line">0f92aaa0-5385-48f5-a54a-644e05652f59</div><div class="line">    Manager &quot;ptcp:6640:127.0.0.1&quot;</div><div class="line">        is_connected: true</div><div class="line">    Bridge &quot;br2&quot;</div><div class="line">        Port &quot;tap2&quot;</div><div class="line">            Interface &quot;tap2&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;patch-ovs-2&quot;</div><div class="line">            Interface &quot;patch-ovs-2&quot;</div><div class="line">                type: patch</div><div class="line">                options: &#123;peer=&quot;patch-ovs-1&quot;&#125;</div><div class="line">        Port &quot;br2&quot;</div><div class="line">            Interface &quot;br2&quot;</div><div class="line">                type: internal</div><div class="line">    Bridge &quot;br1&quot;</div><div class="line">        Port &quot;br1&quot;</div><div class="line">            Interface &quot;br1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;tap1&quot;</div><div class="line">            Interface &quot;tap1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;patch-ovs-1&quot;</div><div class="line">            Interface &quot;patch-ovs-1&quot;</div><div class="line">                type: patch</div><div class="line">                options: &#123;peer=&quot;patch-ovs-2&quot;&#125;</div></pre></td></tr></table></figure>
+<h1 id="实验结果"><a href="#实验结果" class="headerlink" title="实验结果"></a>实验结果</h1><p>ns1 可以ping 通 ns2 ip</p>
+<h1 id="重点解析"><a href="#重点解析" class="headerlink" title="重点解析"></a>重点解析</h1><p>两个ovs bridge间连接分别在两个桥上执行下面命令使用patch port互联<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port br1 patch-ovs-1 -- set Interface patch-ovs-1 type=patch options:peer=patch-ovs-2</div><div class="line"></div><div class="line">ovs-vsctl add-port br2 patch-ovs-2 -- set Interface patch-ovs-2 type=patch options:peer=patch-ovs-1</div></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -472,9 +466,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/tcp-ip/" rel="tag"># tcp/ip</a>
+            <a href="/tags/ubuntun16-04/" rel="tag"># ubuntun16.04</a>
           
-            <a href="/tags/kernel3-10-0-514-16-1/" rel="tag"># kernel3.10.0-514.16.1</a>
+            <a href="/tags/ovs/" rel="tag"># ovs</a>
+          
+            <a href="/tags/patch-port/" rel="tag"># patch port</a>
           
         </div>
       
@@ -487,8 +483,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/select/" rel="next" title="select">
-                <i class="fa fa-chevron-left"></i> select
+              <a href="/4node-flowtable/" rel="next" title="openstack DVR openvswitch流表分析">
+                <i class="fa fa-chevron-left"></i> openstack DVR openvswitch流表分析
               </a>
             
           </div>
@@ -496,10 +492,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/socket信号处理/" rel="prev" title="socket信号处理">
-                socket信号处理 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -666,7 +658,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概念说明"><span class="nav-number">1.</span> <span class="nav-text">概念说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#socket可读的条件"><span class="nav-number">2.</span> <span class="nav-text">socket可读的条件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#socket可写的条件"><span class="nav-number">3.</span> <span class="nav-text">socket可写的条件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考地址"><span class="nav-number">4.</span> <span class="nav-text">参考地址</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#创建patch-port连接ovs两个桥"><span class="nav-number">1.</span> <span class="nav-text">创建patch port连接ovs两个桥</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实验环境"><span class="nav-number">2.</span> <span class="nav-text">实验环境</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建脚本"><span class="nav-number">3.</span> <span class="nav-text">创建脚本</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#测试"><span class="nav-number">4.</span> <span class="nav-text">测试</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实验配置查看"><span class="nav-number">5.</span> <span class="nav-text">实验配置查看</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实验结果"><span class="nav-number">6.</span> <span class="nav-text">实验结果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#重点解析"><span class="nav-number">7.</span> <span class="nav-text">重点解析</span></a></li></ol></div>
             
 
           </div>

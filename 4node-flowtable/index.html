@@ -105,7 +105,7 @@
 <meta property="og:image" content="http://vcpu.me/myimages/4node-twoselfnetwork.png">
 <meta property="og:image" content="http://vcpu.me/myimages/br-int-flow-table.png">
 <meta property="og:image" content="http://vcpu.me/myimages/br-tun-flowtabble.png">
-<meta property="og:updated_time" content="2017-09-04T07:27:59.000Z">
+<meta property="og:updated_time" content="2017-10-11T03:16:42.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="openstack DVR openvswitch流表分析">
 <meta name="twitter:description" content="openstack DVR环境组网如上图：  2计算节点 + 1 网络节点 +1控制节点 DVR配置计算节点无floating ip 主要分析计算节点的ovs 流表策略 ubuntun 16.04 + openstack newton版本  计算节点compute的ovs流表在此安装环境下计算节点共有3个ovs bridge(br-ex,br-int,br-tun)  br-ex:负责计算节点连接">
@@ -447,6 +447,7 @@
 <li>br-tun: 隧道所有的虚拟交换机，通过此隧道连接网络节点（dhcp、router、snat）、计算节点（虚拟机、router）；完成大二层的需求</li>
 </ul>
 <p>在对流表分析前，我们先了解网络拓扑，并获取接口和接口索引对应关系；</p>
+<a id="more"></a>
 <ul>
 <li><p>查看compute br-int接口和接口索引映射关系</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">root@compute:~# ovs-ofctl show br-int</div><div class="line">OFPT_FEATURES_REPLY (xid=0x2): dpid:00005278ead35849</div><div class="line">n_tables:254, n_buffers:256</div><div class="line">capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP</div><div class="line">actions: output enqueue set_vlan_vid set_vlan_pcp strip_vlan mod_dl_src mod_dl_dst mod_nw_src mod_nw_dst mod_nw_tos mod_tp_src mod_tp_dst</div><div class="line"> 1(patch-tun): addr:8e:c4:54:26:0f:46</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> 2(qvo06ec6270-33): addr:0a:7f:a0:b5:1f:b8</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     current:    10GB-FD COPPER</div><div class="line">     speed: 10000 Mbps now, 0 Mbps max</div><div class="line"> 3(qr-6474fe2d-84): addr:00:00:00:00:0e:00</div><div class="line">     config:     PORT_DOWN</div><div class="line">     state:      LINK_DOWN</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> 4(qvo2118dc24-92): addr:6e:1b:a5:df:d7:77</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     current:    10GB-FD COPPER</div><div class="line">     speed: 10000 Mbps now, 0 Mbps max</div><div class="line"> 5(int-br-ex): addr:aa:83:f4:ae:aa:41</div><div class="line">     config:     0</div><div class="line">     state:      0</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> 6(qr-d2e6fcc5-c7): addr:00:00:00:00:0e:00</div><div class="line">     config:     PORT_DOWN</div><div class="line">     state:      LINK_DOWN</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line"> LOCAL(br-int): addr:52:78:ea:d3:58:49</div><div class="line">     config:     PORT_DOWN</div><div class="line">     state:      LINK_DOWN</div><div class="line">     speed: 0 Mbps now, 0 Mbps max</div><div class="line">OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0</div><div class="line">root@compute:~#</div></pre></td></tr></table></figure>
@@ -552,6 +553,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/ovspatch/" rel="prev" title="ovs patch port 连接方法">
+                ovs patch port 连接方法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -624,7 +629,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">37</span>
+                <span class="site-state-item-count">38</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -646,7 +651,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">67</span>
+                <span class="site-state-item-count">68</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
