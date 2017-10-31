@@ -4,6 +4,30 @@
 
     
   <url>
+    <loc>http://vcpu.me/mininet1/</loc>
+    <lastmod>2017-10-31T12:40:57.000Z</lastmod>
+    <data>
+        <display>
+        <title>mininet+RYU环境</title>
+        <pubTime>2017-10-31T10:00:00.000Z</pubTime>
+        
+        <tag>openstack</tag>
+         
+        <tag>ubuntun16.04</tag>
+         
+        <tag>SDN控制器</tag>
+         
+         
+           
+             
+              <breadCrumb title="RYU" url="http://vcpu.me/categories/RYU/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/openstackmoni/</loc>
     <lastmod>2017-10-31T09:07:26.000Z</lastmod>
     <data>
@@ -537,9 +561,9 @@
         <title>拥塞控制</title>
         <pubTime>2017-07-04T10:00:00.000Z</pubTime>
         
-        <tag>tcp/ip</tag>
-         
         <tag>拥塞控制</tag>
+         
+        <tag>tcp/ip</tag>
          
         <tag>Linux拥塞控制基本概念</tag>
          
@@ -706,9 +730,9 @@
         
         <tag>tcp/ip</tag>
          
-        <tag>socket</tag>
-         
         <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>socket</tag>
          
          
            
@@ -751,9 +775,9 @@
         
         <tag>tcp/ip</tag>
          
-        <tag>socket</tag>
-         
         <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>socket</tag>
          
          
            
@@ -795,9 +819,9 @@
         
         <tag>tcp/ip</tag>
          
-        <tag>socket</tag>
-         
         <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>socket</tag>
          
          
            
@@ -863,9 +887,9 @@
         <title>systemtap使用调试记录（二）</title>
         <pubTime>2017-06-20T06:52:23.000Z</pubTime>
         
-        <tag>socket</tag>
-         
         <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>socket</tag>
          
         <tag>systemtap</tag>
          
@@ -941,9 +965,9 @@
         
         <tag>tcp/ip</tag>
          
-        <tag>kernel3.10.0-514.16.1</tag>
-         
         <tag>bind</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
          
          
            

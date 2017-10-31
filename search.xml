@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[mininet+RYU环境]]></title>
+    <url>%2Fmininet1%2F</url>
+    <content type="text"><![CDATA[安装mininet apt-get install mininet 运行mininet 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475root@controller-VirtualBox:~# mn*** No default OpenFlow controller found for default switch!*** Falling back to OVS Bridge*** Creating network*** Adding controller*** Adding hosts:h1 h2*** Adding switches:s1*** Adding links:(h1, s1) (h2, s1)*** Configuring hostsh1 h2*** Starting controller*** Starting 1 switchess1 ...*** Starting CLI:mininet&gt; nodesavailable nodes are:h1 h2 s1mininet&gt; neth1 h1-eth0:s1-eth1h2 h2-eth0:s1-eth2s1 lo: s1-eth1:h1-eth0 s1-eth2:h2-eth0mininet&gt; dump&lt;Host h1: h1-eth0:10.0.0.1 pid=1961&gt;&lt;Host h2: h2-eth0:10.0.0.2 pid=1963&gt;&lt;OVSBridge s1: lo:127.0.0.1,s1-eth1:None,s1-eth2:None pid=1968&gt;mininet&gt; h1 ping h2PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=1.81 ms64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.072 ms^C--- 10.0.0.2 ping statistics ---2 packets transmitted, 2 received, 0% packet loss, time 1002msrtt min/avg/max/mdev = 0.072/0.942/1.812/0.870 msmininet&gt; 下载安装RYU 1234git clone git://github.com/osrg/ryu.gitcd ryusudo pip install -r tools/pip-requiressudo python setup.py install 开启默认mininet环境，启动controller控制ip和端口mn –controller remote,ip=127.0.0.1,port=6633 执行外上述命令后，在一个窗口执行ovs-vsctl show 命令，查看配置情况 123456789101112131415root@controller-VirtualBox:~/ryu# ovs-vsctl show73065536-d00b-440c-a02f-b8d33ef05ee1 Bridge "s1" Controller "ptcp:6634" Controller "tcp:127.0.0.1:6633" fail_mode: secure Port "s1" Interface "s1" type: internal Port "s1-eth1" Interface "s1-eth1" Port "s1-eth2" Interface "s1-eth2" ovs_version: "2.5.2"root@controller-VirtualBox:~/ryu# 如上显示，controller控制ip：port信息如上，默认mininet环境启动了两个客户端分别通过s1-eth1和s1-eth2接入到ovs s1上，二层相连 未执行任何ping动作时候查查看默认流表root@controller-VirtualBox:~/ryu# ovs-ofctl dump-flows s1 -O openflow13 OFPST_FLOW reply (OF1.3) (xid=0x2): 开启simple_switch_13.py RYU控制器demo123456789101112131415161718192021222324252627282930313233343536373839root@controller-VirtualBox:/usr/local/lib/python2.7/dist-packages/ryu/app# ryu-manager --verbose simple_switch_13.py loading app simple_switch_13.pyloading app ryu.controller.ofp_handlerinstantiating app simple_switch_13.py of SimpleSwitch13instantiating app ryu.controller.ofp_handler of OFPHandlerBRICK SimpleSwitch13 CONSUMES EventOFPPacketIn CONSUMES EventOFPSwitchFeaturesBRICK ofp_event PROVIDES EventOFPPacketIn TO &#123;'SimpleSwitch13': set(['main'])&#125; PROVIDES EventOFPSwitchFeatures TO &#123;'SimpleSwitch13': set(['config'])&#125; CONSUMES EventOFPPortStatus CONSUMES EventOFPSwitchFeatures CONSUMES EventOFPHello CONSUMES EventOFPErrorMsg CONSUMES EventOFPEchoRequest CONSUMES EventOFPPortDescStatsReply CONSUMES EventOFPEchoReplyconnected socket:&lt;eventlet.greenio.base.GreenSocket object at 0x7fcef67e5cd0&gt; address:('127.0.0.1', 53604)hello ev &lt;ryu.controller.ofp_event.EventOFPHello object at 0x7fcef67e56d0&gt;move onto config modeEVENT ofp_event-&gt;SimpleSwitch13 EventOFPSwitchFeaturesswitch features ev version=0x4,msg_type=0x6,msg_len=0x20,xid=0xc20757d2,OFPSwitchFeatures(auxiliary_id=0,capabilities=79,datapath_id=1,n_buffers=256,n_tables=254)move onto main modeEVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketInpacket in 1 82:06:4f:42:09:6c 33:33:00:00:00:02 1EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketInpacket in 1 82:06:4f:42:09:6c ff:ff:ff:ff:ff:ff 1EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketInpacket in 1 76:db:0f:62:67:5e 82:06:4f:42:09:6c 2EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketInpacket in 1 82:06:4f:42:09:6c 76:db:0f:62:67:5e 1EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketInpacket in 1 76:db:0f:62:67:5e 33:33:00:00:00:02 2EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketInpacket in 1 82:06:4f:42:09:6c 33:33:00:00:00:02 1EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketInpacket in 1 76:db:0f:62:67:5e 33:33:00:00:00:02 2 开启完simple_switch_13.py 后查看流表项，经过s1所有的流量都会通过127.0.0.1:6633发给控制器，交给simple_switch_13.py 处理root@controller-VirtualBox:~/ryu# ovs-ofctl dump-flows s1 -O openflow13 OFPST_FLOW reply (OF1.3) (xid=0x2): cookie=0x0, duration=2.782s, table=0, n_packets=0, n_bytes=0, priority=0 actions=CONTROLLER:65535 h1 ping h2，流表新增两条12345678mininet&gt; h1 ping h2PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=6.59 ms64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.228 ms^C--- 10.0.0.2 ping statistics ---2 packets transmitted, 2 received, 0% packet loss, time 1002msrtt min/avg/max/mdev = 0.228/3.412/6.597/3.185 ms 12345root@controller-VirtualBox:~/ryu# ovs-ofctl dump-flows s1 -O openflow13OFPST_FLOW reply (OF1.3) (xid=0x2): cookie=0x0, duration=12.970s, table=0, n_packets=4, n_bytes=280, priority=1,in_port=2,dl_dst=0a:30:ba:ff:9b:80 actions=output:1 cookie=0x0, duration=12.967s, table=0, n_packets=3, n_bytes=238, priority=1,in_port=1,dl_dst=ee:78:58:36:2b:06 actions=output:2 cookie=0x0, duration=224.026s, table=0, n_packets=5, n_bytes=322, priority=0 actions=CONTROLLER:65535 123456789101112packet in 1 ee:78:58:36:2b:06 33:33:00:00:00:02 2EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketInpacket in 1 0a:30:ba:ff:9b:80 ff:ff:ff:ff:ff:ff 1EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketInpacket in 1 ee:78:58:36:2b:06 0a:30:ba:ff:9b:80 2EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketInpacket in 1 0a:30:ba:ff:9b:80 ee:78:58:36:2b:06 1EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketInpacket in 1 0a:30:ba:ff:9b:80 33:33:00:00:00:02 1 通过rest api查找相关信息1进入：/usr/local/lib/python2.7/dist-packages/ryu/app ryu-manager –verbose simple_switch_13.py ofctl_rest.py rest_topology.py rest-api查看ovs流表]]></content>
+      <categories>
+        <category>RYU</category>
+      </categories>
+      <tags>
+        <tag>openstack</tag>
+        <tag>ubuntun16.04</tag>
+        <tag>SDN控制器</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[openstack 网络环境模拟]]></title>
     <url>%2Fopenstackmoni%2F</url>
     <content type="text"><![CDATA[背景环境环境介绍: 上述环境是模拟openstack网络环境，分为外网区域、计算节点区域、网络节点区域；外网区域主要模拟外网的网关和路由，计算节点区域模拟openstack计算节点物理机器，网络节点区域模拟openstack网络节点物理机器 计算节点区域和外网交换机，通过vlan206、vlan1000、vlan2000连接到外网交换机，其中valn206是外网浮动ip网段的ip，vlan1000为私网10.10.10.0/24，vlan2000位私网192.168.16.0/24 网络节点区域和外网交换机，br-int通过vlan1000，vlan2000连接外网交换机连接，br-public通过vlan206连接外网交换机 外网区域是计算节点和网络节点网关所在地，同时该区域连接外网接口enp0s8，计算节点和网络节点通过外围区域上外网 ubuntun操作系统区域，是ubuntu系统安装的系统的机器，上述环境是在一个机器中模拟所有节点情况。 环境搭建脚本123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596ovs-vsctl add-br br-int-1ovs-vsctl add-br br-int-2ovs-vsctl add-br swovs-vsctl add-br br-publicip netns add vm1ip netns add vm2ip netns add dhcp1ip netns add dhcp2ip netns add routerip netn add gwovs-vsctl add-port br-int-1 vm1-eth0 tag=1000 -- set Interface vm1-eth0 type=internalip link set vm1-eth0 netns vm1ip netns exec vm1 ifconfig vm1-eth0 10.10.10.10/24 upip netns exec vm1 route add default gw 10.10.10.1ip netns exec vm1 ifconfig lo upovs-vsctl add-port br-int-1 vm2-eth0 tag=2000 -- set Interface vm2-eth0 type=internalip link set vm2-eth0 netns vm2ip netns exec vm2 ifconfig vm2-eth0 192.168.16.10/24 upip netns exec vm2 route add default gw 192.168.16.1ip netns exec vm2 ifconfig lo upovs-vsctl add-port br-int-2 dhcp1-tap tag=1000 -- set Interface dhcp1-tap type=internalip link set dhcp1-tap netns dhcp1ip netns exec dhcp1 ifconfig dhcp1-tap 10.10.10.2/24 upip netns exec dhcp1 ifconfig lo upovs-vsctl add-port br-int-2 dhcp2-tap tag=2000 -- set Interface dhcp2-tap type=internalip link set dhcp2-tap netns dhcp2ip netns exec dhcp2 ifconfig dhcp2-tap 192.168.16.2/24 upip netns exec dhcp2 ifconfig lo upovs-vsctl add-port br-int-2 router-tap1 tag=1000 -- set Interface router-tap1 type=internalip link set router-tap1 netns routerip netns exec router ifconfig router-tap1 10.10.10.1/24 upip netns exec router ifconfig lo upovs-vsctl add-port br-int-2 router-tap2 tag=2000 -- set Interface router-tap2 type=internalip link set router-tap2 netns routerip netns exec router ifconfig router-tap2 192.168.16.1/24 upip netns exec router ifconfig lo upovs-vsctl add-port br-int-1 trunk_int1 trunks=1000,2000,206 -- set Interface trunk_int1 type=patch options:peer=trunk_sw1ovs-vsctl add-port sw trunk_sw1 trunks=1000,2000,206 -- set Interface trunk_sw1 type=patch options:peer=trunk_int1ovs-vsctl add-port br-int-2 trunk_int2 trunks=1000,2000 -- set Interface trunk_int2 type=patch options:peer=trunk_sw2ovs-vsctl add-port sw trunk_sw2 trunks=1000,2000 -- set Interface trunk_sw2 type=patch options:peer=trunk_int2ovs-vsctl add-port br-public router-qg tag=206 -- set Interface router-qg type=internalip link set router-qg netns routerip netns exec router ifconfig router-qg 192.168.206.11/24 upip netns exec router ifconfig lo upovs-vsctl add-port sw provider-gw tag=206 -- set Interface provider-gw type=internalip link set provider-gw netns gwip netns exec gw ifconfig provider-gw 192.168.206.254/24 upip netns exec gw ifconfig lo upovs-vsctl add-port br-public trunk_pub trunks=206 -- set Interface trunk_pub type=patch options:peer=trunk_sw3ovs-vsctl add-port sw trunk_sw3 trunks=206 -- set Interface trunk_sw3 type=patch options:peer=trunk_pubifconfig br-public 192.168.206.10/24 upip netns exec router route add default gw 192.168.206.254ovs-vsctl add-br br-exovs-vsctl add-port br-ex ex-gw -- set Interface ex-gw type=internalip link set ex-gw netns gwip netns exec gw ifconfig ex-gw 10.30.10.100/24 upip netns exec gw ifconfig lo upip netns exec gw route add default gw 10.30.10.1ip netns exec gw iptables -t nat -A POSTROUTING -s 192.168.206.0/24 -o ex-gw -j MASQUERADEovs-vsctl add-port br-ex enp0s8ip addr flush dev enp0s8ifconfig br-ex 10.30.10.145/24route add default gw 10.30.10.1ip netns exec router sysctl net.ipv4.ip_forward=1ip netns exec gw sysctl net.ipv4.ip_forward=1ip netns exec router iptables -t nat -A POSTROUTING -s 10.10.10.0/24 -o router-qg -j MASQUERADEip netns exec router iptables -t nat -A POSTROUTING -s 192.168.16.0/24 -o router-qg -j MASQUERADE 环境搭建完成后查看ovs123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990root@controller-VirtualBox:~# ovs-vsctl show73065536-d00b-440c-a02f-b8d33ef05ee1 Bridge &quot;br-int-1&quot; Port &quot;br-int-1&quot; Interface &quot;br-int-1&quot; type: internal Port &quot;vm2-eth0&quot; tag: 2000 Interface &quot;vm2-eth0&quot; type: internal Port &quot;trunk_int1&quot; trunks: [206, 1000, 2000] Interface &quot;trunk_int1&quot; type: patch options: &#123;peer=&quot;trunk_sw1&quot;&#125; Port &quot;vm1-eth0&quot; tag: 1000 Interface &quot;vm1-eth0&quot; type: internal Bridge br-public Port trunk_pub trunks: [206] Interface trunk_pub type: patch options: &#123;peer=&quot;trunk_sw3&quot;&#125; Port router-qg tag: 206 Interface router-qg type: internal Port br-public Interface br-public type: internal Bridge sw Port &quot;trunk_sw3&quot; trunks: [206] Interface &quot;trunk_sw3&quot; type: patch options: &#123;peer=trunk_pub&#125; Port provider-gw tag: 206 Interface provider-gw type: internal Port &quot;trunk_sw2&quot; trunks: [1000, 2000] Interface &quot;trunk_sw2&quot; type: patch options: &#123;peer=&quot;trunk_int2&quot;&#125; Port &quot;trunk_sw1&quot; trunks: [206, 1000, 2000] Interface &quot;trunk_sw1&quot; type: patch options: &#123;peer=&quot;trunk_int1&quot;&#125; Port sw Interface sw type: internal Bridge &quot;br-int-2&quot; Port &quot;br-int-2&quot; Interface &quot;br-int-2&quot; type: internal Port &quot;dhcp1-tap&quot; tag: 1000 Interface &quot;dhcp1-tap&quot; type: internal Port &quot;router-tap1&quot; tag: 1000 Interface &quot;router-tap1&quot; type: internal Port &quot;router-tap2&quot; tag: 2000 Interface &quot;router-tap2&quot; type: internal Port &quot;trunk_int2&quot; trunks: [1000, 2000] Interface &quot;trunk_int2&quot; type: patch options: &#123;peer=&quot;trunk_sw2&quot;&#125; Port &quot;dhcp2-tap&quot; tag: 2000 Interface &quot;dhcp2-tap&quot; type: internal Bridge br-ex Port &quot;enp0s8&quot; Interface &quot;enp0s8&quot; Port ex-gw Interface ex-gw type: internal Port br-ex Interface br-ex type: internal ovs_version: &quot;2.5.2&quot;]]></content>
@@ -279,8 +292,8 @@
         <category>TCP</category>
       </categories>
       <tags>
-        <tag>tcp/ip</tag>
         <tag>拥塞控制</tag>
+        <tag>tcp/ip</tag>
         <tag>Linux拥塞控制基本概念</tag>
       </tags>
   </entry>
@@ -392,8 +405,8 @@
       </categories>
       <tags>
         <tag>tcp/ip</tag>
-        <tag>socket</tag>
         <tag>kernel3.10.0-514.16.1</tag>
+        <tag>socket</tag>
       </tags>
   </entry>
   <entry>
@@ -429,8 +442,8 @@
         <category>linux kernel</category>
       </categories>
       <tags>
-        <tag>socket</tag>
         <tag>kernel3.10.0-514.16.1</tag>
+        <tag>socket</tag>
         <tag>systemtap</tag>
       </tags>
   </entry>
@@ -484,8 +497,8 @@
       </categories>
       <tags>
         <tag>tcp/ip</tag>
-        <tag>kernel3.10.0-514.16.1</tag>
         <tag>bind</tag>
+        <tag>kernel3.10.0-514.16.1</tag>
       </tags>
   </entry>
   <entry>
@@ -497,8 +510,8 @@
       </categories>
       <tags>
         <tag>tcp/ip</tag>
-        <tag>socket</tag>
         <tag>kernel3.10.0-514.16.1</tag>
+        <tag>socket</tag>
       </tags>
   </entry>
   <entry>
@@ -510,8 +523,8 @@
       </categories>
       <tags>
         <tag>tcp/ip</tag>
-        <tag>socket</tag>
         <tag>kernel3.10.0-514.16.1</tag>
+        <tag>socket</tag>
       </tags>
   </entry>
   <entry>
