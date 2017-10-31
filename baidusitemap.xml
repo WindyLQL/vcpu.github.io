@@ -4,6 +4,30 @@
 
     
   <url>
+    <loc>http://vcpu.me/openstackmoni/</loc>
+    <lastmod>2017-10-31T09:07:26.000Z</lastmod>
+    <data>
+        <display>
+        <title>openstack 网络环境模拟</title>
+        <pubTime>2017-10-30T10:00:00.000Z</pubTime>
+        
+        <tag>openstack</tag>
+         
+        <tag>ubuntun16.04</tag>
+         
+        <tag>实验性质</tag>
+         
+         
+           
+             
+              <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/linuxarp/</loc>
     <lastmod>2017-10-30T10:01:40.000Z</lastmod>
     <data>
@@ -682,9 +706,9 @@
         
         <tag>tcp/ip</tag>
          
-        <tag>kernel3.10.0-514.16.1</tag>
-         
         <tag>socket</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
          
          
            
@@ -727,9 +751,9 @@
         
         <tag>tcp/ip</tag>
          
-        <tag>kernel3.10.0-514.16.1</tag>
-         
         <tag>socket</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
          
          
            
@@ -771,9 +795,9 @@
         
         <tag>tcp/ip</tag>
          
-        <tag>kernel3.10.0-514.16.1</tag>
-         
         <tag>socket</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
          
          
            
@@ -839,9 +863,9 @@
         <title>systemtap使用调试记录（二）</title>
         <pubTime>2017-06-20T06:52:23.000Z</pubTime>
         
-        <tag>kernel3.10.0-514.16.1</tag>
-         
         <tag>socket</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
          
         <tag>systemtap</tag>
          
@@ -917,9 +941,9 @@
         
         <tag>tcp/ip</tag>
          
-        <tag>bind</tag>
-         
         <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>bind</tag>
          
          
            
