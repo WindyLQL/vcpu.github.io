@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://vcpu.me/"/>
-  <updated>2017-10-31T12:40:57.000Z</updated>
+  <updated>2017-10-31T12:58:15.000Z</updated>
   <id>http://vcpu.me/</id>
   
   <author>
@@ -16,11 +16,50 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>mininet+RYU环境</title>
+    <title>mininet界面配置拓扑方法</title>
+    <link href="http://vcpu.me/mininet-jiemian/"/>
+    <id>http://vcpu.me/mininet-jiemian/</id>
+    <published>2017-10-31T10:00:00.000Z</published>
+    <updated>2017-10-31T12:58:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="在ubuntun系统中执行如下命令"><a href="#在ubuntun系统中执行如下命令" class="headerlink" title="在ubuntun系统中执行如下命令"></a>在ubuntun系统中执行如下命令</h1><hr>
+<p>/usr/lib/python2.7/dist-packages/mininet/examples/miniedit.py</p>
+<p><img src="/myimages/CF775C3AE535EE1763BF0BEC704D5FB5.jpg" alt=""><br><a id="more"></a></p>
+<h1 id="遇到问题："><a href="#遇到问题：" class="headerlink" title="遇到问题："></a>遇到问题：</h1><hr>
+<p>在设置控制器时候，点击run时候，miniedit退出并报错如下c0 cannot find required executable controller</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">apt-get install openvswitch-testcontroller</div><div class="line"> cp /usr/bin/ovs-testcontroller /usr/bin/ovs-controller</div><div class="line">ln /usr/bin/ovs-controller /usr/bin/controller</div></pre></td></tr></table></figure>
+<h1 id="环境搭建过程"><a href="#环境搭建过程" class="headerlink" title="环境搭建过程"></a>环境搭建过程</h1><hr>
+<h2 id="步骤1-root模式执行python-usr-lib-python2-7-dist-packages-mininet-examples-miniedit-py"><a href="#步骤1-root模式执行python-usr-lib-python2-7-dist-packages-mininet-examples-miniedit-py" class="headerlink" title="步骤1:root模式执行python /usr/lib/python2.7/dist-packages/mininet/examples/miniedit.py"></a>步骤1:root模式执行python /usr/lib/python2.7/dist-packages/mininet/examples/miniedit.py</h2><p><img src="/myimages/303876CCEBD4BB8D5F7245636AD68AB6.jpg" alt=""></p>
+<h2 id="步骤2-设置h1和h2、h3的IP地址分别为10-10-10-1、10-10-10-2、10-10-10-3"><a href="#步骤2-设置h1和h2、h3的IP地址分别为10-10-10-1、10-10-10-2、10-10-10-3" class="headerlink" title="步骤2:设置h1和h2、h3的IP地址分别为10.10.10.1、10.10.10.2、10.10.10.3"></a>步骤2:设置h1和h2、h3的IP地址分别为10.10.10.1、10.10.10.2、10.10.10.3</h2><p><img src="/myimages/F12E3D9369C8DF95997D09E800F46C20.jpg" alt=""><img src="/myimages/AF38E7D6F9D052A0AF6CCA87A21AE23A.jpg" alt=""><img src="/myimages/6B92E1D27701A0B1E72E22D31EE0E626.jpg" alt=""></p>
+<h2 id="步骤3-点击run运行"><a href="#步骤3-点击run运行" class="headerlink" title="步骤3:点击run运行"></a>步骤3:点击run运行</h2><h2 id="步骤4-保存该脚本为1-py，下次直接运行"><a href="#步骤4-保存该脚本为1-py，下次直接运行" class="headerlink" title="步骤4:保存该脚本为1.py，下次直接运行"></a>步骤4:保存该脚本为1.py，下次直接运行</h2><p><img src="/myimages/3B561F6AACAC60FE926FD0591D4A69D9.jpg" alt=""></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~<span class="comment"># cat 1.py</span></div><div class="line"><span class="comment">#!/usr/bin/python</span></div><div class="line"></div><div class="line"><span class="keyword">from</span> mininet.net <span class="keyword">import</span> Mininet</div><div class="line"><span class="keyword">from</span> mininet.node <span class="keyword">import</span> Controller, RemoteController, OVSController</div><div class="line"><span class="keyword">from</span> mininet.node <span class="keyword">import</span> CPULimitedHost, Host, Node</div><div class="line"><span class="keyword">from</span> mininet.node <span class="keyword">import</span> OVSKernelSwitch, UserSwitch</div><div class="line"><span class="keyword">from</span> mininet.node <span class="keyword">import</span> IVSSwitch</div><div class="line"><span class="keyword">from</span> mininet.cli <span class="keyword">import</span> CLI</div><div class="line"><span class="keyword">from</span> mininet.log <span class="keyword">import</span> setLogLevel, info</div><div class="line"><span class="keyword">from</span> mininet.link <span class="keyword">import</span> TCLink, Intf</div><div class="line"><span class="keyword">from</span> subprocess <span class="keyword">import</span> call</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">myNetwork</span><span class="params">()</span>:</span></div><div class="line"></div><div class="line">    net = Mininet( topo=<span class="keyword">None</span>,</div><div class="line">                   build=<span class="keyword">False</span>,</div><div class="line">                   ipBase=<span class="string">'10.0.0.0/8'</span>)</div><div class="line"></div><div class="line">    info( <span class="string">'*** Adding controller\n'</span> )</div><div class="line">    c0=net.addController(name=<span class="string">'c0'</span>,</div><div class="line">                      controller=Controller,</div><div class="line">                      protocol=<span class="string">'tcp'</span>,</div><div class="line">                      port=<span class="number">6633</span>)</div><div class="line"></div><div class="line">    info( <span class="string">'*** Add switches\n'</span>)</div><div class="line">    s1 = net.addSwitch(<span class="string">'s1'</span>, cls=OVSKernelSwitch, listenPort=<span class="number">6633</span>)</div><div class="line">    s2 = net.addSwitch(<span class="string">'s2'</span>, cls=OVSKernelSwitch, listenPort=<span class="number">6633</span>)</div><div class="line"></div><div class="line">    info( <span class="string">'*** Add hosts\n'</span>)</div><div class="line">    h3 = net.addHost(<span class="string">'h3'</span>, cls=Host, ip=<span class="string">'10.10.10.3'</span>, defaultRoute=<span class="keyword">None</span>)</div><div class="line">    h1 = net.addHost(<span class="string">'h1'</span>, cls=Host, ip=<span class="string">'10.10.10.1'</span>, defaultRoute=<span class="keyword">None</span>)</div><div class="line">    h2 = net.addHost(<span class="string">'h2'</span>, cls=Host, ip=<span class="string">'10.10.10.2'</span>, defaultRoute=<span class="keyword">None</span>)</div><div class="line"></div><div class="line">    info( <span class="string">'*** Add links\n'</span>)</div><div class="line">    net.addLink(h1, s1)</div><div class="line">    net.addLink(s1, h2)</div><div class="line">    net.addLink(s2, h3)</div><div class="line">    net.addLink(s1, s2)</div><div class="line"></div><div class="line">    info( <span class="string">'*** Starting network\n'</span>)</div><div class="line">    net.build()</div><div class="line">    info( <span class="string">'*** Starting controllers\n'</span>)</div><div class="line">    <span class="keyword">for</span> controller <span class="keyword">in</span> net.controllers:</div><div class="line">        controller.start()</div><div class="line"></div><div class="line">    info( <span class="string">'*** Starting switches\n'</span>)</div><div class="line">    net.get(<span class="string">'s1'</span>).start([c0])</div><div class="line">    net.get(<span class="string">'s2'</span>).start([c0])</div><div class="line"></div><div class="line">    info( <span class="string">'*** Post configure switches and hosts\n'</span>)</div><div class="line">    s1.cmd(<span class="string">'ifconfig s1 127.0.0.1'</span>)</div><div class="line">    s2.cmd(<span class="string">'ifconfig s2 127.0.0.1'</span>)</div><div class="line"></div><div class="line">    CLI(net)</div><div class="line">    net.stop()</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">    setLogLevel( <span class="string">'info'</span> )</div><div class="line">    myNetwork()</div></pre></td></tr></table></figure>
+<h2 id="步骤5-直接运行python-1-py恢复环境"><a href="#步骤5-直接运行python-1-py恢复环境" class="headerlink" title="步骤5: 直接运行python 1.py恢复环境"></a>步骤5: 直接运行python 1.py恢复环境</h2>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;在ubuntun系统中执行如下命令&quot;&gt;&lt;a href=&quot;#在ubuntun系统中执行如下命令&quot; class=&quot;headerlink&quot; title=&quot;在ubuntun系统中执行如下命令&quot;&gt;&lt;/a&gt;在ubuntun系统中执行如下命令&lt;/h1&gt;&lt;hr&gt;
+&lt;p&gt;/usr/lib/python2.7/dist-packages/mininet/examples/miniedit.py&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/myimages/CF775C3AE535EE1763BF0BEC704D5FB5.jpg&quot; alt=&quot;&quot;&gt;&lt;br&gt;
+    
+    </summary>
+    
+      <category term="RYU" scheme="http://vcpu.me/categories/RYU/"/>
+    
+    
+      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
+    
+      <category term="mininet界面配置" scheme="http://vcpu.me/tags/mininet%E7%95%8C%E9%9D%A2%E9%85%8D%E7%BD%AE/"/>
+    
+      <category term="实验性质" scheme="http://vcpu.me/tags/%E5%AE%9E%E9%AA%8C%E6%80%A7%E8%B4%A8/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>mininet+RYU环境安装</title>
     <link href="http://vcpu.me/mininet1/"/>
     <id>http://vcpu.me/mininet1/</id>
     <published>2017-10-31T10:00:00.000Z</published>
-    <updated>2017-10-31T12:40:57.000Z</updated>
+    <updated>2017-10-31T12:57:06.000Z</updated>
     
     <content type="html"><![CDATA[<h1 id="安装mininet"><a href="#安装mininet" class="headerlink" title="安装mininet"></a>安装mininet</h1><hr>
 <p>apt-get install mininet</p>
@@ -431,62 +470,6 @@
   </entry>
   
   <entry>
-    <title>metadata</title>
-    <link href="http://vcpu.me/metadata/"/>
-    <id>http://vcpu.me/metadata/</id>
-    <published>2017-08-24T10:00:00.000Z</published>
-    <updated>2017-08-25T07:57:18.000Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="metadata基本概念"><a href="#metadata基本概念" class="headerlink" title="metadata基本概念"></a>metadata基本概念</h1><p>在创建虚拟机的时候，用户往往需要对虚拟机进行一些配置，比如：开启一些服务、安装某些包、添加 SSH 秘钥、配置 hostname 等等。</p>
-<p>在 OpenStack 中，这些配置信息被分成两类：metadata 和 user data。</p>
-<ul>
-<li><p>Metadata 主要包括虚拟机自身的一些常用属性，如 hostname、网络配置信息、SSH 登陆秘钥等，主要的形式为键值对。而 user data 主要包括一些命令、脚本等。</p>
-</li>
-<li><p>User data 通过文件传递，并支持多种文件格式，包括 gzip 压缩文件、shell 脚本、cloud-init 配置文件等。虽然 metadata 和 user data 并不相同，但是 OpenStack 向虚拟机提供这两种信息的机制是一致的，只是虚拟机在获取到信息后，对两者的处理方式不同罢了。所以下文统一用 matadata 来描述。</p>
-</li>
-</ul>
-<p>在 OpenStack 中，虚拟机获取 Metadata 信息的方式有两种：<br>Config drive 和 metadata RESTful 服务。此文只关注解析metadata RESTful 方式<br><a id="more"></a></p>
-<h1 id="Metadata-RESTful-工作原理"><a href="#Metadata-RESTful-工作原理" class="headerlink" title="Metadata RESTful 工作原理"></a>Metadata RESTful 工作原理</h1><p><img src="/myimages/metadata.png" alt="metadata"></p>
-<h1 id="meta作用"><a href="#meta作用" class="headerlink" title="meta作用"></a>meta作用</h1><p>可以使用metadata技术实现用户个性的配置</p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>Metadata 服务为用户自定义配置虚拟机提供了有效的解决方案。本文剖析了 OpenStack 提供 metadata 服务的RESTful机制。那么Config drive 和RESTful机制差别在哪？</p>
-<ul>
-<li>Config drive 机制主要用于配置虚拟机的网络信息，包括 IP、子网掩码、网关等。当虚拟机无法通过 DHCP 正确获取网络信息时，config drive 是获取 metadata 信息的必要方式。</li>
-<li>如果虚拟机能够自动正确配置网络，那么可以通过 RESTful 服务的方式获取 metadata 信息。</li>
-</ul>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;metadata基本概念&quot;&gt;&lt;a href=&quot;#metadata基本概念&quot; class=&quot;headerlink&quot; title=&quot;metadata基本概念&quot;&gt;&lt;/a&gt;metadata基本概念&lt;/h1&gt;&lt;p&gt;在创建虚拟机的时候，用户往往需要对虚拟机进行一些配置，比如：开启一些服务、安装某些包、添加 SSH 秘钥、配置 hostname 等等。&lt;/p&gt;
-&lt;p&gt;在 OpenStack 中，这些配置信息被分成两类：metadata 和 user data。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Metadata 主要包括虚拟机自身的一些常用属性，如 hostname、网络配置信息、SSH 登陆秘钥等，主要的形式为键值对。而 user data 主要包括一些命令、脚本等。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;User data 通过文件传递，并支持多种文件格式，包括 gzip 压缩文件、shell 脚本、cloud-init 配置文件等。虽然 metadata 和 user data 并不相同，但是 OpenStack 向虚拟机提供这两种信息的机制是一致的，只是虚拟机在获取到信息后，对两者的处理方式不同罢了。所以下文统一用 matadata 来描述。&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;在 OpenStack 中，虚拟机获取 Metadata 信息的方式有两种：&lt;br&gt;Config drive 和 metadata RESTful 服务。此文只关注解析metadata RESTful 方式&lt;br&gt;
-    
-    </summary>
-    
-      <category term="openstack" scheme="http://vcpu.me/categories/openstack/"/>
-    
-    
-      <category term="openstack" scheme="http://vcpu.me/tags/openstack/"/>
-    
-      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
-    
-      <category term="metadata" scheme="http://vcpu.me/tags/metadata/"/>
-    
-      <category term="nova-api-metadata" scheme="http://vcpu.me/tags/nova-api-metadata/"/>
-    
-      <category term="Neutron-ns-metadata-proxy" scheme="http://vcpu.me/tags/Neutron-ns-metadata-proxy/"/>
-    
-      <category term="Neutron-metadata-agent" scheme="http://vcpu.me/tags/Neutron-metadata-agent/"/>
-    
-  </entry>
-  
-  <entry>
     <title>图示openstack -组件间基本关系和虚拟机创建</title>
     <link href="http://vcpu.me/vmcreate/"/>
     <id>http://vcpu.me/vmcreate/</id>
@@ -556,6 +539,62 @@
       <category term="openstack" scheme="http://vcpu.me/tags/openstack/"/>
     
       <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>metadata</title>
+    <link href="http://vcpu.me/metadata/"/>
+    <id>http://vcpu.me/metadata/</id>
+    <published>2017-08-24T10:00:00.000Z</published>
+    <updated>2017-08-25T07:57:18.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="metadata基本概念"><a href="#metadata基本概念" class="headerlink" title="metadata基本概念"></a>metadata基本概念</h1><p>在创建虚拟机的时候，用户往往需要对虚拟机进行一些配置，比如：开启一些服务、安装某些包、添加 SSH 秘钥、配置 hostname 等等。</p>
+<p>在 OpenStack 中，这些配置信息被分成两类：metadata 和 user data。</p>
+<ul>
+<li><p>Metadata 主要包括虚拟机自身的一些常用属性，如 hostname、网络配置信息、SSH 登陆秘钥等，主要的形式为键值对。而 user data 主要包括一些命令、脚本等。</p>
+</li>
+<li><p>User data 通过文件传递，并支持多种文件格式，包括 gzip 压缩文件、shell 脚本、cloud-init 配置文件等。虽然 metadata 和 user data 并不相同，但是 OpenStack 向虚拟机提供这两种信息的机制是一致的，只是虚拟机在获取到信息后，对两者的处理方式不同罢了。所以下文统一用 matadata 来描述。</p>
+</li>
+</ul>
+<p>在 OpenStack 中，虚拟机获取 Metadata 信息的方式有两种：<br>Config drive 和 metadata RESTful 服务。此文只关注解析metadata RESTful 方式<br><a id="more"></a></p>
+<h1 id="Metadata-RESTful-工作原理"><a href="#Metadata-RESTful-工作原理" class="headerlink" title="Metadata RESTful 工作原理"></a>Metadata RESTful 工作原理</h1><p><img src="/myimages/metadata.png" alt="metadata"></p>
+<h1 id="meta作用"><a href="#meta作用" class="headerlink" title="meta作用"></a>meta作用</h1><p>可以使用metadata技术实现用户个性的配置</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>Metadata 服务为用户自定义配置虚拟机提供了有效的解决方案。本文剖析了 OpenStack 提供 metadata 服务的RESTful机制。那么Config drive 和RESTful机制差别在哪？</p>
+<ul>
+<li>Config drive 机制主要用于配置虚拟机的网络信息，包括 IP、子网掩码、网关等。当虚拟机无法通过 DHCP 正确获取网络信息时，config drive 是获取 metadata 信息的必要方式。</li>
+<li>如果虚拟机能够自动正确配置网络，那么可以通过 RESTful 服务的方式获取 metadata 信息。</li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;metadata基本概念&quot;&gt;&lt;a href=&quot;#metadata基本概念&quot; class=&quot;headerlink&quot; title=&quot;metadata基本概念&quot;&gt;&lt;/a&gt;metadata基本概念&lt;/h1&gt;&lt;p&gt;在创建虚拟机的时候，用户往往需要对虚拟机进行一些配置，比如：开启一些服务、安装某些包、添加 SSH 秘钥、配置 hostname 等等。&lt;/p&gt;
+&lt;p&gt;在 OpenStack 中，这些配置信息被分成两类：metadata 和 user data。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Metadata 主要包括虚拟机自身的一些常用属性，如 hostname、网络配置信息、SSH 登陆秘钥等，主要的形式为键值对。而 user data 主要包括一些命令、脚本等。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;User data 通过文件传递，并支持多种文件格式，包括 gzip 压缩文件、shell 脚本、cloud-init 配置文件等。虽然 metadata 和 user data 并不相同，但是 OpenStack 向虚拟机提供这两种信息的机制是一致的，只是虚拟机在获取到信息后，对两者的处理方式不同罢了。所以下文统一用 matadata 来描述。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在 OpenStack 中，虚拟机获取 Metadata 信息的方式有两种：&lt;br&gt;Config drive 和 metadata RESTful 服务。此文只关注解析metadata RESTful 方式&lt;br&gt;
+    
+    </summary>
+    
+      <category term="openstack" scheme="http://vcpu.me/categories/openstack/"/>
+    
+    
+      <category term="openstack" scheme="http://vcpu.me/tags/openstack/"/>
+    
+      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
+    
+      <category term="metadata" scheme="http://vcpu.me/tags/metadata/"/>
+    
+      <category term="nova-api-metadata" scheme="http://vcpu.me/tags/nova-api-metadata/"/>
+    
+      <category term="Neutron-ns-metadata-proxy" scheme="http://vcpu.me/tags/Neutron-ns-metadata-proxy/"/>
+    
+      <category term="Neutron-metadata-agent" scheme="http://vcpu.me/tags/Neutron-metadata-agent/"/>
     
   </entry>
   
@@ -873,6 +912,88 @@
   </entry>
   
   <entry>
+    <title>openvSwitch tunnel</title>
+    <link href="http://vcpu.me/openvswitch2/"/>
+    <id>http://vcpu.me/openvswitch2/</id>
+    <published>2017-08-03T10:00:00.000Z</published>
+    <updated>2017-08-07T09:45:44.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="ovs-tunnel"><a href="#ovs-tunnel" class="headerlink" title="ovs tunnel"></a>ovs tunnel</h2><h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><p><img src="/myimages/tunnel.png" alt="tunnel"></p>
+<h3 id="实验拓扑搭建基础脚本"><a href="#实验拓扑搭建基础脚本" class="headerlink" title="实验拓扑搭建基础脚本"></a>实验拓扑搭建基础脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">#vbox虚拟机1</div><div class="line">ip netns add left</div><div class="line">ip link add name veth1 type veth peer name sw1-p1</div><div class="line">ip link set dev veth1 netns left</div><div class="line">ip netns exec left ifconfig veth1 10.0.0.1/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw1</div><div class="line">ovs-vsctl add-port sw1 sw1-p1</div><div class="line">ip link set sw1-p1 up</div><div class="line"></div><div class="line">#vbox虚拟机2</div><div class="line">ip netns add right</div><div class="line">ip link add name veth1 type veth peer name sw2-p1</div><div class="line">ip link set dev veth1 netns right</div><div class="line">ip netns exec right ifconfig veth1 10.0.0.2/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw2</div><div class="line">ovs-vsctl add-port sw2 sw2-p1</div><div class="line">ip link set sw2-p1 up</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<h3 id="GRE-TUNNEL-配置"><a href="#GRE-TUNNEL-配置" class="headerlink" title="GRE TUNNEL 配置"></a>GRE TUNNEL 配置</h3><ul>
+<li><p>vbox虚拟机1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set Interface tun0 type=gre options:remote_ip=10.30.10.141</div></pre></td></tr></table></figure>
+</li>
+<li><p>vbox虚拟机2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set Interface tun0 type=gre options:remote_ip=10.30.10.145</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="查看配置"><a href="#查看配置" class="headerlink" title="查看配置"></a>查看配置</h4><ul>
+<li><p>vbox虚拟机1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">29c5cc05-2a31-4f14-a304-3a697698f96a</div><div class="line">    Bridge &quot;sw1&quot;</div><div class="line">        Port &quot;sw1&quot;</div><div class="line">            Interface &quot;sw1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;sw1-p1&quot;</div><div class="line">            Interface &quot;sw1-p1&quot;</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: gre</div><div class="line">                options: &#123;remote_ip=&quot;10.30.10.141&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div></pre></td></tr></table></figure>
+</li>
+<li><p>vbox虚拟机2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">0f92aaa0-5385-48f5-a54a-644e05652f59</div><div class="line">    Bridge &quot;sw2&quot;</div><div class="line">        Port &quot;sw2-p1&quot;</div><div class="line">            Interface &quot;sw2-p1&quot;</div><div class="line">        Port &quot;sw2&quot;</div><div class="line">            Interface &quot;sw2&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: gre</div><div class="line">                options: &#123;remote_ip=&quot;10.30.10.145&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div><div class="line">root@controller-VirtualBox</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right"><a href="#连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right" class="headerlink" title="连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right"></a>连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ip netns exec left ping 10.0.0.2</div><div class="line">PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.953 ms</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.609 ms</div></pre></td></tr></table></figure>
+<h3 id="VXLAN-TUNNEL配置"><a href="#VXLAN-TUNNEL配置" class="headerlink" title="VXLAN TUNNEL配置"></a>VXLAN TUNNEL配置</h3><ul>
+<li><p>vbox虚拟机1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set Interface tun0 type=vxlan options:local_ip=10.30.10.145 options:remote_ip=10.30.10.141</div></pre></td></tr></table></figure>
+</li>
+<li><p>vbbox虚拟机2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set Interface tun0 type=vxlan options:local_ip=10.30.10.141 options:remote_ip=10.30.10.145</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="查看配置-1"><a href="#查看配置-1" class="headerlink" title="查看配置"></a>查看配置</h4><ul>
+<li><p>vbox虚拟机1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">29c5cc05-2a31-4f14-a304-3a697698f96a</div><div class="line">    Bridge &quot;sw1&quot;</div><div class="line">        Port &quot;sw1&quot;</div><div class="line">            Interface &quot;sw1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;sw1-p1&quot;</div><div class="line">            Interface &quot;sw1-p1&quot;</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: vxlan</div><div class="line">                options: &#123;local_ip=&quot;10.30.10.145&quot;, remote_ip=&quot;10.30.10.141&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div></pre></td></tr></table></figure>
+</li>
+<li><p>vbox虚拟机2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">0f92aaa0-5385-48f5-a54a-644e05652f59</div><div class="line">    Bridge &quot;sw2&quot;</div><div class="line">        Port &quot;sw2-p1&quot;</div><div class="line">            Interface &quot;sw2-p1&quot;</div><div class="line">        Port &quot;sw2&quot;</div><div class="line">            Interface &quot;sw2&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: vxlan</div><div class="line">                options: &#123;local_ip=&quot;10.30.10.141&quot;, remote_ip=&quot;10.30.10.145&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div><div class="line">root@controller-VirtualBox:~#</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right-1"><a href="#连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right-1" class="headerlink" title="连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right"></a>连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ip netns exec left ping 10.0.0.2</div><div class="line">PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.905 ms</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.490 ms</div><div class="line">2 packets transmitted, 2 received, 0% packet loss, time 1001ms</div><div class="line">rtt min/avg/max/mdev = 0.490/0.697/0.905/0.209 ms</div></pre></td></tr></table></figure>
+<h3 id="ipsec-gre配置"><a href="#ipsec-gre配置" class="headerlink" title="ipsec_gre配置"></a>ipsec_gre配置</h3><p>如果运行失败或则无法创建接口，首先安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">apt-get install openvswitch* -y</div></pre></td></tr></table></figure></p>
+<ul>
+<li><p>vbox虚拟机1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set interface tun0 type=ipsec_gre options:remote_ip=10.30.10.141 options:psk=test123</div></pre></td></tr></table></figure>
+</li>
+<li><p>vbbox虚拟机2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set interface tun0 type=ipsec_gre options:remote_ip=10.30.10.145 options:psk=test123</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>在ipsec gre tunnel情况下，我的环境中并没有完成连通，而且日志中也没有报错；具体原因还需要探究。当然我已经翻阅论坛，然并卵，哎。。。，暂且未解之谜吧</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;ovs-tunnel&quot;&gt;&lt;a href=&quot;#ovs-tunnel&quot; class=&quot;headerlink&quot; title=&quot;ovs tunnel&quot;&gt;&lt;/a&gt;ovs tunnel&lt;/h2&gt;&lt;h3 id=&quot;实验拓扑&quot;&gt;&lt;a href=&quot;#实验拓扑&quot; class=&quot;headerlink&quot; title=&quot;实验拓扑&quot;&gt;&lt;/a&gt;实验拓扑&lt;/h3&gt;&lt;p&gt;&lt;img src=&quot;/myimages/tunnel.png&quot; alt=&quot;tunnel&quot;&gt;&lt;/p&gt;
+&lt;h3 id=&quot;实验拓扑搭建基础脚本&quot;&gt;&lt;a href=&quot;#实验拓扑搭建基础脚本&quot; class=&quot;headerlink&quot; title=&quot;实验拓扑搭建基础脚本&quot;&gt;&lt;/a&gt;实验拓扑搭建基础脚本&lt;/h3&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;8&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;9&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;10&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;11&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;12&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;13&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;14&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;15&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;16&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;17&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;18&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;19&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;#vbox虚拟机1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns add left&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link add name veth1 type veth peer name sw1-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set dev veth1 netns left&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns exec left ifconfig veth1 10.0.0.1/24 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-br sw1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-port sw1 sw1-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set sw1-p1 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;#vbox虚拟机2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns add right&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link add name veth1 type veth peer name sw2-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set dev veth1 netns right&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns exec right ifconfig veth1 10.0.0.2/24 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-br sw2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-port sw2 sw2-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set sw2-p1 up&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+    
+    </summary>
+    
+      <category term="网络" scheme="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+    
+    
+      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
+    
+      <category term="ovs" scheme="http://vcpu.me/tags/ovs/"/>
+    
+      <category term="虚拟交换机" scheme="http://vcpu.me/tags/%E8%99%9A%E6%8B%9F%E4%BA%A4%E6%8D%A2%E6%9C%BA/"/>
+    
+      <category term="gre" scheme="http://vcpu.me/tags/gre/"/>
+    
+      <category term="vxlan" scheme="http://vcpu.me/tags/vxlan/"/>
+    
+      <category term="ovx tunnel" scheme="http://vcpu.me/tags/ovx-tunnel/"/>
+    
+      <category term="ipsec gre" scheme="http://vcpu.me/tags/ipsec-gre/"/>
+    
+  </entry>
+  
+  <entry>
     <title>openvSwitch mirror、Qos、STP</title>
     <link href="http://vcpu.me/openvswitch1/"/>
     <id>http://vcpu.me/openvswitch1/</id>
@@ -1021,88 +1142,6 @@
       <category term="Qos" scheme="http://vcpu.me/tags/Qos/"/>
     
       <category term="STP" scheme="http://vcpu.me/tags/STP/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>openvSwitch tunnel</title>
-    <link href="http://vcpu.me/openvswitch2/"/>
-    <id>http://vcpu.me/openvswitch2/</id>
-    <published>2017-08-03T10:00:00.000Z</published>
-    <updated>2017-08-07T09:45:44.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="ovs-tunnel"><a href="#ovs-tunnel" class="headerlink" title="ovs tunnel"></a>ovs tunnel</h2><h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><p><img src="/myimages/tunnel.png" alt="tunnel"></p>
-<h3 id="实验拓扑搭建基础脚本"><a href="#实验拓扑搭建基础脚本" class="headerlink" title="实验拓扑搭建基础脚本"></a>实验拓扑搭建基础脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">#vbox虚拟机1</div><div class="line">ip netns add left</div><div class="line">ip link add name veth1 type veth peer name sw1-p1</div><div class="line">ip link set dev veth1 netns left</div><div class="line">ip netns exec left ifconfig veth1 10.0.0.1/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw1</div><div class="line">ovs-vsctl add-port sw1 sw1-p1</div><div class="line">ip link set sw1-p1 up</div><div class="line"></div><div class="line">#vbox虚拟机2</div><div class="line">ip netns add right</div><div class="line">ip link add name veth1 type veth peer name sw2-p1</div><div class="line">ip link set dev veth1 netns right</div><div class="line">ip netns exec right ifconfig veth1 10.0.0.2/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw2</div><div class="line">ovs-vsctl add-port sw2 sw2-p1</div><div class="line">ip link set sw2-p1 up</div></pre></td></tr></table></figure>
-<a id="more"></a>
-<h3 id="GRE-TUNNEL-配置"><a href="#GRE-TUNNEL-配置" class="headerlink" title="GRE TUNNEL 配置"></a>GRE TUNNEL 配置</h3><ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set Interface tun0 type=gre options:remote_ip=10.30.10.141</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set Interface tun0 type=gre options:remote_ip=10.30.10.145</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="查看配置"><a href="#查看配置" class="headerlink" title="查看配置"></a>查看配置</h4><ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">29c5cc05-2a31-4f14-a304-3a697698f96a</div><div class="line">    Bridge &quot;sw1&quot;</div><div class="line">        Port &quot;sw1&quot;</div><div class="line">            Interface &quot;sw1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;sw1-p1&quot;</div><div class="line">            Interface &quot;sw1-p1&quot;</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: gre</div><div class="line">                options: &#123;remote_ip=&quot;10.30.10.141&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">0f92aaa0-5385-48f5-a54a-644e05652f59</div><div class="line">    Bridge &quot;sw2&quot;</div><div class="line">        Port &quot;sw2-p1&quot;</div><div class="line">            Interface &quot;sw2-p1&quot;</div><div class="line">        Port &quot;sw2&quot;</div><div class="line">            Interface &quot;sw2&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: gre</div><div class="line">                options: &#123;remote_ip=&quot;10.30.10.145&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div><div class="line">root@controller-VirtualBox</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right"><a href="#连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right" class="headerlink" title="连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right"></a>连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ip netns exec left ping 10.0.0.2</div><div class="line">PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.953 ms</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.609 ms</div></pre></td></tr></table></figure>
-<h3 id="VXLAN-TUNNEL配置"><a href="#VXLAN-TUNNEL配置" class="headerlink" title="VXLAN TUNNEL配置"></a>VXLAN TUNNEL配置</h3><ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set Interface tun0 type=vxlan options:local_ip=10.30.10.145 options:remote_ip=10.30.10.141</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set Interface tun0 type=vxlan options:local_ip=10.30.10.141 options:remote_ip=10.30.10.145</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="查看配置-1"><a href="#查看配置-1" class="headerlink" title="查看配置"></a>查看配置</h4><ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">29c5cc05-2a31-4f14-a304-3a697698f96a</div><div class="line">    Bridge &quot;sw1&quot;</div><div class="line">        Port &quot;sw1&quot;</div><div class="line">            Interface &quot;sw1&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;sw1-p1&quot;</div><div class="line">            Interface &quot;sw1-p1&quot;</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: vxlan</div><div class="line">                options: &#123;local_ip=&quot;10.30.10.145&quot;, remote_ip=&quot;10.30.10.141&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ovs-vsctl show</div><div class="line">0f92aaa0-5385-48f5-a54a-644e05652f59</div><div class="line">    Bridge &quot;sw2&quot;</div><div class="line">        Port &quot;sw2-p1&quot;</div><div class="line">            Interface &quot;sw2-p1&quot;</div><div class="line">        Port &quot;sw2&quot;</div><div class="line">            Interface &quot;sw2&quot;</div><div class="line">                type: internal</div><div class="line">        Port &quot;tun0&quot;</div><div class="line">            Interface &quot;tun0&quot;</div><div class="line">                type: vxlan</div><div class="line">                options: &#123;local_ip=&quot;10.30.10.141&quot;, remote_ip=&quot;10.30.10.145&quot;&#125;</div><div class="line">    ovs_version: &quot;2.5.2&quot;</div><div class="line">root@controller-VirtualBox:~#</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right-1"><a href="#连通性测试-在vbox虚拟机1-left-ns中ping虚拟机2-right-1" class="headerlink" title="连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right"></a>连通性测试,在vbox虚拟机1 left ns中ping虚拟机2 right</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:~# ip netns exec left ping 10.0.0.2</div><div class="line">PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=1 ttl=64 time=0.905 ms</div><div class="line">64 bytes from 10.0.0.2: icmp_seq=2 ttl=64 time=0.490 ms</div><div class="line">2 packets transmitted, 2 received, 0% packet loss, time 1001ms</div><div class="line">rtt min/avg/max/mdev = 0.490/0.697/0.905/0.209 ms</div></pre></td></tr></table></figure>
-<h3 id="ipsec-gre配置"><a href="#ipsec-gre配置" class="headerlink" title="ipsec_gre配置"></a>ipsec_gre配置</h3><p>如果运行失败或则无法创建接口，首先安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">apt-get install openvswitch* -y</div></pre></td></tr></table></figure></p>
-<ul>
-<li><p>vbox虚拟机1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw1 tun0 -- set interface tun0 type=ipsec_gre options:remote_ip=10.30.10.141 options:psk=test123</div></pre></td></tr></table></figure>
-</li>
-<li><p>vbbox虚拟机2</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port sw2 tun0 -- set interface tun0 type=ipsec_gre options:remote_ip=10.30.10.145 options:psk=test123</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>在ipsec gre tunnel情况下，我的环境中并没有完成连通，而且日志中也没有报错；具体原因还需要探究。当然我已经翻阅论坛，然并卵，哎。。。，暂且未解之谜吧</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;ovs-tunnel&quot;&gt;&lt;a href=&quot;#ovs-tunnel&quot; class=&quot;headerlink&quot; title=&quot;ovs tunnel&quot;&gt;&lt;/a&gt;ovs tunnel&lt;/h2&gt;&lt;h3 id=&quot;实验拓扑&quot;&gt;&lt;a href=&quot;#实验拓扑&quot; class=&quot;headerlink&quot; title=&quot;实验拓扑&quot;&gt;&lt;/a&gt;实验拓扑&lt;/h3&gt;&lt;p&gt;&lt;img src=&quot;/myimages/tunnel.png&quot; alt=&quot;tunnel&quot;&gt;&lt;/p&gt;
-&lt;h3 id=&quot;实验拓扑搭建基础脚本&quot;&gt;&lt;a href=&quot;#实验拓扑搭建基础脚本&quot; class=&quot;headerlink&quot; title=&quot;实验拓扑搭建基础脚本&quot;&gt;&lt;/a&gt;实验拓扑搭建基础脚本&lt;/h3&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;3&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;4&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;5&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;6&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;7&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;8&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;9&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;10&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;11&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;12&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;13&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;14&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;15&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;16&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;17&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;18&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;19&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;#vbox虚拟机1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns add left&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link add name veth1 type veth peer name sw1-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set dev veth1 netns left&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns exec left ifconfig veth1 10.0.0.1/24 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-br sw1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-port sw1 sw1-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set sw1-p1 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;#vbox虚拟机2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns add right&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link add name veth1 type veth peer name sw2-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set dev veth1 netns right&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip netns exec right ifconfig veth1 10.0.0.2/24 up&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-br sw2&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ovs-vsctl add-port sw2 sw2-p1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;ip link set sw2-p1 up&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-    
-    </summary>
-    
-      <category term="网络" scheme="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
-    
-    
-      <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
-    
-      <category term="ovs" scheme="http://vcpu.me/tags/ovs/"/>
-    
-      <category term="虚拟交换机" scheme="http://vcpu.me/tags/%E8%99%9A%E6%8B%9F%E4%BA%A4%E6%8D%A2%E6%9C%BA/"/>
-    
-      <category term="gre" scheme="http://vcpu.me/tags/gre/"/>
-    
-      <category term="vxlan" scheme="http://vcpu.me/tags/vxlan/"/>
-    
-      <category term="ovx tunnel" scheme="http://vcpu.me/tags/ovx-tunnel/"/>
-    
-      <category term="ipsec gre" scheme="http://vcpu.me/tags/ipsec-gre/"/>
     
   </entry>
   
