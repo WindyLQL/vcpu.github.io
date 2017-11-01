@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://vcpu.me/"/>
-  <updated>2017-11-01T02:00:47.000Z</updated>
+  <updated>2017-11-01T02:02:37.000Z</updated>
   <id>http://vcpu.me/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://vcpu.me/ryu-connect-ovs/"/>
     <id>http://vcpu.me/ryu-connect-ovs/</id>
     <published>2017-11-01T10:00:00.000Z</published>
-    <updated>2017-11-01T02:00:47.000Z</updated>
+    <updated>2017-11-01T02:02:37.000Z</updated>
     
     <content type="html"><![CDATA[<h1 id="基本概念介绍"><a href="#基本概念介绍" class="headerlink" title="基本概念介绍"></a>基本概念介绍</h1><h2 id="执行mn命令后，主机监听6633和6634端口"><a href="#执行mn命令后，主机监听6633和6634端口" class="headerlink" title="执行mn命令后，主机监听6633和6634端口"></a>执行mn命令后，主机监听6633和6634端口</h2><hr>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Active Internet connections (only servers)</div><div class="line">Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name</div><div class="line">tcp        <span class="number">0</span>      <span class="number">0</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>:<span class="number">6633</span>            <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>:*               LISTEN      <span class="number">23871</span>/controller</div><div class="line">tcp        <span class="number">0</span>      <span class="number">0</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>:<span class="number">6634</span>            <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>:*               LISTEN      <span class="number">1131</span>/ovs-vswitchd</div></pre></td></tr></table></figure>
@@ -36,7 +36,7 @@
 <h2 id="主动连接也可以设置多个，设置方法如下"><a href="#主动连接也可以设置多个，设置方法如下" class="headerlink" title="主动连接也可以设置多个，设置方法如下"></a>主动连接也可以设置多个，设置方法如下</h2><p>通过通信数据包得知，该ovs会和本地控制器6636和6637通信，如果有packet in事件时候会将该事件分别发一份给这两个控制器，至于两个控制器间的关系协作暂无研究。</p>
 <p>ovs-vsctl set-controller s1 tcp:127.0.0.1:6636 tcp:127.0.0.1:6637</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">Bridge &quot;s1&quot;</div><div class="line">      Controller &quot;tcp:127.0.0.1:6637&quot;</div><div class="line">      Controller &quot;tcp:127.0.0.1:6636&quot;</div><div class="line">      fail_mode: secure</div><div class="line">      Port &quot;s1-eth1&quot;</div><div class="line">          Interface &quot;s1-eth1&quot;</div><div class="line">      Port &quot;s1-eth2&quot;</div><div class="line">          Interface &quot;s1-eth2&quot;</div><div class="line">      Port &quot;s1&quot;</div><div class="line">          Interface &quot;s1&quot;</div><div class="line">              type: internal</div><div class="line"> ovs_version: &quot;2.5.2&quot;</div></pre></td></tr></table></figure>
-<h1 id="RYU控制器连接ovs方法"><a href="#RYU控制器连接ovs方法" class="headerlink" title="RYU控制器连接ovs方法"></a>RYU控制器连接ovs方法</h1><h2 id="具体例子"><a href="#具体例子" class="headerlink" title="具体例子"></a>具体例子</h2><hr>
+<h1 id="RYU控制器连接ovs步骤"><a href="#RYU控制器连接ovs步骤" class="headerlink" title="RYU控制器连接ovs步骤"></a>RYU控制器连接ovs步骤</h1><hr>
 <ul>
 <li>设置ovs s1 主动连接6666端口</li>
 </ul>

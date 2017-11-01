@@ -3,7 +3,7 @@
   <entry>
     <title><![CDATA[RYU连接ovs方法举例]]></title>
     <url>%2Fryu-connect-ovs%2F</url>
-    <content type="text"><![CDATA[基本概念介绍执行mn命令后，主机监听6633和6634端口 1234Active Internet connections (only servers)Proto Recv-Q Send-Q Local Address Foreign Address State PID/Program nametcp 0 0 0.0.0.0:6633 0.0.0.0:* LISTEN 23871/controllertcp 0 0 0.0.0.0:6634 0.0.0.0:* LISTEN 1131/ovs-vswitchd 命令执行记录如下：1234567891011121314151617root@controller-VirtualBox:~# mn*** Creating network*** Adding controller*** Adding hosts:h1 h2*** Adding switches:s1*** Adding links:(h1, s1) (h2, s1)*** Configuring hostsh1 h2*** Starting controllerc0*** Starting 1 switchess1 ...*** Starting CLI:mininet&gt; 端口6633 是ovs连接的控制器端口，且该端口是mn自己启动的端口6634是被动连接端口 12345678910111213Bridge &quot;s1&quot; Controller &quot;tcp:127.0.0.1:6633&quot; is_connected: true Controller &quot;ptcp:6634&quot; fail_mode: secure Port &quot;s1&quot; Interface &quot;s1&quot; type: internal Port &quot;s1-eth1&quot; Interface &quot;s1-eth1&quot; Port &quot;s1-eth2&quot; Interface &quot;s1-eth2&quot; ovs_version: &quot;2.5.2&quot; 端口6634是ovs-vswitchd监听端口是被动连接管理的端口所谓的被动连接端口是指，控制器可以主动连接此端口，控制此ovs，下面就是设置被动端口的 方式 ovs-vsctl set-controller s1 ptcp:8888 特别说明：相对应被动端口，主动端口（ovs主动连接并和控制器通信的端口）设置方式如下: ovs-vsctl set-controller s1 tcp:127.0.0.1:8887 主动连接本地控制器127.0.0.1:8887端口 主动连接也可以设置多个，设置方法如下通过通信数据包得知，该ovs会和本地控制器6636和6637通信，如果有packet in事件时候会将该事件分别发一份给这两个控制器，至于两个控制器间的关系协作暂无研究。 ovs-vsctl set-controller s1 tcp:127.0.0.1:6636 tcp:127.0.0.1:6637 123456789101112Bridge &quot;s1&quot; Controller &quot;tcp:127.0.0.1:6637&quot; Controller &quot;tcp:127.0.0.1:6636&quot; fail_mode: secure Port &quot;s1-eth1&quot; Interface &quot;s1-eth1&quot; Port &quot;s1-eth2&quot; Interface &quot;s1-eth2&quot; Port &quot;s1&quot; Interface &quot;s1&quot; type: internal ovs_version: &quot;2.5.2&quot; RYU控制器连接ovs方法具体例子 设置ovs s1 主动连接6666端口 ovs-vsctl set-controller s1 tcp:127.0.0.1:6666 设置RYU启动服务端口6666 root@controller-VirtualBox:/usr/local/lib/python2.7/dist-packages/ryu/app# ryu-manager –ofp-tcp-listen-port 6666 –verbose simple_switch_13.py 1tcp 0 0 0.0.0.0:6666 0.0.0.0:* LISTEN 24665/python 通过上述设置ovs连接本机127.0.0.1:6666端口走openflow协议连接控制器simple_switch_13.py]]></content>
+    <content type="text"><![CDATA[基本概念介绍执行mn命令后，主机监听6633和6634端口 1234Active Internet connections (only servers)Proto Recv-Q Send-Q Local Address Foreign Address State PID/Program nametcp 0 0 0.0.0.0:6633 0.0.0.0:* LISTEN 23871/controllertcp 0 0 0.0.0.0:6634 0.0.0.0:* LISTEN 1131/ovs-vswitchd 命令执行记录如下：1234567891011121314151617root@controller-VirtualBox:~# mn*** Creating network*** Adding controller*** Adding hosts:h1 h2*** Adding switches:s1*** Adding links:(h1, s1) (h2, s1)*** Configuring hostsh1 h2*** Starting controllerc0*** Starting 1 switchess1 ...*** Starting CLI:mininet&gt; 端口6633 是ovs连接的控制器端口，且该端口是mn自己启动的端口6634是被动连接端口 12345678910111213Bridge &quot;s1&quot; Controller &quot;tcp:127.0.0.1:6633&quot; is_connected: true Controller &quot;ptcp:6634&quot; fail_mode: secure Port &quot;s1&quot; Interface &quot;s1&quot; type: internal Port &quot;s1-eth1&quot; Interface &quot;s1-eth1&quot; Port &quot;s1-eth2&quot; Interface &quot;s1-eth2&quot; ovs_version: &quot;2.5.2&quot; 端口6634是ovs-vswitchd监听端口是被动连接管理的端口所谓的被动连接端口是指，控制器可以主动连接此端口，控制此ovs，下面就是设置被动端口的 方式 ovs-vsctl set-controller s1 ptcp:8888 特别说明：相对应被动端口，主动端口（ovs主动连接并和控制器通信的端口）设置方式如下: ovs-vsctl set-controller s1 tcp:127.0.0.1:8887 主动连接本地控制器127.0.0.1:8887端口 主动连接也可以设置多个，设置方法如下通过通信数据包得知，该ovs会和本地控制器6636和6637通信，如果有packet in事件时候会将该事件分别发一份给这两个控制器，至于两个控制器间的关系协作暂无研究。 ovs-vsctl set-controller s1 tcp:127.0.0.1:6636 tcp:127.0.0.1:6637 123456789101112Bridge &quot;s1&quot; Controller &quot;tcp:127.0.0.1:6637&quot; Controller &quot;tcp:127.0.0.1:6636&quot; fail_mode: secure Port &quot;s1-eth1&quot; Interface &quot;s1-eth1&quot; Port &quot;s1-eth2&quot; Interface &quot;s1-eth2&quot; Port &quot;s1&quot; Interface &quot;s1&quot; type: internal ovs_version: &quot;2.5.2&quot; RYU控制器连接ovs步骤 设置ovs s1 主动连接6666端口 ovs-vsctl set-controller s1 tcp:127.0.0.1:6666 设置RYU启动服务端口6666 root@controller-VirtualBox:/usr/local/lib/python2.7/dist-packages/ryu/app# ryu-manager –ofp-tcp-listen-port 6666 –verbose simple_switch_13.py 1tcp 0 0 0.0.0.0:6666 0.0.0.0:* LISTEN 24665/python 通过上述设置ovs连接本机127.0.0.1:6666端口走openflow协议连接控制器simple_switch_13.py]]></content>
       <categories>
         <category>RYU</category>
       </categories>
@@ -12,19 +12,6 @@
         <tag>实验性质</tag>
         <tag>ovs</tag>
         <tag>RYU</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title><![CDATA[mininet界面配置拓扑方法]]></title>
-    <url>%2Fmininet-jiemian%2F</url>
-    <content type="text"><![CDATA[在ubuntun系统中执行如下命令 /usr/lib/python2.7/dist-packages/mininet/examples/miniedit.py 遇到问题： 在设置控制器时候，点击run时候，miniedit退出并报错如下c0 cannot find required executable controller 123apt-get install openvswitch-testcontroller cp /usr/bin/ovs-testcontroller /usr/bin/ovs-controllerln /usr/bin/ovs-controller /usr/bin/controller 环境搭建过程 步骤1:root模式执行python /usr/lib/python2.7/dist-packages/mininet/examples/miniedit.py 步骤2:设置h1和h2、h3的IP地址分别为10.10.10.1、10.10.10.2、10.10.10.3 步骤3:点击run运行步骤4:保存该脚本为1.py，下次直接运行 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960root@controller-VirtualBox:~# cat 1.py#!/usr/bin/pythonfrom mininet.net import Mininetfrom mininet.node import Controller, RemoteController, OVSControllerfrom mininet.node import CPULimitedHost, Host, Nodefrom mininet.node import OVSKernelSwitch, UserSwitchfrom mininet.node import IVSSwitchfrom mininet.cli import CLIfrom mininet.log import setLogLevel, infofrom mininet.link import TCLink, Intffrom subprocess import calldef myNetwork(): net = Mininet( topo=None, build=False, ipBase='10.0.0.0/8') info( '*** Adding controller\n' ) c0=net.addController(name='c0', controller=Controller, protocol='tcp', port=6633) info( '*** Add switches\n') s1 = net.addSwitch('s1', cls=OVSKernelSwitch, listenPort=6633) s2 = net.addSwitch('s2', cls=OVSKernelSwitch, listenPort=6633) info( '*** Add hosts\n') h3 = net.addHost('h3', cls=Host, ip='10.10.10.3', defaultRoute=None) h1 = net.addHost('h1', cls=Host, ip='10.10.10.1', defaultRoute=None) h2 = net.addHost('h2', cls=Host, ip='10.10.10.2', defaultRoute=None) info( '*** Add links\n') net.addLink(h1, s1) net.addLink(s1, h2) net.addLink(s2, h3) net.addLink(s1, s2) info( '*** Starting network\n') net.build() info( '*** Starting controllers\n') for controller in net.controllers: controller.start() info( '*** Starting switches\n') net.get('s1').start([c0]) net.get('s2').start([c0]) info( '*** Post configure switches and hosts\n') s1.cmd('ifconfig s1 127.0.0.1') s2.cmd('ifconfig s2 127.0.0.1') CLI(net) net.stop()if __name__ == '__main__': setLogLevel( 'info' ) myNetwork() 步骤5: 直接运行python 1.py恢复环境]]></content>
-      <categories>
-        <category>RYU</category>
-      </categories>
-      <tags>
-        <tag>ubuntun16.04</tag>
-        <tag>mininet界面配置</tag>
-        <tag>实验性质</tag>
       </tags>
   </entry>
   <entry>
@@ -38,6 +25,19 @@
         <tag>openstack</tag>
         <tag>ubuntun16.04</tag>
         <tag>SDN控制器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[mininet界面配置拓扑方法]]></title>
+    <url>%2Fmininet-jiemian%2F</url>
+    <content type="text"><![CDATA[在ubuntun系统中执行如下命令 /usr/lib/python2.7/dist-packages/mininet/examples/miniedit.py 遇到问题： 在设置控制器时候，点击run时候，miniedit退出并报错如下c0 cannot find required executable controller 123apt-get install openvswitch-testcontroller cp /usr/bin/ovs-testcontroller /usr/bin/ovs-controllerln /usr/bin/ovs-controller /usr/bin/controller 环境搭建过程 步骤1:root模式执行python /usr/lib/python2.7/dist-packages/mininet/examples/miniedit.py 步骤2:设置h1和h2、h3的IP地址分别为10.10.10.1、10.10.10.2、10.10.10.3 步骤3:点击run运行步骤4:保存该脚本为1.py，下次直接运行 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960root@controller-VirtualBox:~# cat 1.py#!/usr/bin/pythonfrom mininet.net import Mininetfrom mininet.node import Controller, RemoteController, OVSControllerfrom mininet.node import CPULimitedHost, Host, Nodefrom mininet.node import OVSKernelSwitch, UserSwitchfrom mininet.node import IVSSwitchfrom mininet.cli import CLIfrom mininet.log import setLogLevel, infofrom mininet.link import TCLink, Intffrom subprocess import calldef myNetwork(): net = Mininet( topo=None, build=False, ipBase='10.0.0.0/8') info( '*** Adding controller\n' ) c0=net.addController(name='c0', controller=Controller, protocol='tcp', port=6633) info( '*** Add switches\n') s1 = net.addSwitch('s1', cls=OVSKernelSwitch, listenPort=6633) s2 = net.addSwitch('s2', cls=OVSKernelSwitch, listenPort=6633) info( '*** Add hosts\n') h3 = net.addHost('h3', cls=Host, ip='10.10.10.3', defaultRoute=None) h1 = net.addHost('h1', cls=Host, ip='10.10.10.1', defaultRoute=None) h2 = net.addHost('h2', cls=Host, ip='10.10.10.2', defaultRoute=None) info( '*** Add links\n') net.addLink(h1, s1) net.addLink(s1, h2) net.addLink(s2, h3) net.addLink(s1, s2) info( '*** Starting network\n') net.build() info( '*** Starting controllers\n') for controller in net.controllers: controller.start() info( '*** Starting switches\n') net.get('s1').start([c0]) net.get('s2').start([c0]) info( '*** Post configure switches and hosts\n') s1.cmd('ifconfig s1 127.0.0.1') s2.cmd('ifconfig s2 127.0.0.1') CLI(net) net.stop()if __name__ == '__main__': setLogLevel( 'info' ) myNetwork() 步骤5: 直接运行python 1.py恢复环境]]></content>
+      <categories>
+        <category>RYU</category>
+      </categories>
+      <tags>
+        <tag>ubuntun16.04</tag>
+        <tag>mininet界面配置</tag>
+        <tag>实验性质</tag>
       </tags>
   </entry>
   <entry>
