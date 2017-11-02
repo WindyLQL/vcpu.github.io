@@ -95,18 +95,18 @@
 
 
 
-<meta name="description" content="环境背景 脚本配置1234567891011121314151617181920ip netns add ns1ip netns add ns2ovs-vsctl add-br br0ovs-vsctl add-br br-swovs-vsctl add-port br0 tap1 -- set Interface tap1 type=internalip link set tap1 netns">
+<meta name="description" content="环境背景">
 <meta name="keywords" content="ubuntun16.04,ovs,snat">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ovs snat">
 <meta property="og:url" content="http://vcpu.me/ovs-snat/index.html">
 <meta property="og:site_name" content="i博客">
-<meta property="og:description" content="环境背景 脚本配置1234567891011121314151617181920ip netns add ns1ip netns add ns2ovs-vsctl add-br br0ovs-vsctl add-br br-swovs-vsctl add-port br0 tap1 -- set Interface tap1 type=internalip link set tap1 netns">
+<meta property="og:description" content="环境背景">
 <meta property="og:image" content="http://vcpu.me/myimages/7C7B89E506BC9F0693B0E808E9473162.png">
-<meta property="og:updated_time" content="2017-11-02T07:05:20.000Z">
+<meta property="og:updated_time" content="2017-11-02T10:52:53.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ovs snat">
-<meta name="twitter:description" content="环境背景 脚本配置1234567891011121314151617181920ip netns add ns1ip netns add ns2ovs-vsctl add-br br0ovs-vsctl add-br br-swovs-vsctl add-port br0 tap1 -- set Interface tap1 type=internalip link set tap1 netns">
+<meta name="twitter:description" content="环境背景">
 <meta name="twitter:image" content="http://vcpu.me/myimages/7C7B89E506BC9F0693B0E808E9473162.png">
 
 
@@ -431,7 +431,7 @@
       
 
       
-        <h1 id="环境背景"><a href="#环境背景" class="headerlink" title="环境背景"></a>环境背景</h1><p><img src="/myimages/7C7B89E506BC9F0693B0E808E9473162.png" alt="Untitled Diagram"></p>
+        <h1 id="环境背景"><a href="#环境背景" class="headerlink" title="环境背景"></a>环境背景</h1><p><img src="/myimages/7C7B89E506BC9F0693B0E808E9473162.png" alt="Untitled Diagram"><br><a id="more"></a></p>
 <h1 id="脚本配置"><a href="#脚本配置" class="headerlink" title="脚本配置"></a>脚本配置</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">ip netns add ns1</div><div class="line">ip netns add ns2</div><div class="line">ovs-vsctl add-br br0</div><div class="line">ovs-vsctl add-br br-sw</div><div class="line">ovs-vsctl add-port br0 tap1 -- set Interface tap1 type=internal</div><div class="line">ip link set tap1 netns ns1</div><div class="line">ip netns <span class="keyword">exec</span> ns1 ip link set dev tap1 up</div><div class="line">ovs-vsctl add-port br0 tap2 -- set Interface tap2 type=internal</div><div class="line">ip link set tap2 netns ns2</div><div class="line">ip netns <span class="keyword">exec</span> ns2 ip link set dev tap2 up</div><div class="line">ip netns <span class="keyword">exec</span> ns1 ip addr add <span class="number">192.168</span><span class="number">.1</span><span class="number">.102</span>/<span class="number">24</span> dev tap1</div><div class="line">ip netns <span class="keyword">exec</span> ns2 ip addr add <span class="number">192.168</span><span class="number">.1</span><span class="number">.1</span>/<span class="number">24</span> dev tap2</div><div class="line">ip netns <span class="keyword">exec</span> ns1 ip link set lo up</div><div class="line">ip netns <span class="keyword">exec</span> ns2 ip link set lo up</div><div class="line">ip netns <span class="keyword">exec</span> ns1 ping -c <span class="number">4</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.102</span></div><div class="line">ip netns <span class="keyword">exec</span> ns1 ping -c <span class="number">4</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.1</span></div><div class="line"></div><div class="line"></div><div class="line">ovs-vsctl add-port br0 patch-ovs<span class="number">-0</span> -- set Interface patch-ovs<span class="number">-0</span> type=patch options:peer=patch-sw<span class="number">-1</span></div><div class="line">ovs-vsctl add-port br-sw patch-sw<span class="number">-1</span> -- set Interface patch-sw<span class="number">-1</span> type=patch options:peer=patch-ovs<span class="number">-0</span></div></pre></td></tr></table></figure>
 <p>把外网接口加入到br-sw</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">ip addr flush dev enp0s3</div><div class="line"></div><div class="line">ovs-vsctl add-port br-sw enp0s3</div><div class="line"></div><div class="line">ifconfig br-sw <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>/<span class="number">24</span> up</div><div class="line"></div><div class="line">route add default gw <span class="number">10.30</span><span class="number">.10</span><span class="number">.1</span></div></pre></td></tr></table></figure>

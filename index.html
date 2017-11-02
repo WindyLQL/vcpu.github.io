@@ -471,157 +471,6 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/linux-bridge1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/linux-bridge1/" itemprop="url">linux bridge</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-02T18:00:00+08:00">
-                2017-11-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/网络/" itemprop="url" rel="index">
-                    <span itemprop="name">网络</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/linux-bridge1/" class="leancloud_visitors" data-flag-title="linux bridge">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="linux-bridge处理原理"><a href="#linux-bridge处理原理" class="headerlink" title="linux bridge处理原理"></a>linux bridge处理原理</h2><p>进入桥的数据报文分为几个类型，桥对应的处理方法也不同：<br>1. 报文是本机发送给自己的，桥不处理，交给上层协议栈；<br>2. 接收报文的物理接口不是网桥接口，桥不处理，交给上层协议栈；<br>3. 进入网桥后，如果网桥的状态为Disable，则将包丢弃不处理；<br>4. 报文源地址无效（广播，多播，以及00:00:00:00:00:00），丢包；<br>5. 如果是STP的BPDU包，进入STP处理，处理后不再转发，也不再交给上层协议栈；<br>6. 如果是发给本机的报文，桥直接返回，交给上层协议栈，不转发；<br>7. 需要转发的报文分三种情况：<br>1） 广播或多播，则除接收端口外的所有端口都需要转发一份；<br>2） 单播并且在CAM表中能找到端口映射的，只需要网映射端口转发一份即可；<br>3） 单播但找不到端口映射的，则除了接收端口外其余端口都需要转发；<br>(1) bridge 网络帧，如果帧的目的 MAC 地址是在桥的另一侧的某个网络设备上。<br>(2) 泛洪该网络帧，如果帧的目的 MAC 对网桥是不认识的。<br>(3) 转到更高一层的三层IP协议栈代码处理，如果帧的目的地址是桥本身的或者它的某个端口的。<br>忽略它，如果帧的目的地址是位于它来自的桥的方向的同一侧。</p>
-<p> 对 （1）和 （2）来说，接下来该数据帧被 filter 的 FORWARD 链处理。对（3）来说，它会被 filter 的 INPUT 链处理。发生这种情况时，该 bridge 其实是被用作一个路由器（一个对比例子是现实世界中的带路由的交换机设备）。包含 IP 包的以太帧的目的 MAC 地址是桥的MAC地址，但是目的 IP 地址不是桥的IP地址。</p>
-<h2 id="iptable-linux-bridge网络包匹配条件"><a href="#iptable-linux-bridge网络包匹配条件" class="headerlink" title="iptable linux bridge网络包匹配条件"></a>iptable linux bridge网络包匹配条件</h2><p><img src="/myimages/WX20171102-151131.png" alt="x1.png"></p>
-<h2 id="使用举例"><a href="#使用举例" class="headerlink" title="使用举例"></a>使用举例</h2><h3 id="实验环境"><a href="#实验环境" class="headerlink" title="实验环境"></a>实验环境</h3><p><img src="/myimages/E1DB0D6BC841614F3D154EA4E125E5D4.png" alt="x.png"></p>
-<h3 id="实验脚本"><a href="#实验脚本" class="headerlink" title="实验脚本"></a>实验脚本</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">brctl addbr br0 </div><div class="line">ifconfig br0 <span class="number">1.1</span><span class="number">.2</span><span class="number">.254</span>/<span class="number">24</span> up</div><div class="line">ip addr add <span class="number">1.1</span><span class="number">.1</span><span class="number">.254</span>/<span class="number">24</span> dev br0</div><div class="line"></div><div class="line">ip link add net0_eth0 type veth peer name tap0</div><div class="line">ip netns add net0</div><div class="line">ip link set dev net0_eth0 netns net0</div><div class="line">ip netns <span class="keyword">exec</span> net0 ip link set dev net0_eth0 name eth0</div><div class="line">ip netns <span class="keyword">exec</span> net0 ip addr add <span class="number">1.1</span><span class="number">.1</span><span class="number">.1</span>/<span class="number">24</span> dev eth0</div><div class="line">ip netns <span class="keyword">exec</span> net0 ip link set dev eth0 up</div><div class="line">ip link set dev tap0 master br0</div><div class="line">ip link set dev tap0 up</div><div class="line"></div><div class="line"></div><div class="line">ip link add net1_eth0 type veth peer name tap1</div><div class="line">ip netns add net1</div><div class="line">ip link set dev net1_eth0 netns net1</div><div class="line">ip netns <span class="keyword">exec</span> net1 ip link set dev net1_eth0 name eth0</div><div class="line">ip netns <span class="keyword">exec</span> net1 ip addr add <span class="number">1.1</span><span class="number">.1</span><span class="number">.2</span>/<span class="number">24</span> dev eth0</div><div class="line">ip netns <span class="keyword">exec</span> net1 ip link set dev eth0 up</div><div class="line">ip link set dev tap1 master br0</div><div class="line">ip link set dev tap1 up</div></pre></td></tr></table></figure>
-<h3 id="匹配linux网络数据包"><a href="#匹配linux网络数据包" class="headerlink" title="匹配linux网络数据包"></a>匹配linux网络数据包</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">iptables -A INPUT -p icmp -m physdev --physdev-<span class="keyword">in</span> tap0 -j LOG</div><div class="line">iptables -A FORWARD -p icmp -m physdev --physdev-<span class="keyword">in</span> tap0 --physdev-out tap1 -j LOG</div><div class="line">iptables -A FORWARD -p icmp -m physdev --physdev-<span class="keyword">is</span>-out</div><div class="line">iptables -A FORWARD -p icmp -m physdev --physdev-<span class="keyword">is</span>-out  --physdev-<span class="keyword">is</span>-<span class="keyword">in</span> --physdev-<span class="keyword">is</span>-bridged</div></pre></td></tr></table></figure>
-<h3 id="查看数据包"><a href="#查看数据包" class="headerlink" title="查看数据包"></a>查看数据包</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">Chain INPUT (policy ACCEPT <span class="number">122</span> packets, <span class="number">8044</span> bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     source               destination</div><div class="line">    <span class="number">5</span>   <span class="number">420</span> LOG        icmp --  *      *       <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">0</span>            <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">0</span>            PHYSDEV match --physdev-<span class="keyword">in</span> tap0 LOG flags <span class="number">0</span> level <span class="number">4</span></div><div class="line"></div><div class="line">Chain FORWARD (policy ACCEPT <span class="number">12</span> packets, <span class="number">1008</span> bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     source               destination</div><div class="line">    <span class="number">6</span>   <span class="number">504</span> LOG        icmp --  *      *       <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">0</span>            <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">0</span>            PHYSDEV match --physdev-<span class="keyword">in</span> tap0 --physdev-out tap1 LOG flags <span class="number">0</span> level <span class="number">4</span></div><div class="line">   <span class="number">12</span>  <span class="number">1008</span>            icmp --  *      *       <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">0</span>            <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">0</span>            PHYSDEV match --physdev-<span class="keyword">is</span>-out</div><div class="line">   <span class="number">12</span>  <span class="number">1008</span>            icmp --  *      *       <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">0</span>            <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">0</span>            PHYSDEV match --physdev-<span class="keyword">is</span>-<span class="keyword">in</span> --physdev-<span class="keyword">is</span>-out --physdev-<span class="keyword">is</span>-bridged</div><div class="line"></div><div class="line">Chain OUTPUT (policy ACCEPT <span class="number">85</span> packets, <span class="number">20092</span> bytes)</div><div class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     source               destination</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://vcpu.me/guanshen/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -878,6 +727,156 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/linux-bridge1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/linux-bridge1/" itemprop="url">linux bridge</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-02T18:00:00+08:00">
+                2017-11-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络/" itemprop="url" rel="index">
+                    <span itemprop="name">网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/linux-bridge1/" class="leancloud_visitors" data-flag-title="linux bridge">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="linux-bridge处理原理"><a href="#linux-bridge处理原理" class="headerlink" title="linux bridge处理原理"></a>linux bridge处理原理</h2><p>进入桥的数据报文分为几个类型，桥对应的处理方法也不同：<br>1. 报文是本机发送给自己的，桥不处理，交给上层协议栈；<br>2. 接收报文的物理接口不是网桥接口，桥不处理，交给上层协议栈；<br>3. 进入网桥后，如果网桥的状态为Disable，则将包丢弃不处理；<br>4. 报文源地址无效（广播，多播，以及00:00:00:00:00:00），丢包；<br>5. 如果是STP的BPDU包，进入STP处理，处理后不再转发，也不再交给上层协议栈；<br>6. 如果是发给本机的报文，桥直接返回，交给上层协议栈，不转发；<br>7. 需要转发的报文分三种情况：<br>1） 广播或多播，则除接收端口外的所有端口都需要转发一份；<br>2） 单播并且在CAM表中能找到端口映射的，只需要网映射端口转发一份即可；<br>3） 单播但找不到端口映射的，则除了接收端口外其余端口都需要转发；<br>(1) bridge 网络帧，如果帧的目的 MAC 地址是在桥的另一侧的某个网络设备上。<br>(2) 泛洪该网络帧，如果帧的目的 MAC 对网桥是不认识的。<br>(3) 转到更高一层的三层IP协议栈代码处理，如果帧的目的地址是桥本身的或者它的某个端口的。<br>忽略它，如果帧的目的地址是位于它来自的桥的方向的同一侧。</p>
+<p> 对 （1）和 （2）来说，接下来该数据帧被 filter 的 FORWARD 链处理。对（3）来说，它会被 filter 的 INPUT 链处理。发生这种情况时，该 bridge 其实是被用作一个路由器（一个对比例子是现实世界中的带路由的交换机设备）。包含 IP 包的以太帧的目的 MAC 地址是桥的MAC地址，但是目的 IP 地址不是桥的IP地址。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/linux-bridge1/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://vcpu.me/ovs-snat/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -978,22 +977,14 @@
 
       
         
-          
-            <h1 id="环境背景"><a href="#环境背景" class="headerlink" title="环境背景"></a>环境背景</h1><p><img src="/myimages/7C7B89E506BC9F0693B0E808E9473162.png" alt="Untitled Diagram"></p>
-<h1 id="脚本配置"><a href="#脚本配置" class="headerlink" title="脚本配置"></a>脚本配置</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">ip netns add ns1</div><div class="line">ip netns add ns2</div><div class="line">ovs-vsctl add-br br0</div><div class="line">ovs-vsctl add-br br-sw</div><div class="line">ovs-vsctl add-port br0 tap1 -- set Interface tap1 type=internal</div><div class="line">ip link set tap1 netns ns1</div><div class="line">ip netns <span class="keyword">exec</span> ns1 ip link set dev tap1 up</div><div class="line">ovs-vsctl add-port br0 tap2 -- set Interface tap2 type=internal</div><div class="line">ip link set tap2 netns ns2</div><div class="line">ip netns <span class="keyword">exec</span> ns2 ip link set dev tap2 up</div><div class="line">ip netns <span class="keyword">exec</span> ns1 ip addr add <span class="number">192.168</span><span class="number">.1</span><span class="number">.102</span>/<span class="number">24</span> dev tap1</div><div class="line">ip netns <span class="keyword">exec</span> ns2 ip addr add <span class="number">192.168</span><span class="number">.1</span><span class="number">.1</span>/<span class="number">24</span> dev tap2</div><div class="line">ip netns <span class="keyword">exec</span> ns1 ip link set lo up</div><div class="line">ip netns <span class="keyword">exec</span> ns2 ip link set lo up</div><div class="line">ip netns <span class="keyword">exec</span> ns1 ping -c <span class="number">4</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.102</span></div><div class="line">ip netns <span class="keyword">exec</span> ns1 ping -c <span class="number">4</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.1</span></div><div class="line"></div><div class="line"></div><div class="line">ovs-vsctl add-port br0 patch-ovs<span class="number">-0</span> -- set Interface patch-ovs<span class="number">-0</span> type=patch options:peer=patch-sw<span class="number">-1</span></div><div class="line">ovs-vsctl add-port br-sw patch-sw<span class="number">-1</span> -- set Interface patch-sw<span class="number">-1</span> type=patch options:peer=patch-ovs<span class="number">-0</span></div></pre></td></tr></table></figure>
-<p>把外网接口加入到br-sw</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">ip addr flush dev enp0s3</div><div class="line"></div><div class="line">ovs-vsctl add-port br-sw enp0s3</div><div class="line"></div><div class="line">ifconfig br-sw <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>/<span class="number">24</span> up</div><div class="line"></div><div class="line">route add default gw <span class="number">10.30</span><span class="number">.10</span><span class="number">.1</span></div></pre></td></tr></table></figure>
-<h1 id="配置访问同网段流表10-30-10-175"><a href="#配置访问同网段流表10-30-10-175" class="headerlink" title="配置访问同网段流表10.30.10.175"></a>配置访问同网段流表10.30.10.175</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#如果进入trk可以直接查找连接，如果没有执行相应action</span></div><div class="line">ovs-ofctl add-flow br0 <span class="string">'table=0,priority=10,ip,ct_state=-trk,action=ct(nat,table=1)'</span> </div><div class="line"></div><div class="line"><span class="comment">#新建连接，执行ct commit；创建链接，执行nat规则</span></div><div class="line">ovs-ofctl add-flow br0 <span class="string">'table=1,in_port=1,ip,ct_state=+trk+new,action=ct(nat(src=10.30.10.141-10.30.10.141:5000-50000),commit),mod_dl_src:08:00:27:99:81:b7,mod_dl_dst:00:0e:c6:cf:da:c7,3'</span></div><div class="line"><span class="comment">#到外网流量，已经建立号连接，直接发给3口</span></div><div class="line">ovs-ofctl add-flow br0 <span class="string">'table=1,in_port=1,ip,ct_state=+trk+est,action=mod_dl_src:08:00:27:99:81:b7,mod_dl_dst:00:0e:c6:cf:da:c7,3'</span></div><div class="line"><span class="comment">#回来流量，已经建立连接，直接发给1口</span></div><div class="line">ovs-ofctl add-flow br0 <span class="string">'table=1,in_port=3,ip,ct_state=+trk+est,action=mod_dl_src:1e:33:f9:73:48:d0,mod_dl_dst:92:25:03:9d:0f:34,1'</span></div></pre></td></tr></table></figure>
-<h1 id="配置访问外网114-114-114-114"><a href="#配置访问外网114-114-114-114" class="headerlink" title="配置访问外网114.114.114.114"></a>配置访问外网114.114.114.114</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#如果进入trk可以直接查找连接，如果没有执行相应action</span></div><div class="line">ovs-ofctl add-flow br0 <span class="string">'table=0,priority=10,ip,ct_state=-trk,action=ct(nat,table=1)'</span></div><div class="line"></div><div class="line"><span class="comment">#新建连接，执行ct commit；创建链接，执行nat规则</span></div><div class="line">ovs-ofctl add-flow br0 <span class="string">'table=1,in_port=1,ip,ct_state=+trk+new,action=ct(nat(src=10.30.10.141-10.30.10.141:5000-50000),commit),mod_dl_src:08:00:27:99:81:b7,mod_dl_dst:d4:ee:7:50:78:c2,3'</span></div><div class="line"></div><div class="line"><span class="comment">#到外网流量，已经建立号连接，直接发给3口</span></div><div class="line">ovs-ofctl add-flow br0 <span class="string">'table=1,in_port=1,ip,ct_state=+trk+est,action=mod_dl_src:08:00:27:99:81:b7,mod_dl_dst:d4:ee:7:50:78:c2,3'</span></div><div class="line"><span class="comment">#回来流量，已经建立连接，直接发给1口</span></div><div class="line">ovs-ofctl add-flow br0 <span class="string">'table=1,in_port=3,ip,ct_state=+trk+est,action=mod_dl_src:1e:33:f9:73:48:d0,mod_dl_dst:92:25:03:9d:0f:34,1'</span></div></pre></td></tr></table></figure>
-<h1 id="流表删除"><a href="#流表删除" class="headerlink" title="流表删除"></a>流表删除</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">ovs-ofctl del-flows br0 &apos;table=0,ip,ct_state=-trk&apos;</div><div class="line"></div><div class="line">ovs-ofctl del-flows br0 &apos;table=1,in_port=1,ip,ct_state=+trk+new&apos;</div><div class="line"></div><div class="line">ovs-ofctl del-flows br0 &apos;table=1,in_port=1,ip,ct_state=+trk+est&apos;</div><div class="line"></div><div class="line">ovs-ofctl del-flows br0 &apos;table=1,in_port=3,ip,ct_state=+trk+est&apos;</div></pre></td></tr></table></figure>
-<h1 id="按照dragonflow社区想法实现snat"><a href="#按照dragonflow社区想法实现snat" class="headerlink" title="按照dragonflow社区想法实现snat"></a>按照dragonflow社区想法实现snat</h1><h2 id="snat社区实现流量原理"><a href="#snat社区实现流量原理" class="headerlink" title="snat社区实现流量原理"></a>snat社区实现流量原理</h2><p>流量从br0流出后，修改源mac为已设定 80:88:88:88:88:99，目的mac修改为出口网桥的mac 08:00:27:99:81:b7</p>
-<p>流量从br0流到br-sw后，br-sw收到上述流量后，查看目的mac为桥的mac，属于三层转发流量，br-sw将上述流量源mac变为br-sw mac ，目的mac变为具体地址活着网关的mac。</p>
-<h2 id="snat社区实现要点"><a href="#snat社区实现要点" class="headerlink" title="snat社区实现要点"></a>snat社区实现要点</h2><p>通过将snat发出流量直接发给出口网桥，通过网桥三层转发给具体的目的地址，这样实现从br0中流表不用关心snat访问的具体目标mac地址（访问的具体目标br-sw会主动学习具体mac地址），只需要关注外网网桥的mac即可。</p>
-<h2 id="SNAT-的ARP被动回复流表"><a href="#SNAT-的ARP被动回复流表" class="headerlink" title="SNAT 的ARP被动回复流表"></a>SNAT 的ARP被动回复流表</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">ovs-ofctl add-flow br0 <span class="string">"priority=100 arp arp_op=1 arp_tpa=10.30.10.111 action=move:OXM_OF_ARP_TPA[]-&gt;NXM_NX_REG2[],resubmit(,8),goto_table:10"</span></div><div class="line"></div><div class="line">ovs-ofctl add-flow br0 <span class="string">"table=8,reg2=0x0a1e0a6f/0xffffffff,action=load:0x808888888888-&gt;OXM_OF_PKT_REG0[]"</span></div><div class="line"></div><div class="line">ovs-ofctl add-flow br0 <span class="string">"table=10 priority=10,arp,arp_op=1,action=load:2-&gt;OXM_OF_ARP_OP[],move:OXM_OF_ARP_SHA[]-&gt;OXM_OF_ARP_THA[],move:OXM_OF_PKT_REG0[0..47]-&gt;OXM_OF_ARP_SHA[],move:OXM_OF_ARP_SPA[]-&gt;OXM_OF_ARP_TPA[],move:NXM_NX_REG2[]-&gt;OXM_OF_ARP_SPA[],move:NXM_OF_ETH_SRC[]-&gt;NXM_OF_ETH_DST[],move:OXM_OF_PKT_REG0[0..47]-&gt;NXM_OF_ETH_SRC[],move:NXM_OF_IN_PORT[]-&gt;NXM_NX_REG3[0..15],load:0-&gt;NXM_OF_IN_PORT[],output:NXM_NX_REG3[0..15]"</span></div></pre></td></tr></table></figure>
-<h2 id="SNAT流表"><a href="#SNAT流表" class="headerlink" title="SNAT流表"></a>SNAT流表</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ovs-ofctl add-flow br0 <span class="string">"in_port=1,ip,action=ct(commit,zone=1,nat(src=10.30.10.111-10.30.10.111)),mod_dl_src:80:88:88:88:88:99,mod_dl_dst:08:00:27:99:81:b7,3"</span></div><div class="line">ovs-ofctl add-flow br0 <span class="string">"in_port=3,ct_state=-trk,ip,action=ct(table=0,zone=1,nat)"</span></div><div class="line"></div><div class="line">ovs-ofctl add-flow br0 <span class="string">"in_port=3,ct_state=+trk,ct_zone=1,ip,action=mod_dl_src:80:88:88:88:88:99,mod_dl_dst:92:25:03:9d:0f:34,1"</span></div></pre></td></tr></table></figure>
-<h2 id="生成流表"><a href="#生成流表" class="headerlink" title="生成流表"></a>生成流表</h2><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">cookie=0x0, duration=881.078s, table=0, n_packets=850, n_bytes=83300, idle_age=0, ip,in_port=1 actions=ct(commit,zone=1,nat(src=10.30.</div><div class="line">10.111)),mod_dl_src:80:88:88:88:88:99,mod_dl_dst:08:00:27:99:81:b7,output:3</div><div class="line"> cookie=0x0, duration=732.960s, table=0, n_packets=1621, n_bytes=421788, idle_age=0, ct_state=-trk,ip,in_port=3 actions=ct(table=0,zone</div><div class="line">=1,nat)</div><div class="line"> cookie=0x0, duration=710.396s, table=0, n_packets=1584, n_bytes=408966, idle_age=0, ct_state=+trk,ct_zone=1,ip,in_port=3 actions=mod_d</div><div class="line">l_src:80:88:88:88:88:99,mod_dl_dst:92:25:03:9d:0f:34,output:1</div><div class="line"> cookie=0x0, duration=2336.028s, table=0, n_packets=18, n_bytes=1026, idle_age=4, priority=100,arp,arp_tpa=10.30.10.111,arp_op=1 action</div><div class="line">s=move:NXM_OF_ARP_TPA[]-&gt;NXM_NX_REG2[],resubmit(,8),resubmit(,10)</div><div class="line"> cookie=0x0, duration=38932.939s, table=0, n_packets=17775, n_bytes=5974547, idle_age=332, priority=0 actions=NORMAL</div><div class="line"> cookie=0x0, duration=2171.189s, table=8, n_packets=18, n_bytes=1026, idle_age=4, reg2=0xa1e0a6f actions=load:0x808888888899-&gt;OXM_OF_PK</div><div class="line">T_REG0[]</div><div class="line"> cookie=0x0, duration=2110.202s, table=10, n_packets=18, n_bytes=1026, idle_age=4, priority=10,arp,arp_op=1 actions=load:0x2-&gt;NXM_OF_AR</div><div class="line">P_OP[],move:NXM_NX_ARP_SHA[]-&gt;NXM_NX_ARP_THA[],move:OXM_OF_PKT_REG0[0..47]-&gt;NXM_NX_ARP_SHA[],move:NXM_OF_ARP_SPA[]-&gt;NXM_OF_ARP_TPA[],mo</div><div class="line">ve:NXM_NX_REG2[]-&gt;NXM_OF_ARP_SPA[],move:NXM_OF_ETH_SRC[]-&gt;NXM_OF_ETH_DST[],move:OXM_OF_PKT_REG0[0..47]-&gt;NXM_OF_ETH_SRC[],move:NXM_OF_IN</div><div class="line">_PORT[]-&gt;NXM_NX_REG3[0..15],load:0-&gt;NXM_OF_IN_PORT[],output:NXM_NX_REG3[0..15]</div></pre></td></tr></table></figure>
-
-          
+          <h1 id="环境背景"><a href="#环境背景" class="headerlink" title="环境背景"></a>环境背景</h1><p><img src="/myimages/7C7B89E506BC9F0693B0E808E9473162.png" alt="Untitled Diagram"><br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/ovs-snat/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
