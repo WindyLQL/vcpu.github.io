@@ -4,12 +4,36 @@
 
     
   <url>
+    <loc>http://vcpu.me/ovs-snat/</loc>
+    <lastmod>2017-11-02T07:05:20.000Z</lastmod>
+    <data>
+        <display>
+        <title>ovs snat</title>
+        <pubTime>2017-10-31T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntun16.04</tag>
+         
+        <tag>ovs</tag>
+         
+        <tag>snat</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/ryu-connect-ovs/</loc>
-    <lastmod>2017-11-01T02:02:37.000Z</lastmod>
+    <lastmod>2017-11-02T07:04:57.000Z</lastmod>
     <data>
         <display>
         <title>RYU连接ovs方法举例</title>
-        <pubTime>2017-11-01T10:00:00.000Z</pubTime>
+        <pubTime>2017-10-25T10:00:00.000Z</pubTime>
         
         <tag>ubuntun16.04</tag>
          
@@ -31,11 +55,11 @@
     
   <url>
     <loc>http://vcpu.me/mininet-jiemian/</loc>
-    <lastmod>2017-10-31T12:58:15.000Z</lastmod>
+    <lastmod>2017-11-02T07:04:15.000Z</lastmod>
     <data>
         <display>
         <title>mininet界面配置拓扑方法</title>
-        <pubTime>2017-10-31T10:00:00.000Z</pubTime>
+        <pubTime>2017-10-20T10:00:00.000Z</pubTime>
         
         <tag>ubuntun16.04</tag>
          
@@ -55,11 +79,11 @@
     
   <url>
     <loc>http://vcpu.me/mininet1/</loc>
-    <lastmod>2017-10-31T12:57:06.000Z</lastmod>
+    <lastmod>2017-11-02T07:03:52.000Z</lastmod>
     <data>
         <display>
         <title>mininet+RYU环境安装</title>
-        <pubTime>2017-10-31T10:00:00.000Z</pubTime>
+        <pubTime>2017-10-20T10:00:00.000Z</pubTime>
         
         <tag>openstack</tag>
          
@@ -79,11 +103,11 @@
     
   <url>
     <loc>http://vcpu.me/openstackmoni/</loc>
-    <lastmod>2017-10-31T09:07:26.000Z</lastmod>
+    <lastmod>2017-11-02T07:03:17.000Z</lastmod>
     <data>
         <display>
         <title>openstack 网络环境模拟</title>
-        <pubTime>2017-10-30T10:00:00.000Z</pubTime>
+        <pubTime>2017-10-15T10:00:00.000Z</pubTime>
         
         <tag>openstack</tag>
          
@@ -95,6 +119,30 @@
            
              
               <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/linux-bridge1/</loc>
+    <lastmod>2017-11-02T07:01:15.000Z</lastmod>
+    <data>
+        <display>
+        <title>linux bridge</title>
+        <pubTime>2017-11-02T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntun16.04</tag>
+         
+        <tag>iptables</tag>
+         
+        <tag>linux bridge</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
           
         </display>
     </data>

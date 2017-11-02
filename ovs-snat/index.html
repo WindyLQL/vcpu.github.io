@@ -1,0 +1,1271 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ubuntun16.04,ovs,snat," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="i博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="环境背景 脚本配置1234567891011121314151617181920ip netns add ns1ip netns add ns2ovs-vsctl add-br br0ovs-vsctl add-br br-swovs-vsctl add-port br0 tap1 -- set Interface tap1 type=internalip link set tap1 netns">
+<meta name="keywords" content="ubuntun16.04,ovs,snat">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ovs snat">
+<meta property="og:url" content="http://vcpu.me/ovs-snat/index.html">
+<meta property="og:site_name" content="i博客">
+<meta property="og:description" content="环境背景 脚本配置1234567891011121314151617181920ip netns add ns1ip netns add ns2ovs-vsctl add-br br0ovs-vsctl add-br br-swovs-vsctl add-port br0 tap1 -- set Interface tap1 type=internalip link set tap1 netns">
+<meta property="og:image" content="http://vcpu.me/myimages/7C7B89E506BC9F0693B0E808E9473162.png">
+<meta property="og:updated_time" content="2017-11-02T07:05:20.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ovs snat">
+<meta name="twitter:description" content="环境背景 脚本配置1234567891011121314151617181920ip netns add ns1ip netns add ns2ovs-vsctl add-br br0ovs-vsctl add-br br-swovs-vsctl add-port br0 tap1 -- set Interface tap1 type=internalip link set tap1 netns">
+<meta name="twitter:image" content="http://vcpu.me/myimages/7C7B89E506BC9F0693B0E808E9473162.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://vcpu.me/ovs-snat/"/>
+
+
+
+
+
+  <title>ovs snat | i博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">i博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">仰望星空前，还需脚踏实地。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/ovs-snat/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ovs snat</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-31T18:00:00+08:00">
+                2017-10-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络/" itemprop="url" rel="index">
+                    <span itemprop="name">网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/ovs-snat/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/ovs-snat/" class="leancloud_visitors" data-flag-title="ovs snat">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="环境背景"><a href="#环境背景" class="headerlink" title="环境背景"></a>环境背景</h1><p><img src="/myimages/7C7B89E506BC9F0693B0E808E9473162.png" alt="Untitled Diagram"></p>
+<h1 id="脚本配置"><a href="#脚本配置" class="headerlink" title="脚本配置"></a>脚本配置</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">ip netns add ns1</div><div class="line">ip netns add ns2</div><div class="line">ovs-vsctl add-br br0</div><div class="line">ovs-vsctl add-br br-sw</div><div class="line">ovs-vsctl add-port br0 tap1 -- set Interface tap1 type=internal</div><div class="line">ip link set tap1 netns ns1</div><div class="line">ip netns <span class="keyword">exec</span> ns1 ip link set dev tap1 up</div><div class="line">ovs-vsctl add-port br0 tap2 -- set Interface tap2 type=internal</div><div class="line">ip link set tap2 netns ns2</div><div class="line">ip netns <span class="keyword">exec</span> ns2 ip link set dev tap2 up</div><div class="line">ip netns <span class="keyword">exec</span> ns1 ip addr add <span class="number">192.168</span><span class="number">.1</span><span class="number">.102</span>/<span class="number">24</span> dev tap1</div><div class="line">ip netns <span class="keyword">exec</span> ns2 ip addr add <span class="number">192.168</span><span class="number">.1</span><span class="number">.1</span>/<span class="number">24</span> dev tap2</div><div class="line">ip netns <span class="keyword">exec</span> ns1 ip link set lo up</div><div class="line">ip netns <span class="keyword">exec</span> ns2 ip link set lo up</div><div class="line">ip netns <span class="keyword">exec</span> ns1 ping -c <span class="number">4</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.102</span></div><div class="line">ip netns <span class="keyword">exec</span> ns1 ping -c <span class="number">4</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.1</span></div><div class="line"></div><div class="line"></div><div class="line">ovs-vsctl add-port br0 patch-ovs<span class="number">-0</span> -- set Interface patch-ovs<span class="number">-0</span> type=patch options:peer=patch-sw<span class="number">-1</span></div><div class="line">ovs-vsctl add-port br-sw patch-sw<span class="number">-1</span> -- set Interface patch-sw<span class="number">-1</span> type=patch options:peer=patch-ovs<span class="number">-0</span></div></pre></td></tr></table></figure>
+<p>把外网接口加入到br-sw</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">ip addr flush dev enp0s3</div><div class="line"></div><div class="line">ovs-vsctl add-port br-sw enp0s3</div><div class="line"></div><div class="line">ifconfig br-sw <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>/<span class="number">24</span> up</div><div class="line"></div><div class="line">route add default gw <span class="number">10.30</span><span class="number">.10</span><span class="number">.1</span></div></pre></td></tr></table></figure>
+<h1 id="配置访问同网段流表10-30-10-175"><a href="#配置访问同网段流表10-30-10-175" class="headerlink" title="配置访问同网段流表10.30.10.175"></a>配置访问同网段流表10.30.10.175</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#如果进入trk可以直接查找连接，如果没有执行相应action</span></div><div class="line">ovs-ofctl add-flow br0 <span class="string">'table=0,priority=10,ip,ct_state=-trk,action=ct(nat,table=1)'</span> </div><div class="line"></div><div class="line"><span class="comment">#新建连接，执行ct commit；创建链接，执行nat规则</span></div><div class="line">ovs-ofctl add-flow br0 <span class="string">'table=1,in_port=1,ip,ct_state=+trk+new,action=ct(nat(src=10.30.10.141-10.30.10.141:5000-50000),commit),mod_dl_src:08:00:27:99:81:b7,mod_dl_dst:00:0e:c6:cf:da:c7,3'</span></div><div class="line"><span class="comment">#到外网流量，已经建立号连接，直接发给3口</span></div><div class="line">ovs-ofctl add-flow br0 <span class="string">'table=1,in_port=1,ip,ct_state=+trk+est,action=mod_dl_src:08:00:27:99:81:b7,mod_dl_dst:00:0e:c6:cf:da:c7,3'</span></div><div class="line"><span class="comment">#回来流量，已经建立连接，直接发给1口</span></div><div class="line">ovs-ofctl add-flow br0 <span class="string">'table=1,in_port=3,ip,ct_state=+trk+est,action=mod_dl_src:1e:33:f9:73:48:d0,mod_dl_dst:92:25:03:9d:0f:34,1'</span></div></pre></td></tr></table></figure>
+<h1 id="配置访问外网114-114-114-114"><a href="#配置访问外网114-114-114-114" class="headerlink" title="配置访问外网114.114.114.114"></a>配置访问外网114.114.114.114</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#如果进入trk可以直接查找连接，如果没有执行相应action</span></div><div class="line">ovs-ofctl add-flow br0 <span class="string">'table=0,priority=10,ip,ct_state=-trk,action=ct(nat,table=1)'</span></div><div class="line"></div><div class="line"><span class="comment">#新建连接，执行ct commit；创建链接，执行nat规则</span></div><div class="line">ovs-ofctl add-flow br0 <span class="string">'table=1,in_port=1,ip,ct_state=+trk+new,action=ct(nat(src=10.30.10.141-10.30.10.141:5000-50000),commit),mod_dl_src:08:00:27:99:81:b7,mod_dl_dst:d4:ee:7:50:78:c2,3'</span></div><div class="line"></div><div class="line"><span class="comment">#到外网流量，已经建立号连接，直接发给3口</span></div><div class="line">ovs-ofctl add-flow br0 <span class="string">'table=1,in_port=1,ip,ct_state=+trk+est,action=mod_dl_src:08:00:27:99:81:b7,mod_dl_dst:d4:ee:7:50:78:c2,3'</span></div><div class="line"><span class="comment">#回来流量，已经建立连接，直接发给1口</span></div><div class="line">ovs-ofctl add-flow br0 <span class="string">'table=1,in_port=3,ip,ct_state=+trk+est,action=mod_dl_src:1e:33:f9:73:48:d0,mod_dl_dst:92:25:03:9d:0f:34,1'</span></div></pre></td></tr></table></figure>
+<h1 id="流表删除"><a href="#流表删除" class="headerlink" title="流表删除"></a>流表删除</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">ovs-ofctl del-flows br0 &apos;table=0,ip,ct_state=-trk&apos;</div><div class="line"></div><div class="line">ovs-ofctl del-flows br0 &apos;table=1,in_port=1,ip,ct_state=+trk+new&apos;</div><div class="line"></div><div class="line">ovs-ofctl del-flows br0 &apos;table=1,in_port=1,ip,ct_state=+trk+est&apos;</div><div class="line"></div><div class="line">ovs-ofctl del-flows br0 &apos;table=1,in_port=3,ip,ct_state=+trk+est&apos;</div></pre></td></tr></table></figure>
+<h1 id="按照dragonflow社区想法实现snat"><a href="#按照dragonflow社区想法实现snat" class="headerlink" title="按照dragonflow社区想法实现snat"></a>按照dragonflow社区想法实现snat</h1><h2 id="snat社区实现流量原理"><a href="#snat社区实现流量原理" class="headerlink" title="snat社区实现流量原理"></a>snat社区实现流量原理</h2><p>流量从br0流出后，修改源mac为已设定 80:88:88:88:88:99，目的mac修改为出口网桥的mac 08:00:27:99:81:b7</p>
+<p>流量从br0流到br-sw后，br-sw收到上述流量后，查看目的mac为桥的mac，属于三层转发流量，br-sw将上述流量源mac变为br-sw mac ，目的mac变为具体地址活着网关的mac。</p>
+<h2 id="snat社区实现要点"><a href="#snat社区实现要点" class="headerlink" title="snat社区实现要点"></a>snat社区实现要点</h2><p>通过将snat发出流量直接发给出口网桥，通过网桥三层转发给具体的目的地址，这样实现从br0中流表不用关心snat访问的具体目标mac地址（访问的具体目标br-sw会主动学习具体mac地址），只需要关注外网网桥的mac即可。</p>
+<h2 id="SNAT-的ARP被动回复流表"><a href="#SNAT-的ARP被动回复流表" class="headerlink" title="SNAT 的ARP被动回复流表"></a>SNAT 的ARP被动回复流表</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">ovs-ofctl add-flow br0 <span class="string">"priority=100 arp arp_op=1 arp_tpa=10.30.10.111 action=move:OXM_OF_ARP_TPA[]-&gt;NXM_NX_REG2[],resubmit(,8),goto_table:10"</span></div><div class="line"></div><div class="line">ovs-ofctl add-flow br0 <span class="string">"table=8,reg2=0x0a1e0a6f/0xffffffff,action=load:0x808888888888-&gt;OXM_OF_PKT_REG0[]"</span></div><div class="line"></div><div class="line">ovs-ofctl add-flow br0 <span class="string">"table=10 priority=10,arp,arp_op=1,action=load:2-&gt;OXM_OF_ARP_OP[],move:OXM_OF_ARP_SHA[]-&gt;OXM_OF_ARP_THA[],move:OXM_OF_PKT_REG0[0..47]-&gt;OXM_OF_ARP_SHA[],move:OXM_OF_ARP_SPA[]-&gt;OXM_OF_ARP_TPA[],move:NXM_NX_REG2[]-&gt;OXM_OF_ARP_SPA[],move:NXM_OF_ETH_SRC[]-&gt;NXM_OF_ETH_DST[],move:OXM_OF_PKT_REG0[0..47]-&gt;NXM_OF_ETH_SRC[],move:NXM_OF_IN_PORT[]-&gt;NXM_NX_REG3[0..15],load:0-&gt;NXM_OF_IN_PORT[],output:NXM_NX_REG3[0..15]"</span></div></pre></td></tr></table></figure>
+<h2 id="SNAT流表"><a href="#SNAT流表" class="headerlink" title="SNAT流表"></a>SNAT流表</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ovs-ofctl add-flow br0 <span class="string">"in_port=1,ip,action=ct(commit,zone=1,nat(src=10.30.10.111-10.30.10.111)),mod_dl_src:80:88:88:88:88:99,mod_dl_dst:08:00:27:99:81:b7,3"</span></div><div class="line">ovs-ofctl add-flow br0 <span class="string">"in_port=3,ct_state=-trk,ip,action=ct(table=0,zone=1,nat)"</span></div><div class="line"></div><div class="line">ovs-ofctl add-flow br0 <span class="string">"in_port=3,ct_state=+trk,ct_zone=1,ip,action=mod_dl_src:80:88:88:88:88:99,mod_dl_dst:92:25:03:9d:0f:34,1"</span></div></pre></td></tr></table></figure>
+<h2 id="生成流表"><a href="#生成流表" class="headerlink" title="生成流表"></a>生成流表</h2><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">cookie=0x0, duration=881.078s, table=0, n_packets=850, n_bytes=83300, idle_age=0, ip,in_port=1 actions=ct(commit,zone=1,nat(src=10.30.</div><div class="line">10.111)),mod_dl_src:80:88:88:88:88:99,mod_dl_dst:08:00:27:99:81:b7,output:3</div><div class="line"> cookie=0x0, duration=732.960s, table=0, n_packets=1621, n_bytes=421788, idle_age=0, ct_state=-trk,ip,in_port=3 actions=ct(table=0,zone</div><div class="line">=1,nat)</div><div class="line"> cookie=0x0, duration=710.396s, table=0, n_packets=1584, n_bytes=408966, idle_age=0, ct_state=+trk,ct_zone=1,ip,in_port=3 actions=mod_d</div><div class="line">l_src:80:88:88:88:88:99,mod_dl_dst:92:25:03:9d:0f:34,output:1</div><div class="line"> cookie=0x0, duration=2336.028s, table=0, n_packets=18, n_bytes=1026, idle_age=4, priority=100,arp,arp_tpa=10.30.10.111,arp_op=1 action</div><div class="line">s=move:NXM_OF_ARP_TPA[]-&gt;NXM_NX_REG2[],resubmit(,8),resubmit(,10)</div><div class="line"> cookie=0x0, duration=38932.939s, table=0, n_packets=17775, n_bytes=5974547, idle_age=332, priority=0 actions=NORMAL</div><div class="line"> cookie=0x0, duration=2171.189s, table=8, n_packets=18, n_bytes=1026, idle_age=4, reg2=0xa1e0a6f actions=load:0x808888888899-&gt;OXM_OF_PK</div><div class="line">T_REG0[]</div><div class="line"> cookie=0x0, duration=2110.202s, table=10, n_packets=18, n_bytes=1026, idle_age=4, priority=10,arp,arp_op=1 actions=load:0x2-&gt;NXM_OF_AR</div><div class="line">P_OP[],move:NXM_NX_ARP_SHA[]-&gt;NXM_NX_ARP_THA[],move:OXM_OF_PKT_REG0[0..47]-&gt;NXM_NX_ARP_SHA[],move:NXM_OF_ARP_SPA[]-&gt;NXM_OF_ARP_TPA[],mo</div><div class="line">ve:NXM_NX_REG2[]-&gt;NXM_OF_ARP_SPA[],move:NXM_OF_ETH_SRC[]-&gt;NXM_OF_ETH_DST[],move:OXM_OF_PKT_REG0[0..47]-&gt;NXM_OF_ETH_SRC[],move:NXM_OF_IN</div><div class="line">_PORT[]-&gt;NXM_NX_REG3[0..15],load:0-&gt;NXM_OF_IN_PORT[],output:NXM_NX_REG3[0..15]</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ubuntun16-04/" rel="tag"># ubuntun16.04</a>
+          
+            <a href="/tags/ovs/" rel="tag"># ovs</a>
+          
+            <a href="/tags/snat/" rel="tag"># snat</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/ryu-connect-ovs/" rel="next" title="RYU连接ovs方法举例">
+                <i class="fa fa-chevron-left"></i> RYU连接ovs方法举例
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/linux-bridge1/" rel="prev" title="linux bridge">
+                linux bridge <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/h.jpg"
+               alt="vcpu.me" />
+          <p class="site-author-name" itemprop="name">vcpu.me</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">45</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">76</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/vcpu/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://ytlm.github.io/" title="CDN张三丰" target="_blank">CDN张三丰</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://io.iwalk.me" title="互联网绝世高手Andy" target="_blank">互联网绝世高手Andy</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#环境背景"><span class="nav-number">1.</span> <span class="nav-text">环境背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#脚本配置"><span class="nav-number">2.</span> <span class="nav-text">脚本配置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#配置访问同网段流表10-30-10-175"><span class="nav-number">3.</span> <span class="nav-text">配置访问同网段流表10.30.10.175</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#配置访问外网114-114-114-114"><span class="nav-number">4.</span> <span class="nav-text">配置访问外网114.114.114.114</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#流表删除"><span class="nav-number">5.</span> <span class="nav-text">流表删除</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#按照dragonflow社区想法实现snat"><span class="nav-number">6.</span> <span class="nav-text">按照dragonflow社区想法实现snat</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#snat社区实现流量原理"><span class="nav-number">6.1.</span> <span class="nav-text">snat社区实现流量原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#snat社区实现要点"><span class="nav-number">6.2.</span> <span class="nav-text">snat社区实现要点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SNAT-的ARP被动回复流表"><span class="nav-number">6.3.</span> <span class="nav-text">SNAT 的ARP被动回复流表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SNAT流表"><span class="nav-number">6.4.</span> <span class="nav-text">SNAT流表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#生成流表"><span class="nav-number">6.5.</span> <span class="nav-text">生成流表</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">vcpu.me</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "863fca753b274564bc586efc2a6ffbb0",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("l5u4v8AcoPCp9wlPGVJTG6Ny-gzGzoHsz", "RQdYIOd2snvd1muAW65nsn25");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
