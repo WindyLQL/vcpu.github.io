@@ -4,6 +4,30 @@
 
     
   <url>
+    <loc>http://vcpu.me/linux-bridge1/</loc>
+    <lastmod>2017-11-02T07:07:37.000Z</lastmod>
+    <data>
+        <display>
+        <title>linux bridge</title>
+        <pubTime>2017-11-02T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntun16.04</tag>
+         
+        <tag>iptables</tag>
+         
+        <tag>linux bridge</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/ovs-snat/</loc>
     <lastmod>2017-11-02T07:05:20.000Z</lastmod>
     <data>
@@ -119,30 +143,6 @@
            
              
               <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://vcpu.me/linux-bridge1/</loc>
-    <lastmod>2017-11-02T07:01:15.000Z</lastmod>
-    <data>
-        <display>
-        <title>linux bridge</title>
-        <pubTime>2017-11-02T10:00:00.000Z</pubTime>
-        
-        <tag>ubuntun16.04</tag>
-         
-        <tag>iptables</tag>
-         
-        <tag>linux bridge</tag>
-         
-         
-           
-             
-              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
           
         </display>
     </data>

@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://vcpu.me/linux-bridge1/</loc>
+    
+    <lastmod>2017-11-02T07:07:37.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://vcpu.me/ovs-snat/</loc>
     
     <lastmod>2017-11-02T07:05:20.000Z</lastmod>
@@ -33,13 +40,6 @@
     <loc>http://vcpu.me/openstackmoni/</loc>
     
     <lastmod>2017-11-02T07:03:17.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://vcpu.me/linux-bridge1/</loc>
-    
-    <lastmod>2017-11-02T07:01:15.000Z</lastmod>
     
   </url>
   
