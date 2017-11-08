@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://vcpu.me/"/>
-  <updated>2017-11-08T10:07:49.000Z</updated>
+  <updated>2017-11-08T10:10:20.000Z</updated>
   <id>http://vcpu.me/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://vcpu.me/ovs-limit/"/>
     <id>http://vcpu.me/ovs-limit/</id>
     <published>2017-11-08T10:00:00.000Z</published>
-    <updated>2017-11-08T10:07:49.000Z</updated>
+    <updated>2017-11-08T10:10:20.000Z</updated>
     
     <content type="html"><![CDATA[<h1 id="netperf吞吐测试方法"><a href="#netperf吞吐测试方法" class="headerlink" title="netperf吞吐测试方法"></a>netperf吞吐测试方法</h1><h2 id="步骤1-在ns4-namespace中运行netserver"><a href="#步骤1-在ns4-namespace中运行netserver" class="headerlink" title="步骤1:在ns4 namespace中运行netserver"></a>步骤1:在ns4 namespace中运行netserver</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Starting netserver with host &apos;IN(6)ADDR_ANY&apos; port &apos;12865&apos; and family AF_UNSPEC</div></pre></td></tr></table></figure>
 <h2 id="步骤2-在ns1-namespace中运行-netperf-H-1-1-1-4-t-UDP-STREAM"><a href="#步骤2-在ns1-namespace中运行-netperf-H-1-1-1-4-t-UDP-STREAM" class="headerlink" title="步骤2:在ns1 namespace中运行 netperf -H 1.1.1.4 -t UDP_STREAM"></a>步骤2:在ns1 namespace中运行 netperf -H 1.1.1.4 -t UDP_STREAM</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">root@compute:~# netperf -H 1.1.1.4 -t UDP_STREAM</div><div class="line">MIGRATED UDP STREAM TEST from 0.0.0.0 (0.0.0.0) port 0 AF_INET to 1.1.1.4 (1.1.1.4) port 0 AF_INET : demo</div><div class="line">Socket Message Elapsed Messages</div><div class="line">Size Size Time Okay Errors Throughput</div><div class="line">bytes bytes secs # # 10^6bits/sec</div><div class="line">212992 65507 10.01 795007 0 41640.99</div><div class="line">212992 10.01 794006 41588.56</div></pre></td></tr></table></figure>
@@ -81,7 +81,7 @@
     
     </summary>
     
-      <category term="openstack" scheme="http://vcpu.me/categories/openstack/"/>
+      <category term="网络" scheme="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
     
     
       <category term="ubuntun16.04" scheme="http://vcpu.me/tags/ubuntun16-04/"/>
@@ -2344,6 +2344,44 @@
   </entry>
   
   <entry>
+    <title>socket读写条件</title>
+    <link href="http://vcpu.me/socket_rw_proc/"/>
+    <id>http://vcpu.me/socket_rw_proc/</id>
+    <published>2017-06-26T11:10:34.000Z</published>
+    <updated>2017-06-26T08:55:50.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="概念说明"><a href="#概念说明" class="headerlink" title="概念说明"></a>概念说明</h2><p>1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：<br>每个套接字有一个接收低水位和一个发送低水位。他们由select函数使用。<br>接收低水位标记是让select返回”可读”时套接字接收缓冲区中所需的数据量。对于TCP,其默认值为1。<br>发送低水位标记是让select返回”可写”时套接字发送缓冲区中所需的可用空间。对于TCP，其默认值常为2048</p>
+<p>通俗的解释一下，缓存区我们当成一个大小为 n bytes的空间，那么：<br>接收区缓存的作用就是，接收对面的数据放在缓存区，供应用程序读。当然了，只有当缓存区可读的数据量(接收低水位标记)到达一定程度（eg:1）的时候，我们才能读到数据，不然不就读不到数据了吗。<br>发送区缓存的作用就是，发送应用程序的数据到缓存区，然后一起发给对面。当然了，只有当缓存区剩余一定空间(发送低水位标记)（eg:2048）,你才能写数据进去，不然可能导致空间不够。</p>
+<p>2.FIN: (结束标志,Finish)用来结束一个TCP回话.但对应端口仍处于开放状态,准备接收后续数据.</p>
+<p>特别纠正说明：</p>
+<blockquote>
+<p>经过测试在3.10.0-514.16.1.el7.x86_64 内核情况下SO_SNDLOWAT/SO_RCVLOWAT<br>默认发送和接收最低水位均为1，也就是说默认情况下低水位值可以不考虑，系统缓冲区有数据就读<br>有空闲就写</p>
+</blockquote>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> value =<span class="number">0</span>;</div><div class="line"><span class="keyword">int</span> v_len = <span class="keyword">sizeof</span>(value);</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_SNDLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"snd low at value: %d\n"</span>,value);</div><div class="line">value = <span class="number">0</span>;</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_RCVLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"rcv low at value: %d\n"</span>,value);</div></pre></td></tr></table></figure>
+<h2 id="socket可读的条件"><a href="#socket可读的条件" class="headerlink" title="socket可读的条件"></a>socket可读的条件</h2><p>下列四个条件中的任何一个满足时,socket准备好读:<br>1.socket的接收缓冲区中的数据字节大于等于该socket的接收缓冲区低水位标记的当前大小。对这样的socket的读操作将不阻塞并返回一个大于0的值 {也就是返回准备好读入的数据}。我们可以用SO_RCVLOWATsocket选项来设置该socket的低水位标记。对于TCP和UDP .socket而言，其缺省值为1</p>
+<p>2.该连接的读这一半关闭{也就是接收了FIN的TCP连接}。对这样的socket的读操作将不阻塞并返回0</p>
+<p>3.socket是一个用于监听的socket,并且已经完成的连接数为非0.这样的soocket处于可读状态,是因为socket收到了对方的connect请求,执行了三次握手的第一步:对方发送SYN请求过来,使监听socket处于可读状态;正常情况下,这样的socket上的accept操作不会阻塞;</p>
+<p>4.有一个socket有异常错误条件待处理。对于这样的socket的读操作将不会阻塞,并且返回一个错误-1,errno则设置成明确的错误条件。这些待处理的错误也可通过指定socket选项SO_ERROR调用getsockopt来取得并清除</p>
+<h2 id="socket可写的条件"><a href="#socket可写的条件" class="headerlink" title="socket可写的条件"></a>socket可写的条件</h2><p>1.socket发送缓冲区中数据字节大于等于该socket发送缓冲区低水位大小。写操作不会被阻塞，会直接返回写入的数据大小，SO_SNDLOWAT socket选项设置socket可写低水位大小。经过测试默认大小为1。<br>2.如果你已经关闭连接，或者主动fin半关闭。这种情况下socket再些将要产生SIGPIPE信号，你没有对这个信号处理的话，你的进程将会被关闭。<br>3.有socket异常错误待处理，这种情况下写操作并不会被阻塞会直接返回一个错误-1，想知道错误原因erron可以帮助你。</p>
+<h2 id="参考地址"><a href="#参考地址" class="headerlink" title="参考地址"></a>参考地址</h2><p><a href="http://blog.csdn.net/szcarewell/article/details/51227540" target="_blank" rel="external">http://blog.csdn.net/szcarewell/article/details/51227540</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;概念说明&quot;&gt;&lt;a href=&quot;#概念说明&quot; class=&quot;headerlink&quot; title=&quot;概念说明&quot;&gt;&lt;/a&gt;概念说明&lt;/h2&gt;&lt;p&gt;1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：&lt;br&gt;每个套接字有一个接收低水位和一个发送低水位。他们
+    
+    </summary>
+    
+      <category term="socket" scheme="http://vcpu.me/categories/socket/"/>
+    
+    
+      <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
+    
+      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
+    
+  </entry>
+  
+  <entry>
     <title>socket信号处理</title>
     <link href="http://vcpu.me/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/"/>
     <id>http://vcpu.me/socket信号处理/</id>
@@ -2446,44 +2484,6 @@
       <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
     
       <category term="socket信号处理" scheme="http://vcpu.me/tags/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>socket读写条件</title>
-    <link href="http://vcpu.me/socket_rw_proc/"/>
-    <id>http://vcpu.me/socket_rw_proc/</id>
-    <published>2017-06-26T11:10:34.000Z</published>
-    <updated>2017-06-26T08:55:50.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="概念说明"><a href="#概念说明" class="headerlink" title="概念说明"></a>概念说明</h2><p>1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：<br>每个套接字有一个接收低水位和一个发送低水位。他们由select函数使用。<br>接收低水位标记是让select返回”可读”时套接字接收缓冲区中所需的数据量。对于TCP,其默认值为1。<br>发送低水位标记是让select返回”可写”时套接字发送缓冲区中所需的可用空间。对于TCP，其默认值常为2048</p>
-<p>通俗的解释一下，缓存区我们当成一个大小为 n bytes的空间，那么：<br>接收区缓存的作用就是，接收对面的数据放在缓存区，供应用程序读。当然了，只有当缓存区可读的数据量(接收低水位标记)到达一定程度（eg:1）的时候，我们才能读到数据，不然不就读不到数据了吗。<br>发送区缓存的作用就是，发送应用程序的数据到缓存区，然后一起发给对面。当然了，只有当缓存区剩余一定空间(发送低水位标记)（eg:2048）,你才能写数据进去，不然可能导致空间不够。</p>
-<p>2.FIN: (结束标志,Finish)用来结束一个TCP回话.但对应端口仍处于开放状态,准备接收后续数据.</p>
-<p>特别纠正说明：</p>
-<blockquote>
-<p>经过测试在3.10.0-514.16.1.el7.x86_64 内核情况下SO_SNDLOWAT/SO_RCVLOWAT<br>默认发送和接收最低水位均为1，也就是说默认情况下低水位值可以不考虑，系统缓冲区有数据就读<br>有空闲就写</p>
-</blockquote>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> value =<span class="number">0</span>;</div><div class="line"><span class="keyword">int</span> v_len = <span class="keyword">sizeof</span>(value);</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_SNDLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"snd low at value: %d\n"</span>,value);</div><div class="line">value = <span class="number">0</span>;</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_RCVLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"rcv low at value: %d\n"</span>,value);</div></pre></td></tr></table></figure>
-<h2 id="socket可读的条件"><a href="#socket可读的条件" class="headerlink" title="socket可读的条件"></a>socket可读的条件</h2><p>下列四个条件中的任何一个满足时,socket准备好读:<br>1.socket的接收缓冲区中的数据字节大于等于该socket的接收缓冲区低水位标记的当前大小。对这样的socket的读操作将不阻塞并返回一个大于0的值 {也就是返回准备好读入的数据}。我们可以用SO_RCVLOWATsocket选项来设置该socket的低水位标记。对于TCP和UDP .socket而言，其缺省值为1</p>
-<p>2.该连接的读这一半关闭{也就是接收了FIN的TCP连接}。对这样的socket的读操作将不阻塞并返回0</p>
-<p>3.socket是一个用于监听的socket,并且已经完成的连接数为非0.这样的soocket处于可读状态,是因为socket收到了对方的connect请求,执行了三次握手的第一步:对方发送SYN请求过来,使监听socket处于可读状态;正常情况下,这样的socket上的accept操作不会阻塞;</p>
-<p>4.有一个socket有异常错误条件待处理。对于这样的socket的读操作将不会阻塞,并且返回一个错误-1,errno则设置成明确的错误条件。这些待处理的错误也可通过指定socket选项SO_ERROR调用getsockopt来取得并清除</p>
-<h2 id="socket可写的条件"><a href="#socket可写的条件" class="headerlink" title="socket可写的条件"></a>socket可写的条件</h2><p>1.socket发送缓冲区中数据字节大于等于该socket发送缓冲区低水位大小。写操作不会被阻塞，会直接返回写入的数据大小，SO_SNDLOWAT socket选项设置socket可写低水位大小。经过测试默认大小为1。<br>2.如果你已经关闭连接，或者主动fin半关闭。这种情况下socket再些将要产生SIGPIPE信号，你没有对这个信号处理的话，你的进程将会被关闭。<br>3.有socket异常错误待处理，这种情况下写操作并不会被阻塞会直接返回一个错误-1，想知道错误原因erron可以帮助你。</p>
-<h2 id="参考地址"><a href="#参考地址" class="headerlink" title="参考地址"></a>参考地址</h2><p><a href="http://blog.csdn.net/szcarewell/article/details/51227540" target="_blank" rel="external">http://blog.csdn.net/szcarewell/article/details/51227540</a></p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;概念说明&quot;&gt;&lt;a href=&quot;#概念说明&quot; class=&quot;headerlink&quot; title=&quot;概念说明&quot;&gt;&lt;/a&gt;概念说明&lt;/h2&gt;&lt;p&gt;1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：&lt;br&gt;每个套接字有一个接收低水位和一个发送低水位。他们
-    
-    </summary>
-    
-      <category term="socket" scheme="http://vcpu.me/categories/socket/"/>
-    
-    
-      <category term="tcp/ip" scheme="http://vcpu.me/tags/tcp-ip/"/>
-    
-      <category term="kernel3.10.0-514.16.1" scheme="http://vcpu.me/tags/kernel3-10-0-514-16-1/"/>
     
   </entry>
   
