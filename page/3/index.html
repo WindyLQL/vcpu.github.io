@@ -319,6 +319,156 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/openvswitch2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/openvswitch2/" itemprop="url">openvSwitch tunnel</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T18:00:00+08:00">
+                2017-08-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络/" itemprop="url" rel="index">
+                    <span itemprop="name">网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/openvswitch2/" class="leancloud_visitors" data-flag-title="openvSwitch tunnel">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="ovs-tunnel"><a href="#ovs-tunnel" class="headerlink" title="ovs tunnel"></a>ovs tunnel</h2><h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><p><img src="/myimages/tunnel.png" alt="tunnel"></p>
+<h3 id="实验拓扑搭建基础脚本"><a href="#实验拓扑搭建基础脚本" class="headerlink" title="实验拓扑搭建基础脚本"></a>实验拓扑搭建基础脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">#vbox虚拟机1</div><div class="line">ip netns add left</div><div class="line">ip link add name veth1 type veth peer name sw1-p1</div><div class="line">ip link set dev veth1 netns left</div><div class="line">ip netns exec left ifconfig veth1 10.0.0.1/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw1</div><div class="line">ovs-vsctl add-port sw1 sw1-p1</div><div class="line">ip link set sw1-p1 up</div><div class="line"></div><div class="line">#vbox虚拟机2</div><div class="line">ip netns add right</div><div class="line">ip link add name veth1 type veth peer name sw2-p1</div><div class="line">ip link set dev veth1 netns right</div><div class="line">ip netns exec right ifconfig veth1 10.0.0.2/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw2</div><div class="line">ovs-vsctl add-port sw2 sw2-p1</div><div class="line">ip link set sw2-p1 up</div></pre></td></tr></table></figure>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/openvswitch2/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://vcpu.me/openvswitch/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1687,158 +1837,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/惊群/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/惊群/" itemprop="url">惊群探究</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-29T12:00:00+08:00">
-                2017-06-29
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index">
-                    <span itemprop="name">linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/惊群/" class="leancloud_visitors" data-flag-title="惊群探究">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="惊群"><a href="#惊群" class="headerlink" title="惊群"></a>惊群</h2><p>发生在多进程或者多线程，等待同一个socket事件，当该事件发生，这些进程或者线程都被唤醒</p>
-<h2 id="发生位置"><a href="#发生位置" class="headerlink" title="发生位置"></a>发生位置</h2><p>2.6版本内核accept已经解决该问题了，但是select／poll或者epool_wait仍然存在该问题</p>
-<h2 id="产生影响"><a href="#产生影响" class="headerlink" title="产生影响"></a>产生影响</h2><p>一个连接来临时，多个子进程同时被唤醒，却只有一个子进程accept成功，其余都失败，重新休眠；产生了没有必要的唤醒和上下文切换，造成性能浪费。</p>
-<h2 id="惊群实例分析"><a href="#惊群实例分析" class="headerlink" title="惊群实例分析"></a>惊群实例分析</h2><p>总体结论：accept linux内核已经解决惊群问题3.10.0-514.16.1.el7.x86_64，具体唤醒方式实现参见<a href="http://vcpu.me/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/">socket信号处理博文</a><br>select/pool和epool内核并没有支持解决惊群问题。<br>之前一直觉得epool和select使用非常平凡，为什么操作系统不直接自己解决惊群问题？应该是epool和select不仅仅使用在socket监听中，会存在需要唤醒多个进程的使用场景。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/惊群/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1888,7 +1886,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">46</span>
+                <span class="site-state-item-count">47</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1910,7 +1908,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">77</span>
+                <span class="site-state-item-count">80</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

@@ -4,8 +4,36 @@
 
     
   <url>
+    <loc>http://vcpu.me/ovs-limit/</loc>
+    <lastmod>2017-11-08T10:04:17.000Z</lastmod>
+    <data>
+        <display>
+        <title>ovs 发包限速</title>
+        <pubTime>2017-11-08T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntun16.04</tag>
+         
+        <tag>ovs</tag>
+         
+        <tag>tc</tag>
+         
+        <tag>netperf</tag>
+         
+        <tag>发包限速</tag>
+         
+         
+           
+             
+              <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/guanshen/</loc>
-    <lastmod>2017-11-02T10:55:19.000Z</lastmod>
+    <lastmod>2017-11-02T11:05:04.000Z</lastmod>
     <data>
         <display>
         <title>小说官神经典语录</title>
