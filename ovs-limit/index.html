@@ -103,7 +103,7 @@
 <meta property="og:site_name" content="i博客">
 <meta property="og:description" content="netperf吞吐测试方法步骤1:在ns4 namespace中运行netserver1Starting netserver with host &amp;apos;IN(6)ADDR_ANY&amp;apos; port &amp;apos;12865&amp;apos; and family AF_UNSPEC 步骤2:在ns1 namespace中运行 netperf -H 1.1.1.4 -t UDP_STREAM123">
 <meta property="og:image" content="http://vcpu.me/myimages/9786C404838BFF52EAF2688A82519E0A.png">
-<meta property="og:updated_time" content="2017-11-08T10:04:17.000Z">
+<meta property="og:updated_time" content="2017-11-08T10:07:49.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ovs 发包限速">
 <meta name="twitter:description" content="netperf吞吐测试方法步骤1:在ns4 namespace中运行netserver1Starting netserver with host &amp;apos;IN(6)ADDR_ANY&amp;apos; port &amp;apos;12865&amp;apos; and family AF_UNSPEC 步骤2:在ns1 namespace中运行 netperf -H 1.1.1.4 -t UDP_STREAM123">
@@ -433,7 +433,7 @@
       
         <h1 id="netperf吞吐测试方法"><a href="#netperf吞吐测试方法" class="headerlink" title="netperf吞吐测试方法"></a>netperf吞吐测试方法</h1><h2 id="步骤1-在ns4-namespace中运行netserver"><a href="#步骤1-在ns4-namespace中运行netserver" class="headerlink" title="步骤1:在ns4 namespace中运行netserver"></a>步骤1:在ns4 namespace中运行netserver</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Starting netserver with host &apos;IN(6)ADDR_ANY&apos; port &apos;12865&apos; and family AF_UNSPEC</div></pre></td></tr></table></figure>
 <h2 id="步骤2-在ns1-namespace中运行-netperf-H-1-1-1-4-t-UDP-STREAM"><a href="#步骤2-在ns1-namespace中运行-netperf-H-1-1-1-4-t-UDP-STREAM" class="headerlink" title="步骤2:在ns1 namespace中运行 netperf -H 1.1.1.4 -t UDP_STREAM"></a>步骤2:在ns1 namespace中运行 netperf -H 1.1.1.4 -t UDP_STREAM</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">root@compute:~# netperf -H 1.1.1.4 -t UDP_STREAM</div><div class="line">MIGRATED UDP STREAM TEST from 0.0.0.0 (0.0.0.0) port 0 AF_INET to 1.1.1.4 (1.1.1.4) port 0 AF_INET : demo</div><div class="line">Socket Message Elapsed Messages</div><div class="line">Size Size Time Okay Errors Throughput</div><div class="line">bytes bytes secs # # 10^6bits/sec</div><div class="line">212992 65507 10.01 795007 0 41640.99</div><div class="line">212992 10.01 794006 41588.56</div></pre></td></tr></table></figure>
-<p>测速结果：41.58856Gbps</p>
+<p>测速结果：41.58856Gbps<br><a id="more"></a></p>
 <h1 id="ovs限速操作方法"><a href="#ovs限速操作方法" class="headerlink" title="ovs限速操作方法"></a>ovs限速操作方法</h1><h2 id="添加限速策略"><a href="#添加限速策略" class="headerlink" title="添加限速策略"></a>添加限速策略</h2><hr>
 <h3 id="步骤1-添加qos"><a href="#步骤1-添加qos" class="headerlink" title="步骤1:添加qos"></a>步骤1:添加qos</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl --timeout=<span class="number">10</span> -- set Port firstbr qos=@newqos -- --id=@newqos create QoS type=linux-htb  other-config:max-rate=<span class="number">60000000000</span></div></pre></td></tr></table></figure>
 <p><strong>注意</strong>：该命令限速60G，即使重复执行上述命令，也是最后一条命令生效</p>
@@ -530,8 +530,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/guanshen/" rel="next" title="小说官神经典语录">
-                <i class="fa fa-chevron-left"></i> 小说官神经典语录
+              <a href="/linux-bridge1/" rel="next" title="linux bridge">
+                <i class="fa fa-chevron-left"></i> linux bridge
               </a>
             
           </div>
