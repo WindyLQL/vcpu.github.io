@@ -1704,7 +1704,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/openvswitch2/">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/openvswitch1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="vcpu.me">
@@ -1723,7 +1723,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/openvswitch2/" itemprop="url">openvSwitch tunnel</a></h1>
+                <a class="post-title-link" href="/openvswitch1/" itemprop="url">openvSwitch mirror、Qos、STP</a></h1>
         
 
         <div class="post-meta">
@@ -1775,7 +1775,7 @@
 
           
           
-             <span id="/openvswitch2/" class="leancloud_visitors" data-flag-title="openvSwitch tunnel">
+             <span id="/openvswitch1/" class="leancloud_visitors" data-flag-title="openvSwitch mirror、Qos、STP">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1804,11 +1804,17 @@
 
       
         
-          <h2 id="ovs-tunnel"><a href="#ovs-tunnel" class="headerlink" title="ovs tunnel"></a>ovs tunnel</h2><h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><p><img src="/myimages/tunnel.png" alt="tunnel"></p>
-<h3 id="实验拓扑搭建基础脚本"><a href="#实验拓扑搭建基础脚本" class="headerlink" title="实验拓扑搭建基础脚本"></a>实验拓扑搭建基础脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">#vbox虚拟机1</div><div class="line">ip netns add left</div><div class="line">ip link add name veth1 type veth peer name sw1-p1</div><div class="line">ip link set dev veth1 netns left</div><div class="line">ip netns exec left ifconfig veth1 10.0.0.1/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw1</div><div class="line">ovs-vsctl add-port sw1 sw1-p1</div><div class="line">ip link set sw1-p1 up</div><div class="line"></div><div class="line">#vbox虚拟机2</div><div class="line">ip netns add right</div><div class="line">ip link add name veth1 type veth peer name sw2-p1</div><div class="line">ip link set dev veth1 netns right</div><div class="line">ip netns exec right ifconfig veth1 10.0.0.2/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw2</div><div class="line">ovs-vsctl add-port sw2 sw2-p1</div><div class="line">ip link set sw2-p1 up</div></pre></td></tr></table></figure>
+          <h2 id="ovs-mirror"><a href="#ovs-mirror" class="headerlink" title="ovs mirror"></a>ovs mirror</h2><h3 id="ovs-mirror介绍"><a href="#ovs-mirror介绍" class="headerlink" title="ovs mirror介绍"></a>ovs mirror介绍</h3><p>mirror可以将虚拟交换机把数据包发给的接口或则vlan</p>
+<ul>
+<li><p>命令中对数据包选择选项：<br>select_all，所有的包<br>select_dst_port<br>select_src_port<br>select_vlan</p>
+</li>
+<li><p>将数据包镜像的命令：<br>output_port (SPAN Switched Port ANalyzer 本地流量)<br>output_vlan (RSPAN Remote Switched Port ANalyzer 远程流量)</p>
+</li>
+</ul>
+<h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><p><img src="/myimages/ovsmirror.png" alt="ovsmirror"></p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/openvswitch2/#more" rel="contents">
+            <a class="btn" href="/openvswitch1/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1894,7 +1900,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">47</span>
+                <span class="site-state-item-count">48</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1916,7 +1922,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">80</span>
+                <span class="site-state-item-count">84</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -1993,8 +1999,8 @@
       <div class="footer-inner">
         <div class="copyright" >
   
-  &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

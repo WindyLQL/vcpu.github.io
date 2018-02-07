@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://vcpu.me/dropwatch/</loc>
+    
+    <lastmod>2018-02-07T13:14:29.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://vcpu.me/f-stack%E5%AE%89%E8%A3%85/</loc>
+    
+    <lastmod>2018-02-07T13:13:17.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://vcpu.me/ovs-limit/</loc>
     
     <lastmod>2017-11-08T10:12:35.000Z</lastmod>
@@ -117,13 +131,6 @@
     <loc>http://vcpu.me/secritygroup/</loc>
     
     <lastmod>2017-08-09T06:59:00.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://vcpu.me/f-stack%E5%AE%89%E8%A3%85/</loc>
-    
-    <lastmod>2017-08-07T10:58:32.000Z</lastmod>
     
   </url>
   
