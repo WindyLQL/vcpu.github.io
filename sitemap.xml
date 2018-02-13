@@ -2,9 +2,72 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://vcpu.me/print_stack/</loc>
+    
+    <lastmod>2018-02-11T16:35:25.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://vcpu.me/exectime_for_c_proess/</loc>
+    
+    <lastmod>2018-02-11T16:34:06.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://vcpu.me/valgrind/</loc>
+    
+    <lastmod>2018-02-11T16:33:36.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://vcpu.me/guest_tx_pps_performance/</loc>
+    
+    <lastmod>2018-02-11T16:12:11.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://vcpu.me/ftrace/</loc>
+    
+    <lastmod>2018-02-11T15:48:10.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://vcpu.me/ubuntu_soure_make/</loc>
+    
+    <lastmod>2018-02-11T15:33:13.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://vcpu.me/systemtap3.1/</loc>
+    
+    <lastmod>2018-02-11T15:18:58.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://vcpu.me/systemtap-skills/</loc>
+    
+    <lastmod>2018-02-11T15:18:53.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://vcpu.me/dropwatch/</loc>
     
-    <lastmod>2018-02-07T13:14:29.000Z</lastmod>
+    <lastmod>2018-02-11T14:48:59.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://vcpu.me/osx-ensible/</loc>
+    
+    <lastmod>2018-02-11T14:04:07.000Z</lastmod>
     
   </url>
   

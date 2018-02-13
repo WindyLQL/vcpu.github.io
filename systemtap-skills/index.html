@@ -1,0 +1,1379 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="systemtap,ubuntu16.04.2,probe,内存泄漏探测,嵌入c,打印二级指针,qemu进程创建失败," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="i博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="systemtap是一个强大的工具，笔者本次主要是发现其能力，为后续操作使用做下积淀积累。请见下文。 probe “probe” \&amp;lt;=&amp;gt; “探测”, 是SystemTap进行具体地收集数据的关键字。“probe point” 是probe动作的时机，也称探测点。也就是probe程序监视的某事件点，一旦侦测的事件触发了，则probe将从此处插入内核或者用户进程中。 探测点语法123456ke">
+<meta name="keywords" content="systemtap,ubuntu16.04.2,probe,内存泄漏探测,嵌入c,打印二级指针,qemu进程创建失败">
+<meta property="og:type" content="article">
+<meta property="og:title" content="systemtap能做什么？第一篇">
+<meta property="og:url" content="http://vcpu.me/systemtap-skills/index.html">
+<meta property="og:site_name" content="i博客">
+<meta property="og:description" content="systemtap是一个强大的工具，笔者本次主要是发现其能力，为后续操作使用做下积淀积累。请见下文。 probe “probe” \&amp;lt;=&amp;gt; “探测”, 是SystemTap进行具体地收集数据的关键字。“probe point” 是probe动作的时机，也称探测点。也就是probe程序监视的某事件点，一旦侦测的事件触发了，则probe将从此处插入内核或者用户进程中。 探测点语法123456ke">
+<meta property="og:updated_time" content="2018-02-11T15:18:53.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="systemtap能做什么？第一篇">
+<meta name="twitter:description" content="systemtap是一个强大的工具，笔者本次主要是发现其能力，为后续操作使用做下积淀积累。请见下文。 probe “probe” \&amp;lt;=&amp;gt; “探测”, 是SystemTap进行具体地收集数据的关键字。“probe point” 是probe动作的时机，也称探测点。也就是probe程序监视的某事件点，一旦侦测的事件触发了，则probe将从此处插入内核或者用户进程中。 探测点语法123456ke">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://vcpu.me/systemtap-skills/"/>
+
+
+
+
+
+  <title>systemtap能做什么？第一篇 | i博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">i博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">仰望星空前，还需脚踏实地。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/systemtap-skills/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">systemtap能做什么？第一篇</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-10T18:00:00+08:00">
+                2017-12-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux-kernel/" itemprop="url" rel="index">
+                    <span itemprop="name">linux kernel</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a class="cloud-tie-join-count" href="/systemtap-skills/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/systemtap-skills/" class="leancloud_visitors" data-flag-title="systemtap能做什么？第一篇">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>systemtap是一个强大的工具，笔者本次主要是发现其能力，为后续操作使用做下积淀积累。请见下文。</p>
+<p><strong>probe</strong></p>
+<p>“probe” \&lt;=> “探测”, 是SystemTap进行具体地收集数据的关键字。<br>“probe point” 是probe动作的时机，也称探测点。也就是probe程序监视的某事件点，一旦侦测的事件触发了，则probe将从此处插入内核或者用户进程中。</p>
+<h2 id="探测点语法"><a href="#探测点语法" class="headerlink" title="探测点语法"></a>探测点语法</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">kernel.function(PATTERN)</div><div class="line">kernel.function(PATTERN).call</div><div class="line">kernel.function(PATTERN).<span class="keyword">return</span></div><div class="line">kernel.function(PATTERN).retutrn.maxactive(VALUE)</div><div class="line">kernel.function(PATTERN).inline</div><div class="line">kernel.function(PATTERN).label(PATTERN)</div></pre></td></tr></table></figure>
+<ul>
+<li>return 返回点探测</li>
+<li>return.maxactive(VALUE)修饰return，控制同时探测多少个实例，默认足够一搬不用，如果出现了跳过探测现象且很多，可以使用此参数，提升探测效果</li>
+<li>.call 函数被调用时触发此调用点</li>
+<li>.inline 内联函数需要展示时候用此参数</li>
+<li>.label 内核常常用到goto函数，用此标签可以探测出具体的goto返回点</li>
+</ul>
+<a id="more"></a>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">module(MPATTERN).function(PATTERN)</div><div class="line">moudle(MPATTERN).function(PATTERN).call</div><div class="line">moudle(MPATTERN).function(PATTERN).<span class="keyword">return</span>.maxactive(VALUE)</div><div class="line">moudle(MPATTERN).function(PATTERN).inline</div></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">kernel.statement(PATTERN)</div><div class="line">kernel.statement(ADDRESS).absolute</div></pre></td></tr></table></figure>
+<ul>
+<li>statement定位到具体的line或者函数，将这些定位点作为跟踪点</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">moudle(MPATTERN).statement(PATTERN)</div></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">process(PROCESSPATH).function(PATTERN)</div><div class="line">process(PROCESSPATH).function(PATTERN).call</div><div class="line">process(PROCESSPATH).function(PATTERN).<span class="keyword">return</span></div><div class="line">process(PROCESSPATH).function(PATTERN).inline</div><div class="line">process(PROCESSPATH).statement(PATTERN)</div></pre></td></tr></table></figure>
+<h2 id="PATTERN"><a href="#PATTERN" class="headerlink" title="PATTERN"></a>PATTERN</h2><p>func[@file]</p>
+<p>func@file:linenumber</p>
+<p>eg:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">kernel.function(<span class="string">"*int*"</span>)</div><div class="line">kernel.function(<span class="string">"*"</span>)</div><div class="line">kernel.function(<span class="string">"__netif_receive_skb_core"</span>)</div></pre></td></tr></table></figure>
+<h2 id="我当前内核有哪些函数？"><a href="#我当前内核有哪些函数？" class="headerlink" title="我当前内核有哪些函数？"></a>我当前内核有哪些函数？</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># stap -l 'kernel.function("*")'|grep __netif_receive_skb_core</span></div><div class="line">kernel.function(<span class="string">"__netif_receive_skb_core@/build/linux-W6HB68/linux-4.4.0/net/core/dev.c:3828"</span>)</div></pre></td></tr></table></figure>
+<h2 id="我当前内核有哪些变量？"><a href="#我当前内核有哪些变量？" class="headerlink" title="我当前内核有哪些变量？"></a>我当前内核有哪些变量？</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># stap -L 'kernel.function("__netif_receive_skb_core")'</span></div><div class="line">kernel.function(<span class="string">"__netif_receive_skb_core@/build/linux-W6HB68/linux-4.4.0/net/core/dev.c:3828"</span>) $skb:struct sk_buff* $pfmemalloc:bool</div></pre></td></tr></table></figure>
+<h2 id="我想知道-netif-receive-skb-core被调用了几次？"><a href="#我想知道-netif-receive-skb-core被调用了几次？" class="headerlink" title="我想知道__netif_receive_skb_core被调用了几次？"></a>我想知道__netif_receive_skb_core被调用了几次？</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># cat tanche.stp</span></div></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">global</span> count=<span class="number">0</span></div><div class="line"></div><div class="line">probe kernel.function(<span class="string">"__netif_receive_skb_core"</span>) &#123;</div><div class="line">  count++</div><div class="line">  <span class="keyword">if</span> (count % <span class="number">5</span> == <span class="number">0</span>)</div><div class="line">     printf( <span class="string">"sys_sync called %d times\n"</span>, count);</div><div class="line">&#125;</div><div class="line"></div><div class="line">probe timer.ms(<span class="number">10000</span>)&#123;</div><div class="line">   printf(<span class="string">" %d times\n\n"</span>,count);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>每收5个数据包，打印一次，如果没有收到5个数据包，且时间过了约10s，也打印一次</p>
+<p>执行结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># stap tanche.stp</span></div><div class="line"> <span class="number">0</span> times</div><div class="line">sys_sync called <span class="number">5</span> times</div><div class="line">sys_sync called <span class="number">10</span> times</div><div class="line">sys_sync called <span class="number">15</span> times</div><div class="line">^Croot@ubuntu:~<span class="comment">#</span></div></pre></td></tr></table></figure>
+<h2 id="如何打印内核函数的返回值？"><a href="#如何打印内核函数的返回值？" class="headerlink" title="如何打印内核函数的返回值？"></a>如何打印内核函数的返回值？</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># stap -e 'probe kernel.function("__netif_receive_skb_core").return &#123; printf("__netif_receive_skb_core return: :%d\n",$return) exit() &#125;'</span></div><div class="line">__netif_receive_skb_core <span class="keyword">return</span>: :<span class="number">0</span></div></pre></td></tr></table></figure>
+<h2 id="如何使用stap知晓当前函数在哪丢包的？"><a href="#如何使用stap知晓当前函数在哪丢包的？" class="headerlink" title="如何使用stap知晓当前函数在哪丢包的？"></a>如何使用stap知晓当前函数在哪丢包的？</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="title">int__netif_receive_skb_core</span><span class="params">(struct sk_buff *skb, <span class="keyword">bool</span> pfmemalloc)</span></span></div><div class="line">&#123;</div><div class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">packet_type</span> *<span class="title">ptype</span>, *<span class="title">pt_prev</span>;</span></div><div class="line">...</div><div class="line">			<span class="keyword">goto</span> out;</div><div class="line">	&#125;</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_NET_CLS_ACT</span></div><div class="line">	<span class="keyword">if</span> (skb-&gt;tc_verd &amp; TC_NCLS) &#123;</div><div class="line">		skb-&gt;tc_verd = CLR_TC_NCLS(skb-&gt;tc_verd);</div><div class="line">		<span class="keyword">goto</span> ncls;</div><div class="line">	&#125;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div><div class="line"></div><div class="line">	<span class="keyword">if</span> (pfmemalloc)</div><div class="line">		<span class="keyword">goto</span> skip_taps;</div><div class="line"></div><div class="line">	list_for_each_entry_rcu(ptype, &amp;ptype_all, <span class="built_in">list</span>) &#123;</div><div class="line">		<span class="keyword">if</span> (pt_prev)</div><div class="line">			ret = deliver_skb(skb, pt_prev, orig_dev);</div><div class="line">		pt_prev = ptype;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">...</div><div class="line"></div><div class="line">	<span class="keyword">if</span> (pt_prev) &#123;</div><div class="line">		<span class="keyword">if</span> (unlikely(skb_orphan_frags(skb, GFP_ATOMIC)))</div><div class="line">			<span class="keyword">goto</span> drop;</div><div class="line">		<span class="keyword">else</span></div><div class="line">			ret = pt_prev-&gt;func(skb, skb-&gt;dev, pt_prev, orig_dev);</div><div class="line">	&#125; <span class="keyword">else</span> &#123;</div><div class="line">drop:</div><div class="line">		atomic_long_inc(&amp;skb-&gt;dev-&gt;rx_dropped);</div><div class="line">		kfree_skb(skb);</div><div class="line">		<span class="comment">/* Jamal, now you will not able to escape explaining</span></div><div class="line">		 * me how you were going to use this. :-)</div><div class="line">		 */</div><div class="line">		ret = NET_RX_DROP;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">out:</div><div class="line">	<span class="keyword">return</span> ret;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">stap -e 'probe kernel.function("__netif_receive_skb_core").label("drop") &#123; printf("__netif_receive_skb_core drop\n")  &#125;’</div><div class="line">stap -e 'probe kernel.function("__netif_receive_skb_core").label("out") &#123; printf("__netif_receive_skb_core out\n")  &#125;'</div></pre></td></tr></table></figure>
+<p>linux函数使用goto处理函数返回点再正常不过了，此时如果你使用return探测丢包点，难达预期效果。只有将丢包点精准到goto语句的label标签，才可以发现丢包位置。</p>
+<p>（之前对stap 的probe理解不深刻，也不会这样用，也不知曾为找具体丢包点挠过多少回头皮）</p>
+<h2 id="谁调用了-netif-receive-skb-core-收了我的数据包？"><a href="#谁调用了-netif-receive-skb-core-收了我的数据包？" class="headerlink" title="谁调用了__netif_receive_skb_core 收了我的数据包？"></a>谁调用了__netif_receive_skb_core 收了我的数据包？</h2><p>首先列出__netif_receive_skb_core所在的代码位置</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># stap -L  'kernel.function("__netif_receive_skb_core")'</span></div><div class="line">kernel.function(<span class="string">"__netif_receive_skb_core@/build/linux-W6HB68/linux-4.4.0/net/core/dev.c:3828"</span>) $skb:struct sk_buff* $pfmemalloc:bool</div></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">stap -e <span class="string">'probe kernel.statement("*@net/core/dev.c:3829") &#123;printf(" : %s\n", execname()) &#125;'</span></div></pre></td></tr></table></figure>
+<h2 id="qume虚拟机进程创建出了错，该怎么办？"><a href="#qume虚拟机进程创建出了错，该怎么办？" class="headerlink" title="qume虚拟机进程创建出了错，该怎么办？"></a>qume虚拟机进程创建出了错，该怎么办？</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">root@compute<span class="number">-001</span>:~<span class="comment"># cat qumetanche.stp</span></div><div class="line">probe begin &#123;</div><div class="line">    printf(<span class="string">"start moniting qemu clone syscall...\n"</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line">probe kernel.function(<span class="string">"sys_clone"</span>) &#123;</div><div class="line">    <span class="keyword">if</span> (execname() == <span class="string">"qemu-system-x86"</span>) &#123;</div><div class="line">        printf(<span class="string">"sys_clone : %s\n"</span>, execname())</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">probe kernel.function(<span class="string">"sys_clone"</span>).<span class="keyword">return</span> &#123;</div><div class="line">    <span class="keyword">if</span> (execname() == <span class="string">"qemu-system-x86"</span>) &#123;</div><div class="line">        printf(<span class="string">"sys_clone_return : %s, %d\n"</span>, execname(), $<span class="keyword">return</span>)</div><div class="line">        <span class="keyword">if</span> ($<span class="keyword">return</span> &lt; <span class="number">0</span>)</div><div class="line">            printf(<span class="string">"[error]sys_clone_return : %s, %d\n"</span>, execname(), $<span class="keyword">return</span>)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>进程在创建时候，会调用sys_clone，通过过滤调用该函数的执行者，可以定位到qemu-system-x86服务建立的进程，然后跟踪建立过程中返回值确认创建失败原因</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">root@compute<span class="number">-001</span>:~<span class="comment"># stap qumetanche.stp</span></div><div class="line">start moniting qemu clone syscall...</div><div class="line">sys_clone : qemu-system-x86</div><div class="line">sys_clone_return : qemu-system-x86, <span class="number">29946</span></div><div class="line">sys_clone : qemu-system-x86</div><div class="line">sys_clone_return : qemu-system-x86, <span class="number">29947</span></div><div class="line">sys_clone : qemu-system-x86</div><div class="line">sys_clone_return : qemu-system-x86, <span class="number">29948</span></div><div class="line">sys_clone : qemu-system-x86</div><div class="line">sys_clone_return : qemu-system-x86, <span class="number">29949</span></div><div class="line">sys_clone : qemu-system-x86</div><div class="line">sys_clone_return : qemu-system-x86, <span class="number">29950</span></div><div class="line">sys_clone : qemu-system-x86</div><div class="line">sys_clone_return : qemu-system-x86, <span class="number">29951</span></div><div class="line">sys_clone : qemu-system-x86</div><div class="line">sys_clone_return : qemu-system-x86, <span class="number">29952</span></div><div class="line">sys_clone : qemu-system-x86</div><div class="line">sys_clone_return : qemu-system-x86, <span class="number">30088</span></div><div class="line">sys_clone : qemu-system-x86</div></pre></td></tr></table></figure>
+<h2 id="我想研究一个内核（信号处理过程）过程该怎么做？"><a href="#我想研究一个内核（信号处理过程）过程该怎么做？" class="headerlink" title="我想研究一个内核（信号处理过程）过程该怎么做？"></a>我想研究一个内核（信号处理过程）过程该怎么做？</h2><h3 id="步骤1-找到sys-kill函数所在的源文件"><a href="#步骤1-找到sys-kill函数所在的源文件" class="headerlink" title="步骤1:找到sys_kill函数所在的源文件"></a>步骤1:找到sys_kill函数所在的源文件</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># stap -l 'kernel.function("sys_kill")'</span></div><div class="line">kernel.function(<span class="string">"SyS_kill@/build/linux-W6HB68/linux-4.4.0/kernel/signal.c:2847"</span>)</div></pre></td></tr></table></figure>
+<p>得知信号处理函数所在的内核源代码路径为：/build/linux-W6HB68/linux-4.4.0/kernel/signal.c</p>
+<p>因为不同平台会有不同的内核路径，首先要做的事情就是，先找到具体内核路径</p>
+<h3 id="步骤2-根据步骤1找到的内核路径，探测该路径下所有的函数的调用和返回并打出结果"><a href="#步骤2-根据步骤1找到的内核路径，探测该路径下所有的函数的调用和返回并打出结果" class="headerlink" title="步骤2:根据步骤1找到的内核路径，探测该路径下所有的函数的调用和返回并打出结果"></a>步骤2:根据步骤1找到的内核路径，探测该路径下所有的函数的调用和返回并打出结果</h3><p>-x -x PID sets target() to PID, 脚本里会用到此参数</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~# stap -x 15365 signal.stp</div><div class="line">WARNING: function signals_init is in blacklisted section: keyword at signal.stp:5:1</div><div class="line"> source: probe kernel.function("*@/build/linux-W6HB68/linux-4.4.0/kernel/signal.c").call &#123;</div><div class="line">         ^</div><div class="line">WARNING: function setup_print_fatal_signals is in blacklisted section: keyword at :5:1</div><div class="line"> source: probe kernel.function("*@/build/linux-W6HB68/linux-4.4.0/kernel/signal.c").call &#123;</div><div class="line">         ^</div><div class="line">begin</div><div class="line"></div><div class="line">     0 bash(15365):    -&gt; get_signal,pid() 15365 target() 15365</div><div class="line">     5 bash(15365):        -&gt; get_signal,pid() 15365 target() 15365</div><div class="line">     8 bash(15365):            -&gt; dequeue_signal,pid() 15365 target() 15365</div><div class="line">     9 bash(15365):                -&gt; dequeue_signal,pid() 15365 target() 15365</div><div class="line">    11 bash(15365):                    -&gt; __dequeue_signal,pid() 15365 target() 15365</div><div class="line">    13 bash(15365):                        -&gt; __dequeue_signal,pid() 15365 target() 15365</div><div class="line">    14 bash(15365):                            -&gt; __dequeue_signal,pid() 15365 target() 15365</div><div class="line">    16 bash(15365):                                -&gt; __dequeue_signal,pid() 15365 target() 15365</div><div class="line">    18 bash(15365):                                    -&gt; __sigqueue_free,pid() 15365 target() 15365</div><div class="line">    19 bash(15365):                                        -&gt; __sigqueue_free,pid() 15365 target() 15365</div><div class="line">    22 bash(15365):                                            -&gt; recalc_sigpending,pid() 15365 target() 15365</div><div class="line">    23 bash(15365):                                                -&gt; recalc_sigpending,pid() 15365 target() 15365</div><div class="line">    25 bash(15365):                                                    -&gt; recalc_sigpending_tsk,pid() 15365 target() 15365</div><div class="line">    27 bash(15365):                                                        -&gt; recalc_sigpending_tsk,pid() 15365 target() 15365</div><div class="line">    31 bash(15365):                                                            -&gt; signal_setup_done,pid() 15365 target() 15365</div><div class="line">    33 bash(15365):                                                                -&gt; signal_setup_done,pid() 15365 target() 15365</div><div class="line">    34 bash(15365):                                                                    -&gt; __set_current_blocked,pid() 15365 target() 15365</div><div class="line">    36 bash(15365):                                                                        -&gt; __set_current_blocked,pid() 15365 target() 15365</div><div class="line">    38 bash(15365):                                                                            -&gt; __set_task_blocked,pid() 15365 target() 15365</div><div class="line">    39 bash(15365):                                                                                -&gt; __set_task_blocked,pid() 15365 target() 15365</div><div class="line">    41 bash(15365):                                                                                    -&gt; recalc_sigpending,pid() 15365 target() 15365</div></pre></td></tr></table></figure>
+<h2 id="有人用stap分析内存泄漏和重复释放，记录下来吧"><a href="#有人用stap分析内存泄漏和重复释放，记录下来吧" class="headerlink" title="有人用stap分析内存泄漏和重复释放，记录下来吧"></a>有人用stap分析内存泄漏和重复释放，记录下来吧</h2><h3 id="步骤1-分析要要用的c语言源码，并编译"><a href="#步骤1-分析要要用的c语言源码，并编译" class="headerlink" title="步骤1:分析要要用的c语言源码，并编译"></a>步骤1:分析要要用的c语言源码，并编译</h3><figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># cat mem_test.c</span></div><div class="line"><span class="comment">#include &lt;stdio.h&gt;</span></div><div class="line"><span class="comment">#include &lt;stdlib.h&gt;</span></div><div class="line"><span class="comment">#include &lt;unistd.h&gt;</span></div><div class="line"></div><div class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, char *argv[])</div><div class="line">&#123;</div><div class="line">    char *p1;</div><div class="line">    char *p2;</div><div class="line">    char *p3;</div><div class="line">    char *p4;</div><div class="line"></div><div class="line">    <span class="keyword">sleep</span>(<span class="number">20</span>);<span class="regexp">//</span>让程序<span class="keyword">sleep</span> <span class="number">20</span><span class="keyword">s</span>是因为我们程序先起来之后，等待SystemTap启动设置探测点</div><div class="line">    p1 = malloc(<span class="number">500</span>);</div><div class="line">    p2 = malloc(<span class="number">200</span>);</div><div class="line">    p3 = malloc(<span class="number">300</span>);</div><div class="line">    p4 = malloc(<span class="number">300</span>);<span class="regexp">//</span>泄漏</div><div class="line">    free(p1);</div><div class="line">    free(p2);</div><div class="line">    free(p3);</div><div class="line">    free(p2);<span class="regexp">//</span>重复释放</div><div class="line">    <span class="keyword">printf</span>(<span class="string">"p1: %p, p2: %p, p3: %p, p4: %p\n"</span>, p1, p2, p3, p4);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong>编译：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gcc -g mem_test.c -o main</div></pre></td></tr></table></figure>
+<h3 id="步骤2-探测内存泄漏和重复释放的脚本"><a href="#步骤2-探测内存泄漏和重复释放的脚本" class="headerlink" title="步骤2: 探测内存泄漏和重复释放的脚本"></a>步骤2: 探测内存泄漏和重复释放的脚本</h3><figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># cat mem.stp</span></div><div class="line">probe begin &#123;</div><div class="line">    <span class="keyword">printf</span>(<span class="string">"=============begin============\n"</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line">//记录内存分配和释放的计数关联数组</div><div class="line">global g_mem_ref_tbl</div><div class="line">//记录内存分配和释放的调用堆栈关联数组</div><div class="line">global g_mem_bt_tbl</div><div class="line"></div><div class="line">probe process(<span class="string">"/lib/x86_64-linux-gnu/libc.so.6"</span>).function(<span class="string">"__libc_malloc"</span>).<span class="keyword">return</span>, process(<span class="string">"/lib/x86_64-linux-gnu/libc.so.6"</span>).function(<span class="string">"__libc_calloc"</span>).<span class="keyword">return</span> &#123;</div><div class="line">    <span class="keyword">if</span> (target() == pid()) &#123;</div><div class="line">        <span class="keyword">if</span> (g_mem_ref_tbl[$return] == <span class="number">0</span>) &#123;</div><div class="line">            g_mem_ref_tbl[$return]++</div><div class="line">            g_mem_bt_tbl[$return] = sprint_ubacktrace()</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">probe process(<span class="string">"/lib/x86_64-linux-gnu/libc.so.6"</span>).function(<span class="string">"__libc_free"</span>).call &#123;</div><div class="line">    <span class="keyword">if</span> (target() == pid()) &#123;</div><div class="line">        g_mem_ref_tbl[$mem]--</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (g_mem_ref_tbl[$mem] == <span class="number">0</span>) &#123;</div><div class="line">            <span class="keyword">if</span> ($mem != <span class="number">0</span>) &#123;</div><div class="line">                <span class="regexp">//</span>记录上次释放的调用堆栈</div><div class="line">                g_mem_bt_tbl[$mem] = sprint_ubacktrace()</div><div class="line">            &#125;</div><div class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (g_mem_ref_tbl[$mem] &lt; <span class="number">0</span> &amp;&amp; $mem != <span class="number">0</span>) &#123;</div><div class="line">            <span class="regexp">//</span>如果调用free已经失衡，那就出现了重复释放内存的问题，这里输出当前调用堆栈，以及这个地址上次释放的调用堆栈</div><div class="line">            <span class="keyword">printf</span>(<span class="string">"----------------------------------------------\n"</span>)</div><div class="line">            <span class="keyword">printf</span>(<span class="string">"[%p] has been freed : %d\n"</span>, $mem, g_mem_ref_tbl[$mem])</div><div class="line">            <span class="keyword">printf</span>(<span class="string">"who free this memory  at  error moment ? you can see the stack "</span>)</div><div class="line">            print_ubacktrace()</div><div class="line"></div><div class="line">            <span class="keyword">printf</span>(<span class="string">"haha,The memory has been freed by : \n"</span>)</div><div class="line">            <span class="keyword">printf</span>(<span class="string">"%s\n"</span>, g_mem_bt_tbl[$mem])</div><div class="line">            <span class="keyword">printf</span>(<span class="string">"----------------------------------------------\n"</span>)</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">probe end &#123;</div><div class="line">    <span class="regexp">//</span>最后输出产生泄漏的内存是在哪里分配的</div><div class="line">    <span class="keyword">printf</span>(<span class="string">"=============end============\n"</span>)</div><div class="line">    <span class="keyword">foreach</span>(mem in g_mem_ref_tbl) &#123;</div><div class="line">        <span class="keyword">if</span> (g_mem_ref_tbl[mem] &gt; <span class="number">0</span>) &#123;</div><div class="line">            <span class="keyword">printf</span>(<span class="string">"[%p] is not free ,but you malloc it in %s ,so This is memory Loss!!!!\n"</span>, mem, g_mem_bt_tbl[mem])</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong>脚本分析：脚本主要记录下内存申请点和释放点，这样就可以很容易找到内存重复释放和泄漏点了</strong></p>
+<h3 id="步骤3-探测过程"><a href="#步骤3-探测过程" class="headerlink" title="步骤3: 探测过程"></a>步骤3: 探测过程</h3><figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># vim mem.stp</span></div><div class="line">root@ubuntu:~<span class="comment"># ./main &amp;</span></div><div class="line">[<span class="number">1</span>] <span class="number">18904</span></div><div class="line">root@ubuntu:~<span class="comment"># stap -x 18904 mem.stp</span></div><div class="line">=============begin============</div><div class="line">p1: <span class="number">0xa28010</span>, p2: <span class="number">0xa28210</span>, p3: <span class="number">0xa282e0</span>, p4: <span class="number">0xa28420</span></div><div class="line">*** Error in <span class="string">`./main': double free or corruption (!prev): 0x0000000000a28210 ***</span></div><div class="line">======= Backtrace: =========</div><div class="line">/lib/x86_64-linux-gnu/libc.so.6(+0x777e5)[0x7f1d146897e5]</div><div class="line">/lib/x86_64-linux-gnu/libc.so.6(+0x8037a)[0x7f1d1469237a]</div><div class="line">/lib/x86_64-linux-gnu/libc.so.6(cfree+0x4c)[0x7f1d1469653c]</div><div class="line">./main[0x40069c]</div><div class="line">/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf0)[0x7f1d14632830]</div><div class="line">./main[0x400529]</div><div class="line">======= Memory map: ========</div><div class="line">00400000-00401000 r-xp 00000000 fc:00 526710                             /root/main</div><div class="line">00600000-00601000 r--p 00000000 fc:00 526710                             /root/main</div><div class="line">00601000-00602000 rw-p 00001000 fc:00 526710                             /root/main</div><div class="line">00a28000-00a49000 rw-p 00000000 00:00 0                                  [heap]</div><div class="line">7f1d10000000-7f1d10021000 rw-p 00000000 00:00 0</div><div class="line">7f1d10021000-7f1d14000000 ---p 00000000 00:00 0</div><div class="line">7f1d143fc000-7f1d14412000 r-xp 00000000 fc:00 786953                     /lib/x86_64-linux-gnu/libgcc_s.so.1</div><div class="line">7f1d14412000-7f1d14611000 ---p 00016000 fc:00 786953                     /lib/x86_64-linux-gnu/libgcc_s.so.1</div><div class="line">7f1d14611000-7f1d14612000 rw-p 00015000 fc:00 786953                     /lib/x86_64-linux-gnu/libgcc_s.so.1</div><div class="line">7f1d14612000-7f1d147d2000 r-xp 00000000 fc:00 791185                     /lib/x86_64-linux-gnu/libc-2.23.so</div><div class="line">7f1d147d2000-7f1d149d2000 ---p 001c0000 fc:00 791185                     /lib/x86_64-linux-gnu/libc-2.23.so</div><div class="line">7f1d149d2000-7f1d149d6000 r--p 001c0000 fc:00 791185                     /lib/x86_64-linux-gnu/libc-2.23.so</div><div class="line">7f1d149d6000-7f1d149d8000 rw-p 001c4000 fc:00 791185                     /lib/x86_64-linux-gnu/libc-2.23.so</div><div class="line">7f1d149d8000-7f1d149dc000 rw-p 00000000 00:00 0</div><div class="line">7f1d149dc000-7f1d14a02000 r-xp 00000000 fc:00 791163                     /lib/x86_64-linux-gnu/ld-2.23.so</div><div class="line">7f1d14bf2000-7f1d14bf5000 rw-p 00000000 00:00 0</div><div class="line">7f1d14bfe000-7f1d14c01000 rw-p 00000000 00:00 0</div><div class="line">7f1d14c01000-7f1d14c02000 r--p 00025000 fc:00 791163                     /lib/x86_64-linux-gnu/ld-2.23.so</div><div class="line">7f1d14c02000-7f1d14c03000 rw-p 00026000 fc:00 791163                     /lib/x86_64-linux-gnu/ld-2.23.so</div><div class="line">7f1d14c03000-7f1d14c04000 rw-p 00000000 00:00 0</div><div class="line">7ffc8d97f000-7ffc8d9a0000 rw-p 00000000 00:00 0                          [stack]</div><div class="line">7ffc8d9d3000-7ffc8d9d5000 r--p 00000000 00:00 0                          [vvar]</div><div class="line">7ffc8d9d5000-7ffc8d9d7000 r-xp 00000000 00:00 0                          [vdso]</div><div class="line">7fffffffe000-7ffffffff000 --xp 00000000 00:00 0                          [uprobes]</div><div class="line">ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]</div><div class="line">WARNING: Missing unwind data for a module, rerun with 'stap -d /root/main'</div><div class="line">WARNING: Missing unwind data for a module, rerun with 'stap -d /lib/x86_64-linux-gnu/ld-2.23.so'</div><div class="line">----------------------------------------------</div><div class="line">[0xa28210] has been freed : -1</div><div class="line">who free this memory  at  error moment ? you can see the stack  0x7f1d146964f0 : free+0x0/0x1d0 [/lib/x86_64-linux-gnu/libc-2.23.so]</div><div class="line"> 0x40069c [/root/main+0x69c/0x1000]</div><div class="line">haha,The memory has been freed by :</div><div class="line">free+0x0 [libc-2.23.so]</div><div class="line">0x400684 [main+0x684]</div><div class="line">----------------------------------------------</div><div class="line"></div><div class="line">^C=============end============</div><div class="line">[0xa28420] is not free ,but you malloc it in 0x400643 [main+0x643] ,so This is memory Loss!!!!</div><div class="line">[0xa28560] is not free ,but you malloc it in _IO_file_doallocate+0x55 [libc-2.23.so]</div><div class="line">_IO_doallocbuf+0x34 [libc-2.23.so]</div><div class="line">_IO_file_overflow@@GLIBC_2.2.5+0x1c8 [libc-2.23.so]</div><div class="line">_IO_file_xsputn@@GLIBC_2.2.5+0xad [libc-2.23.so]</div><div class="line">_IO_vfprintf+0xd1 [libc-2.23.so]</div><div class="line">printf+0x99 [libc-2.23.so]</div><div class="line">0x40066c [main+0x66c] ,so This is memory Loss!!!!</div><div class="line">[0x7f1d100008c0] is not free ,but you malloc it in 0x7f1d149f8f5a [ld-2.23.so+0x1cf5a] ,so This is memory Loss!!!!</div><div class="line">[0x7f1d100008f0] is not free ,but you malloc it in 0x7f1d149e7bf6 [ld-2.23.so+0xbbf6] ,so This is memory Loss!!!!</div><div class="line">[0x7f1d10000da0] is not free ,but you malloc it in 0x7f1d149e7ef4 [ld-2.23.so+0xbef4] ,so This is memory Loss!!!!</div><div class="line">[0x7f1d10000dd0] is not free ,but you malloc it in 0x7f1d149ea737 [ld-2.23.so+0xe737] ,so This is memory Loss!!!!</div><div class="line">[0x7f1d10000e10] is not free ,but you malloc it in 0x7f1d149ee0be [ld-2.23.so+0x120be] ,so This is memory Loss!!!!</div><div class="line">[1]+  Aborted                 (core dumped) ./main</div></pre></td></tr></table></figure>
+<h3 id="步骤4-结果分析："><a href="#步骤4-结果分析：" class="headerlink" title="步骤4:结果分析："></a>步骤4:结果分析：</h3><h4 id="a-申请内存地址如下"><a href="#a-申请内存地址如下" class="headerlink" title="a. 申请内存地址如下"></a>a. 申请内存地址如下</h4><figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">p1: <span class="number">0xa28010</span>, p2: <span class="number">0xa28210</span>, p3: <span class="number">0xa282e0</span>, p4: <span class="number">0xa28420</span></div></pre></td></tr></table></figure>
+<h4 id="b-0xa28210-p2-重复释放，重复释放位置-0x40069c-root-main-0x69c-0x1000-，因为它已经在0x400684-main-0x684-释放过了"><a href="#b-0xa28210-p2-重复释放，重复释放位置-0x40069c-root-main-0x69c-0x1000-，因为它已经在0x400684-main-0x684-释放过了" class="headerlink" title="b. 0xa28210 p2 重复释放，重复释放位置 0x40069c [/root/main+0x69c/0x1000] ，因为它已经在0x400684 [main+0x684] 释放过了"></a>b. 0xa28210 p2 重复释放，重复释放位置 0x40069c [/root/main+0x69c/0x1000] ，因为它已经在0x400684 [main+0x684] 释放过了</h4><figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[<span class="number">0xa28210</span>] has been freed : -<span class="number">1</span></div><div class="line">who free this memory  at  error moment ? you can see the stack  <span class="number">0x7f1d146964f0</span> : free+<span class="number">0x0</span>/<span class="number">0x1d0</span> [<span class="regexp">/lib/x</span>86_64-linux-gnu/libc-<span class="number">2.23</span>.so]</div><div class="line"> <span class="number">0x40069c</span> [<span class="regexp">/root/main</span>+<span class="number">0x69c</span>/<span class="number">0x1000</span>]</div><div class="line">haha,The memory has been freed by :</div><div class="line">free+<span class="number">0x0</span> [libc-<span class="number">2.23</span>.so]</div><div class="line"><span class="number">0x400684</span> [main+<span class="number">0x684</span>]</div></pre></td></tr></table></figure>
+<h4 id="c-0xa28420-p4内存泄漏，你在0x400643-main-0x643-申请了它，但是没有释放"><a href="#c-0xa28420-p4内存泄漏，你在0x400643-main-0x643-申请了它，但是没有释放" class="headerlink" title="c. 0xa28420 p4内存泄漏，你在0x400643 [main+0x643] 申请了它，但是没有释放"></a>c. 0xa28420 p4内存泄漏，你在0x400643 [main+0x643] 申请了它，但是没有释放</h4><figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[<span class="number">0xa28420</span>] is <span class="keyword">not</span> free ,but you malloc it in <span class="number">0x400643</span> [main+<span class="number">0x643</span>] ,so This is memory Loss!!!!</div></pre></td></tr></table></figure>
+<h2 id="我可以获取哪些函数和系统状态并打印出来？"><a href="#我可以获取哪些函数和系统状态并打印出来？" class="headerlink" title="我可以获取哪些函数和系统状态并打印出来？"></a>我可以获取哪些函数和系统状态并打印出来？</h2><figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># cat test_all_func.stp</span></div><div class="line"> probe begin &#123;</div><div class="line">    <span class="keyword">printf</span>(<span class="string">"SystemTap scrits start\n"</span>);&#125;</div><div class="line">    probe kernel.function(<span class="string">"tcp_v4_rcv"</span>)&#123;</div><div class="line">        <span class="keyword">printf</span>(<span class="string">"skb-&gt;len = %d\n "</span>,$skb-&gt;len);</div><div class="line">        <span class="keyword">printf</span>(<span class="string">"cpu %d \n"</span>,cpu())</div><div class="line">        <span class="keyword">printf</span>(<span class="string">"execname %s pid %d tid %d \n"</span>,execname(),pid(),tid());</div><div class="line">        <span class="keyword">printf</span>(<span class="string">"pp %s probefunc %s\n"</span>,pp(),probefunc());</div><div class="line">        <span class="keyword">printf</span>(<span class="string">"gettimeofday_s %d get_cycles %d \n"</span>,gettimeofday_s(),get_cycles());</div><div class="line">        <span class="keyword">printf</span>(<span class="string">"ppfunc %s \n  target  %d\n "</span>,ppfunc(),target());</div><div class="line">       print_backtrace();</div><div class="line">        <span class="keyword">exit</span>()</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>执行结果如下：具体含义自己体会和尝试</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># stap -d e1000 -x 1000  test_all_func.stp</span></div><div class="line">SystemTap scrits start</div><div class="line">skb-&gt;len = <span class="number">32</span></div><div class="line"> cpu <span class="number">3</span></div><div class="line">execname sshd pid <span class="number">14479</span> tid <span class="number">14479</span></div><div class="line">pp kernel.function(<span class="string">"tcp_v4_rcv@/build/linux-W6HB68/linux-4.4.0/net/ipv4/tcp_ipv4.c:1555"</span>) probefunc tcp_v4_rcv</div><div class="line">gettimeofday_s <span class="number">1516860301</span> get_cycles <span class="number">127888015890393</span></div><div class="line">ppfunc tcp_v4_rcv</div><div class="line">  target  <span class="number">1000</span></div><div class="line">  <span class="number">0xffffffff81791250</span> : tcp_v4_rcv+<span class="number">0x0</span>/<span class="number">0xa20</span> [kernel]</div><div class="line"> <span class="number">0xffffffff8176b414</span> : ip_local_deliver_finish+<span class="number">0x94</span>/<span class="number">0x1e0</span> [kernel]</div><div class="line"> <span class="number">0xffffffff8176b71f</span> : ip_local_deliver+<span class="number">0x6f</span>/<span class="number">0xe0</span> [kernel]</div><div class="line"> <span class="number">0xffffffff8176b0f2</span> : ip_rcv_finish+<span class="number">0x92</span>/<span class="number">0x320</span> [kernel]</div><div class="line"> <span class="number">0xffffffff8176ba21</span> : ip_rcv+<span class="number">0x291</span>/<span class="number">0x3a0</span> [kernel]</div><div class="line"> <span class="number">0xffffffff8172c634</span> : __netif_receive_skb_core+<span class="number">0x704</span>/<span class="number">0xa60</span> [kernel]</div><div class="line"> <span class="number">0xffffffff8172c9a8</span> : __netif_receive_skb+<span class="number">0x18</span>/<span class="number">0x60</span> [kernel]</div><div class="line"> <span class="number">0xffffffff8172ca22</span> : netif_receive_skb_internal+<span class="number">0x32</span>/<span class="number">0xa0</span> [kernel]</div><div class="line"> <span class="number">0xffffffff8172d6a3</span> : napi_gro_receive+<span class="number">0xc3</span>/<span class="number">0x120</span> [kernel]</div><div class="line"> <span class="number">0xffffffffc00400d2</span> : e1000_clean_rx_irq+<span class="number">0x152</span>/<span class="number">0x4c0</span> [e100<span class="number">0</span>]</div><div class="line"> <span class="number">0xffffffffc0040722</span> : e1000_clean+<span class="number">0x262</span>/<span class="number">0x8c0</span> [e100<span class="number">0</span>]</div><div class="line"> <span class="number">0xffffffff8172ceee</span> : net_rx_action+<span class="number">0x21e</span>/<span class="number">0x360</span> [kernel]</div><div class="line"> <span class="number">0xffffffff81085db1</span> : __do_softirq+<span class="number">0x101</span>/<span class="number">0x290</span> [kernel]</div><div class="line"> <span class="number">0xffffffff8183a30c</span> : do_softirq_own_stack+<span class="number">0x1c</span>/<span class="number">0x30</span> [kernel]</div></pre></td></tr></table></figure>
+<p>获取当前调用栈，probe的探测点代码位置，触发进程名称、进程id和线程id、执行cpu id，当然时间相关函数也可以打出来；</p>
+<p>这些函数基本可以帮助你了解定位该probe点所处于位置和系统进程运行和调用情况；可谓强大之极。</p>
+<h2 id="我想了解用户态程序成员变量在某一行的值，我该怎么做？"><a href="#我想了解用户态程序成员变量在某一行的值，我该怎么做？" class="headerlink" title="我想了解用户态程序成员变量在某一行的值，我该怎么做？"></a>我想了解用户态程序成员变量在某一行的值，我该怎么做？</h2><p>使用statement定位到具体某一行，然后打印出你关注的变量即可。</p>
+<p>eg: 用户态程序如下</p>
+<p>root@ubuntu:~# cat test.c</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#include &lt;stdio.h&gt;</span></div><div class="line">typedef struct str &#123;</div><div class="line">    <span class="keyword">int</span>    len;</div><div class="line">    char *data;</div><div class="line">&#125; str_t;</div><div class="line"></div><div class="line">typedef struct policy &#123;</div><div class="line">    str_t    name;</div><div class="line">    <span class="keyword">int</span>     id;</div><div class="line">&#125; policy_t;</div><div class="line"></div><div class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, char *argv[])</div><div class="line">&#123;</div><div class="line">    policy_t policy;</div><div class="line">    policy_t *p = &amp;policy;</div><div class="line">    p-&gt;id = <span class="number">111</span>;</div><div class="line">    p-&gt;name.data = <span class="string">"test"</span>;</div><div class="line">    p-&gt;name.len = sizeof(<span class="string">"test"</span>)-<span class="number">1</span>;</div><div class="line"></div><div class="line">    <span class="keyword">printf</span>(<span class="string">" p-&gt;id: %d, p-&gt;name.data:[%p] %s, p-&gt;name.len: %d\n"</span>, p-&gt;id, p-&gt;name.data, p-&gt;name.data, p-&gt;name.len);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>gcc -Wall -g -o test ./test.c</p>
+<p>stap 脚本如下：</p>
+<p>root@ubuntu:~# cat test.stp</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">probe process(<span class="string">"./test"</span>).statement(<span class="string">"main@./test.c:20"</span>)</div><div class="line">&#123;</div><div class="line">     <span class="keyword">printf</span>(<span class="string">"p-&gt;name-&gt;data pointer[%p]  policy name: p-&gt;name-&gt;data %s :  p-&gt;name-&gt;len %d  p-&gt;id %d \n"</span>, $p-&gt;name-&gt;data,$p-&gt;name-&gt;data$,$p-&gt;name-&gt;len,$p-&gt;id);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如何探测：</p>
+<p>步骤1:开启脚本监听</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># stap test.stp</span></div><div class="line">p-&gt;name-&gt;data pointer[<span class="number">0x4006b8</span>]  policy name: p-&gt;name-&gt;data <span class="string">"test"</span> :  p-&gt;name-&gt;len <span class="number">4</span>  p-&gt;id <span class="number">111</span></div></pre></td></tr></table></figure>
+<p>步骤2:运行用户态进程</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># stap test.stp</span></div><div class="line">p-&gt;name-&gt;data pointer[<span class="number">0x4006b8</span>]  policy name: p-&gt;name-&gt;data <span class="string">"test"</span> :  p-&gt;name-&gt;len <span class="number">4</span>  p-&gt;id <span class="number">111</span></div></pre></td></tr></table></figure>
+<h2 id="我用户态的函数是void-类型，脚本一直报类型不对，我想通过void-指针拿出具体成员，该怎么做？"><a href="#我用户态的函数是void-类型，脚本一直报类型不对，我想通过void-指针拿出具体成员，该怎么做？" class="headerlink" title="我用户态的函数是void * 类型，脚本一直报类型不对，我想通过void *指针拿出具体成员，该怎么做？"></a>我用户态的函数是void * 类型，脚本一直报类型不对，我想通过void *指针拿出具体成员，该怎么做？</h2><p>eg:</p>
+<p>如下： 我定义了一个void * 类型的变量q,想在stap脚本中通过q打印出成员变量的值，该怎么做？</p>
+<p>root@ubuntu:~# cat test.c</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#include &lt;stdio.h&gt;</span></div><div class="line">typedef struct str &#123;</div><div class="line">    <span class="keyword">int</span>    len;</div><div class="line">    char *data;</div><div class="line">&#125; str_t;</div><div class="line"></div><div class="line">typedef struct policy &#123;</div><div class="line">    str_t    name;</div><div class="line">    <span class="keyword">int</span>     id;</div><div class="line">&#125; policy_t;</div><div class="line"></div><div class="line"><span class="keyword">int</span> main(<span class="keyword">int</span> argc, char *argv[])</div><div class="line">&#123;</div><div class="line">    policy_t policy;</div><div class="line">    policy_t *p = &amp;policy;</div><div class="line">    void *<span class="keyword">q</span>=(void*)p;</div><div class="line">    p-&gt;id = <span class="number">111</span>;</div><div class="line">    p-&gt;name.data = <span class="string">"test"</span>;</div><div class="line">    p-&gt;name.len = sizeof(<span class="string">"test"</span>)-<span class="number">1</span>;</div><div class="line"></div><div class="line">    <span class="keyword">printf</span>(<span class="string">"[p:%p] [q:%p] p-&gt;id: %d, p-&gt;name.data:[%p] %s, p-&gt;name.len: %d\n"</span>, p,<span class="keyword">q</span>,p-&gt;id, p-&gt;name.data, p-&gt;name.data, p-&gt;name.len);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>脚本：</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># cat test.stp</span></div><div class="line">probe process(<span class="string">"./test"</span>).statement(<span class="string">"main@./test.c:21"</span>)</div><div class="line">&#123;</div><div class="line">     d =&amp;@cast($q,<span class="string">"policy_t"</span>)</div><div class="line">     <span class="keyword">printf</span>(<span class="string">"policy name: p-&gt;name-&gt;data %s  \n"</span>, d-&gt;name-&gt;data$);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>脚本解释：d变量为转换后的指针，是脚本的局部变量 ；@cast($q,”policy_t”) 方法可以转换指针类型</p>
+<p>探测脚本运行:</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># stap test.stp</span></div><div class="line">policy name: p-&gt;name-&gt;data <span class="string">"test"</span></div></pre></td></tr></table></figure>
+<p>编译运行:</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">gcc -Wall -g -o test ./test.c</div><div class="line">root@ubuntu:~<span class="comment"># ./test</span></div><div class="line">[p:<span class="number">0x7ffc5202b240</span>] [<span class="keyword">q</span>:<span class="number">0x7ffc5202b240</span>] p-&gt;id: <span class="number">111</span>, p-&gt;name.data:[<span class="number">0x4006d8</span>] test, p-&gt;name.len: <span class="number">4</span></div></pre></td></tr></table></figure>
+<p>怎么做到的？ 通过@cast($q,”policy_t”)将void * 类型的指针转换为policy_t *类型的指针，即可</p>
+<h2 id="如果存在二级指针，如果通过stap脚本监控其值？"><a href="#如果存在二级指针，如果通过stap脚本监控其值？" class="headerlink" title="如果存在二级指针，如果通过stap脚本监控其值？"></a>如果存在二级指针，如果通过stap脚本监控其值？</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># cat test1.c</span></div></pre></td></tr></table></figure>
+<p>c用户程序</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">#include &lt;stdio.h&gt;</div><div class="line"></div><div class="line">struct test &#123;</div><div class="line">    int count;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">int main(int argc, char *argv[])</div><div class="line">&#123;</div><div class="line">    struct test t = &#123;.count = 5566&#125;;</div><div class="line">    struct test *pt = &amp;t;</div><div class="line">    struct test **ppt = &amp;pt;</div><div class="line"></div><div class="line">    printf("t.count: %d, pt-&gt;count: %d, ppt-&gt;count: %d\n", t.count, pt-&gt;count, (*ppt)-&gt;count);</div><div class="line"></div><div class="line">    return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>stap监控脚本</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~# cat test1.stp</div><div class="line">probe process("./test1").statement("main@./test1.c:13")</div><div class="line">&#123;</div><div class="line">    printf("$t-&gt;count: %d, $pt-&gt;count: %d, $ppt-&gt;count: %d", $t-&gt;count, $pt-&gt;count, $ppt[0]-&gt;count);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>脚本运行：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~# stap test1.stp</div><div class="line">$t-&gt;count: 5566, $pt-&gt;count: 5566, $ppt-&gt;count: 5566</div></pre></td></tr></table></figure>
+<p>程序运行：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~# ./test1</div><div class="line">t.count: 5566, pt-&gt;count: 5566, ppt-&gt;count: 5566</div></pre></td></tr></table></figure>
+<p>总结：ppt是二级指针，(*ppt)->count 在stap脚本中表现形式是 $ppt[0]->count</p>
+<h2 id="如何嵌入c语言？"><a href="#如何嵌入c语言？" class="headerlink" title="如何嵌入c语言？"></a>如何嵌入c语言？</h2><figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># cat copy_process.stp</span></div><div class="line">function getprocname:string(task:long)</div><div class="line">%&#123;</div><div class="line">    struct task_struct *task = (struct task_struct *)STAP_ARG_task;</div><div class="line">    snprintf(STAP_RETVALUE, MAXSTRINGLEN, <span class="string">"pid: %d, comm: %s"</span>, task-&gt;pid, task-&gt;comm);</div><div class="line">%&#125;</div><div class="line"></div><div class="line">function getprocid:long(task:long)</div><div class="line">%&#123;</div><div class="line">    struct task_struct *task = (struct task_struct *)STAP_ARG_task;</div><div class="line">    STAP_RETURN(task-&gt;pid);</div><div class="line">%&#125;</div><div class="line"></div><div class="line">probe kernel.function(<span class="string">"copy_process"</span>).<span class="keyword">return</span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">printf</span>(<span class="string">"copy_process return: %p, pid: %d, getprocname: %s, getprocid: %d\n"</span>, $return, $return-&gt;pid, getprocname($return), getprocid($return));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong>运行</strong></p>
+<p>窗口1:</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># stap -g copy_process.stp</span></div><div class="line">copy_process <span class="keyword">return</span>: <span class="number">0xffff88030ff3aa00</span>, pid: <span class="number">11976</span>, getprocname: pid: <span class="number">11976</span>, comm: bash, getprocid: <span class="number">11976</span></div></pre></td></tr></table></figure>
+<p>窗口2</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ls</div></pre></td></tr></table></figure>
+<ul>
+<li>stap脚本要在花括号前加上% 号</li>
+<li>获取参数STAP_ARG_前缀</li>
+<li>返回值用STAP_RETVALUE ，其它情况使用snprintf or strncat将返回值拼进来</li>
+<li>上述task是指针类型为long</li>
+</ul>
+<h2 id="如何修改进程中的变量？"><a href="#如何修改进程中的变量？" class="headerlink" title="如何修改进程中的变量？"></a>如何修改进程中的变量？</h2><p>root@ubuntu:~# cat test3.c</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#include&lt;stdio.h&gt;</span></div><div class="line">typedef struct policy&#123;</div><div class="line">    <span class="keyword">int</span> id;</div><div class="line">&#125;policy_t;</div><div class="line"></div><div class="line"><span class="keyword">int</span> main()</div><div class="line">&#123;</div><div class="line">   policy_t policy;</div><div class="line">   policy_t *p = &amp;policy;</div><div class="line">   policy_t **pp ;</div><div class="line">   p-&gt;id =<span class="number">111</span>;</div><div class="line">   <span class="keyword">printf</span>(<span class="string">"before stap set value,p-&gt;id:%d\n"</span>,p-&gt;id);</div><div class="line">   pp = &amp;p;</div><div class="line">   <span class="keyword">printf</span>(<span class="string">"after stap set value,p-&gt;id : %d ,(*pp)-&gt;id : %d\n"</span>,p-&gt;id,(*pp)-&gt;id);</div><div class="line">   <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>修改进程中结构变了policy_t中的id</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">probe process(<span class="string">"./test3"</span>).statement(<span class="string">"main@./test3.c:13"</span>)</div><div class="line">&#123;</div><div class="line">  $p-&gt;id=<span class="number">222</span>;</div><div class="line">  <span class="keyword">printf</span>(<span class="string">"$p$: %s\n"</span>,$p$)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>执行stap脚本</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># stap -g test3.stap</span></div><div class="line">$p$: &#123;.id=<span class="number">222</span>&#125;</div></pre></td></tr></table></figure>
+<p>运行进程程序</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># ./test3</span></div><div class="line">before stap set value,p-&gt;id:<span class="number">111</span></div><div class="line">after stap set value,p-&gt;id : <span class="number">222</span> ,(*pp)-&gt;id : <span class="number">222</span></div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/systemtap/" rel="tag"># systemtap</a>
+          
+            <a href="/tags/ubuntu16-04-2/" rel="tag"># ubuntu16.04.2</a>
+          
+            <a href="/tags/probe/" rel="tag"># probe</a>
+          
+            <a href="/tags/内存泄漏探测/" rel="tag"># 内存泄漏探测</a>
+          
+            <a href="/tags/嵌入c/" rel="tag"># 嵌入c</a>
+          
+            <a href="/tags/打印二级指针/" rel="tag"># 打印二级指针</a>
+          
+            <a href="/tags/qemu进程创建失败/" rel="tag"># qemu进程创建失败</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/systemtap3.1/" rel="next" title="ubuntu16.04.2 systemtap安装以及工作原理和协议栈调用栈不全解决方法">
+                <i class="fa fa-chevron-left"></i> ubuntu16.04.2 systemtap安装以及工作原理和协议栈调用栈不全解决方法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/ubuntu_soure_make/" rel="prev" title="ubuntu16.04内核代码编译升级步骤">
+                ubuntu16.04内核代码编译升级步骤 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/h.jpg"
+               alt="vcpu.me" />
+          <p class="site-author-name" itemprop="name">vcpu.me</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">125</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/vcpu/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://ytlm.github.io/" title="CDN张三丰" target="_blank">CDN张三丰</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://io.iwalk.me" title="互联网绝世高手Andy" target="_blank">互联网绝世高手Andy</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#探测点语法"><span class="nav-number">1.</span> <span class="nav-text">探测点语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PATTERN"><span class="nav-number">2.</span> <span class="nav-text">PATTERN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#我当前内核有哪些函数？"><span class="nav-number">3.</span> <span class="nav-text">我当前内核有哪些函数？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#我当前内核有哪些变量？"><span class="nav-number">4.</span> <span class="nav-text">我当前内核有哪些变量？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#我想知道-netif-receive-skb-core被调用了几次？"><span class="nav-number">5.</span> <span class="nav-text">我想知道__netif_receive_skb_core被调用了几次？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何打印内核函数的返回值？"><span class="nav-number">6.</span> <span class="nav-text">如何打印内核函数的返回值？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何使用stap知晓当前函数在哪丢包的？"><span class="nav-number">7.</span> <span class="nav-text">如何使用stap知晓当前函数在哪丢包的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#谁调用了-netif-receive-skb-core-收了我的数据包？"><span class="nav-number">8.</span> <span class="nav-text">谁调用了__netif_receive_skb_core 收了我的数据包？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#qume虚拟机进程创建出了错，该怎么办？"><span class="nav-number">9.</span> <span class="nav-text">qume虚拟机进程创建出了错，该怎么办？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#我想研究一个内核（信号处理过程）过程该怎么做？"><span class="nav-number">10.</span> <span class="nav-text">我想研究一个内核（信号处理过程）过程该怎么做？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤1-找到sys-kill函数所在的源文件"><span class="nav-number">10.1.</span> <span class="nav-text">步骤1:找到sys_kill函数所在的源文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤2-根据步骤1找到的内核路径，探测该路径下所有的函数的调用和返回并打出结果"><span class="nav-number">10.2.</span> <span class="nav-text">步骤2:根据步骤1找到的内核路径，探测该路径下所有的函数的调用和返回并打出结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#有人用stap分析内存泄漏和重复释放，记录下来吧"><span class="nav-number">11.</span> <span class="nav-text">有人用stap分析内存泄漏和重复释放，记录下来吧</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤1-分析要要用的c语言源码，并编译"><span class="nav-number">11.1.</span> <span class="nav-text">步骤1:分析要要用的c语言源码，并编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤2-探测内存泄漏和重复释放的脚本"><span class="nav-number">11.2.</span> <span class="nav-text">步骤2: 探测内存泄漏和重复释放的脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤3-探测过程"><span class="nav-number">11.3.</span> <span class="nav-text">步骤3: 探测过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#步骤4-结果分析："><span class="nav-number">11.4.</span> <span class="nav-text">步骤4:结果分析：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#a-申请内存地址如下"><span class="nav-number">11.4.1.</span> <span class="nav-text">a. 申请内存地址如下</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b-0xa28210-p2-重复释放，重复释放位置-0x40069c-root-main-0x69c-0x1000-，因为它已经在0x400684-main-0x684-释放过了"><span class="nav-number">11.4.2.</span> <span class="nav-text">b. 0xa28210 p2 重复释放，重复释放位置 0x40069c [/root/main+0x69c/0x1000] ，因为它已经在0x400684 [main+0x684] 释放过了</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#c-0xa28420-p4内存泄漏，你在0x400643-main-0x643-申请了它，但是没有释放"><span class="nav-number">11.4.3.</span> <span class="nav-text">c. 0xa28420 p4内存泄漏，你在0x400643 [main+0x643] 申请了它，但是没有释放</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#我可以获取哪些函数和系统状态并打印出来？"><span class="nav-number">12.</span> <span class="nav-text">我可以获取哪些函数和系统状态并打印出来？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#我想了解用户态程序成员变量在某一行的值，我该怎么做？"><span class="nav-number">13.</span> <span class="nav-text">我想了解用户态程序成员变量在某一行的值，我该怎么做？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#我用户态的函数是void-类型，脚本一直报类型不对，我想通过void-指针拿出具体成员，该怎么做？"><span class="nav-number">14.</span> <span class="nav-text">我用户态的函数是void * 类型，脚本一直报类型不对，我想通过void *指针拿出具体成员，该怎么做？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如果存在二级指针，如果通过stap脚本监控其值？"><span class="nav-number">15.</span> <span class="nav-text">如果存在二级指针，如果通过stap脚本监控其值？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何嵌入c语言？"><span class="nav-number">16.</span> <span class="nav-text">如何嵌入c语言？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何修改进程中的变量？"><span class="nav-number">17.</span> <span class="nav-text">如何修改进程中的变量？</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">vcpu.me</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "863fca753b274564bc586efc2a6ffbb0",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("l5u4v8AcoPCp9wlPGVJTG6Ny-gzGzoHsz", "RQdYIOd2snvd1muAW65nsn25");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
