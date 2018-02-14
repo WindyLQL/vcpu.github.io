@@ -397,8 +397,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a class="cloud-tie-join-count" href="/openvswitch1/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count join-count" itemprop="commentCount"></span>
+                <a href="/openvswitch1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="openvswitch1/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -599,8 +600,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/openvswitch2/" rel="next" title="openvSwitch tunnel">
-                <i class="fa fa-chevron-left"></i> openvSwitch tunnel
+              <a href="/openvswitch/" rel="next" title="openvSwitch">
+                <i class="fa fa-chevron-left"></i> openvSwitch
               </a>
             
           </div>
@@ -609,8 +610,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/openvswitch3/" rel="prev" title="openvSwitch flow">
-                openvSwitch flow <i class="fa fa-chevron-right"></i>
+              <a href="/openvswitch2/" rel="prev" title="openvSwitch tunnel">
+                openvSwitch tunnel <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -637,7 +638,12 @@
           
   <div class="comments" id="comments">
     
-      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
     
   </div>
 
@@ -903,6 +909,26 @@
 
   
 
+    
+      <script id="dsq-count-scr" src="https://vcpu.me.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://vcpu.me/openvswitch1/';
+          this.page.identifier = 'openvswitch1/';
+          this.page.title = 'openvSwitch mirror、Qos、STP';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://vcpu.me.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
 
 
 
@@ -913,19 +939,12 @@
 
 
   
-    
-    <script>
-      var cloudTieConfig = {
-        url: document.location.href, 
-        sourceId: "",
-        productKey: "863fca753b274564bc586efc2a6ffbb0",
-        target: "cloud-tie-wrapper"
-      };
-    </script>
-    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+
+
+
+
+
   
-
-
 
 
 
