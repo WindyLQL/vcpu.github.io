@@ -319,6 +319,166 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/linuxarp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/linuxarp/" itemprop="url">linux arp机制解析</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-01T18:00:00+08:00">
+                2017-10-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/linuxarp/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="linuxarp/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/linuxarp/" class="leancloud_visitors" data-flag-title="linux arp机制解析">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="一-问题"><a href="#一-问题" class="headerlink" title="一.问题"></a>一.问题</h2><h3 id="1-使用keepalived进行热备份的系统需要一个虚拟的IP地址，然而该虚拟IP地址到底属于哪台机器是根据热备群的主备来决定的，因此主机器在获得该虚拟IP的时候，必须要广播一个免费的arp，起初人们认为这没有必要，理由是不这么做，热备群也工作的很好，然而事实证明，这是必须的；"><a href="#1-使用keepalived进行热备份的系统需要一个虚拟的IP地址，然而该虚拟IP地址到底属于哪台机器是根据热备群的主备来决定的，因此主机器在获得该虚拟IP的时候，必须要广播一个免费的arp，起初人们认为这没有必要，理由是不这么做，热备群也工作的很好，然而事实证明，这是必须的；" class="headerlink" title="1.使用keepalived进行热备份的系统需要一个虚拟的IP地址，然而该虚拟IP地址到底属于哪台机器是根据热备群的主备来决定的，因此主机器在获得该虚拟IP的时候，必须要广播一个免费的arp，起初人们认为这没有必要，理由是不这么做，热备群也工作的很好，然而事实证明，这是必须的；"></a>1.使用keepalived进行热备份的系统需要一个虚拟的IP地址，然而该虚拟IP地址到底属于哪台机器是根据热备群的主备来决定的，因此主机器在获得该虚拟IP的时候，必须要广播一个免费的arp，起初人们认为这没有必要，理由是不这么做，热备群也工作的很好，然而事实证明，这是必须的；</h3><h3 id="2-ARP缓存表项都有一个老化时间，然而在linux系统中却没有给出具体如何来设置这个老化时间。那么到底怎么设置这个老化时间呢？"><a href="#2-ARP缓存表项都有一个老化时间，然而在linux系统中却没有给出具体如何来设置这个老化时间。那么到底怎么设置这个老化时间呢？" class="headerlink" title="2.ARP缓存表项都有一个老化时间，然而在linux系统中却没有给出具体如何来设置这个老化时间。那么到底怎么设置这个老化时间呢？"></a>2.ARP缓存表项都有一个老化时间，然而在linux系统中却没有给出具体如何来设置这个老化时间。那么到底怎么设置这个老化时间呢？</h3>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/linuxarp/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://vcpu.me/4node-flowtable/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1795,173 +1955,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/openvswitch1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/openvswitch1/" itemprop="url">openvSwitch mirror、Qos、STP</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T18:00:00+08:00">
-                2017-08-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/网络/" itemprop="url" rel="index">
-                    <span itemprop="name">网络</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/openvswitch1/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="openvswitch1/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/openvswitch1/" class="leancloud_visitors" data-flag-title="openvSwitch mirror、Qos、STP">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="ovs-mirror"><a href="#ovs-mirror" class="headerlink" title="ovs mirror"></a>ovs mirror</h2><h3 id="ovs-mirror介绍"><a href="#ovs-mirror介绍" class="headerlink" title="ovs mirror介绍"></a>ovs mirror介绍</h3><p>mirror可以将虚拟交换机把数据包发给的接口或则vlan</p>
-<ul>
-<li><p>命令中对数据包选择选项：<br>select_all，所有的包<br>select_dst_port<br>select_src_port<br>select_vlan</p>
-</li>
-<li><p>将数据包镜像的命令：<br>output_port (SPAN Switched Port ANalyzer 本地流量)<br>output_vlan (RSPAN Remote Switched Port ANalyzer 远程流量)</p>
-</li>
-</ul>
-<h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><p><img src="/myimages/ovsmirror.png" alt="ovsmirror"></p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/openvswitch1/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2011,7 +2004,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-count">58</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2033,7 +2026,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">125</span>
+                <span class="site-state-item-count">127</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
