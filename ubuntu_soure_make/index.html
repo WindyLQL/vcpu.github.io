@@ -95,17 +95,17 @@
 
 
 
-<meta name="description" content="笔者最近在ubuntu基础平台上做开发，因此对于基础平台的探究再从新来一遍吧，下面是基础平台编译升级内核的方法。 下载源代码1234567891011121314151617181920212223242526272829303132333435root@ubuntu:~# apt-cache search linux-sourcelinux-source - Linux kernel sourc">
+<meta name="description" content="笔者最近在ubuntu基础平台上做开发，因此对于基础平台的探究再从新来一遍吧，下面是基础平台编译升级内核的方法。">
 <meta name="keywords" content="ubuntu16.04.2,内核代码获取,内核代码编译">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ubuntu16.04内核代码编译升级步骤">
 <meta property="og:url" content="http://vcpu.me/ubuntu_soure_make/index.html">
 <meta property="og:site_name" content="i博客">
-<meta property="og:description" content="笔者最近在ubuntu基础平台上做开发，因此对于基础平台的探究再从新来一遍吧，下面是基础平台编译升级内核的方法。 下载源代码1234567891011121314151617181920212223242526272829303132333435root@ubuntu:~# apt-cache search linux-sourcelinux-source - Linux kernel sourc">
-<meta property="og:updated_time" content="2018-02-11T15:33:13.000Z">
+<meta property="og:description" content="笔者最近在ubuntu基础平台上做开发，因此对于基础平台的探究再从新来一遍吧，下面是基础平台编译升级内核的方法。">
+<meta property="og:updated_time" content="2018-02-26T10:21:55.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ubuntu16.04内核代码编译升级步骤">
-<meta name="twitter:description" content="笔者最近在ubuntu基础平台上做开发，因此对于基础平台的探究再从新来一遍吧，下面是基础平台编译升级内核的方法。 下载源代码1234567891011121314151617181920212223242526272829303132333435root@ubuntu:~# apt-cache search linux-sourcelinux-source - Linux kernel sourc">
+<meta name="twitter:description" content="笔者最近在ubuntu基础平台上做开发，因此对于基础平台的探究再从新来一遍吧，下面是基础平台编译升级内核的方法。">
 
 
 
@@ -430,7 +430,7 @@
       
 
       
-        <p>笔者最近在ubuntu基础平台上做开发，因此对于基础平台的探究再从新来一遍吧，下面是基础平台编译升级内核的方法。</p>
+        <p>笔者最近在ubuntu基础平台上做开发，因此对于基础平台的探究再从新来一遍吧，下面是基础平台编译升级内核的方法。<br><a id="more"></a></p>
 <h1 id="下载源代码"><a href="#下载源代码" class="headerlink" title="下载源代码"></a>下载源代码</h1><figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># apt-cache search linux-source</span></div><div class="line">linux-source - Linux kernel source   with Ubuntu patches</div><div class="line">linux-source-<span class="number">4.4</span>.<span class="number">0</span> - Linux kernel source <span class="keyword">for</span> version <span class="number">4.4</span>.<span class="number">0</span> with Ubuntu patches</div><div class="line">linux-source-<span class="number">4.10</span>.<span class="number">0</span> - Linux kernel source <span class="keyword">for</span> version <span class="number">4.10</span>.<span class="number">0</span> with Ubuntu patches</div><div class="line">linux-source-<span class="number">4.11</span>.<span class="number">0</span> - Linux kernel source <span class="keyword">for</span> version <span class="number">4.11</span>.<span class="number">0</span> with Ubuntu patches</div><div class="line">linux-source-<span class="number">4.13</span>.<span class="number">0</span> - Linux kernel source <span class="keyword">for</span> version <span class="number">4.13</span>.<span class="number">0</span> with Ubuntu patches</div><div class="line">linux-source-<span class="number">4.8</span>.<span class="number">0</span> - Linux kernel source <span class="keyword">for</span> version <span class="number">4.8</span>.<span class="number">0</span> with Ubuntu patches</div><div class="line">root@ubuntu:~<span class="comment">#</span></div><div class="line">root@ubuntu:~<span class="comment">#</span></div><div class="line">root@ubuntu:~<span class="comment">#</span></div><div class="line">root@ubuntu:~<span class="comment"># uname -r</span></div><div class="line"><span class="number">4.4</span>.<span class="number">0</span>-<span class="number">62</span>-generic</div><div class="line">root@ubuntu:~<span class="comment">#</span></div><div class="line">root@ubuntu:~<span class="comment"># apt-get install linux-source-4.4.0</span></div><div class="line">Reading <span class="keyword">package</span> lists... Done</div><div class="line">Building dependency tree</div><div class="line">Reading <span class="keyword">state</span> information... Done</div><div class="line">The following packages were automatically installed <span class="keyword">and</span> are <span class="keyword">no</span> longer required:</div><div class="line">  systemtap-common systemtap-runtime</div><div class="line">Use <span class="string">'apt autoremove'</span> to remove them.</div><div class="line">Suggested packages:</div><div class="line">  libncurses-dev | ncurses-dev kernel-<span class="keyword">package</span> libqt3-dev</div><div class="line">The following NEW packages will be installed:</div><div class="line">  linux-source-<span class="number">4.4</span>.<span class="number">0</span></div><div class="line"><span class="number">0</span> upgraded, <span class="number">1</span> newly installed, <span class="number">0</span> to remove <span class="keyword">and</span> <span class="number">153</span> <span class="keyword">not</span> upgraded.</div><div class="line">Need to get <span class="number">112</span> MB of archives.</div><div class="line">After this operation, <span class="number">130</span> MB of additional disk space will be used.</div><div class="line">Get:<span class="number">1</span> http:<span class="regexp">//mirrors</span>.aliyun.com/ubuntu xenial-updates/main amd64 linux-source-<span class="number">4.4</span>.<span class="number">0</span> all <span class="number">4.4</span>.<span class="number">0</span>-<span class="number">109.132</span> [<span class="number">112</span> MB]</div><div class="line">Fetched <span class="number">112</span> MB in <span class="number">5</span>min <span class="number">2</span><span class="keyword">s</span> (<span class="number">371</span> kB/<span class="keyword">s</span>)</div><div class="line">Selecting previously unselected <span class="keyword">package</span> linux-source-<span class="number">4.4</span>.<span class="number">0</span>.</div><div class="line">(Reading database ... <span class="number">113915</span> files <span class="keyword">and</span> directories currently installed.)</div><div class="line">Preparing to <span class="keyword">unpack</span> .../linux-source-<span class="number">4.4</span>.<span class="number">0_4</span>.<span class="number">4.0</span>-<span class="number">109.132_</span>all.deb ...</div><div class="line">Unpacking linux-source-<span class="number">4.4</span>.<span class="number">0</span> (<span class="number">4.4</span>.<span class="number">0</span>-<span class="number">109.132</span>) ...</div><div class="line">Setting up linux-source-<span class="number">4.4</span>.<span class="number">0</span> (<span class="number">4.4</span>.<span class="number">0</span>-<span class="number">109.132</span>) ...</div><div class="line">root@ubuntu:~<span class="comment">#</span></div></pre></td></tr></table></figure>
 <h1 id="源代码下载目录"><a href="#源代码下载目录" class="headerlink" title="源代码下载目录"></a>源代码下载目录</h1><figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:<span class="regexp">/usr/src</span><span class="comment"># ls /usr/src/linux-source-4.4.0</span></div><div class="line">debian  debian.master  linux-source-<span class="number">4.4</span>.<span class="number">0</span>.tar.bz2</div><div class="line">root@ubuntu:<span class="regexp">/usr/src</span><span class="comment">#</span></div></pre></td></tr></table></figure>
 <h1 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h1><p>apt-get install libncurses5-dev libncursesw5-dev</p>
@@ -574,7 +574,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">58</span>
+                <span class="site-state-item-count">59</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -596,7 +596,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">127</span>
+                <span class="site-state-item-count">131</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

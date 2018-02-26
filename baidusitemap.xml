@@ -4,6 +4,60 @@
 
     
   <url>
+    <loc>http://vcpu.me/ubuntu_soure_make/</loc>
+    <lastmod>2018-02-26T10:21:55.000Z</lastmod>
+    <data>
+        <display>
+        <title>ubuntu16.04内核代码编译升级步骤</title>
+        <pubTime>2017-12-22T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntu16.04.2</tag>
+         
+        <tag>内核代码获取</tag>
+         
+        <tag>内核代码编译</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux kernel" url="http://vcpu.me/categories/linux-kernel/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/vlan-muti-external-fip-porb/</loc>
+    <lastmod>2018-02-26T10:20:34.000Z</lastmod>
+    <data>
+        <display>
+        <title>openstack SDN vlan多外网fip环路问题解决</title>
+        <pubTime>2018-02-26T10:00:00.000Z</pubTime>
+        
+        <tag>openstack</tag>
+         
+        <tag>ovs</tag>
+         
+        <tag>SDN</tag>
+         
+        <tag>问题分析过程</tag>
+         
+        <tag>网络节点环路</tag>
+         
+        <tag>免费aro广播</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/addr2line/</loc>
     <lastmod>2018-02-14T09:50:14.000Z</lastmod>
     <data>
@@ -151,30 +205,6 @@
         <tag>cpu调度情况查看</tag>
          
         <tag>内核函数调用</tag>
-         
-         
-           
-             
-              <breadCrumb title="linux kernel" url="http://vcpu.me/categories/linux-kernel/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://vcpu.me/ubuntu_soure_make/</loc>
-    <lastmod>2018-02-11T15:33:13.000Z</lastmod>
-    <data>
-        <display>
-        <title>ubuntu16.04内核代码编译升级步骤</title>
-        <pubTime>2017-12-22T10:00:00.000Z</pubTime>
-        
-        <tag>ubuntu16.04.2</tag>
-         
-        <tag>内核代码获取</tag>
-         
-        <tag>内核代码编译</tag>
          
          
            
