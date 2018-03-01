@@ -4,6 +4,36 @@
 
     
   <url>
+    <loc>http://vcpu.me/dpdk-ovs-vhost-user-kvm/</loc>
+    <lastmod>2018-03-01T03:27:34.000Z</lastmod>
+    <data>
+        <display>
+        <title>OSX Fusion ubuntu16.04.2 虚拟机安装dpdk ovs</title>
+        <pubTime>2018-02-28T10:00:00.000Z</pubTime>
+        
+        <tag>osx操作系统</tag>
+         
+        <tag>VMware Fusion 8</tag>
+         
+        <tag>kvm</tag>
+         
+        <tag>dpdk</tag>
+         
+        <tag>ovs</tag>
+         
+        <tag>vhost-user</tag>
+         
+         
+           
+             
+              <breadCrumb title="DPDK" url="http://vcpu.me/categories/DPDK/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/ubuntu_soure_make/</loc>
     <lastmod>2018-02-26T10:21:55.000Z</lastmod>
     <data>
@@ -468,9 +498,9 @@
         
         <tag>ubuntun16.04</tag>
          
-        <tag>实验性质</tag>
-         
         <tag>ovs</tag>
+         
+        <tag>实验性质</tag>
          
         <tag>RYU</tag>
          
