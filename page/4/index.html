@@ -99,6 +99,7 @@
 <meta property="og:title" content="i博客">
 <meta property="og:url" content="http://vcpu.me/page/4/index.html">
 <meta property="og:site_name" content="i博客">
+<meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="i博客">
 
@@ -481,167 +482,6 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/openvswitch2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/openvswitch2/" itemprop="url">openvSwitch tunnel</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T18:00:00+08:00">
-                2017-08-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/网络/" itemprop="url" rel="index">
-                    <span itemprop="name">网络</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/openvswitch2/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="openvswitch2/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/openvswitch2/" class="leancloud_visitors" data-flag-title="openvSwitch tunnel">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="ovs-tunnel"><a href="#ovs-tunnel" class="headerlink" title="ovs tunnel"></a>ovs tunnel</h2><h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><p><img src="/myimages/tunnel.png" alt="tunnel"></p>
-<h3 id="实验拓扑搭建基础脚本"><a href="#实验拓扑搭建基础脚本" class="headerlink" title="实验拓扑搭建基础脚本"></a>实验拓扑搭建基础脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">#vbox虚拟机1</div><div class="line">ip netns add left</div><div class="line">ip link add name veth1 type veth peer name sw1-p1</div><div class="line">ip link set dev veth1 netns left</div><div class="line">ip netns exec left ifconfig veth1 10.0.0.1/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw1</div><div class="line">ovs-vsctl add-port sw1 sw1-p1</div><div class="line">ip link set sw1-p1 up</div><div class="line"></div><div class="line">#vbox虚拟机2</div><div class="line">ip netns add right</div><div class="line">ip link add name veth1 type veth peer name sw2-p1</div><div class="line">ip link set dev veth1 netns right</div><div class="line">ip netns exec right ifconfig veth1 10.0.0.2/24 up</div><div class="line"></div><div class="line">ovs-vsctl add-br sw2</div><div class="line">ovs-vsctl add-port sw2 sw2-p1</div><div class="line">ip link set sw2-p1 up</div></pre></td></tr></table></figure>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/openvswitch2/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://vcpu.me/openvswitch1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -809,6 +649,167 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/openvswitch2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/openvswitch2/" itemprop="url">openvSwitch tunnel</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T18:00:00+08:00">
+                2017-08-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络/" itemprop="url" rel="index">
+                    <span itemprop="name">网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/openvswitch2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="openvswitch2/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/openvswitch2/" class="leancloud_visitors" data-flag-title="openvSwitch tunnel">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="ovs-tunnel"><a href="#ovs-tunnel" class="headerlink" title="ovs tunnel"></a>ovs tunnel</h2><h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><p><img src="/myimages/tunnel.png" alt="tunnel"></p>
+<h3 id="实验拓扑搭建基础脚本"><a href="#实验拓扑搭建基础脚本" class="headerlink" title="实验拓扑搭建基础脚本"></a>实验拓扑搭建基础脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">#vbox虚拟机1</span><br><span class="line">ip netns add left</span><br><span class="line">ip link add name veth1 type veth peer name sw1-p1</span><br><span class="line">ip link set dev veth1 netns left</span><br><span class="line">ip netns exec left ifconfig veth1 10.0.0.1/24 up</span><br><span class="line"></span><br><span class="line">ovs-vsctl add-br sw1</span><br><span class="line">ovs-vsctl add-port sw1 sw1-p1</span><br><span class="line">ip link set sw1-p1 up</span><br><span class="line"></span><br><span class="line">#vbox虚拟机2</span><br><span class="line">ip netns add right</span><br><span class="line">ip link add name veth1 type veth peer name sw2-p1</span><br><span class="line">ip link set dev veth1 netns right</span><br><span class="line">ip netns exec right ifconfig veth1 10.0.0.2/24 up</span><br><span class="line"></span><br><span class="line">ovs-vsctl add-br sw2</span><br><span class="line">ovs-vsctl add-port sw2 sw2-p1</span><br><span class="line">ip link set sw2-p1 up</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/openvswitch2/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://vcpu.me/openvswitch/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -925,11 +926,11 @@
 <li>ovs-vswitchd</li>
 </ul>
 <p>主要模块、实现交换功能，含有支持流交换的Linux内核模块,基于流交换<br>它和上层controller通信采用OPENFLOW协议，与ovsdb-server通信采用OVSDB协议，和内核通信采用netlink通信<br>支持多个独立datapatch(网桥)</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root      2225     1  0 20:05 ?        00:00:00 ovs-vswitchd: monitoring pid 2226 (healthy)</div><div class="line">root      2226  2225  0 20:05 ?        00:00:00 ovs-vswitchd unix:/var/run/openvswitch/db.sock -vconsole:emer -vsyslog:err -vfile:info --mlockall --no-chdir --log-file=/var/log/openvswitch/ovs-vswitchd.log --pidfile=/var/run/openvswitch/ovs-vswitchd.pid --detach --monitor</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root      2225     1  0 20:05 ?        00:00:00 ovs-vswitchd: monitoring pid 2226 (healthy)</span><br><span class="line">root      2226  2225  0 20:05 ?        00:00:00 ovs-vswitchd unix:/var/run/openvswitch/db.sock -vconsole:emer -vsyslog:err -vfile:info --mlockall --no-chdir --log-file=/var/log/openvswitch/ovs-vswitchd.log --pidfile=/var/run/openvswitch/ovs-vswitchd.pid --detach --monitor</span><br></pre></td></tr></table></figure>
 <ul>
 <li>ovsdb-server </li>
 </ul>
-<p>虚拟交换机配置信息（接口、交换内容、VLAN等）存放的数据库服务，ovs-vswitchd会根据ovsdb-server中的配置工作。<br>ovsdb-server 和ovs-vswitchd 使用OVSDB(JSON-RPC)方式通信<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root      2201     1  0 20:05 ?        00:00:00 ovsdb-server: monitoring pid 2202 (healthy)</div><div class="line">root      2202  2201  0 20:05 ?        00:00:00 ovsdb-server /etc/openvswitch/conf.db -vconsole:emer -vsyslog:err -vfile:info --remote=punix:/var/run/openvswitch/db.sock --private-key=db:Open_vSwitch,SSL,private_key --certificate=db:Open_vSwitch,SSL,certificate --bootstrap-ca-cert=db:Open_vSwitch,SSL,ca_cert --no-chdir --log-file=/var/log/openvswitch/ovsdb-server.log --pidfile=/var/run/openvswitch/ovsdb-server.pid --detach --monitor</div></pre></td></tr></table></figure></p>
+<p>虚拟交换机配置信息（接口、交换内容、VLAN等）存放的数据库服务，ovs-vswitchd会根据ovsdb-server中的配置工作。<br>ovsdb-server 和ovs-vswitchd 使用OVSDB(JSON-RPC)方式通信<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root      2201     1  0 20:05 ?        00:00:00 ovsdb-server: monitoring pid 2202 (healthy)</span><br><span class="line">root      2202  2201  0 20:05 ?        00:00:00 ovsdb-server /etc/openvswitch/conf.db -vconsole:emer -vsyslog:err -vfile:info --remote=punix:/var/run/openvswitch/db.sock --private-key=db:Open_vSwitch,SSL,private_key --certificate=db:Open_vSwitch,SSL,certificate --bootstrap-ca-cert=db:Open_vSwitch,SSL,ca_cert --no-chdir --log-file=/var/log/openvswitch/ovsdb-server.log --pidfile=/var/run/openvswitch/ovsdb-server.pid --detach --monitor</span><br></pre></td></tr></table></figure></p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/openvswitch/#more" rel="contents">
@@ -1575,11 +1576,11 @@
 
       
         
-          <h2 id="ARP相关命令"><a href="#ARP相关命令" class="headerlink" title="ARP相关命令"></a>ARP相关命令</h2><h3 id="ip-n显示ARP表"><a href="#ip-n显示ARP表" class="headerlink" title="ip n显示ARP表"></a>ip n显示ARP表</h3><h3 id="全部清除linux-arp表项"><a href="#全部清除linux-arp表项" class="headerlink" title="全部清除linux arp表项"></a>全部清除linux arp表项</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">arp -n|awk &apos;/^[1-9]/&#123;system(&quot;arp -d &quot;$1)&#125;&apos;</div></pre></td></tr></table></figure>
-<h3 id="清除接口eth0所有的mac"><a href="#清除接口eth0所有的mac" class="headerlink" title="清除接口eth0所有的mac"></a>清除接口eth0所有的mac</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ip neigh flush  dev eth0</div></pre></td></tr></table></figure>
-<h3 id="arp-v-额外显示接口类型和arp表项统计信息"><a href="#arp-v-额外显示接口类型和arp表项统计信息" class="headerlink" title="arp -v 额外显示接口类型和arp表项统计信息"></a>arp -v 额外显示接口类型和arp表项统计信息</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:/home/controller# arp -v</div><div class="line">Address                  HWtype  HWaddress           Flags Mask            Iface</div><div class="line">10.0.1.2                 ether   22:dc:c1:9c:8c:b4   C                     eth0</div><div class="line">Entries: 1	Skipped: 0	Found: 1</div></pre></td></tr></table></figure>
-<h3 id="arp-a-显示全部ARP缓存"><a href="#arp-a-显示全部ARP缓存" class="headerlink" title="arp -a 显示全部ARP缓存"></a>arp -a 显示全部ARP缓存</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:/home/controller# arp -a</div><div class="line">? (10.0.1.2) at 22:dc:c1:9c:8c:b4 [ether] on eth0</div></pre></td></tr></table></figure>
-<h3 id="arp-n-可快速查询ARP缓存"><a href="#arp-n-可快速查询ARP缓存" class="headerlink" title="arp -n 可快速查询ARP缓存"></a>arp -n 可快速查询ARP缓存</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">root@controller-VirtualBox:/home/controller# arp -n</div><div class="line">Address                  HWtype  HWaddress           Flags Mask            Iface</div><div class="line">10.0.1.2                 ether   22:dc:c1:9c:8c:b4   C                     eth0</div><div class="line">root@controller-VirtualBox:/home/controller#</div></pre></td></tr></table></figure>
+          <h2 id="ARP相关命令"><a href="#ARP相关命令" class="headerlink" title="ARP相关命令"></a>ARP相关命令</h2><h3 id="ip-n显示ARP表"><a href="#ip-n显示ARP表" class="headerlink" title="ip n显示ARP表"></a>ip n显示ARP表</h3><h3 id="全部清除linux-arp表项"><a href="#全部清除linux-arp表项" class="headerlink" title="全部清除linux arp表项"></a>全部清除linux arp表项</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arp -n|awk &apos;/^[1-9]/&#123;system(&quot;arp -d &quot;$1)&#125;&apos;</span><br></pre></td></tr></table></figure>
+<h3 id="清除接口eth0所有的mac"><a href="#清除接口eth0所有的mac" class="headerlink" title="清除接口eth0所有的mac"></a>清除接口eth0所有的mac</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip neigh flush  dev eth0</span><br></pre></td></tr></table></figure>
+<h3 id="arp-v-额外显示接口类型和arp表项统计信息"><a href="#arp-v-额外显示接口类型和arp表项统计信息" class="headerlink" title="arp -v 额外显示接口类型和arp表项统计信息"></a>arp -v 额外显示接口类型和arp表项统计信息</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@controller-VirtualBox:/home/controller# arp -v</span><br><span class="line">Address                  HWtype  HWaddress           Flags Mask            Iface</span><br><span class="line">10.0.1.2                 ether   22:dc:c1:9c:8c:b4   C                     eth0</span><br><span class="line">Entries: 1	Skipped: 0	Found: 1</span><br></pre></td></tr></table></figure>
+<h3 id="arp-a-显示全部ARP缓存"><a href="#arp-a-显示全部ARP缓存" class="headerlink" title="arp -a 显示全部ARP缓存"></a>arp -a 显示全部ARP缓存</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@controller-VirtualBox:/home/controller# arp -a</span><br><span class="line">? (10.0.1.2) at 22:dc:c1:9c:8c:b4 [ether] on eth0</span><br></pre></td></tr></table></figure>
+<h3 id="arp-n-可快速查询ARP缓存"><a href="#arp-n-可快速查询ARP缓存" class="headerlink" title="arp -n 可快速查询ARP缓存"></a>arp -n 可快速查询ARP缓存</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@controller-VirtualBox:/home/controller# arp -n</span><br><span class="line">Address                  HWtype  HWaddress           Flags Mask            Iface</span><br><span class="line">10.0.1.2                 ether   22:dc:c1:9c:8c:b4   C                     eth0</span><br><span class="line">root@controller-VirtualBox:/home/controller#</span><br></pre></td></tr></table></figure>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/cmd1/#more" rel="contents">

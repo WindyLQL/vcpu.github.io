@@ -82,6 +82,8 @@
 
 
 
+  
+
 
   <link rel="alternate" href="/atom.xml" title="i博客" type="application/atom+xml" />
 
@@ -99,6 +101,7 @@
 <meta property="og:title" content="i博客">
 <meta property="og:url" content="http://vcpu.me/index.html">
 <meta property="og:site_name" content="i博客">
+<meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="i博客">
 
@@ -919,7 +922,7 @@
 
       
         
-          <h3 id="针对于linux平台-下，c程序使用场景举例："><a href="#针对于linux平台-下，c程序使用场景举例：" class="headerlink" title="针对于linux平台 下，c程序使用场景举例："></a>针对于linux平台 下，c程序使用场景举例：</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">root@ubuntu:~<span class="comment"># cat ./mem_test.c</span></div><div class="line"><span class="comment">#include &lt;stdio.h&gt;</span></div><div class="line"><span class="comment">#include &lt;stdlib.h&gt;</span></div><div class="line"><span class="comment">#include &lt;unistd.h&gt;</span></div><div class="line"></div><div class="line">int main(int argc, char *argv[])</div><div class="line">&#123;</div><div class="line">    char *p1;</div><div class="line">    char *p2;</div><div class="line">    char *p3;</div><div class="line">    char *p4;</div><div class="line"></div><div class="line">    sleep(<span class="number">20</span>);//让程序sleep <span class="number">20</span>s是因为我们程序先起来之后，等待SystemTap启动设置探测点</div><div class="line">    p1 = malloc(<span class="number">500</span>);</div><div class="line">    p2 = malloc(<span class="number">200</span>);</div><div class="line">    p3 = malloc(<span class="number">300</span>);</div><div class="line">    p4 = malloc(<span class="number">300</span>);//泄漏</div><div class="line">    free(p1);</div><div class="line">    free(p2);</div><div class="line">    free(p3);</div><div class="line">    free(p2);//重复释放</div><div class="line">    printf(<span class="string">"p1: %p, p2: %p, p3: %p, p4: %p\n"</span>, p1, p2, p3, p4);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+          <h3 id="针对于linux平台-下，c程序使用场景举例："><a href="#针对于linux平台-下，c程序使用场景举例：" class="headerlink" title="针对于linux平台 下，c程序使用场景举例："></a>针对于linux平台 下，c程序使用场景举例：</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:~<span class="comment"># cat ./mem_test.c</span></span><br><span class="line"><span class="comment">#include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;stdlib.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;unistd.h&gt;</span></span><br><span class="line"></span><br><span class="line">int main(int argc, char *argv[])</span><br><span class="line">&#123;</span><br><span class="line">    char *p1;</span><br><span class="line">    char *p2;</span><br><span class="line">    char *p3;</span><br><span class="line">    char *p4;</span><br><span class="line"></span><br><span class="line">    sleep(<span class="number">20</span>);//让程序sleep <span class="number">20</span>s是因为我们程序先起来之后，等待SystemTap启动设置探测点</span><br><span class="line">    p1 = malloc(<span class="number">500</span>);</span><br><span class="line">    p2 = malloc(<span class="number">200</span>);</span><br><span class="line">    p3 = malloc(<span class="number">300</span>);</span><br><span class="line">    p4 = malloc(<span class="number">300</span>);//泄漏</span><br><span class="line">    free(p1);</span><br><span class="line">    free(p2);</span><br><span class="line">    free(p3);</span><br><span class="line">    free(p2);//重复释放</span><br><span class="line">    printf(<span class="string">"p1: %p, p2: %p, p3: %p, p4: %p\n"</span>, p1, p2, p3, p4);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/addr2line/#more" rel="contents">
@@ -1242,7 +1245,7 @@
         
           <p>strace可以帮助你打印函数执行时间，帮助你查看程序消耗，针对于复杂的工作进程例如nginx或者janus，我暂且没有尝试，但是对复杂程序性能调整作用不大。</p>
 <p>遇到复杂程序你可以考虑valgrind –tool=callgrind工具</p>
-<p><a href="http://valgrind.org/docs/manual/cl-manual.html#cl-manual.options.separation" target="_blank" rel="external">http://valgrind.org/docs/manual/cl-manual.html#cl-manual.options.separation</a></p>
+<p><a href="http://valgrind.org/docs/manual/cl-manual.html#cl-manual.options.separation" target="_blank" rel="noopener">http://valgrind.org/docs/manual/cl-manual.html#cl-manual.options.separation</a></p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/exectime_for_c_proess/#more" rel="contents">

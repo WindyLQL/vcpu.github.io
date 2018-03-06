@@ -102,6 +102,7 @@
 <meta property="og:url" content="http://vcpu.me/TCP拥塞控制/index.html">
 <meta property="og:site_name" content="i博客">
 <meta property="og:description" content="TCP拥塞控制设计概念延迟确认定时器 TCP延时确认定时器是指在一个TCP连接中，当一方收到另一端的数据后，并不是立刻ACK确认，而是等待200ms（2.6内核 40ms），如果这段时间内有新的数据要发往对方，本地奖ACK和数据封装在一个数据包中捎带发送；如果这段时间内没有新的数据要发往对方，200ms后ack确认。  优点：减少传输消耗缺点：增加了延迟     超时重传定时器超时重传是TCP协议">
+<meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://vcpu.me/myimages/tcp.jpg">
 <meta property="og:updated_time" content="2017-07-05T01:33:00.000Z">
 <meta name="twitter:card" content="summary">
@@ -439,6 +440,8 @@
 <h3 id="超时重传定时器"><a href="#超时重传定时器" class="headerlink" title="超时重传定时器"></a>超时重传定时器</h3><p>超时重传是TCP协议栈保障数据可靠性的一个重要机制<br>原理：</p>
 <blockquote>
 <p>发送一个数据后同时开启定时器，在一定时间内如果没有收到对方确认，定时器激活重新发送数据包，直到发送成功或者到达最大重传次数。<br><a id="more"></a></p>
+</blockquote>
+<blockquote>
 <p> RTO(重传超时时间)</p>
 <blockquote>
 <p>如果RTO值被设置过大，将会使得发送端经过很长时间等待才能发现报文段丢失，会降低吞吐<br>如果RTO值被设置很小，发送端尽管可以很快的检测出报文段的丢失，但也可能将一些延迟大的报文段误认为是丢失，造成不必要重传，浪费网络资源。</p>
@@ -474,6 +477,8 @@
 <h3 id="diorder状态"><a href="#diorder状态" class="headerlink" title="diorder状态"></a>diorder状态</h3><p>在Linux内核TCP实现中，有一个disorder状态，此状态是open状态向快速重传过度的一个状态，收到3个重复确认才开开始快速重传，从收到第一个重复确认到收到第三个重复确认这段时间，处于disorder状态。</p>
 <blockquote>
 <p>设置disorder状态的必要性在于，当收到重复确认比较少时，我们还没法判断当前是否发生丢包，因为对端收到乱序报文，也会发送选择确认。如果重复确认足够多比如3个重复确认，就进入recovery状态，而如果在收到1-2个重复确认再收到数据确认，则回到open状态。</p>
+</blockquote>
+<blockquote>
 <p>从disorder状态回到open状态时，拥塞窗口和慢启动阈值不发生变化，会继续进行慢启动或者拥塞避免。</p>
 </blockquote>
 <h3 id="reocvery状态"><a href="#reocvery状态" class="headerlink" title="reocvery状态"></a>reocvery状态</h3><p>在linux内核实现中快速重传（动作）和快速恢复（阶段）用recovery状态表示。<br>快速恢复阶段，指的是从快速重传开始，到网络上没有丢失的报文，可以回到open状态的这段时间，拥塞窗口和慢启动阈值也调整回去。</p>
@@ -488,7 +493,11 @@
 <h3 id="慢启动阶段拥塞窗口调整策略"><a href="#慢启动阶段拥塞窗口调整策略" class="headerlink" title="慢启动阶段拥塞窗口调整策略"></a>慢启动阶段拥塞窗口调整策略</h3><p>慢启动阶段，有多少数据包被确认久增加多少数据包。一般的描述为一个传输轮次，拥塞窗口翻倍。这与有多少数据包被确认，拥塞窗口增加多少是一个意思。后者更适合于写代码。<br>拥塞避免阶段拥塞窗口调整<br>    没收到一定个数的ACK拥塞窗口加1<br>reno算法拥塞避免表现为：<br>    拥塞窗口在维持一段时间内的恒定值后，自增1</p>
 <h3 id="disorder阶段拥塞窗口调整"><a href="#disorder阶段拥塞窗口调整" class="headerlink" title="disorder阶段拥塞窗口调整"></a>disorder阶段拥塞窗口调整</h3><blockquote>
 <p>disorder是一个观望状态，拥塞窗口和慢启动阈值保持不变。即此时满足in_flight &lt; 拥塞窗口，对端能接收，并且发送队列中还有数据，则会继续发送数据。</p>
+</blockquote>
+<blockquote>
 <p>disorder收到数据确认时候，先前引发重复确认报文段已经到达了接收端，这时会重新回到open状态，拥塞窗口和慢启动阈值没有发生任何变化。</p>
+</blockquote>
+<blockquote>
 <p>disorder接收到足够多的重复确认数据包时（一般3个），会进入revocery状态。</p>
 </blockquote>
 <h3 id="快速恢复阶段拥塞窗口调整"><a href="#快速恢复阶段拥塞窗口调整" class="headerlink" title="快速恢复阶段拥塞窗口调整"></a>快速恢复阶段拥塞窗口调整</h3><p>进入快速恢复之前，调整慢启动阈值，等退出快速恢复阶段时，拥塞窗口等于慢启动阈值。快速恢复阶段不同恢复算法用不同的拥塞窗口调整策略。</p>

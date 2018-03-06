@@ -102,6 +102,7 @@
 <meta property="og:url" content="http://vcpu.me/Linux系统调用/index.html">
 <meta property="og:site_name" content="i博客">
 <meta property="og:description" content="什么事系统调用 linux虚拟地址空间分为用户空间和内核空间 用户空间不可直接访问内核空间，帝王班的内核空间可直接访问用户空间 用户空间只能通过系统调用访问内核空间 系统调用时内核提供的一组函数接口，使得用户空间上进程可以和内核空间交互  系统调用过程 执行用户程序 根据glibc中实现，取得系统调用号，将其存入EAX并执行int $0x80（128号中断） 用户态可以传递变量、参数值给内核，内核">
+<meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2017-06-22T10:10:14.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux系统调用">
@@ -444,7 +445,7 @@
 <li>系统调用结束将访问址存入EAX，返回中断处理函数</li>
 <li>中断处理函数根据存储用户态进程上下文环境恢复用户态，同时用户态就获取了内核态函数执行的返回值</li>
 </ul>
-<h2 id="系统调用汇编"><a href="#系统调用汇编" class="headerlink" title="系统调用汇编"></a>系统调用汇编</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">// pid = fork();</div><div class="line">asm volatile(</div><div class="line">    &quot;mov $0x2, %%eax\n\t&quot; // 将fork的系统调用号2存到eax寄存器  </div><div class="line">    &quot;int $0x80\n\t&quot;       // 产生int 0x80中断</div><div class="line">    &quot;mov %%eax,%0\n\t&quot;    // 将结果存入pid中</div><div class="line">    : &quot;=m&quot; (pid)</div></pre></td></tr></table></figure>
+<h2 id="系统调用汇编"><a href="#系统调用汇编" class="headerlink" title="系统调用汇编"></a>系统调用汇编</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// pid = fork();</span><br><span class="line">asm volatile(</span><br><span class="line">    &quot;mov $0x2, %%eax\n\t&quot; // 将fork的系统调用号2存到eax寄存器  </span><br><span class="line">    &quot;int $0x80\n\t&quot;       // 产生int 0x80中断</span><br><span class="line">    &quot;mov %%eax,%0\n\t&quot;    // 将结果存入pid中</span><br><span class="line">    : &quot;=m&quot; (pid)</span><br></pre></td></tr></table></figure>
 <h2 id="系统调用实现分析"><a href="#系统调用实现分析" class="headerlink" title="系统调用实现分析"></a>系统调用实现分析</h2><p>待续</p>
 <h2 id="添加系统调用"><a href="#添加系统调用" class="headerlink" title="添加系统调用"></a>添加系统调用</h2><p>待续</p>
 

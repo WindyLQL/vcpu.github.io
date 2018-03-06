@@ -102,6 +102,7 @@
 <meta property="og:url" content="http://vcpu.me/socket_rw_proc/index.html">
 <meta property="og:site_name" content="i博客">
 <meta property="og:description" content="概念说明1.接收缓存区低水位标记（用于读）和发送缓存区低水位标记（用于写）：每个套接字有一个接收低水位和一个发送低水位。他们由select函数使用。接收低水位标记是让select返回”可读”时套接字接收缓冲区中所需的数据量。对于TCP,其默认值为1。发送低水位标记是让select返回”可写”时套接字发送缓冲区中所需的可用空间。对于TCP，其默认值常为2048 通俗的解释一下，缓存区我们当成一个大小">
+<meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2017-06-26T08:55:50.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="socket读写条件">
@@ -437,13 +438,13 @@
 <blockquote>
 <p>经过测试在3.10.0-514.16.1.el7.x86_64 内核情况下SO_SNDLOWAT/SO_RCVLOWAT<br>默认发送和接收最低水位均为1，也就是说默认情况下低水位值可以不考虑，系统缓冲区有数据就读<br>有空闲就写</p>
 </blockquote>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> value =<span class="number">0</span>;</div><div class="line"><span class="keyword">int</span> v_len = <span class="keyword">sizeof</span>(value);</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_SNDLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"snd low at value: %d\n"</span>,value);</div><div class="line">value = <span class="number">0</span>;</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_RCVLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"rcv low at value: %d\n"</span>,value);</div></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> value =<span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> v_len = <span class="keyword">sizeof</span>(value);</span><br><span class="line">getsockopt(sockfd, SOL_SOCKET, SO_SNDLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"snd low at value: %d\n"</span>,value);</span><br><span class="line">value = <span class="number">0</span>;</span><br><span class="line">getsockopt(sockfd, SOL_SOCKET, SO_RCVLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"rcv low at value: %d\n"</span>,value);</span><br></pre></td></tr></table></figure>
 <h2 id="socket可读的条件"><a href="#socket可读的条件" class="headerlink" title="socket可读的条件"></a>socket可读的条件</h2><p>下列四个条件中的任何一个满足时,socket准备好读:<br>1.socket的接收缓冲区中的数据字节大于等于该socket的接收缓冲区低水位标记的当前大小。对这样的socket的读操作将不阻塞并返回一个大于0的值 {也就是返回准备好读入的数据}。我们可以用SO_RCVLOWATsocket选项来设置该socket的低水位标记。对于TCP和UDP .socket而言，其缺省值为1</p>
 <p>2.该连接的读这一半关闭{也就是接收了FIN的TCP连接}。对这样的socket的读操作将不阻塞并返回0</p>
 <p>3.socket是一个用于监听的socket,并且已经完成的连接数为非0.这样的soocket处于可读状态,是因为socket收到了对方的connect请求,执行了三次握手的第一步:对方发送SYN请求过来,使监听socket处于可读状态;正常情况下,这样的socket上的accept操作不会阻塞;</p>
 <p>4.有一个socket有异常错误条件待处理。对于这样的socket的读操作将不会阻塞,并且返回一个错误-1,errno则设置成明确的错误条件。这些待处理的错误也可通过指定socket选项SO_ERROR调用getsockopt来取得并清除</p>
 <h2 id="socket可写的条件"><a href="#socket可写的条件" class="headerlink" title="socket可写的条件"></a>socket可写的条件</h2><p>1.socket发送缓冲区中数据字节大于等于该socket发送缓冲区低水位大小。写操作不会被阻塞，会直接返回写入的数据大小，SO_SNDLOWAT socket选项设置socket可写低水位大小。经过测试默认大小为1。<br>2.如果你已经关闭连接，或者主动fin半关闭。这种情况下socket再些将要产生SIGPIPE信号，你没有对这个信号处理的话，你的进程将会被关闭。<br>3.有socket异常错误待处理，这种情况下写操作并不会被阻塞会直接返回一个错误-1，想知道错误原因erron可以帮助你。</p>
-<h2 id="参考地址"><a href="#参考地址" class="headerlink" title="参考地址"></a>参考地址</h2><p><a href="http://blog.csdn.net/szcarewell/article/details/51227540" target="_blank" rel="external">http://blog.csdn.net/szcarewell/article/details/51227540</a></p>
+<h2 id="参考地址"><a href="#参考地址" class="headerlink" title="参考地址"></a>参考地址</h2><p><a href="http://blog.csdn.net/szcarewell/article/details/51227540" target="_blank" rel="noopener">http://blog.csdn.net/szcarewell/article/details/51227540</a></p>
 
       
     </div>

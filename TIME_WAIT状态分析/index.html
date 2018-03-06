@@ -102,6 +102,7 @@
 <meta property="og:url" content="http://vcpu.me/TIME_WAIT状态分析/index.html">
 <meta property="og:site_name" content="i博客">
 <meta property="og:description" content="TIME_WAIT状态分析之所以起这样一个题目是因为很久以前我曾经写过一篇介绍TIME_WAIT的文章，不过当时基本属于浅尝辄止，并没深入说明问题的来龙去脉，碰巧这段时间反复被别人问到相关的问题，让我觉得有必要全面总结一下，以备不时之需。 讨论前大家可以拿手头的服务器摸摸底，记住「ss」比「netstat」快：1ss -ant | awk &apos;NR&amp;gt;1 &amp;#123;++s[$1]&amp;#125;">
+<meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2017-06-23T03:16:59.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="TIME_WAIT状态分析">
@@ -431,9 +432,9 @@
 
       
         <h1 id="TIME-WAIT状态分析"><a href="#TIME-WAIT状态分析" class="headerlink" title="TIME_WAIT状态分析"></a>TIME_WAIT状态分析</h1><p>之所以起这样一个题目是因为很久以前我曾经写过一篇介绍TIME_WAIT的文章，不过当时基本属于浅尝辄止，并没深入说明问题的来龙去脉，碰巧这段时间反复被别人问到相关的问题，让我觉得有必要全面总结一下，以备不时之需。</p>
-<p>讨论前大家可以拿手头的服务器摸摸底，记住「ss」比「netstat」快：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ss -ant | awk 'NR&gt;1 &#123;++s[$1]&#125; END &#123;for(k in s) print k,s[k]&#125;</div></pre></td></tr></table></figure></p>
+<p>讨论前大家可以拿手头的服务器摸摸底，记住「ss」比「netstat」快：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ss -ant | awk 'NR&gt;1 &#123;++s[$1]&#125; END &#123;for(k in s) print k,s[k]&#125;</span><br></pre></td></tr></table></figure></p>
 <p>更简单方法：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cat /proc/net/sockstat</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/net/sockstat</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
 <p>我猜你一定被巨大无比的TIME_WAIT网络连接总数吓到了！以我个人的经验，对于一台繁忙的Web服务器来说，如果主要以短连接为主，那么其TIME_WAIT网络连接总数很可能会达到几万，甚至十几万。虽然一个TIME_WAIT网络连接耗费的资源无非就是一个端口、一点内存，但是架不住基数大，所以这始终是一个需要面对的问题。</p>
 <h2 id="TIMEWAIT是什么"><a href="#TIMEWAIT是什么" class="headerlink" title="TIMEWAIT是什么"></a>TIMEWAIT是什么</h2><p>因为TCP连接是双向的，所以在关闭连接的时候，两个方向各自都需要关闭。先发FIN包的一方执行的是主动关闭；后发FIN包的一方执行的是被动关闭。主动关闭的一方会进入TIME_WAIT状态，并且在此状态停留两倍的MSL时长。<br>穿插一点MSL的知识：MSL指的是报文段的最大生存时间，如果报文段在网络活动了MSL时间，还没有被接收，那么会被丢弃。关于MSL的大小，RFC 793协议中给出的建议是两分钟，不过实际上不同的操作系统可能有不同的设置，以Linux为例，通常是半分钟，两倍的MSL就是一分钟，也就是60秒，并且这个数值是硬编码在内核中的，也就是说除非你重新编译内核，否则没法修改它：</p>
@@ -443,7 +444,7 @@
 <h3 id="tcp-tw-recycle："><a href="#tcp-tw-recycle：" class="headerlink" title="tcp_tw_recycle："></a>tcp_tw_recycle：</h3><p>顾名思义就是回收TIME_WAIT连接。可以说这个内核参数已经变成了大众处理TIME_WAIT的万金油，如果你在网络上搜索TIME_WAIT的解决方案，十有八九会推荐设置它，不过这里隐藏着一个不易察觉的陷阱：<br>当多个客户端通过NAT方式联网并与服务端交互时，服务端看到的是同一个IP，也就是说对服务端而言这些客户端实际上等同于一个，可惜由于这些客户端的时间戳可能存在差异，于是乎从服务端的视角看，便可能出现时间戳错乱的现象，进而直接导致时间戳小的数据包被丢弃。（tcp_tw_recycle和tcp_timestamps导致connect失败问题。同时开启情况下，60s内同一源ip主机socket 请求中timestamp必须是递增的）</p>
 <h3 id="tcp-tw-reuse："><a href="#tcp-tw-reuse：" class="headerlink" title="tcp_tw_reuse："></a>tcp_tw_reuse：</h3><p>顾名思义就是复用TIME_WAIT连接。当创建新连接的时候，如果可能的话会考虑复用相应的TIME_WAIT连接。通常认为「tcp_tw_reuse」比「tcp_tw_recycle」安全一些，这是因为一来TIME_WAIT创建时间必须超过一秒才可能会被复用；二来只有连接的时间戳是递增的时候才会被复用。官方文档里是这样说的：如果从协议视角看它是安全的，那么就可以使用。这简直就是外交辞令啊！按我的看法，如果网络比较稳定，比如都是内网连接，那么就可以尝试使用。<br>不过需要注意的是在哪里使用，既然我们要复用连接，那么当然应该在连接的发起方使用，而不能在被连接方使用。举例来说：客户端向服务端发起HTTP请求，服务端响应后主动关闭连接，于是TIME_WAIT便留在了服务端，此类情况使用「tcp_tw_reuse」是无效的，因为服务端是被连接方，所以不存在复用连接一说。让我们延伸一点来看，比如说服务端是PHP，它查询另一个MySQL服务端，然后主动断开连接，于是TIME_WAIT就落在了PHP一侧，此类情况下使用「tcp_tw_reuse」是有效的，因为此时PHP相对于MySQL而言是客户端，它是连接的发起方，所以可以复用连接。<br>说明：如果使用tcp_tw_reuse，请激活tcp_timestamps，否则无效。</p>
 <h3 id="tcp-max-tw-buckets："><a href="#tcp-max-tw-buckets：" class="headerlink" title="tcp_max_tw_buckets："></a>tcp_max_tw_buckets：</h3><p>顾名思义就是控制TIME_WAIT总数。官网文档说这个选项只是为了阻止一些简单的DoS攻击，平常不要人为的降低它。如果缩小了它，那么系统会将多余的TIME_WAIT删除掉，日志里会显示：「TCP: time wait bucket table overflow」。<br>需要提醒大家的是物极必反，曾经看到有人把「tcp_max_tw_buckets」设置成0，也就是说完全抛弃TIME_WAIT，这就有些冒险了，用一句围棋谚语来说：入界宜缓。<br>…<br>有时候，如果我们换个角度去看问题，往往能得到四两拨千斤的效果。前面提到的例子：客户端向服务端发起HTTP请求，服务端响应后主动关闭连接，于是TIME_WAIT便留在了服务端。这里的关键在于主动关闭连接的是服务端！在关闭TCP连接的时候，先出手的一方注定逃不开TIME_WAIT的宿命，套用一句歌词：把我的悲伤留给自己，你的美丽让你带走。如果客户端可控的话，那么在服务端打开KeepAlive，尽可能不让服务端主动关闭连接，而让客户端主动关闭连接，如此一来问题便迎刃而解了。</p>
-<p>原文连接于<a href="https://huoding.com/2013/12/31/316" target="_blank" rel="external">https://huoding.com/2013/12/31/316</a></p>
+<p>原文连接于<a href="https://huoding.com/2013/12/31/316" target="_blank" rel="noopener">https://huoding.com/2013/12/31/316</a></p>
 
       
     </div>

@@ -99,6 +99,7 @@
 <meta property="og:title" content="i博客">
 <meta property="og:url" content="http://vcpu.me/page/5/index.html">
 <meta property="og:site_name" content="i博客">
+<meta property="og:locale" content="zh-Hans">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="i博客">
 
@@ -1095,13 +1096,13 @@
 <blockquote>
 <p>经过测试在3.10.0-514.16.1.el7.x86_64 内核情况下SO_SNDLOWAT/SO_RCVLOWAT<br>默认发送和接收最低水位均为1，也就是说默认情况下低水位值可以不考虑，系统缓冲区有数据就读<br>有空闲就写</p>
 </blockquote>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> value =<span class="number">0</span>;</div><div class="line"><span class="keyword">int</span> v_len = <span class="keyword">sizeof</span>(value);</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_SNDLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"snd low at value: %d\n"</span>,value);</div><div class="line">value = <span class="number">0</span>;</div><div class="line">getsockopt(sockfd, SOL_SOCKET, SO_RCVLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</div><div class="line"><span class="built_in">printf</span>(<span class="string">"rcv low at value: %d\n"</span>,value);</div></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> value =<span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> v_len = <span class="keyword">sizeof</span>(value);</span><br><span class="line">getsockopt(sockfd, SOL_SOCKET, SO_SNDLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"snd low at value: %d\n"</span>,value);</span><br><span class="line">value = <span class="number">0</span>;</span><br><span class="line">getsockopt(sockfd, SOL_SOCKET, SO_RCVLOWAT, (<span class="keyword">void</span>*)&amp;value, &amp;v_len);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">"rcv low at value: %d\n"</span>,value);</span><br></pre></td></tr></table></figure>
 <h2 id="socket可读的条件"><a href="#socket可读的条件" class="headerlink" title="socket可读的条件"></a>socket可读的条件</h2><p>下列四个条件中的任何一个满足时,socket准备好读:<br>1.socket的接收缓冲区中的数据字节大于等于该socket的接收缓冲区低水位标记的当前大小。对这样的socket的读操作将不阻塞并返回一个大于0的值 {也就是返回准备好读入的数据}。我们可以用SO_RCVLOWATsocket选项来设置该socket的低水位标记。对于TCP和UDP .socket而言，其缺省值为1</p>
 <p>2.该连接的读这一半关闭{也就是接收了FIN的TCP连接}。对这样的socket的读操作将不阻塞并返回0</p>
 <p>3.socket是一个用于监听的socket,并且已经完成的连接数为非0.这样的soocket处于可读状态,是因为socket收到了对方的connect请求,执行了三次握手的第一步:对方发送SYN请求过来,使监听socket处于可读状态;正常情况下,这样的socket上的accept操作不会阻塞;</p>
 <p>4.有一个socket有异常错误条件待处理。对于这样的socket的读操作将不会阻塞,并且返回一个错误-1,errno则设置成明确的错误条件。这些待处理的错误也可通过指定socket选项SO_ERROR调用getsockopt来取得并清除</p>
 <h2 id="socket可写的条件"><a href="#socket可写的条件" class="headerlink" title="socket可写的条件"></a>socket可写的条件</h2><p>1.socket发送缓冲区中数据字节大于等于该socket发送缓冲区低水位大小。写操作不会被阻塞，会直接返回写入的数据大小，SO_SNDLOWAT socket选项设置socket可写低水位大小。经过测试默认大小为1。<br>2.如果你已经关闭连接，或者主动fin半关闭。这种情况下socket再些将要产生SIGPIPE信号，你没有对这个信号处理的话，你的进程将会被关闭。<br>3.有socket异常错误待处理，这种情况下写操作并不会被阻塞会直接返回一个错误-1，想知道错误原因erron可以帮助你。</p>
-<h2 id="参考地址"><a href="#参考地址" class="headerlink" title="参考地址"></a>参考地址</h2><p><a href="http://blog.csdn.net/szcarewell/article/details/51227540" target="_blank" rel="external">http://blog.csdn.net/szcarewell/article/details/51227540</a></p>
+<h2 id="参考地址"><a href="#参考地址" class="headerlink" title="参考地址"></a>参考地址</h2><p><a href="http://blog.csdn.net/szcarewell/article/details/51227540" target="_blank" rel="noopener">http://blog.csdn.net/szcarewell/article/details/51227540</a></p>
 
           
         
@@ -1257,7 +1258,7 @@
       
         
           <h2 id="socket-I-O事件处理"><a href="#socket-I-O事件处理" class="headerlink" title="socket I/O事件处理"></a>socket I/O事件处理</h2><p>以TCP socket为例<br>kernel: 3.10.0-514.16.1.el7.x86_64</p>
-<h3 id="socket-IO处理函数"><a href="#socket-IO处理函数" class="headerlink" title="socket IO处理函数"></a>socket IO处理函数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sock</span> &#123;</span></div><div class="line">	...</div><div class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">socket_wq</span> __<span class="title">rcu</span> *<span class="title">sk_wq</span>;</span> <span class="comment">/*等待队列和异步队列*/</span></div><div class="line">	...</div><div class="line">	<span class="keyword">void</span>			(*sk_state_change)(struct sock *sk);</div><div class="line">	<span class="keyword">void</span>			(*sk_data_ready)(struct sock *sk, <span class="keyword">int</span> bytes);</div><div class="line">	<span class="keyword">void</span>			(*sk_write_space)(struct sock *sk);</div><div class="line">	<span class="keyword">void</span>			(*sk_error_report)(struct sock *sk);</div><div class="line">	<span class="keyword">int</span>			(*sk_backlog_rcv)(struct sock *sk);</div><div class="line">	...</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<h3 id="socket-IO处理函数"><a href="#socket-IO处理函数" class="headerlink" title="socket IO处理函数"></a>socket IO处理函数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sock</span> &#123;</span></span><br><span class="line">	...</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">socket_wq</span> __<span class="title">rcu</span> *<span class="title">sk_wq</span>;</span> <span class="comment">/*等待队列和异步队列*/</span></span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">void</span>			(*sk_state_change)(struct sock *sk);</span><br><span class="line">	<span class="keyword">void</span>			(*sk_data_ready)(struct sock *sk, <span class="keyword">int</span> bytes);</span><br><span class="line">	<span class="keyword">void</span>			(*sk_write_space)(struct sock *sk);</span><br><span class="line">	<span class="keyword">void</span>			(*sk_error_report)(struct sock *sk);</span><br><span class="line">	<span class="keyword">int</span>			(*sk_backlog_rcv)(struct sock *sk);</span><br><span class="line">	...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <ul>
 <li><p>sk_wq</p>
 <blockquote>
@@ -1438,7 +1439,7 @@
 
       
         
-          <figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/time.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">select</span><span class="params">(<span class="keyword">int</span> nfds, fd_set *readfds, fd_set *writefds,</span></span></div><div class="line">           fd_set *exceptfds, struct timeval *timeout);</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_CLR</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;</div><div class="line"><span class="function"><span class="keyword">int</span>  <span class="title">FD_ISSET</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_SET</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_ZERO</span><span class="params">(fd_set *<span class="built_in">set</span>)</span></span>;</div></pre></td></tr></table></figure>
+          <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/time.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">select</span><span class="params">(<span class="keyword">int</span> nfds, fd_set *readfds, fd_set *writefds,</span></span></span><br><span class="line"><span class="function"><span class="params">           fd_set *exceptfds, struct timeval *timeout)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_CLR</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span>  <span class="title">FD_ISSET</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_SET</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_ZERO</span><span class="params">(fd_set *<span class="built_in">set</span>)</span></span>;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>nfds 是最大文件描述符号 +1   怎么可能这么简单，它限制的是最大值而不是个数</li>
 <li>readfds 用来记录可读fd集合</li>
@@ -1609,9 +1610,9 @@
       
         
           <h1 id="TIME-WAIT状态分析"><a href="#TIME-WAIT状态分析" class="headerlink" title="TIME_WAIT状态分析"></a>TIME_WAIT状态分析</h1><p>之所以起这样一个题目是因为很久以前我曾经写过一篇介绍TIME_WAIT的文章，不过当时基本属于浅尝辄止，并没深入说明问题的来龙去脉，碰巧这段时间反复被别人问到相关的问题，让我觉得有必要全面总结一下，以备不时之需。</p>
-<p>讨论前大家可以拿手头的服务器摸摸底，记住「ss」比「netstat」快：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ss -ant | awk 'NR&gt;1 &#123;++s[$1]&#125; END &#123;for(k in s) print k,s[k]&#125;</div></pre></td></tr></table></figure></p>
+<p>讨论前大家可以拿手头的服务器摸摸底，记住「ss」比「netstat」快：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ss -ant | awk 'NR&gt;1 &#123;++s[$1]&#125; END &#123;for(k in s) print k,s[k]&#125;</span><br></pre></td></tr></table></figure></p>
 <p>更简单方法：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cat /proc/net/sockstat</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/net/sockstat</span><br></pre></td></tr></table></figure>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/TIME_WAIT状态分析/#more" rel="contents">
@@ -1786,7 +1787,7 @@
 <li>系统调用结束将访问址存入EAX，返回中断处理函数</li>
 <li>中断处理函数根据存储用户态进程上下文环境恢复用户态，同时用户态就获取了内核态函数执行的返回值</li>
 </ul>
-<h2 id="系统调用汇编"><a href="#系统调用汇编" class="headerlink" title="系统调用汇编"></a>系统调用汇编</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">// pid = fork();</div><div class="line">asm volatile(</div><div class="line">    &quot;mov $0x2, %%eax\n\t&quot; // 将fork的系统调用号2存到eax寄存器  </div><div class="line">    &quot;int $0x80\n\t&quot;       // 产生int 0x80中断</div><div class="line">    &quot;mov %%eax,%0\n\t&quot;    // 将结果存入pid中</div><div class="line">    : &quot;=m&quot; (pid)</div></pre></td></tr></table></figure>
+<h2 id="系统调用汇编"><a href="#系统调用汇编" class="headerlink" title="系统调用汇编"></a>系统调用汇编</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// pid = fork();</span><br><span class="line">asm volatile(</span><br><span class="line">    &quot;mov $0x2, %%eax\n\t&quot; // 将fork的系统调用号2存到eax寄存器  </span><br><span class="line">    &quot;int $0x80\n\t&quot;       // 产生int 0x80中断</span><br><span class="line">    &quot;mov %%eax,%0\n\t&quot;    // 将结果存入pid中</span><br><span class="line">    : &quot;=m&quot; (pid)</span><br></pre></td></tr></table></figure>
 <h2 id="系统调用实现分析"><a href="#系统调用实现分析" class="headerlink" title="系统调用实现分析"></a>系统调用实现分析</h2><p>待续</p>
 <h2 id="添加系统调用"><a href="#添加系统调用" class="headerlink" title="添加系统调用"></a>添加系统调用</h2><p>待续</p>
 
@@ -1945,16 +1946,26 @@
         
           <h2 id="tcp-socket发送缓冲区探究结论"><a href="#tcp-socket发送缓冲区探究结论" class="headerlink" title="tcp socket发送缓冲区探究结论"></a>tcp socket发送缓冲区探究结论</h2><blockquote>
 <p>1: 未设置SO_SNDBUF时，sk-&gt;sk_sndbuf值由tcp_finish_connect-&gt;tcp_init_buffer_space-&gt;tcp_sndbuf_expand决定，TCP协议栈会自己计算一个值出来46080，sk_sndbuf是46080和net.ipv4.tcp_wmem[2]（4194304）的较小值</p>
+</blockquote>
+<blockquote>
 <p>2: 设置SO_SNDBUF后，tcp_sndbuf_expand将不会再被调用，其值情况完全由sock_setsockopt决定</p>
 <blockquote>
 <p>2-1: 设置值较小 value &lt;  2304 { SOCK_MIN_SNDBUF（4608）/2 }</p>
 <blockquote>
 <p>sk_sndbuf = 4608</p>
 </blockquote>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
 <p>2-2: 设置值适中 { SOCK_MIN_SNDBUF（4608）/2 }  &lt;  value  &lt;  net.core.wmem_max</p>
 <blockquote>
 <p>sk_sndbuf = value*2</p>
 </blockquote>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
 <p>2-3: 设置值较大 value &gt; net.core.wmem_max</p>
 <blockquote>
 <p>sk_sndbuf = net.core.wmem_max* 2</p>

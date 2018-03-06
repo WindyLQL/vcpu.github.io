@@ -102,6 +102,7 @@
 <meta property="og:url" content="http://vcpu.me/centos脚本执行顺序/index.html">
 <meta property="og:site_name" content="i博客">
 <meta property="og:description" content="centos脚本执行顺序通用角度分析，centos 7 系统中存在如下以下5种常用的脚本路径/etc/rc.d/rc.local/etc/profile/etc/bashrc~/.bash_profile~/.bashrc 通过在除rc外的脚本中加入echo信息，reboot虚拟机并ssh登陆用户，打印出顺序如下I am etc profilei am etc bashrci am ~ bash">
+<meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2017-06-15T07:42:10.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="centos环境下脚本执行顺序探究">
@@ -475,7 +476,7 @@
 <li>bashrc 是专门给bash做初始化设置的，相对应来讲，其它shell会有专门的shrc、zshrc文件存放</li>
 </ul>
 <h2 id="开机启动脚本其它说明"><a href="#开机启动脚本其它说明" class="headerlink" title="开机启动脚本其它说明"></a>开机启动脚本其它说明</h2><p>centos7 默认是没有执行权限的，想在此处加执行脚本，执行脚本不会执行到，需要增添执行权限</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[root@localhost rc.d]# ls -alt rc.local</div><div class="line">-rw-r--r--. 1 root root 491 Jun 13 22:24 rc.local</div><div class="line">[root@localhost rc.d]# chmod +x rc.local</div><div class="line"></div><div class="line">[root@localhost qinlong]# ls -alt /etc/rc.d/rc.local</div><div class="line">-rwxr-xr-x. 1 root root 535 Jun 13 22:48 /etc/rc.d/rc.local</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost rc.d]# ls -alt rc.local</span><br><span class="line">-rw-r--r--. 1 root root 491 Jun 13 22:24 rc.local</span><br><span class="line">[root@localhost rc.d]# chmod +x rc.local</span><br><span class="line"></span><br><span class="line">[root@localhost qinlong]# ls -alt /etc/rc.d/rc.local</span><br><span class="line">-rwxr-xr-x. 1 root root 535 Jun 13 22:48 /etc/rc.d/rc.local</span><br></pre></td></tr></table></figure>
 
       
     </div>
