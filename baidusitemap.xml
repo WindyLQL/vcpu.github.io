@@ -3,6 +3,32 @@
 
 
     
+  <url>
+    <loc>http://vcpu.me/dnat/</loc>
+    <lastmod>2018-04-18T03:29:49.000Z</lastmod>
+    <data>
+        <display>
+        <title>Using vlan external netowrk fip，dragonflow dirtributed dnat does not work</title>
+        <pubTime>2018-04-18T04:00:00.000Z</pubTime>
+        
+        <tag>dragonflow</tag>
+         
+        <tag>dirtributed dnat</tag>
+         
+        <tag>vlan external netowrk</tag>
+         
+        <tag>floating ip</tag>
+         
+         
+           
+             
+              <breadCrumb title="dragonflow" url="http://vcpu.me/categories/dragonflow/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
     
   <url>
     <loc>http://vcpu.me/chun/</loc>
