@@ -4,6 +4,36 @@
 
     
   <url>
+    <loc>http://vcpu.me/openstackdns/</loc>
+    <lastmod>2018-06-08T12:28:32.000Z</lastmod>
+    <data>
+        <display>
+        <title>openstack and Dragonflow DNS</title>
+        <pubTime>2018-05-28T10:00:00.000Z</pubTime>
+        
+        <tag>dragonflow dns相关</tag>
+         
+        <tag>云主机dns解析</tag>
+         
+        <tag>openstack 云主机stack</tag>
+         
+        <tag>DNS试验</tag>
+         
+        <tag>search</tag>
+         
+        <tag>domain</tag>
+         
+         
+           
+             
+              <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/dnat/</loc>
     <lastmod>2018-04-18T03:29:49.000Z</lastmod>
     <data>
