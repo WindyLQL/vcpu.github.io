@@ -4,6 +4,84 @@
 
     
   <url>
+    <loc>http://vcpu.me/tap_drop/</loc>
+    <lastmod>2018-06-12T05:08:25.000Z</lastmod>
+    <data>
+        <display>
+        <title>云主机tap口丢包问题</title>
+        <pubTime>2018-06-11T10:00:00.000Z</pubTime>
+        
+        <tag>tap口丢包</tag>
+         
+        <tag>云主机带宽测试不稳定</tag>
+         
+        <tag>ping云主机高延迟</tag>
+         
+        <tag>云主机cpu绑定</tag>
+         
+        <tag>高性能云主机方法</tag>
+         
+        <tag>NUMA优化概念</tag>
+         
+        <tag>CPU挤压导致性能下降</tag>
+         
+        <tag>使用CPU资源的隔离</tag>
+         
+         
+           
+             
+              <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/packet_from_nic_to_user_process/</loc>
+    <lastmod>2018-06-12T04:59:36.000Z</lastmod>
+    <data>
+        <display>
+        <title>数据包如何从物理网卡到达云主机的应用程序？</title>
+        <pubTime>2018-06-12T10:00:00.000Z</pubTime>
+        
+        <tag>linux bridge</tag>
+         
+        <tag>linux kernel</tag>
+         
+        <tag>数据包转发原理</tag>
+         
+        <tag>openvswitch</tag>
+         
+        <tag>协议栈处理过程</tag>
+         
+        <tag>网卡驱动处理过程</tag>
+         
+        <tag>处理数据包中断上半部分和下半部分</tag>
+         
+        <tag>netfilter</tag>
+         
+        <tag>RPS算法工作原理</tag>
+         
+        <tag>vhost-net线程工作原理</tag>
+         
+        <tag>linux veth口工作原理</tag>
+         
+        <tag>数据包抓包点和数据包统计个数位置</tag>
+         
+        <tag>kvm中断触发云主机中断过程</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux" url="http://vcpu.me/categories/linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/network_brocast/</loc>
     <lastmod>2018-06-12T02:27:01.000Z</lastmod>
     <data>
@@ -1193,9 +1271,9 @@
         <title>拥塞控制</title>
         <pubTime>2017-07-04T10:00:00.000Z</pubTime>
         
-        <tag>拥塞控制</tag>
-         
         <tag>tcp/ip</tag>
+         
+        <tag>拥塞控制</tag>
          
         <tag>Linux拥塞控制基本概念</tag>
          

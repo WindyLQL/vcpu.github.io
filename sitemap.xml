@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://vcpu.me/tap_drop/</loc>
+    
+    <lastmod>2018-06-12T05:08:25.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://vcpu.me/packet_from_nic_to_user_process/</loc>
+    
+    <lastmod>2018-06-12T04:59:36.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://vcpu.me/network_brocast/</loc>
     
     <lastmod>2018-06-12T02:27:01.000Z</lastmod>
