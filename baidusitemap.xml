@@ -4,14 +4,34 @@
 
     
   <url>
-    <loc>http://vcpu.me/dragonflow_muti_external_network/</loc>
-    <lastmod>2018-06-12T07:02:39.000Z</lastmod>
+    <loc>http://vcpu.me/read_dragonflow_etcd_data/</loc>
+    <lastmod>2018-06-12T07:17:08.000Z</lastmod>
     <data>
         <display>
-        <title>dragonflow2018多外网转发方案</title>
-        <pubTime>2018-04-22T10:00:00.000Z</pubTime>
+        <title>Dragonflow etcdv3数据读取方法</title>
+        <pubTime>2018-03-22T10:00:00.000Z</pubTime>
         
-        <tag>dragonflow多外网方案</tag>
+        <tag>Dragonflow etcdv3数据读取方法</tag>
+         
+         
+           
+             
+              <breadCrumb title="dragonflow" url="http://vcpu.me/categories/dragonflow/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/etcdv3/</loc>
+    <lastmod>2018-06-12T07:14:53.000Z</lastmod>
+    <data>
+        <display>
+        <title>etcdv3使用</title>
+        <pubTime>2018-03-21T10:00:00.000Z</pubTime>
+        
+        <tag>etcdv3使用</tag>
          
          
            
@@ -25,13 +45,33 @@
     
   <url>
     <loc>http://vcpu.me/self-service_and_provider_flows/</loc>
-    <lastmod>2018-06-12T06:49:40.000Z</lastmod>
+    <lastmod>2018-06-12T07:10:23.000Z</lastmod>
     <data>
         <display>
         <title>dragonflow self-service 和 provider通信流量走向图示</title>
         <pubTime>2018-04-11T10:00:00.000Z</pubTime>
         
         <tag>draonflow 流表结构</tag>
+         
+         
+           
+             
+              <breadCrumb title="dragonflow" url="http://vcpu.me/categories/dragonflow/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/dragonflow_muti_external_network/</loc>
+    <lastmod>2018-06-12T07:02:39.000Z</lastmod>
+    <data>
+        <display>
+        <title>dragonflow2018多外网转发方案</title>
+        <pubTime>2018-04-22T10:00:00.000Z</pubTime>
+        
+        <tag>dragonflow多外网方案</tag>
          
          
            

@@ -2,16 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://vcpu.me/dragonflow_muti_external_network/</loc>
+    <loc>http://vcpu.me/read_dragonflow_etcd_data/</loc>
     
-    <lastmod>2018-06-12T07:02:39.000Z</lastmod>
+    <lastmod>2018-06-12T07:17:08.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://vcpu.me/etcdv3/</loc>
+    
+    <lastmod>2018-06-12T07:14:53.000Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://vcpu.me/self-service_and_provider_flows/</loc>
     
-    <lastmod>2018-06-12T06:49:40.000Z</lastmod>
+    <lastmod>2018-06-12T07:10:23.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://vcpu.me/dragonflow_muti_external_network/</loc>
+    
+    <lastmod>2018-06-12T07:02:39.000Z</lastmod>
     
   </url>
   
