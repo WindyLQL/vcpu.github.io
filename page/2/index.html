@@ -1011,6 +1011,170 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/dragonflow_flows/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/dragonflow_flows/" itemprop="url">Dragonflow openvswitch流表实现原理</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-17T18:00:00+08:00">
+                2018-04-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/dragonflow/" itemprop="url" rel="index">
+                    <span itemprop="name">dragonflow</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/dragonflow_flows/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="dragonflow_flows/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/dragonflow_flows/" class="leancloud_visitors" data-flag-title="Dragonflow openvswitch流表实现原理">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="独立唯一的标记"><a href="#独立唯一的标记" class="headerlink" title="独立唯一的标记"></a>独立唯一的标记</h1><p>dragonflow 2018 所有的云主机接口会被分配到一个全局独立唯一的id；这个标记可以理解成云主机网络路径的一种抽象，每个云主机的网络路径不同的，二三层通信过程实际是在选择对应通信目标的网络路径，然后进行数据包转发，所以这些id在云主之间通信起到至关重要的作用。</p>
+<h1 id="云主机之间的通信"><a href="#云主机之间的通信" class="headerlink" title="云主机之间的通信"></a>云主机之间的通信</h1><p>云主机A和云主机B，位于同一个subnet；它们的通信过程是：云主机A发出的数据包会跑到table55，根据目的mac选择网络路径（id设置到reg7）;</p>
+<p>本机table115会根据选择的网络路径将数据包转发，其它节点，会根据网络路径将数据包发给vxlan隧道</p>
+<p>同一个路由，跨子网情况下，table55会根据目的网关的mac匹配，因为是发给网关流量设置reg5=1，交给table60匹配目的ip网段，确定子网信息（设置metadata标识），最后根据目的ip和子网信息，匹配table65找寻最后的网络路径。</p>
+<h1 id="网络节点qr和云主机通信"><a href="#网络节点qr和云主机通信" class="headerlink" title="网络节点qr和云主机通信"></a>网络节点qr和云主机通信</h1><p>l2 table根据网关mac判断，设置reg5=1 代表三层流量，l3 table根据mac（也有根据网关的ip） 选择网络路径</p>
+<h1 id="DNAT"><a href="#DNAT" class="headerlink" title="DNAT"></a>DNAT</h1><p>dnat属于三层流量，会经过table55 设置reg5=1交给三层table60处理；table60根据源地址发现该流量需要dnat，交给table77；最新的方案中的目的mac是最后决定的，所以需要将流量</p>
+<p>从定向到table55，table55会帮助引导，重新最后设置mac地址后发出的。</p>
+<p>回来的流量直接到table55，根据目的 mac判断是fip流量后，外网fip流量交给table75分流后交给table75 nat还原；还原后从新到table55 重新寻找具体网络路径。</p>
+<h1 id="SNAT"><a href="#SNAT" class="headerlink" title="SNAT"></a>SNAT</h1><p>访问外网地址114.114.114.114，云主机发出的流量经过table55，因为目的mac是子网网关mac，所以标记三层流量交给table60，交给table70区做snat，最后交给table71将流量发出</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://vcpu.me/self-service_and_provider_flows/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1890,179 +2054,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/etcdv3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/etcdv3/" itemprop="url">etcdv3使用</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-21T18:00:00+08:00">
-                2018-03-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/dragonflow/" itemprop="url" rel="index">
-                    <span itemprop="name">dragonflow</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/etcdv3/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="etcdv3/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/etcdv3/" class="leancloud_visitors" data-flag-title="etcdv3使用">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><h2 id="下载etcdv3包"><a href="#下载etcdv3包" class="headerlink" title="下载etcdv3包"></a>下载etcdv3包</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/src/ </span><br><span class="line">wget https:<span class="comment">//github.com/coreos/etcd/releases/download/v3.2.15/etcd-v3.2.15-linux-amd64.tar.gz</span></span><br></pre></td></tr></table></figure>
-<h2 id="解压"><a href="#解压" class="headerlink" title="解压"></a>解压</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf etcd-v3<span class="number">.2</span><span class="number">.15</span>-linux-amd64.tar.gz</span><br><span class="line">mv etcd-v3<span class="number">.2</span><span class="number">.15</span>-linux-amd64 etcd</span><br></pre></td></tr></table></figure>
-<h2 id="添加v3环境变量"><a href="#添加v3环境变量" class="headerlink" title="添加v3环境变量"></a>添加v3环境变量</h2><p>将代码路径加入环境变量中，并使用etcdv3的api接口</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/profile</span><br><span class="line"><span class="keyword">export</span> PATH=/usr/local/src/etcd:$PATH</span><br><span class="line"><span class="keyword">export</span> ETCDCTL_API=<span class="number">3</span></span><br></pre></td></tr></table></figure>
-<p>生效 source /etc/profile</p>
-<h1 id="简易启动local-standlone-cluster"><a href="#简易启动local-standlone-cluster" class="headerlink" title="简易启动local standlone cluster"></a>简易启动local standlone cluster</h1><p>参考：<a href="https://coreos.com/etcd/docs/latest/dev-guide/local_cluster.html" target="_blank" rel="noopener">https://coreos.com/etcd/docs/latest/dev-guide/local_cluster.html</a></p>
-<h2 id="切换到-usr-local-src-etc-目录直接启动etcd服务进程"><a href="#切换到-usr-local-src-etc-目录直接启动etcd服务进程" class="headerlink" title="切换到:/usr/local/src/etc 目录直接启动etcd服务进程"></a>切换到:/usr/local/src/etc 目录直接启动etcd服务进程</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:/usr/local/src/etcd# ./etcd&amp;</span><br><span class="line">[<span class="number">1</span>] <span class="number">19228</span></span><br><span class="line">root@ubuntu:/usr/local/src/etcd# <span class="number">2018</span><span class="number">-03</span><span class="number">-07</span> <span class="number">13</span>:<span class="number">40</span>:<span class="number">16.719105</span> I | etcdmain: etcd Version: <span class="number">3.2</span><span class="number">.15</span></span><br><span class="line"><span class="number">2018</span><span class="number">-03</span><span class="number">-07</span> <span class="number">13</span>:<span class="number">40</span>:<span class="number">16.719217</span> I | etcdmain: Git SHA: <span class="number">1b</span>3ac99e8</span><br><span class="line"><span class="number">2018</span><span class="number">-03</span><span class="number">-07</span> <span class="number">13</span>:<span class="number">40</span>:<span class="number">16.719235</span> I | etcdmain: Go Version: go1<span class="number">.8</span><span class="number">.5</span></span><br><span class="line"><span class="number">2018</span><span class="number">-03</span><span class="number">-07</span> <span class="number">13</span>:<span class="number">40</span>:<span class="number">16.719244</span> I | etcdmain: Go OS/Arch: linux/amd64</span><br><span class="line"><span class="number">2018</span><span class="number">-03</span><span class="number">-07</span> <span class="number">13</span>:<span class="number">40</span>:<span class="number">16.719254</span> I | etcdmain: setting maximum number of CPUs to <span class="number">4</span>, total number of available CPUs is <span class="number">4</span></span><br><span class="line"><span class="number">2018</span><span class="number">-03</span><span class="number">-07</span> <span class="number">13</span>:<span class="number">40</span>:<span class="number">16.719274</span> W | etcdmain: no data-dir provided, <span class="keyword">using</span> <span class="keyword">default</span> data-dir ./<span class="keyword">default</span>.etcd</span><br><span class="line"><span class="number">2018</span><span class="number">-03</span><span class="number">-07</span> <span class="number">13</span>:<span class="number">40</span>:<span class="number">16.719422</span> N | etcdmain: the server is already initialized as</span><br></pre></td></tr></table></figure>
-<h2 id="判别是否启动成功"><a href="#判别是否启动成功" class="headerlink" title="判别是否启动成功"></a>判别是否启动成功</h2><p>查看 2379 和 2380 两个端口服务都已经启动成功</p>
-<p><img src="resources/BDA1CFCF368602F7FEEB7E50A3882D93.jpg" alt=""></p>
-<h1 id="etcdctl操作etcd存储"><a href="#etcdctl操作etcd存储" class="headerlink" title="etcdctl操作etcd存储"></a>etcdctl操作etcd存储</h1><p>额外说明：etcdctl get “” –from-key 是查看所有数据</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">root@ubuntu:~<span class="meta"># etcdctl  del f</span></span><br><span class="line"><span class="number">1</span></span><br><span class="line">root@ubuntu:~<span class="meta"># etcdctl get <span class="meta-string">""</span> --from-key</span></span><br><span class="line">fo</span><br><span class="line">xxx</span><br><span class="line">foo</span><br><span class="line">bar</span><br><span class="line">root@ubuntu:~<span class="meta"># etcdctl  put q qq</span></span><br><span class="line">OK</span><br><span class="line">root@ubuntu:~<span class="meta"># etcdctl get <span class="meta-string">""</span> --from-key</span></span><br><span class="line">fo</span><br><span class="line">xxx</span><br><span class="line">foo</span><br><span class="line">bar</span><br><span class="line">q</span><br><span class="line">qq</span><br><span class="line">root@ubuntu:~<span class="meta"># etcdctl  put q qqq</span></span><br><span class="line">OK</span><br><span class="line">root@ubuntu:~<span class="meta"># etcdctl get <span class="meta-string">""</span> --from-key</span></span><br><span class="line">fo</span><br><span class="line">xxx</span><br><span class="line">foo</span><br><span class="line">bar</span><br><span class="line">q</span><br><span class="line">qqq</span><br></pre></td></tr></table></figure>
-<h1 id="python-API命令操作etcd"><a href="#python-API命令操作etcd" class="headerlink" title="python API命令操作etcd"></a>python API命令操作etcd</h1><h2 id="安装api库"><a href="#安装api库" class="headerlink" title="安装api库"></a>安装api库</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install etcd3gw</span><br></pre></td></tr></table></figure>
-<h2 id="操作方法"><a href="#操作方法" class="headerlink" title="操作方法"></a>操作方法</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> etcd3gw</span><br><span class="line"></span><br><span class="line">e3gw = etcd3gw.client(<span class="string">'127.0.0.1'</span>, <span class="number">2379</span>, ca_cert=<span class="keyword">None</span>,</span><br><span class="line">                      cert_cert=<span class="keyword">None</span>, timeout=<span class="keyword">None</span>)</span><br><span class="line"><span class="comment"># add one key value</span></span><br><span class="line">e3gw.create(<span class="string">'sdn'</span>, <span class="string">'4'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># delete one key value</span></span><br><span class="line">e3gw.delete(<span class="string">'sdn'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># replace one key value</span></span><br><span class="line">e3gw.replace(<span class="string">'sdn'</span>, <span class="string">'4'</span>, <span class="string">'40'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># get one key's value</span></span><br><span class="line"><span class="keyword">print</span> e3gw.get(<span class="string">'sdn'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># get all</span></span><br><span class="line"><span class="keyword">print</span> e3gw.get_all()</span><br></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2107,7 +2103,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">79</span>
+                <span class="site-state-item-count">81</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2129,7 +2125,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">192</span>
+                <span class="site-state-item-count">195</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://vcpu.me/tcp_pps_test/</loc>
+    
+    <lastmod>2018-06-12T07:29:49.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://vcpu.me/dragonflow_flows/</loc>
+    
+    <lastmod>2018-06-12T07:23:25.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://vcpu.me/read_dragonflow_etcd_data/</loc>
     
     <lastmod>2018-06-12T07:17:08.000Z</lastmod>

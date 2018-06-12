@@ -4,6 +4,48 @@
 
     
   <url>
+    <loc>http://vcpu.me/tcp_pps_test/</loc>
+    <lastmod>2018-06-12T07:29:49.000Z</lastmod>
+    <data>
+        <display>
+        <title>云主机TCP PPS测试方法</title>
+        <pubTime>2017-12-11T10:00:00.000Z</pubTime>
+        
+        <tag>TCP PPS</tag>
+         
+         
+           
+             
+              <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/dragonflow_flows/</loc>
+    <lastmod>2018-06-12T07:23:25.000Z</lastmod>
+    <data>
+        <display>
+        <title>Dragonflow openvswitch流表实现原理</title>
+        <pubTime>2018-04-17T10:00:00.000Z</pubTime>
+        
+        <tag>Dragonflow openvswitch流表实现原理</tag>
+         
+        <tag>Dragonflow 流表采用的标记</tag>
+         
+         
+           
+             
+              <breadCrumb title="dragonflow" url="http://vcpu.me/categories/dragonflow/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/read_dragonflow_etcd_data/</loc>
     <lastmod>2018-06-12T07:17:08.000Z</lastmod>
     <data>
