@@ -4,8 +4,88 @@
 
     
   <url>
+    <loc>http://vcpu.me/dragonflow_muti_external_network/</loc>
+    <lastmod>2018-06-12T07:02:39.000Z</lastmod>
+    <data>
+        <display>
+        <title>dragonflow2018多外网转发方案</title>
+        <pubTime>2018-04-22T10:00:00.000Z</pubTime>
+        
+        <tag>dragonflow多外网方案</tag>
+         
+         
+           
+             
+              <breadCrumb title="dragonflow" url="http://vcpu.me/categories/dragonflow/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/self-service_and_provider_flows/</loc>
+    <lastmod>2018-06-12T06:49:40.000Z</lastmod>
+    <data>
+        <display>
+        <title>dragonflow self-service 和 provider通信流量走向图示</title>
+        <pubTime>2018-04-11T10:00:00.000Z</pubTime>
+        
+        <tag>draonflow 流表结构</tag>
+         
+         
+           
+             
+              <breadCrumb title="dragonflow" url="http://vcpu.me/categories/dragonflow/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/dragonflow_provider_flow/</loc>
+    <lastmod>2018-06-12T06:47:31.000Z</lastmod>
+    <data>
+        <display>
+        <title>dragonflow provider流量走向图示</title>
+        <pubTime>2018-04-09T10:00:00.000Z</pubTime>
+        
+        <tag>draonflow 流表结构</tag>
+         
+         
+           
+             
+              <breadCrumb title="dragonflow" url="http://vcpu.me/categories/dragonflow/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/dragonflow_fip_flows/</loc>
+    <lastmod>2018-06-12T06:46:15.000Z</lastmod>
+    <data>
+        <display>
+        <title>dragonflow fip流量走向图示</title>
+        <pubTime>2018-04-08T10:00:00.000Z</pubTime>
+        
+        <tag>draonflow 流表结构</tag>
+         
+         
+           
+             
+              <breadCrumb title="dragonflow" url="http://vcpu.me/categories/dragonflow/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/dragonflow_security_group3/</loc>
-    <lastmod>2018-06-12T06:26:16.000Z</lastmod>
+    <lastmod>2018-06-12T06:39:18.000Z</lastmod>
     <data>
         <display>
         <title>Dragonflow安全组实现三（详细）</title>
@@ -22,7 +102,7 @@
          
            
              
-              <breadCrumb title="linux" url="http://vcpu.me/categories/linux/"/>
+              <breadCrumb title="dragonflow" url="http://vcpu.me/categories/dragonflow/"/>
           
         </display>
     </data>

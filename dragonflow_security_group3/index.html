@@ -95,23 +95,23 @@
 
 
 
-<meta name="description" content="流量从其它云主机发起，然后该云主机被动回复的流量场景下，此情况的安全组工作情况入方向安全组入方向安全组是指控制数据流量进入云主机的安全组，下文是针对于这种安全组的详细分析。分析方式有多种，下文是按照流量时刻进行分析的，流量时刻包含未放通入方向安全组、放通安全组第一个数据包、放通安全组建立会话后；根据这些流量时刻可以观察安全组起作用的整个过程，方便理解。 未放通入方向安全组12cookie=0x0,">
+<meta name="description" content="流量从其它云主机发起，然后该云主机被动回复的流量场景下，此情况的安全组工作情况入方向安全组入方向安全组是指控制数据流量进入云主机的安全组，下文是针对于这种安全组的详细分析。分析方式有多种，下文是按照流量时刻进行分析的，流量时刻包含未放通入方向安全组、放通安全组第一个数据包、放通安全组建立会话后；根据这些流量时刻可以观察安全组起作用的整个过程，方便理解。">
 <meta name="keywords" content="openvswitch安全组实现细节,dragonflow安全组实现偏向于安全组作用原理介绍,按照流量时刻分析安全组起作用过程,linux conntrack">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Dragonflow安全组实现三（详细）">
 <meta property="og:url" content="http://vcpu.me/dragonflow_security_group3/index.html">
 <meta property="og:site_name" content="i博客">
-<meta property="og:description" content="流量从其它云主机发起，然后该云主机被动回复的流量场景下，此情况的安全组工作情况入方向安全组入方向安全组是指控制数据流量进入云主机的安全组，下文是针对于这种安全组的详细分析。分析方式有多种，下文是按照流量时刻进行分析的，流量时刻包含未放通入方向安全组、放通安全组第一个数据包、放通安全组建立会话后；根据这些流量时刻可以观察安全组起作用的整个过程，方便理解。 未放通入方向安全组12cookie=0x0,">
+<meta property="og:description" content="流量从其它云主机发起，然后该云主机被动回复的流量场景下，此情况的安全组工作情况入方向安全组入方向安全组是指控制数据流量进入云主机的安全组，下文是针对于这种安全组的详细分析。分析方式有多种，下文是按照流量时刻进行分析的，流量时刻包含未放通入方向安全组、放通安全组第一个数据包、放通安全组建立会话后；根据这些流量时刻可以观察安全组起作用的整个过程，方便理解。">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://vcpu.me/myimages/9A3B03F5AD1CD04CEDE17169A04DA25A.jpg">
 <meta property="og:image" content="http://vcpu.me/myimages/F3259CE46FC3DD99C9376129065AB77E.jpg">
 <meta property="og:image" content="http://vcpu.me/myimages/6C72F09C7FCF57E90C02722776FC0EF4.jpg">
 <meta property="og:image" content="http://vcpu.me/myimages/B9A786A0DAD3944497E177A80A3A9130.jpg">
 <meta property="og:image" content="http://vcpu.me/myimages/10F8A532DA020F074A71AE5D6FA01068.jpg">
-<meta property="og:updated_time" content="2018-06-12T06:26:16.000Z">
+<meta property="og:updated_time" content="2018-06-12T06:39:18.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Dragonflow安全组实现三（详细）">
-<meta name="twitter:description" content="流量从其它云主机发起，然后该云主机被动回复的流量场景下，此情况的安全组工作情况入方向安全组入方向安全组是指控制数据流量进入云主机的安全组，下文是针对于这种安全组的详细分析。分析方式有多种，下文是按照流量时刻进行分析的，流量时刻包含未放通入方向安全组、放通安全组第一个数据包、放通安全组建立会话后；根据这些流量时刻可以观察安全组起作用的整个过程，方便理解。 未放通入方向安全组12cookie=0x0,">
+<meta name="twitter:description" content="流量从其它云主机发起，然后该云主机被动回复的流量场景下，此情况的安全组工作情况入方向安全组入方向安全组是指控制数据流量进入云主机的安全组，下文是针对于这种安全组的详细分析。分析方式有多种，下文是按照流量时刻进行分析的，流量时刻包含未放通入方向安全组、放通安全组第一个数据包、放通安全组建立会话后；根据这些流量时刻可以观察安全组起作用的整个过程，方便理解。">
 <meta name="twitter:image" content="http://vcpu.me/myimages/9A3B03F5AD1CD04CEDE17169A04DA25A.jpg">
 
 
@@ -381,8 +381,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux/" itemprop="url" rel="index">
-                    <span itemprop="name">linux</span>
+                  <a href="/categories/dragonflow/" itemprop="url" rel="index">
+                    <span itemprop="name">dragonflow</span>
                   </a>
                 </span>
 
@@ -438,6 +438,7 @@
 
       
         <h1 id="流量从其它云主机发起，然后该云主机被动回复的流量场景下，此情况的安全组工作情况"><a href="#流量从其它云主机发起，然后该云主机被动回复的流量场景下，此情况的安全组工作情况" class="headerlink" title="流量从其它云主机发起，然后该云主机被动回复的流量场景下，此情况的安全组工作情况"></a>流量从其它云主机发起，然后该云主机被动回复的流量场景下，此情况的安全组工作情况</h1><h2 id="入方向安全组"><a href="#入方向安全组" class="headerlink" title="入方向安全组"></a>入方向安全组</h2><p>入方向安全组是指控制数据流量进入云主机的安全组，下文是针对于这种安全组的详细分析。分析方式有多种，下文是按照流量时刻进行分析的，流量时刻包含未放通入方向安全组、放通安全组第一个数据包、放通安全组建立会话后；根据这些流量时刻可以观察安全组起作用的整个过程，方便理解。</p>
+<a id="more"></a>
 <h3 id="未放通入方向安全组"><a href="#未放通入方向安全组" class="headerlink" title="未放通入方向安全组"></a>未放通入方向安全组</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cookie=0x0, duration=2362.677s, table=105, n_packets=1563, n_bytes=153174, idle_age=0, priority=100,ip,reg7=0xa3 actions=ct(table=110,zone=OXM_OF_METADATA[0..15])</span><br><span class="line">cookie=0x0, duration=4987.907s, table=110, n_packets=662, n_bytes=71525, idle_age=334, priority=1 actions=drop</span><br></pre></td></tr></table></figure>
 <p>数据根据流量流入主机的标记0xa3判定数据包需要进入安全组流程</p>
 <p>将流量通过ct注入到table110处理，安全组建立的会话被网段信息分割（不同网段建立CT不会冲突，因为不同域）</p>
@@ -649,7 +650,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">73</span>
+                <span class="site-state-item-count">77</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -671,7 +672,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">188</span>
+                <span class="site-state-item-count">190</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
