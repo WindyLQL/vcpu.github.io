@@ -4,6 +4,80 @@
 
     
   <url>
+    <loc>http://vcpu.me/network_brocast/</loc>
+    <lastmod>2018-06-12T02:27:01.000Z</lastmod>
+    <data>
+        <display>
+        <title>二层广播和三层广播</title>
+        <pubTime>2018-06-03T10:00:00.000Z</pubTime>
+        
+        <tag>二层广播</tag>
+         
+        <tag>三层广播</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/rx_dropped/</loc>
+    <lastmod>2018-06-12T02:20:15.000Z</lastmod>
+    <data>
+        <display>
+        <title>网卡rx dropped问题</title>
+        <pubTime>2018-06-06T10:00:00.000Z</pubTime>
+        
+        <tag>rx dropped</tag>
+         
+        <tag>rx_missed_errors</tag>
+         
+        <tag>rx_over_errors</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux" url="http://vcpu.me/categories/linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/tunning_simple/</loc>
+    <lastmod>2018-06-12T02:16:01.000Z</lastmod>
+    <data>
+        <display>
+        <title>linux服务端程序tunning过程简要总结</title>
+        <pubTime>2018-06-11T10:00:00.000Z</pubTime>
+        
+        <tag>linux高性能tunning</tag>
+         
+        <tag>服务端程序性能</tag>
+         
+        <tag>网络丢包</tag>
+         
+        <tag>性能优化方法</tag>
+         
+        <tag>Linux wake affinity</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux" url="http://vcpu.me/categories/linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/openstackdns/</loc>
     <lastmod>2018-06-08T12:28:32.000Z</lastmod>
     <data>
@@ -1119,9 +1193,9 @@
         <title>拥塞控制</title>
         <pubTime>2017-07-04T10:00:00.000Z</pubTime>
         
-        <tag>tcp/ip</tag>
-         
         <tag>拥塞控制</tag>
+         
+        <tag>tcp/ip</tag>
          
         <tag>Linux拥塞控制基本概念</tag>
          

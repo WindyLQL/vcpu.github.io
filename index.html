@@ -322,6 +322,511 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/tunning_simple/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/tunning_simple/" itemprop="url">linux服务端程序tunning过程简要总结</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-11T18:00:00+08:00">
+                2018-06-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/tunning_simple/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="tunning_simple/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/tunning_simple/" class="leancloud_visitors" data-flag-title="linux服务端程序tunning过程简要总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="如何定位性能瓶颈问题？"><a href="#如何定位性能瓶颈问题？" class="headerlink" title="如何定位性能瓶颈问题？"></a>如何定位性能瓶颈问题？</h1><h2 id="步骤1-网络丢包的原因定位"><a href="#步骤1-网络丢包的原因定位" class="headerlink" title="步骤1:网络丢包的原因定位"></a>步骤1:网络丢包的原因定位</h2><h3 id="ethtool-S-eth0"><a href="#ethtool-S-eth0" class="headerlink" title="ethtool -S eth0"></a>ethtool -S eth0</h3><p>rx_dropped代表丢包发生在linux 内核缓冲区，丢包发生在docker的虚拟网卡上</p>
+<h3 id="cat-proc-net-softnet-stat"><a href="#cat-proc-net-softnet-stat" class="headerlink" title="cat /proc/net/softnet_stat"></a>cat /proc/net/softnet_stat</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root@xnet-controller1:~<span class="comment"># cat /proc/net/softnet_stat</span></span><br><span class="line"><span class="number">0</span>f77ed22 <span class="number">00000000</span> <span class="number">00000</span>b03 <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></span><br><span class="line"><span class="number">101</span>a1151 <span class="number">00000000</span> <span class="number">000007</span>d9 <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></span><br><span class="line"><span class="number">1</span>fa636a0 <span class="number">00000000</span> <span class="number">0000639</span>d <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></span><br><span class="line"><span class="number">0</span>f9afaf9 <span class="number">00000000</span> <span class="number">00000</span>f08 <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></span><br></pre></td></tr></table></figure>
+<p>第一列：中断处理程序接收的帧数</p>
+<p>第二列：由于超过cpu队列 netdev_max_backlog 1000 丢弃帧数</p>
+<p>第三列：net_rx_action 函数中处理数据包超过300 netdev_budget 或者 运行时间超过2个时间片</p>
+<p>内核为每个cpu都存储一个softnet_data对象，如果所有中断都由一个cpu核处理，如果接受数据包量非常大，超过中断处理速度，就会导致超过netdev_max_backlog而丢包<br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/tunning_simple/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/rx_dropped/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/rx_dropped/" itemprop="url">网卡rx dropped问题</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-06T18:00:00+08:00">
+                2018-06-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/rx_dropped/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="rx_dropped/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/rx_dropped/" class="leancloud_visitors" data-flag-title="网卡rx dropped问题">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><p>有一些设备出现rx dropped，如下图示，或者通过ifconfig 查看</p>
+<p><img src="/myimages/F8A99D0F3FABA09BD4DCDFE71FB91C94.jpg" alt=""></p>
+<p>详细定位error分布</p>
+<p><img src="/myimages/E4184CDAF417C290E555A4F893405742.jpg" alt=""></p>
+<p>我遇到了物理网卡的dropped丢包问题，详细查找丢包原因可以通过ethtool -S ens2f0 查看具体丢包分布，如上图，所有的丢包点在rx_missed_errors,</p>
+<p>那么rx_missed_errors 代表什么？ 我又能做些什么？rx_fifo_errors，rx_over_errors丢包参数含义是什么？后文主要围绕这三点进行说明</p>
+<h1 id="rx-missed-errors-代表什么？"><a href="#rx-missed-errors-代表什么？" class="headerlink" title="rx_missed_errors 代表什么？"></a>rx_missed_errors 代表什么？</h1><p>物理网卡接受数据buffer已经满了，无法接收数据计数</p>
+<p>rx_missed_errors代表着DMA传送完成数据，发送硬件中断前，网卡的FIFO缓冲已经满了，导致数据丢掉的个数</p>
+<p>Counts the number of missed packets. Packets are missed when the receive FIFO has insufficient space<br>to store the incoming packet. This can be caused because of too few buffers allocated, or because there<br>is insufficient bandwidth on the PCI bus. Events setting this counter causes ICR.Rx Miss, the Receiver<br>Overrun Interrupt, to be set. This register does not increment if receives are not enabled.<br>These packets are also counted in the Total Packets Received register as well as in Total Octets<br>Received.</p>
+<h1 id="rx-no-buffer"><a href="#rx-no-buffer" class="headerlink" title="rx_no_buffer"></a>rx_no_buffer</h1><p>网卡通过DMA将设备FIFO中的数据传送给ring buffer时候，已经无内存可以放数据了，也就是说ringbuffer不足了，往往是系统处理数据较慢导致</p>
+<h1 id="rx-over-errors"><a href="#rx-over-errors" class="headerlink" title="rx_over_errors"></a>rx_over_errors</h1><p>系统ring buffer 满了，数据放不进去了，物理网卡无法通过DMA传送数据，该数据包被丢弃，尝尝发生在系统无法及时处理流量时候。</p>
+<h1 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h1><p>其实上面计数信息，不同网卡计数信息含义不同,在此不做解释了，具体遇到问题，再查找具体含义吧</p>
+<p>不管怎么说出现rx_missed_errors代表还有有流量突发，导致网卡fifo满了，个人认为应该观察rx_missed_errors 后续增长情况，如果长时间不增长，可以不用做调整</p>
+<p>如果持续增长，你就要看看你的网卡是不是次品了；如果很少切少量的增长，其实最难定位，像我遇到的这种情况，只有rx_missed_errors 没有rx_fifo_errors和rx_over_errors计数，网卡可以通过DMA将数据送给</p>
+<p>系统内存中，这就很奇怪了，所以我怀疑，有两种可能性导致该问题：</p>
+<p>可能性较大:在机器刚上线时候，网卡速率和交换机速率没有调整好导致，该计数后续不会增长了</p>
+<p>可能性较小:网卡异常</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/network_brocast/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/network_brocast/" itemprop="url">二层广播和三层广播</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-03T18:00:00+08:00">
+                2018-06-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络/" itemprop="url" rel="index">
+                    <span itemprop="name">网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/network_brocast/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="network_brocast/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/network_brocast/" class="leancloud_visitors" data-flag-title="二层广播和三层广播">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>广播只有2层的。跨网段访问是寻址。</p>
+<p>三层交换机等同于路由器。也就是说源ip和目的ip在数据包里一直不变（不经过nat的情况），mac地址将时刻改变。广播只存在二层。三层情况下是路由寻址。</p>
+<p>二层广播：全F的二层广播帧（交换机一般所发送的广播帧）</p>
+<p>三层广播：192.168.1.255&amp;255.255.255.255(区别是一个网段内的广播&amp;全网络广播，一般是路由传播。但默认情况下路由器不转发广播包)</p>
+<p>广播地址是一种特殊的IP地址形式，一种是直接广播地址，一种是有限广播地址。 直接广播地址包含一个有效的网络号和一个全”1”的主机号，如你说的202.163.30.255，255就是一个主机号，202则是C类的IP地址，C类IP地址就是我们常接触到的。 受限广播地址是32位全1的IP地址（255.255.255.255）。该地址用于主机配置过程中IP数据报的目的地址，此时，主机可能还不知道它所在网络的网络掩码，甚至连它的IP地址也不知道。在任何情况下，路由器都不转发目的地址为受限的广播地址的数据报，这样的数据报仅出现在本地网络中。</p>
+<p>受限广播可以用在计算机不知道自己IP地址的时候，比如向DHCP服务器索要地址时、PPPOE拨号时等.</p>
+<p>直接广播可用于本地网络，也可以跨网段广播，比如主机192.168.1.1/30可以发送广播包到192.168.1.7，使主机192.168.1.5/30也可以接收到该数据包，前提是之间的路由器要开启定向广播功能.</p>
+<p>另外，无论是何种广播，它第二层目的MAC地址都是FF-FF-FF-FF-FF-FF，这样交换机也就可以往外flood广播包.区别于多播的MAC帧头是01005A+subnetid</p>
+<p>eg:</p>
+<p><img src="/myimages/34773F1EF5AD7E05070990D10AFF91AE.jpg" alt=""></p>
+<p>因为访问的目的地址是直接广播地址，所以云主机并没有学习其arp，而是广播发出，如果不是广播地址，云主机会首先发arp学习其目的mac，然后将目的mac填入icmp数据包，将icmp数据包发出去</p>
+<p><img src="/myimages/914586476075AF6216D780CF83BA2CDE.jpg" alt=""></p>
+<p>DHCP 请求目的地址是255.255.255.255三层受限广播，且目的MAC是全F</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://vcpu.me/openstackdns/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1451,492 +1956,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/exectime_for_c_proess/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/exectime_for_c_proess/" itemprop="url">strace跟踪程序执行时间</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-13T18:00:00+08:00">
-                2018-01-13
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux-kernel/" itemprop="url" rel="index">
-                    <span itemprop="name">linux kernel</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/exectime_for_c_proess/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="exectime_for_c_proess/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/exectime_for_c_proess/" class="leancloud_visitors" data-flag-title="strace跟踪程序执行时间">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>strace可以帮助你打印函数执行时间，帮助你查看程序消耗，针对于复杂的工作进程例如nginx或者janus，我暂且没有尝试，但是对复杂程序性能调整作用不大。</p>
-<p>遇到复杂程序你可以考虑valgrind –tool=callgrind工具</p>
-<p><a href="http://valgrind.org/docs/manual/cl-manual.html#cl-manual.options.separation" target="_blank" rel="noopener">http://valgrind.org/docs/manual/cl-manual.html#cl-manual.options.separation</a></p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/exectime_for_c_proess/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/print_stack/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/print_stack/" itemprop="url">gdb工具打印函数调用栈</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-10T18:00:00+08:00">
-                2018-01-10
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/linux-kernel/" itemprop="url" rel="index">
-                    <span itemprop="name">linux kernel</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/print_stack/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="print_stack/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/print_stack/" class="leancloud_visitors" data-flag-title="gdb工具打印函数调用栈">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>可以使用该脚本打印出当前进程的调用栈，当CPU使用率100%时候，你可以使用此脚本得知应用程序在忙什么，对应用程序进程调试</p>
-<p>当然如果你应用程序性能不足，你正无助时，可以多次使用此脚本，你可以大概得知程序调用栈所耗损的地方，找到性能调试的关键点</p>
-<p>我曾经遇到过CPU使用率不高，服务端程序性能严重不足情况，我使用了此脚本找到了io处理的一个全局锁，在修改优化此全局锁后，大大提升了服务端程序的性能</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/print_stack/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/osx-ensible/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/osx-ensible/" itemprop="url">使用mac pro 使用ansible自动监控服务器进程状态</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T18:00:00+08:00">
-                2018-01-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/网络/" itemprop="url" rel="index">
-                    <span itemprop="name">网络</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/osx-ensible/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="osx-ensible/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/osx-ensible/" class="leancloud_visitors" data-flag-title="使用mac pro 使用ansible自动监控服务器进程状态">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>本文目的，因为笔者有需要观察云开发环境相关服务进程需求，因为该开发环境并没有部署相关运行监控程序，因此笔者想通过一个脚本，在使用环境前做一个基本检查</p>
-<p>如果服务不满足使用条件，对其进行一定调整，使用该脚本只需要花费不到1s时间，既可以达到使用目标。当然也可以通过ssh命令到具体服务器一个个观察服务进程，但需要耗费大量重复劳动时间。</p>
-<h1 id="场景描述"><a href="#场景描述" class="headerlink" title="场景描述"></a>场景描述</h1><p>mac pro osx 系统想远程登录控制controller服务器(ubuntu16.04)，并且执行相关命令</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/osx-ensible/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1986,7 +2005,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">62</span>
+                <span class="site-state-item-count">65</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2008,7 +2027,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">143</span>
+                <span class="site-state-item-count">153</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
