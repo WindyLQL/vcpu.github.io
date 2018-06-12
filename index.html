@@ -485,170 +485,6 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/tap_drop/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/tap_drop/" itemprop="url">云主机tap口丢包问题</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-11T18:00:00+08:00">
-                2018-06-11
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/openstack/" itemprop="url" rel="index">
-                    <span itemprop="name">openstack</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/tap_drop/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="tap_drop/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/tap_drop/" class="leancloud_visitors" data-flag-title="云主机tap口丢包问题">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>某一用户在云平台上，在同一个VPC建立3台云主机，2台centos6.3（16vcpu,8G内存）和一台windows2008 sever（4 vcpu，4G内存）云主机；</p>
-<p>我们编号为A，B,C ，其中A代表压力客户端云主机， B代表应用后台服务器云主机， C代表存储服务器云主机</p>
-<p>通过A持续压力B，发现网络流量只有50Mb情况下，在外部ping服务器B出现大幅动的延迟波动，在15ms以上，有时候甚至50ms；而无压力情况下ping 浮动ip延迟在5ms以下；</p>
-<p>且此时查看云主机接口发现连接云主机B的tap口丢包很严重，约丢1000个左右。</p>
-<p><img src="/myimages/951775FB19D00C23048B9DE185AEE0C7.png" alt="cc.png"><br>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/tap_drop/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://vcpu.me/tunning_simple/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -769,6 +605,170 @@
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/tunning_simple/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/tap_drop/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/tap_drop/" itemprop="url">云主机tap口丢包问题</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-11T18:00:00+08:00">
+                2018-06-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/openstack/" itemprop="url" rel="index">
+                    <span itemprop="name">openstack</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/tap_drop/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="tap_drop/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/tap_drop/" class="leancloud_visitors" data-flag-title="云主机tap口丢包问题">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>某一用户在云平台上，在同一个VPC建立3台云主机，2台centos6.3（16vcpu,8G内存）和一台windows2008 sever（4 vcpu，4G内存）云主机；</p>
+<p>我们编号为A，B,C ，其中A代表压力客户端云主机， B代表应用后台服务器云主机， C代表存储服务器云主机</p>
+<p>通过A持续压力B，发现网络流量只有50Mb情况下，在外部ping服务器B出现大幅动的延迟波动，在15ms以上，有时候甚至50ms；而无压力情况下ping 浮动ip延迟在5ms以下；</p>
+<p>且此时查看云主机接口发现连接云主机B的tap口丢包很严重，约丢1000个左右。</p>
+<p><img src="/myimages/951775FB19D00C23048B9DE185AEE0C7.png" alt="cc.png"><br>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/tap_drop/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1319,6 +1319,234 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/dragonflow_security_group3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/dragonflow_security_group3/" itemprop="url">Dragonflow安全组实现三（详细）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-21T18:00:00+08:00">
+                2018-05-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/dragonflow_security_group3/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="dragonflow_security_group3/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/dragonflow_security_group3/" class="leancloud_visitors" data-flag-title="Dragonflow安全组实现三（详细）">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="流量从其它云主机发起，然后该云主机被动回复的流量场景下，此情况的安全组工作情况"><a href="#流量从其它云主机发起，然后该云主机被动回复的流量场景下，此情况的安全组工作情况" class="headerlink" title="流量从其它云主机发起，然后该云主机被动回复的流量场景下，此情况的安全组工作情况"></a>流量从其它云主机发起，然后该云主机被动回复的流量场景下，此情况的安全组工作情况</h1><h2 id="入方向安全组"><a href="#入方向安全组" class="headerlink" title="入方向安全组"></a>入方向安全组</h2><p>入方向安全组是指控制数据流量进入云主机的安全组，下文是针对于这种安全组的详细分析。分析方式有多种，下文是按照流量时刻进行分析的，流量时刻包含未放通入方向安全组、放通安全组第一个数据包、放通安全组建立会话后；根据这些流量时刻可以观察安全组起作用的整个过程，方便理解。</p>
+<h3 id="未放通入方向安全组"><a href="#未放通入方向安全组" class="headerlink" title="未放通入方向安全组"></a>未放通入方向安全组</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cookie=0x0, duration=2362.677s, table=105, n_packets=1563, n_bytes=153174, idle_age=0, priority=100,ip,reg7=0xa3 actions=ct(table=110,zone=OXM_OF_METADATA[0..15])</span><br><span class="line">cookie=0x0, duration=4987.907s, table=110, n_packets=662, n_bytes=71525, idle_age=334, priority=1 actions=drop</span><br></pre></td></tr></table></figure>
+<p>数据根据流量流入主机的标记0xa3判定数据包需要进入安全组流程</p>
+<p>将流量通过ct注入到table110处理，安全组建立的会话被网段信息分割（不同网段建立CT不会冲突，因为不同域）</p>
+<p>因为没有方通安全组智能命中默认drop策略，该数据包被丢弃</p>
+<h3 id="放通安全组第一个数据包"><a href="#放通安全组第一个数据包" class="headerlink" title="放通安全组第一个数据包"></a>放通安全组第一个数据包</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cookie=0x0, duration=2362.677s, table=105, n_packets=1563, n_bytes=153174, idle_age=0, priority=100,ip,reg7=0xa3 actions=ct(table=110,zone=OXM_OF_METADATA[0..15])</span><br><span class="line">cookie=0x0, duration=2093.711s, table=110, n_packets=4, n_bytes=392, idle_age=51, priority=11,conj_id=9,ip actions=ct(commit,table=115,zone=NXM_NX_CT_ZONE[])</span><br><span class="line">cookie=0x0, duration=2204.825s, table=110, n_packets=0, n_bytes=0, idle_age=2204, priority=11,ct_state=+new-est-rel-inv+trk,reg7=0xa3 actions=conjunction(9,1/2)</span><br><span class="line">cookie=0xb00000000, duration=1291.328s, table=110, n_packets=0, n_bytes=0, idle_age=1291, priority=11,icmp actions=conjunction(9,2/2)</span><br></pre></td></tr></table></figure>
+<p>此时安全组被放通了</p>
+<p>数据根据流量流入主机的标记0xa3判定数据包需要进入安全组流程</p>
+<p>在安全组判断流程table110中，有一种特殊的判定条件就是conj_id=9，这种条件的意思是匹配条件仍在该table中，查找流量会继续查找匹配conjunction(9,1/2) conjunction(9,2/2)，如果能够同时命中这两个条件，该会话会commit记录到conntrack中，将该流量交给table115发出处理</p>
+<p>conjunction(9,1/2) +new-est-rel-inv+trk 数据包会话未建立完成（一正一反数据包建立称为est）、未关联会话、无异常状态（ovs有问题或者数据包来的状态检测不通过）、数据包是进入ct状态后复制的数据包不是从其它地方误闯进来的</p>
+<p>conjunction(9,2/2) 安全组协议条件判断</p>
+<p>conjunction(9,1/2) 以会话为角度的状态条件判断、conjunction(9,2/2)是协议白名单条件判断</p>
+<p>conj_id=9 的意思是必须要同时满足conjunction(9,1/2)、conjunction(9,2/2) 才算满足判断条件才能执行后续的actions</p>
+<p>经过过这个流程后，会话状态建立了，但是处于初始状态+new ; 如果条件不满足不会执行commit动作，也就不会建立conntrack表项</p>
+<p>stack@p-controller:~/dragonflow$ sudo conntrack -E -e ALL|grep 2.2.2.6</p>
+<p> [NEW] icmp 1 30 src=2.2.2.10 dst=2.2.2.6 type=8 code=0 id=43521 [UNREPLIED] src=2.2.2.6 dst=2.2.2.10 type=0 code=0 id=43521 zone=11</p>
+<p>那么该安全组产生的会话什么时候更新状态 ？ 在此就先简单讲解吧，作为小标题，因为它并不符合入方向的流量时刻，会话的更新需要该云主机收到流量后，根据协议回复该流量，然后再次进入CT流程会触发如下更新：</p>
+<p>[UPDATE] icmp 1 30 src=2.2.2.10 dst=2.2.2.6 type=8 code=0 id=43521 src=2.2.2.6 dst=2.2.2.10 type=0 code=0 id=43521 zone=11</p>
+<h3 id="放通安全组建立会话"><a href="#放通安全组建立会话" class="headerlink" title="放通安全组建立会话"></a>放通安全组建立会话</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cookie=0x0, duration=2362.677s, table=105, n_packets=1563, n_bytes=153174, idle_age=0, priority=100,ip,reg7=0xa3 actions=ct(table=110,zone=OXM_OF_METADATA[0..15])</span><br><span class="line">cookie=0x0, duration=4947.447s, table=110, n_packets=1470, n_bytes=144060, idle_age=0, priority=65534,ct_state=-new+est-rel-inv+trk actions=resubmit(,115)</span><br></pre></td></tr></table></figure>
+<p>方通安全组后续流量</p>
+<p>数据根据流量流入主机的标记0xa3判定数据包需要进入安全组流程</p>
+<p>在安全组条件table110中，-new+est-rel-inv+trk 会话建立完成了，不用再查找条件了，可以根据已有的会话直接放入到云主机了</p>
+<h2 id="出方向安全组"><a href="#出方向安全组" class="headerlink" title="出方向安全组"></a>出方向安全组</h2><p>流量到达云主机后，云主机回复此协议流量，会再次经过出方向安全组流程，下文详细分析。分析方式有多种，下文是按照流量时刻进行分析的；但是在被动回复的场景下，流量时刻分为第一个回复的数据包、和后续回复的流量；其实这两种流量场景从宏观流表上不存在差异性，但其底层具体的动作是有差异的，第一个回复的数据包时刻，会触发conntrack会话从new变更为est状态; 和后续回复的流量会一直是est状态，不存在状态变化过程。</p>
+<h3 id="第一个回复的数据包时刻"><a href="#第一个回复的数据包时刻" class="headerlink" title="第一个回复的数据包时刻"></a>第一个回复的数据包时刻</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cookie=0x0, duration=9890.264s, table=10, n_packets=8389, n_bytes=822122, idle_age=0, priority=100,ip,reg6=0xa3 actions=ct(table=15,zone=OXM_OF_METADATA[0..15])</span><br><span class="line">cookie=0x0, duration=12447.715s, table=15, n_packets=8658, n_bytes=848484, idle_age=1, priority=65534,ct_state=-new+est-rel-inv+trk actions=resubmit(,20)</span><br></pre></td></tr></table></figure>
+<p>第一个数据包会根据标记0xa3，查找ct更新ct状态为est，并复制产生一个数据包,将该数据包交给table出安全组规则进行判别</p>
+<p>table15 出方向安全组规则查找地，这类规则可分为两种： 一种是状态判断 一种是安全组条件的判断 ,但是在被动回复的场景下我们只关注状态判断就好了；安全组条件判断一般发生在主动出发场景。</p>
+<p>状态判断是 -new+est-rel-inv+trk ： 只要是est状态数据包、数据包是进入ct状态后复制的数据包不是从其它地方误闯进来的 就算状态检测通过，直接退出出安全组判断，将该流量交给后续流程（table20）处理</p>
+<h3 id="后续回复的流量"><a href="#后续回复的流量" class="headerlink" title="后续回复的流量"></a>后续回复的流量</h3><p>cookie=0x0, duration=9890.264s, table=10, n_packets=8389, n_bytes=822122, idle_age=0, priority=100,ip,reg6=0xa3 actions=ct(table=15,zone=OXM_OF_METADATA[0..15])</p>
+<p> cookie=0x0, duration=12447.715s, table=15, n_packets=8658, n_bytes=848484, idle_age=1, priority=65534,ct_state=-new+est-rel-inv+trk actions=resubmit(,20)</p>
+<p>因为这个时候会话的状态已经维持在est状态，所以直接可以过table15的状态检查，直接退出安全组，将该流量交给table20处理</p>
+<h1 id="流量当前云主机发起，然后该云主机会收到回复的流量，此场景下情况的安全组工作情况"><a href="#流量当前云主机发起，然后该云主机会收到回复的流量，此场景下情况的安全组工作情况" class="headerlink" title="流量当前云主机发起，然后该云主机会收到回复的流量，此场景下情况的安全组工作情况"></a>流量当前云主机发起，然后该云主机会收到回复的流量，此场景下情况的安全组工作情况</h1><p>这种流量场景会先经过云主机出方向安全组，后经过云主机入方向安全组，和被动回复场景正好相反</p>
+<h2 id="出方向安全组-1"><a href="#出方向安全组-1" class="headerlink" title="出方向安全组"></a>出方向安全组</h2><p>默认情况下出方向的安全组都是放通的，所以在此将流量时刻分析直接简化为： 放通第一个数据包，放通安全组建立会话</p>
+<h3 id="放通第一个数据包"><a href="#放通第一个数据包" class="headerlink" title="放通第一个数据包"></a>放通第一个数据包</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cookie=0x0, duration=11539.315s, table=10, n_packets=8580, n_bytes=840840, idle_age=5, priority=100,ip,reg6=0xa3 actions=ct(table=15,zone=OXM_OF_METADATA[0..15])</span><br><span class="line">cookie=0x0, duration=11264.259s, table=15, n_packets=258, n_bytes=25284, idle_age=5, priority=11,conj_id=9,ip actions=ct(commit,table=20,zone=NXM_NX_CT_ZONE[])</span><br><span class="line">cookie=0xa00000000, duration=11366.388s, table=15, n_packets=0, n_bytes=0, idle_age=11366, priority=11,ip actions=conjunction(9,2/2)</span><br><span class="line">cookie=0x0, duration=11406.839s, table=15, n_packets=0, n_bytes=0, idle_age=11406, priority=11,ct_state=+new-est-rel-inv+trk,reg6=0xa3 actions=conjunction(9,1/2)</span><br></pre></td></tr></table></figure>
+<p>conjunction(9,2/2) 安全组协议条件判断 放通所有的ip数据包 ，加入的安全组策略全部体现在此处</p>
+<p>conjunction(9,1/2) 以会话为角度的判断，主要是建立状态后续就不需要多次查询安全组协议条件了</p>
+<h3 id="放通安全组建立会话-1"><a href="#放通安全组建立会话-1" class="headerlink" title="放通安全组建立会话"></a>放通安全组建立会话</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cookie=0x0, duration=11539.315s, table=10, n_packets=8580, n_bytes=840840, idle_age=5, priority=100,ip,reg6=0xa3 actions=ct(table=15,zone=OXM_OF_METADATA[0..15])</span><br><span class="line">cookie=0x0, duration=22154.590s, table=15, n_packets=8869, n_bytes=869162, idle_age=1, priority=65534,ct_state=-new+est-rel-inv+trk actions=resubmit(,20)</span><br></pre></td></tr></table></figure>
+<p>云主机发出的协议流量被回复后，会话状态转为est，后续流量直接查看会话状态</p>
+<h2 id="入方向安全组-1"><a href="#入方向安全组-1" class="headerlink" title="入方向安全组"></a>入方向安全组</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cookie=0x0, duration=31.769s, table=105, n_packets=13, n_bytes=1274, idle_age=1, priority=100,ip,reg7=0xa3 actions=ct(table=110,zone=OXM_OF_METADATA[0..15])</span><br><span class="line">cookie=0x0, duration=55.210s, table=110, n_packets=34, n_bytes=3332, idle_age=0, priority=65534,ct_state=-new+est-rel-inv+trk actions=resubmit(,115)</span><br></pre></td></tr></table></figure>
+<p>cookie值： 在table15和table110中，有一种协议放通的策略，该策略和conj_id相同，应该是额外的功能吧，你可以使用该功能很方便的过滤出你想看的安全组流表</p>
+<p>默认行为： 出方向全部放通，入方向不放通，如果此云主机作为服务端使用，需要ssh、http等服务，需要额外开启</p>
+<p>安全组功能是针对于ip的层的判别策略</p>
+<p>安全组的流表优先级不同？</p>
+<p>优先级肯定不同，安全组是按照建立的顺序从低到高优先级逐渐延展，这样查找时候会按照优先级高的安全组开始查找，运气差的话要循环查找一遍</p>
+<p>不同安全组是如何区分的？</p>
+<p>由上文我们知道，conjunction(9,2/1) 是以会话为角度的判断，其实还有一个条件reg6=0x9c，根据这个条件呢；不同云主机接口可以查找不同的安全组策略；这个条件也是区分安全组的关键</p>
+<h2 id="安全组的etcd长什么样？"><a href="#安全组的etcd长什么样？" class="headerlink" title="安全组的etcd长什么样？"></a>安全组的etcd长什么样？</h2><p><img src="/myimages/9A3B03F5AD1CD04CEDE17169A04DA25A.jpg" alt=""></p>
+<p><img src="/myimages/F3259CE46FC3DD99C9376129065AB77E.jpg" alt=""></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[(<span class="string">'&#123;"name": "default", "unique_key": 4, "rules": [</span></span><br><span class="line"><span class="string">&#123;"direction": "ingress", "protocol": 6, "ethertype": "IPv4", "port_range_max": 65535, "security_group_id": "253df9b8-3e41-4153-ae43-6c4990dcd74f", "topic": "5e347d7b2f7541198031e12916acaa0b", "version": 0, "port_range_min": 1, "remote_ip_prefix": "0.0.0.0/0", "id": "19bf513a-89a0-4f2e-91a8-53e7e11c0a7c"&#125;,</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> &#123;"direction": "egress", "ethertype": "IPv4", "security_group_id": "253df9b8-3e41-4153-ae43-6c4990dcd74f", "topic": "5e347d7b2f7541198031e12916acaa0b", "version": 0, "id": "6384d6b0-684d-4102-a2f0-44ae2abff45a"&#125;, </span></span><br><span class="line"><span class="string">&#123;"direction": "egress", "ethertype": "IPv6", "security_group_id": "253df9b8-3e41-4153-ae43-6c4990dcd74f", "topic": "5e347d7b2f7541198031e12916acaa0b", "version": 0, "id": "63902a8d-375b-485e-ba44-d5679d16128a"&#125;,</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> &#123;"remote_group_id": "253df9b8-3e41-4153-ae43-6c4990dcd74f", "direction": "ingress", "ethertype": "IPv4", "security_group_id": "253df9b8-3e41-4153-ae43-6c4990dcd74f", "topic": "5e347d7b2f7541198031e12916acaa0b", "version": 0, "id": "79c9bca5-ec8f-4e8c-bb6b-059cac18490c"&#125;,</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> &#123;"direction": "ingress", "protocol": 1, "ethertype": "IPv4", "security_group_id": "253df9b8-3e41-4153-ae43-6c4990dcd74f", "topic": "5e347d7b2f7541198031e12916acaa0b", "version": 0, "remote_ip_prefix": "0.0.0.0/0", "id": "d3116bc4-614f-4e3e-889b-562261714e24"&#125;,</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> &#123;"remote_group_id": "253df9b8-3e41-4153-ae43-6c4990dcd74f", "direction": "ingress", "ethertype": "IPv6", "security_group_id": "253df9b8-3e41-4153-ae43-6c4990dcd74f", "topic": "5e347d7b2f7541198031e12916acaa0b", "version": 0, "id": "f95d6c8e-b4f9-4de0-b16f-87a9bdb4513b"&#125;], </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">"topic": "5e347d7b2f7541198031e12916acaa0b", "version": 6, "id": "253df9b8-3e41-4153-ae43-6c4990dcd74f"&#125;’, &#123;u'</span>mod_revision<span class="string">': u'</span><span class="number">44933</span><span class="string">', u'</span>create_revision<span class="string">': u'</span><span class="number">621</span><span class="string">', u'</span>version<span class="string">': u'</span><span class="number">3</span><span class="string">', u'</span>key<span class="string">': '</span>/secgroup/<span class="number">253</span>df9b8<span class="number">-3e41</span><span class="number">-4153</span>-ae43<span class="number">-6</span>c4990dcd74f’&#125;</span><br><span class="line"></span><br><span class="line">)]</span><br></pre></td></tr></table></figure>
+<h2 id="远程安全组怎么实现的？"><a href="#远程安全组怎么实现的？" class="headerlink" title="远程安全组怎么实现的？"></a>远程安全组怎么实现的？</h2><p>研究远程安全组的场景是，位于同一个vpc的两台云主机，拥有不同的安全组策略（安全组default和安全组xxxx），这两个安全组策略均放通了对外主动访问的流量；只有安全组default 的云主机放通了default安全组可以访问的远程安全组访问策略</p>
+<p><img src="/myimages/6C72F09C7FCF57E90C02722776FC0EF4.jpg" alt=""></p>
+<p>那么其是如何实现的？</p>
+<p>我们研究入方向安全组的变化吧</p>
+<p>在远程安全组下发之前：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">cookie=0x0, duration=422.928s, table=105, n_packets=375, n_bytes=36750, idle_age=13, priority=100,ip,reg7=0xaa actions=ct(table=110,zone=OXM_OF_METADATA[0..15])</span><br><span class="line">cookie=0x0, duration=422.928s, table=105, n_packets=0, n_bytes=0, idle_age=422, priority=100,ipv6,reg7=0xaa actions=ct(table=110,zone=OXM_OF_METADATA[0..15])</span><br><span class="line">cookie=0x0, duration=422.828s, table=105, n_packets=262, n_bytes=25676, idle_age=0, priority=100,ip,reg7=0xad actions=ct(table=110,zone=OXM_OF_METADATA[0..15])</span><br><span class="line">cookie=0x0, duration=422.828s, table=105, n_packets=0, n_bytes=0, idle_age=422, priority=100,ipv6,reg7=0xad actions=ct(table=110,zone=OXM_OF_METADATA[0..15])</span><br><span class="line">cookie=0x0, duration=425.459s, table=110, n_packets=495, n_bytes=48510, idle_age=13, priority=65534,ct_state=-new+est-rel-inv+trk actions=resubmit(,115)</span><br><span class="line">cookie=0x0, duration=425.459s, table=110, n_packets=0, n_bytes=0, idle_age=425, priority=65534,ct_state=-new+rel-inv+trk actions=resubmit(,115)</span><br><span class="line">cookie=0x0, duration=425.459s, table=110, n_packets=0, n_bytes=0, idle_age=425, priority=65534,ct_state=+new+rel-inv+trk,ip actions=ct(commit,table=115,zone=NXM_NX_CT_ZONE[])</span><br><span class="line">cookie=0x0, duration=425.459s, table=110, n_packets=0, n_bytes=0, idle_age=425, priority=65534,ct_state=+new+rel-inv+trk,ipv6 actions=ct(commit,table=115,zone=NXM_NX_CT_ZONE[])</span><br><span class="line">cookie=0x0, duration=425.459s, table=110, n_packets=0, n_bytes=0, idle_age=425, priority=65534,ct_state=+inv+trk actions=drop</span><br><span class="line">cookie=0x0, duration=422.928s, table=110, n_packets=0, n_bytes=0, idle_age=422, priority=6,conj_id=4,ip actions=ct(commit,table=115,zone=NXM_NX_CT_ZONE[])</span><br><span class="line">cookie=0x0, duration=422.928s, table=110, n_packets=0, n_bytes=0, idle_age=422, priority=6,conj_id=4,ipv6 actions=ct(commit,table=115,zone=NXM_NX_CT_ZONE[])</span><br><span class="line">cookie=0x0, duration=422.828s, table=110, n_packets=3, n_bytes=294, idle_age=78, priority=13,conj_id=11,ip actions=ct(commit,table=115,zone=NXM_NX_CT_ZONE[])</span><br><span class="line">cookie=0x0, duration=422.828s, table=110, n_packets=0, n_bytes=0, idle_age=422, priority=13,conj_id=11,ipv6 actions=ct(commit,table=115,zone=NXM_NX_CT_ZONE[])</span><br><span class="line">cookie=0x0, duration=422.928s, table=110, n_packets=0, n_bytes=0, idle_age=422, priority=6,ct_state=+new-est-rel-inv+trk,reg7=0xaa actions=conjunction(4,1/2)</span><br><span class="line">cookie=0x0, duration=422.828s, table=110, n_packets=0, n_bytes=0, idle_age=422, priority=13,ct_state=+new-est-rel-inv+trk,reg7=0xad actions=conjunction(11,1/2)</span><br><span class="line">cookie=0x0, duration=425.459s, table=110, n_packets=139, n_bytes=13622, idle_age=0, priority=1 actions=drop</span><br></pre></td></tr></table></figure>
+<p>远程安全组下发之后</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">cookie=0x0, duration=361.237s, table=105, n_packets=326, n_bytes=31948, idle_age=1, priority=100,ip,reg7=0xaa actions=ct(table=110,zone=OXM_OF_METADATA[0..15])</span><br><span class="line">cookie=0x0, duration=361.237s, table=105, n_packets=0, n_bytes=0, idle_age=361, priority=100,ipv6,reg7=0xaa actions=ct(table=110,zone=OXM_OF_METADATA[0..15])</span><br><span class="line">cookie=0x0, duration=361.137s, table=105, n_packets=200, n_bytes=19600, idle_age=1, priority=100,ip,reg7=0xad actions=ct(table=110,zone=OXM_OF_METADATA[0..15])</span><br><span class="line">cookie=0x0, duration=361.137s, table=105, n_packets=0, n_bytes=0, idle_age=361, priority=100,ipv6,reg7=0xad actions=ct(table=110,zone=OXM_OF_METADATA[0..15])</span><br><span class="line">cookie=0x0, duration=363.768s, table=110, n_packets=397, n_bytes=38906, idle_age=1, priority=65534,ct_state=-new+est-rel-inv+trk actions=resubmit(,115)</span><br><span class="line">cookie=0x0, duration=363.768s, table=110, n_packets=0, n_bytes=0, idle_age=363, priority=65534,ct_state=-new+rel-inv+trk actions=resubmit(,115)</span><br><span class="line">cookie=0x0, duration=363.768s, table=110, n_packets=0, n_bytes=0, idle_age=363, priority=65534,ct_state=+new+rel-inv+trk,ip actions=ct(commit,table=115,zone=NXM_NX_CT_ZONE[])</span><br><span class="line">cookie=0x0, duration=363.768s, table=110, n_packets=0, n_bytes=0, idle_age=363, priority=65534,ct_state=+new+rel-inv+trk,ipv6 actions=ct(commit,table=115,zone=NXM_NX_CT_ZONE[])</span><br><span class="line">cookie=0x0, duration=363.768s, table=110, n_packets=0, n_bytes=0, idle_age=363, priority=65534,ct_state=+inv+trk actions=drop</span><br><span class="line">cookie=0x0, duration=361.237s, table=110, n_packets=0, n_bytes=0, idle_age=361, priority=6,conj_id=4,ip actions=ct(commit,table=115,zone=NXM_NX_CT_ZONE[])</span><br><span class="line">cookie=0x0, duration=361.237s, table=110, n_packets=0, n_bytes=0, idle_age=361, priority=6,conj_id=4,ipv6 actions=ct(commit,table=115,zone=NXM_NX_CT_ZONE[])</span><br><span class="line">cookie=0x0, duration=361.137s, table=110, n_packets=3, n_bytes=294, idle_age=17, priority=13,conj_id=11,ip actions=ct(commit,table=115,zone=NXM_NX_CT_ZONE[])</span><br><span class="line">cookie=0x0, duration=361.137s, table=110, n_packets=0, n_bytes=0, idle_age=361, priority=13,conj_id=11,ipv6 actions=ct(commit,table=115,zone=NXM_NX_CT_ZONE[])</span><br><span class="line">cookie=0x800000000, duration=361.137s, table=110, n_packets=0, n_bytes=0, idle_age=361, priority=13,icmp,nw_src=192.168.58.107 actions=conjunction(11,2/2)</span><br><span class="line">cookie=0x800000000, duration=361.137s, table=110, n_packets=0, n_bytes=0, idle_age=361, priority=13,icmp,nw_src=192.168.58.109 actions=conjunction(11,2/2)</span><br><span class="line">cookie=0x0, duration=361.237s, table=110, n_packets=0, n_bytes=0, idle_age=361, priority=6,ct_state=+new-est-rel-inv+trk,reg7=0xaa actions=conjunction(4,1/2)</span><br><span class="line">cookie=0x0, duration=361.137s, table=110, n_packets=0, n_bytes=0, idle_age=361, priority=13,ct_state=+new-est-rel-inv+trk,reg7=0xad actions=conjunction(11,1/2)</span><br><span class="line">cookie=0x0, duration=363.768s, table=110, n_packets=126, n_bytes=12348, idle_age=22, priority=1 actions=drop</span><br></pre></td></tr></table></figure>
+<p><img src="/myimages/B9A786A0DAD3944497E177A80A3A9130.jpg" alt=""></p>
+<p>通过对比发现：</p>
+<p> cookie=0x800000000, duration=361.137s, table=110, n_packets=0, n_bytes=0, idle_age=361, priority=13,icmp,nw_src=192.168.58.107 actions=conjunction(11,2/2)</p>
+<p> cookie=0x800000000, duration=361.137s, table=110, n_packets=0, n_bytes=0, idle_age=361, priority=13,icmp,nw_src=192.168.58.109 actions=conjunction(11,2/2)</p>
+<p>如果访问安全组xxxx的云主机，源地址是192.168.58.107 192.168.58.109可以访问；其实这两个云主机的安全组都属于安全组default，也就相当于放通了安全组default的访问策略；总结一句话就是远程安全组通关源地址条件实现。通过研究发现dragonflow</p>
+<p>还解决了源ip地址很多的问题，它会通过在一个网段的地址通过mask 方式减少策略条目。</p>
+<h3 id="减少条目方法"><a href="#减少条目方法" class="headerlink" title="减少条目方法"></a>减少条目方法</h3><p>eg: 192.168.58.100 192.168.58.111 换成条件为192.168.58.110/31</p>
+<p> cookie=0xa00000000, duration=149.523s, table=110, n_packets=0, n_bytes=0, idle_age=149, priority=13,icmp,nw_src=192.168.58.110/31 actions=conjunction(11,2/2)</p>
+<h3 id="远程安全组是同一个网段才下发？"><a href="#远程安全组是同一个网段才下发？" class="headerlink" title="远程安全组是同一个网段才下发？"></a>远程安全组是同一个网段才下发？</h3><p>远程安全组和是不是同一个网段没有关联，其不关注使用该安全组的云主机是否处于同一个网段，其只根据源ip进行策略添加判断；因此有时候会出现虽然放通了该安全组，但是从来不会被命中情况；其实想想也基本能理解了，作为安全组策略，它们无法智能或者武断的分辨出不同云主机之间连通关系，所以只能一到切实现该功能。</p>
+<h2 id="安全组的代码都在什么位置？"><a href="#安全组的代码都在什么位置？" class="headerlink" title="安全组的代码都在什么位置？ "></a>安全组的代码都在什么位置？ </h2><p>sg.py</p>
+<h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">2018-04-19 06:52:09.803 DEBUG dragonflow.db.api_nb [-] Could not get object 487e697b-d4e7-4471-b958-22b1367c1bd8 from table lport from (pid=28510) get /opt/stack/dragonflow/dragonflow/db/api_nb.py:296</span><br><span class="line">2018-04-19 06:52:09.803 DEBUG dragonflow.db.api_nb [-] (<span class="string">'Traceback (most recent call last):n  File "/opt/stack/dragonflow/dragonflow/db/api_nb.py", line 290, in getn    _get_topic(lean_obj),n  File "/opt/stack/dragonflow/dragonflow/db/drivers/etcd_db_driver.py", line 117, in get_keyn    return self._get_key(self._make_key(table, key), key)n  File "/opt/stack/dragonflow/dragonflow/db/drivers/etcd_db_driver.py", line 123, in _get_keyn    raise df_exceptions.DBKeyNotFound(key=key)nDBKeyNotFound: DB Key not found, key=487e697b-d4e7-4471-b958-22b1367c1bd8n'</span>,) from (pid=28510) get /opt/stack/dragonflow/dragonflow/db/api_nb.py:297</span><br><span class="line">2018-04-19 06:52:09.803 WARNING dragonflow.controller.topology [-] No logical port found <span class="keyword">for</span> ovs port: OvsPort object</span><br><span class="line"></span><br><span class="line">2018-04-19 06:52:09.807 DEBUG dragonflow.db.api_nb [-] Could not get object bf8c2c33-b61f-4bf1-937d-ce48ec63439c from table lport from (pid=28510) get /opt/stack/dragonflow/dragonflow/db/api_nb.py:296</span><br><span class="line">2018-04-19 06:52:09.807 DEBUG dragonflow.db.api_nb [-] (<span class="string">'Traceback (most recent call last):n  File "/opt/stack/dragonflow/dragonflow/db/api_nb.py", line 290, in getn    _get_topic(lean_obj),n  File "/opt/stack/dragonflow/dragonflow/db/drivers/etcd_db_driver.py", line 117, in get_keyn    return self._get_key(self._make_key(table, key), key)n  File "/opt/stack/dragonflow/dragonflow/db/drivers/etcd_db_driver.py", line 123, in _get_keyn    raise df_exceptions.DBKeyNotFound(key=key)nDBKeyNotFound: DB Key not found, key=bf8c2c33-b61f-4bf1-937d-ce48ec63439cn'</span>,) from (pid=28510) get /opt/stack/dragonflow/dragonflow/db/api_nb.py:297</span><br><span class="line">2018-04-19 06:52:09.807 WARNING dragonflow.controller.topology [-] No logical port found <span class="keyword">for</span> ovs port: OvsPort object</span><br><span class="line"></span><br><span class="line">2018-04-19 06:52:09.817 DEBUG dragonflow.db.api_nb [-] Could not get object 71c111ac-3eac-4dba-91c6-6195b50091a4 from table lport from (pid=28510) get /opt/stack/dragonflow/dragonflow/db/api_nb.py:296</span><br><span class="line">2018-04-19 06:52:09.817 DEBUG dragonflow.db.api_nb [-] (<span class="string">'Traceback (most recent call last):n  File "/opt/stack/dragonflow/dragonflow/db/api_nb.py", line 290, in getn    _get_topic(lean_obj),n  File "/opt/stack/dragonflow/dragonflow/db/drivers/etcd_db_driver.py", line 117, in get_keyn    return self._get_key(self._make_key(table, key), key)n  File "/opt/stack/dragonflow/dragonflow/db/drivers/etcd_db_driver.py", line 123, in _get_keyn    raise df_exceptions.DBKeyNotFound(key=key)nDBKeyNotFound: DB Key not found, key=71c111ac-3eac-4dba-91c6-6195b50091a4n'</span>,) from (pid=28510) get /opt/stack/dragonflow/dragonflow/db/api_nb.py:297</span><br><span class="line">2018-04-19 06:52:09.817 WARNING dragonflow.controller.topology [-] No logical port found <span class="keyword">for</span> ovs port: OvsPort object</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">Pdb) bt</span><br><span class="line">  /usr/<span class="built_in">local</span>/bin/df-local-controller(10)&lt;module&gt;()</span><br><span class="line">-&gt; sys.exit(main())</span><br><span class="line">  /opt/stack/dragonflow/dragonflow/cmd/eventlet/df_local_controller.py(17)main()</span><br><span class="line">-&gt; df_local_controller.main()</span><br><span class="line">  /opt/stack/dragonflow/dragonflow/controller/df_local_controller.py(352)main()</span><br><span class="line">-&gt; controller.run()</span><br><span class="line">  /opt/stack/dragonflow/dragonflow/controller/df_local_controller.py(121)run()</span><br><span class="line">-&gt; self.nb_api.process_changes()</span><br><span class="line">  /opt/stack/dragonflow/dragonflow/db/api_nb.py(207)process_changes()</span><br><span class="line">-&gt; self._notification_cb(next_update)</span><br><span class="line">  /opt/stack/dragonflow/dragonflow/controller/df_local_controller.py(292)_handle_update()</span><br><span class="line">-&gt; self._handle_db_change(update)</span><br><span class="line">  /opt/stack/dragonflow/dragonflow/controller/df_local_controller.py(306)_handle_db_change()</span><br><span class="line">-&gt; self.sync()</span><br><span class="line">  /opt/stack/dragonflow/dragonflow/controller/df_local_controller.py(137)sync()</span><br><span class="line">-&gt; self.topology.check_topology_info()</span><br><span class="line">  /opt/stack/dragonflow/dragonflow/controller/topology.py(294)check_topology_info()</span><br><span class="line">-&gt; lport = self._get_lport(ovs_port)</span><br><span class="line">  /opt/stack/dragonflow/dragonflow/controller/topology.py(278)_get_lport()</span><br><span class="line">-&gt; lport = self.nb_api.get(ovs_port.lport)</span><br><span class="line">&gt; /opt/stack/dragonflow/dragonflow/db/api_nb.py(296)get()</span><br><span class="line">-&gt; LOG.debug(</span><br></pre></td></tr></table></figure>
+<p>(Pdb) ovs_port</p>
+<p>OvsPort(attached_mac=EUI(‘fa:16:3e:f3:c7:0a’), id=u’db4b9d2d-1bb2-4648-9308-0e5aa32719bf’, lport=LogicalPortProxy(id=487e697b-d4e7-4471-b958-22b1367c1bd8), name=u’tap487e697b-d4’, ofport=-1, type=u’compute’)</p>
+<p>这个问题已经定位了，是因为在check_topology_info的时候，会根据ovs口，来查找etcd，如果存在下面情况（在ovsdb存在，但实际口已经没有了），会导致etcd中没有数据，因此会出现上述的告警；这个告警属于正常的</p>
+<p>；根本原因是ovs口的No such device问题。</p>
+<p><img src="/myimages/10F8A532DA020F074A71AE5D6FA01068.jpg" alt=""></p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://vcpu.me/ovs_l3_forward/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1828,183 +2056,11 @@ d. src ip 1.1.1.1 dst ip 2.2.2.2
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/dnat/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/dnat/" itemprop="url">Using vlan external netowrk fip，dragonflow dirtributed dnat does not work</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-18T12:00:00+08:00">
-                2018-04-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/dragonflow/" itemprop="url" rel="index">
-                    <span itemprop="name">dragonflow</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/dnat/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="dnat/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/dnat/" class="leancloud_visitors" data-flag-title="Using vlan external netowrk fip，dragonflow dirtributed dnat does not work">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>My problem is :<br> Dragonflow distributed dnat can work ok when external network type is vlan ? if ok ,dragonflow distributed dnat support two or more external vlan network ?</p>
-<p>Details below:</p>
-<h1 id="Using-flat-external-netowork-fip-，-dragonflow-distributed-dnat-work-fine"><a href="#Using-flat-external-netowork-fip-，-dragonflow-distributed-dnat-work-fine" class="headerlink" title="Using flat external netowork fip ， dragonflow distributed dnat work fine"></a>Using flat external netowork fip ， dragonflow distributed dnat work fine</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">+------------------------------------------------------+                   +----------------------------------+</span><br><span class="line">|                                                      |                   |                   MARK: C        |</span><br><span class="line">|                   br-ex                    enp0s3    |XXXXXXXXXXXXXXXXXXX| <span class="number">192.168</span><span class="number">.56</span><span class="number">.10</span>                    |</span><br><span class="line">|                  <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">12</span>:<span class="number">3</span>f:<span class="number">5</span>b                   |                   | external network gateway         |</span><br><span class="line">|                  <span class="number">192.168</span><span class="number">.56</span><span class="number">.155</span>                      |                   |                                  |</span><br><span class="line">+------------------------------------------------------+                   +----------------------------------+</span><br><span class="line">                    |</span><br><span class="line">                    |</span><br><span class="line">                    |</span><br><span class="line">                    |</span><br><span class="line">                    |</span><br><span class="line">                    |</span><br><span class="line">                    |</span><br><span class="line">   +-----------------------------------------------------------+             flows: A -&gt; br-int(dnat) -&gt; br-ex(l3 forward) -&gt; C</span><br><span class="line">   |                                                           |</span><br><span class="line">   |                                                           |</span><br><span class="line">   |                         br-int                            |</span><br><span class="line">   |                                                           |</span><br><span class="line">   |                                                           |</span><br><span class="line">   +-----------------------------------------------------------+</span><br><span class="line">                             |</span><br><span class="line">                             |</span><br><span class="line">                             |        fa:<span class="number">16</span>:<span class="number">3</span>e:d4:<span class="number">60</span>:<span class="number">2</span>d</span><br><span class="line">                             |        flat floating ip <span class="number">192.168</span><span class="number">.56</span><span class="number">.55</span></span><br><span class="line">                             |         dragonflow distribute dnat</span><br><span class="line">                             |</span><br><span class="line">                    +--------------------+</span><br><span class="line">                    |  <span class="number">1.1</span><span class="number">.1</span><span class="number">.6</span>           |</span><br><span class="line">                    |            Mark: A |</span><br><span class="line">                    |                    |</span><br><span class="line">                    |                    |</span><br><span class="line">                    +--------------------+</span><br></pre></td></tr></table></figure>
-<p>Instructions：</p>
-<p>192.168.56.0/24 is my external flat network subnet. </p>
-<p>using dragonflow dnat </p>
-<p>A->C icmp flows: A -> br-int(dnat) -> br-ex(l3 forward) -> C</p>
-<p>1.1.1.6 with fip ping gateway.( A->C connected). When icmp packet arrived at br-ex , layer3 forwarding is noraml.</p>
-<p>Catch packets in br-ex interface.</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">tcpdump: verbose output suppressed, use -v <span class="keyword">or</span> -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on br-ex, link-type EN10MB (Ethernet), capture size <span class="number">262144</span> bytes</span><br><span class="line"><span class="number">21</span>:<span class="number">40</span>:<span class="number">50.340646</span> fa:<span class="number">16</span>:<span class="number">3</span>e:d4:<span class="number">60</span>:<span class="number">2</span>d &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">12</span>:<span class="number">3</span>f:<span class="number">5</span>b, ethertype IPv4 (<span class="number">0x0800</span>), length <span class="number">98</span>: <span class="number">192.168</span><span class="number">.56</span><span class="number">.55</span> &gt; <span class="number">114.114</span><span class="number">.114</span><span class="number">.114</span>: ICMP echo request, id <span class="number">22785</span>, seq <span class="number">188</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">21</span>:<span class="number">40</span>:<span class="number">50.340672</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">12</span>:<span class="number">3</span>f:<span class="number">5</span>b &gt; be:e5:f2:da:<span class="number">42</span>:<span class="number">46</span>, ethertype IPv4 (<span class="number">0x0800</span>), length <span class="number">98</span>: <span class="number">192.168</span><span class="number">.56</span><span class="number">.55</span> &gt; <span class="number">114.114</span><span class="number">.114</span><span class="number">.114</span>: ICMP echo request, id <span class="number">22785</span>, seq <span class="number">188</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">21</span>:<span class="number">40</span>:<span class="number">51.341668</span> fa:<span class="number">16</span>:<span class="number">3</span>e:d4:<span class="number">60</span>:<span class="number">2</span>d &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">12</span>:<span class="number">3</span>f:<span class="number">5</span>b, ethertype IPv4 (<span class="number">0x0800</span>), length <span class="number">98</span>: <span class="number">192.168</span><span class="number">.56</span><span class="number">.55</span> &gt; <span class="number">114.114</span><span class="number">.114</span><span class="number">.114</span>: ICMP echo request, id <span class="number">22785</span>, seq <span class="number">189</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">21</span>:<span class="number">40</span>:<span class="number">51.341696</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">12</span>:<span class="number">3</span>f:<span class="number">5</span>b &gt; be:e5:f2:da:<span class="number">42</span>:<span class="number">46</span>, ethertype IPv4 (<span class="number">0x0800</span>), length <span class="number">98</span>: <span class="number">192.168</span><span class="number">.56</span><span class="number">.55</span> &gt; <span class="number">114.114</span><span class="number">.114</span><span class="number">.114</span>: ICMP echo request, id <span class="number">22785</span>, seq <span class="number">189</span>, length <span class="number">64</span></span><br></pre></td></tr></table></figure>
-<p>tcpdump catch packets in enp0s3</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">listening on enp0s3, link-type EN10MB (Ethernet), capture size <span class="number">262144</span> bytes</span><br><span class="line"><span class="number">21</span>:<span class="number">43</span>:<span class="number">01.601739</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">12</span>:<span class="number">3</span>f:<span class="number">5</span>b &gt; be:e5:f2:da:<span class="number">42</span>:<span class="number">46</span>, ethertype IPv4 (<span class="number">0x0800</span>), length <span class="number">98</span>: <span class="number">192.168</span><span class="number">.56</span><span class="number">.55</span> &gt; <span class="number">114.114</span><span class="number">.114</span><span class="number">.114</span>: ICMP echo request, id <span class="number">22785</span>, seq <span class="number">319</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">21</span>:<span class="number">43</span>:<span class="number">01.609858</span> be:e5:f2:da:<span class="number">42</span>:<span class="number">46</span> &gt; fa:<span class="number">16</span>:<span class="number">3</span>e:d4:<span class="number">60</span>:<span class="number">2</span>d, ethertype IPv4 (<span class="number">0x0800</span>), length <span class="number">98</span>: <span class="number">114.114</span><span class="number">.114</span><span class="number">.114</span> &gt; <span class="number">192.168</span><span class="number">.56</span><span class="number">.55</span>: ICMP echo reply, id <span class="number">22785</span>, seq <span class="number">319</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">21</span>:<span class="number">43</span>:<span class="number">02.602343</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">12</span>:<span class="number">3</span>f:<span class="number">5</span>b &gt; be:e5:f2:da:<span class="number">42</span>:<span class="number">46</span>, ethertype IPv4 (<span class="number">0x0800</span>), length <span class="number">98</span>: <span class="number">192.168</span><span class="number">.56</span><span class="number">.55</span> &gt; <span class="number">114.114</span><span class="number">.114</span><span class="number">.114</span>: ICMP echo request, id <span class="number">22785</span>, seq <span class="number">320</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">21</span>:<span class="number">43</span>:<span class="number">02.611243</span> be:e5:f2:da:<span class="number">42</span>:<span class="number">46</span> &gt; fa:<span class="number">16</span>:<span class="number">3</span>e:d4:<span class="number">60</span>:<span class="number">2</span>d, ethertype IPv4 (<span class="number">0x0800</span>), length <span class="number">98</span>: <span class="number">114.114</span><span class="number">.114</span><span class="number">.114</span> &gt; <span class="number">192.168</span><span class="number">.56</span><span class="number">.55</span>: ICMP echo reply, id <span class="number">22785</span>, seq <span class="number">320</span>, length <span class="number">64</span></span><br></pre></td></tr></table></figure>
-<h1 id="Using-vlan-external-netowrk-fip，dragonflow-dirtributed-dnat-does-not-work"><a href="#Using-vlan-external-netowrk-fip，dragonflow-dirtributed-dnat-does-not-work" class="headerlink" title="Using vlan external netowrk fip，dragonflow dirtributed dnat does not work"></a>Using vlan external netowrk fip，dragonflow dirtributed dnat does not work</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">+------------------------------------------------------+                   +----------------------------------+</span><br><span class="line">|                                                      |                   |                   MARK: C        |</span><br><span class="line">|                   br-ex                    enp0s3    |XXXXXXXXXXXXXXXXXXX| <span class="number">192.168</span><span class="number">.57</span><span class="number">.10</span>                    |</span><br><span class="line">|                  <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">12</span>:<span class="number">3</span>f:<span class="number">5</span>b                   |                   | external vlan network gateway    |</span><br><span class="line">|                  <span class="number">192.168</span><span class="number">.56</span><span class="number">.155</span>                      |                   |                                  |</span><br><span class="line">+------------------------------------------------------+                   +----------------------------------+</span><br><span class="line">                    |</span><br><span class="line">                    |                                                                                                 +</span><br><span class="line">                    |                                                                                                 |</span><br><span class="line">                    |                                                                                                 |</span><br><span class="line">                    |                                                                                                 |</span><br><span class="line">                    |                                                                                                 |</span><br><span class="line">                    |                                                                                                 v</span><br><span class="line">   +-----------------------------------------------------------+             flows: A -&gt; br-int(dnat) -&gt; br-ex(l3 forward) -&gt; C</span><br><span class="line">   |                                                           |</span><br><span class="line">   |                                                           |</span><br><span class="line">   |                         br-int                            |                                          work err here</span><br><span class="line">   |                                                           |</span><br><span class="line">   |                                                           |</span><br><span class="line">   +-----------------------------------------------------------+</span><br><span class="line">                             |</span><br><span class="line">                             |</span><br><span class="line">                             |      fa:<span class="number">16</span>:<span class="number">3</span>e:<span class="number">39</span>:<span class="number">63</span>:c2</span><br><span class="line">                             |       vlan external network fip : <span class="number">192.168</span><span class="number">.57</span><span class="number">.159</span></span><br><span class="line">                             |</span><br><span class="line">                             |</span><br><span class="line">                    +--------------------+</span><br><span class="line">                    |  <span class="number">1.1</span><span class="number">.1</span><span class="number">.6</span>           |</span><br><span class="line">                    |            Mark: A |</span><br><span class="line">                    |                    |</span><br><span class="line">                    |                    |</span><br><span class="line">                    +--------------------+</span><br></pre></td></tr></table></figure>
-<p>Catch packets in br-ex interface. and I find that icmp packet can not be l3 forwarded in br-ex . A -> c disconnect.</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">stack@p-controller:~/devstack$ sudo tcpdump -i br-ex -ne</span><br><span class="line">tcpdump: verbose output suppressed, use -v <span class="keyword">or</span> -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on br-ex, link-type EN10MB (Ethernet), capture size <span class="number">262144</span> bytes</span><br><span class="line"><span class="number">21</span>:<span class="number">58</span>:<span class="number">36.278770</span> fa:<span class="number">16</span>:<span class="number">3</span>e:<span class="number">39</span>:<span class="number">63</span>:c2 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">12</span>:<span class="number">3</span>f:<span class="number">5</span>b, ethertype <span class="number">802.1</span>Q (<span class="number">0x8100</span>), length <span class="number">102</span>: vlan <span class="number">207</span>, p <span class="number">0</span>, ethertype IPv4, <span class="number">192.168</span><span class="number">.57</span><span class="number">.159</span> &gt; <span class="number">114.114</span><span class="number">.114</span><span class="number">.114</span>: ICMP echo request, id <span class="number">23041</span>, seq <span class="number">15</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">21</span>:<span class="number">58</span>:<span class="number">37.279352</span> fa:<span class="number">16</span>:<span class="number">3</span>e:<span class="number">39</span>:<span class="number">63</span>:c2 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">12</span>:<span class="number">3</span>f:<span class="number">5</span>b, ethertype <span class="number">802.1</span>Q (<span class="number">0x8100</span>), length <span class="number">102</span>: vlan <span class="number">207</span>, p <span class="number">0</span>, ethertype IPv4, <span class="number">192.168</span><span class="number">.57</span><span class="number">.159</span> &gt; <span class="number">114.114</span><span class="number">.114</span><span class="number">.114</span>: ICMP echo request, id <span class="number">23041</span>, seq <span class="number">16</span>, length <span class="number">64</span></span><br><span class="line"><span class="number">21</span>:<span class="number">58</span>:<span class="number">38.279781</span> fa:<span class="number">16</span>:<span class="number">3</span>e:<span class="number">39</span>:<span class="number">63</span>:c2 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">12</span>:<span class="number">3</span>f:<span class="number">5</span>b, ethertype <span class="number">802.1</span>Q (<span class="number">0x8100</span>), length <span class="number">102</span>: vlan <span class="number">207</span>, p <span class="number">0</span>, ethertype IPv4, <span class="number">192.168</span><span class="number">.57</span><span class="number">.159</span> &gt; <span class="number">114.114</span><span class="number">.114</span><span class="number">.114</span>: ICMP echo request, id <span class="number">23041</span>, seq <span class="number">17</span>, length <span class="number">64</span></span><br></pre></td></tr></table></figure>
-<p>My problem is :</p>
-<p> Dragonflow distributed dnat can work ok when external network type is vlan ? if ok ,dragonflow distributed dnat support two or more external vlan network ?</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -2049,7 +2105,7 @@ d. src ip 1.1.1.1 dst ip 2.2.2.2
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">70</span>
+                <span class="site-state-item-count">73</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2071,7 +2127,7 @@ d. src ip 1.1.1.1 dst ip 2.2.2.2
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">178</span>
+                <span class="site-state-item-count">188</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

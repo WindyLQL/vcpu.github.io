@@ -4,6 +4,80 @@
 
     
   <url>
+    <loc>http://vcpu.me/dragonflow_security_group3/</loc>
+    <lastmod>2018-06-12T06:26:16.000Z</lastmod>
+    <data>
+        <display>
+        <title>Dragonflow安全组实现三（详细）</title>
+        <pubTime>2018-05-21T10:00:00.000Z</pubTime>
+        
+        <tag>openvswitch安全组实现细节</tag>
+         
+        <tag>dragonflow安全组实现偏向于安全组作用原理介绍</tag>
+         
+        <tag>按照流量时刻分析安全组起作用过程</tag>
+         
+        <tag>linux conntrack</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux" url="http://vcpu.me/categories/linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/ovs_connection_crach/</loc>
+    <lastmod>2018-06-12T06:15:34.000Z</lastmod>
+    <data>
+        <display>
+        <title>两台云主机处于同一个物理主机的fip和安全组会话冲突</title>
+        <pubTime>2018-04-23T10:00:00.000Z</pubTime>
+        
+        <tag>openvswitch实现安全组和FIP icmp偶尔通</tag>
+         
+        <tag>openvswitch实现安全组和FIP tcp一直不通</tag>
+         
+        <tag>fip修改地址后导致ct状态判断inv</tag>
+         
+        <tag>openvswitch实现安全组和FIP会遇到的问题</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux" url="http://vcpu.me/categories/linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/build_ovs/</loc>
+    <lastmod>2018-06-12T06:06:29.000Z</lastmod>
+    <data>
+        <display>
+        <title>openvswitch手动编译方法</title>
+        <pubTime>2018-04-28T10:00:00.000Z</pubTime>
+        
+        <tag>openvswitch编译运行过程</tag>
+         
+        <tag>openvswitch 打包deb</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux" url="http://vcpu.me/categories/linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/conjuctive/</loc>
     <lastmod>2018-06-12T05:34:17.000Z</lastmod>
     <data>
