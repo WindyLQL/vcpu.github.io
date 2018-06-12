@@ -1319,6 +1319,524 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/ovs_l3_forward/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/ovs_l3_forward/" itemprop="url">openvswitch bridge br-ex三层转发</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-16T18:00:00+08:00">
+                2018-05-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络/" itemprop="url" rel="index">
+                    <span itemprop="name">网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/ovs_l3_forward/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="ovs_l3_forward/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/ovs_l3_forward/" class="leancloud_visitors" data-flag-title="openvswitch bridge br-ex三层转发">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p><img src="/myimages/AB8846E98A049AA9C8AD616041CD46C7.png" alt="dd.png"></p>
+<h1 id="ovs-bridge-br-ex三层转发概念"><a href="#ovs-bridge-br-ex三层转发概念" class="headerlink" title="ovs bridge br-ex三层转发概念"></a>ovs bridge br-ex三层转发概念</h1><p>openvswitch bridge三层转发，和linux bridge三层转发类似，只有给br-ex桥配置上ip地址后才存在三层转发的概念。</p>
+<p>三层转发的概念和传统的三层转发有一定差异性，给bridge配置地址这种模式是，赋予bridge一种能力，该能力能让访问bridge地址的数据流进入协议栈中的具体应用中；eg:配置bridge一个地址后</p>
+<p>我们可以ssh连接这个地址控制这台服务器；这种能把流量送给上层应用的能力叫做三层转发能力。当然这种能力只有给ovs bridge配置地址且开启主机的forward功能后才具备。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/ovs_l3_forward/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/policy_router/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/policy_router/" itemprop="url">linux策略路由的添加</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-13T18:00:00+08:00">
+                2018-05-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络/" itemprop="url" rel="index">
+                    <span itemprop="name">网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/policy_router/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="policy_router/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/policy_router/" class="leancloud_visitors" data-flag-title="linux策略路由的添加">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="添加记录"><a href="#添加记录" class="headerlink" title="添加记录"></a>添加记录</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">stack@pdf-compute:~$ ip rule show</span><br><span class="line"><span class="number">0</span>:	<span class="keyword">from</span> all lookup local</span><br><span class="line"><span class="number">32765</span>:	<span class="keyword">from</span> <span class="number">169.254</span><span class="number">.169</span><span class="number">.254</span> lookup <span class="number">2</span></span><br><span class="line"><span class="number">32766</span>:	<span class="keyword">from</span> all lookup main</span><br><span class="line"><span class="number">32767</span>:	<span class="keyword">from</span> all lookup default</span><br><span class="line">stack@pdf-compute:~$</span><br><span class="line">stack@pdf-compute:~$ sudo ip rule add <span class="keyword">from</span> <span class="number">192.168</span><span class="number">.56</span><span class="number">.0</span>/<span class="number">24</span> table <span class="number">10</span></span><br><span class="line">stack@pdf-compute:~$ sudo ip route add default via <span class="number">192.168</span><span class="number">.56</span><span class="number">.10</span> table <span class="number">10</span></span><br><span class="line">RTNETLINK answers: File exists</span><br><span class="line">stack@pdf-compute:~$ ip route show table <span class="number">10</span></span><br><span class="line">default via <span class="number">192.168</span><span class="number">.56</span><span class="number">.10</span> dev br-ex</span><br><span class="line">stack@pdf-compute:~$</span><br><span class="line">stack@pdf-compute:~$ sudo ip route delete  default via <span class="number">192.168</span><span class="number">.56</span><span class="number">.10</span> table <span class="number">10</span></span><br><span class="line">stack@pdf-compute:~$ ip route show table <span class="number">10</span></span><br><span class="line">stack@pdf-compute:~$</span><br><span class="line">stack@pdf-compute:~$ sudo ip route add default via <span class="number">192.168</span><span class="number">.56</span><span class="number">.10</span> table <span class="number">10</span></span><br><span class="line">stack@pdf-compute:~$</span><br><span class="line">stack@pdf-compute:~$ ip route show table <span class="number">10</span></span><br><span class="line">default via <span class="number">192.168</span><span class="number">.56</span><span class="number">.10</span> dev br-ex</span><br><span class="line">stack@pdf-compute:~$ sudo ip route add <span class="number">114.114</span><span class="number">.114</span><span class="number">.114</span>  via <span class="number">192.168</span><span class="number">.56</span><span class="number">.10</span> table <span class="number">10</span></span><br><span class="line">stack@pdf-compute:~$ ip route show table <span class="number">10</span></span><br><span class="line">default via <span class="number">192.168</span><span class="number">.56</span><span class="number">.10</span> dev br-ex</span><br><span class="line"><span class="number">114.114</span><span class="number">.114</span><span class="number">.114</span> via <span class="number">192.168</span><span class="number">.56</span><span class="number">.10</span> dev br-ex</span><br></pre></td></tr></table></figure>
+<h1 id="步骤总结"><a href="#步骤总结" class="headerlink" title="步骤总结"></a>步骤总结</h1><h2 id="添加"><a href="#添加" class="headerlink" title="添加"></a>添加</h2><ul>
+<li>ip rule add from 192.168.56.0/24 table 10</li>
+<li>ip route add default via 192.168.56.10 table 10</li>
+<li>ip route add 114.114.114.114 via 192.168.56.10 table 10</li>
+</ul>
+<h2 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h2><ul>
+<li>ip route delete 114.114.114.114 via 192.168.56.10 table 10</li>
+<li>sudo ip route delete default via 192.168.56.10 table 10</li>
+<li>sudo ip rule delete from 192.168.56.0/24</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/conjuctive/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/conjuctive/" itemprop="url">CONJUNCTIVE MATCH FIELDS原理</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-08T18:00:00+08:00">
+                2018-05-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络/" itemprop="url" rel="index">
+                    <span itemprop="name">网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/conjuctive/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="conjuctive/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/conjuctive/" class="leancloud_visitors" data-flag-title="CONJUNCTIVE MATCH FIELDS原理">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="问题？"><a href="#问题？" class="headerlink" title="问题？"></a>问题？</h1><p>一条单独的openflow的字段只能匹配一个条件，但是总会有需要匹配多个条件的使用场景。</p>
+<p>为了匹配一组字段可以通过多加对应个数的流表来实现，当然这是最简单高效的方法。</p>
+<p>eg: 把原地址是a，b，c，d发给控制器处理，你可以通过如下多条流表实现：</p>
+<p> ip,ip_src=a actions=controller</p>
+<p> ip,ip_src=b actions=controller</p>
+<p> ip,ip_src=c actions=controller</p>
+<p> ip,ip_src=d actions=controller</p>
+<p>当然和其相识的场景如下，e,f,g,h的目的地址的发给控制器处理</p>
+<p> ip,ip_dst=e actions=controller</p>
+<p> ip,ip_dst=f actions=controller</p>
+<p> ip,ip_dst=g actions=controller</p>
+<p> ip,ip_dst=h actions=controller</p>
+<p>但是问题来了，你把上述两种情况流表，都放到一个table中，就会出现问题：</p>
+<p>当前情况是，如果源ip是a,b,c,d，目的ip是e,f,g,h；或者两个条件只要满足一个，数据包就被发给controller处理</p>
+<p>很显然，上述流表可能命中多个，一般来讲出现这种情况需要优先级概念来区分查找到精确的流表，否则优先级别全部相同情况下，命中策略就是不稳定性的</p>
+<p>也不知道会命中哪一条策略。</p>
+<p>假定，如果想要连续匹配，源地址和目的地址必须分别在abcd和efgh中选取，那么共有16总流表来实现此需求，当然我们举例的场景使用这种方法不会别扭，但是如果情况更复杂？</p>
+<p>综上所述，conjunction就诞生了（ovs2.4+支持）</p>
+<h1 id="如何实现的？"><a href="#如何实现的？" class="headerlink" title="如何实现的？"></a>如何实现的？</h1><h2 id="32-bit-id-for-conjunctive"><a href="#32-bit-id-for-conjunctive" class="headerlink" title="32-bit id for conjunctive "></a>32-bit id for conjunctive </h2><p>32位的id是openflow table中具有唯一性</p>
+<h2 id="如何实现的？-1"><a href="#如何实现的？-1" class="headerlink" title="如何实现的？"></a>如何实现的？</h2><p>首先根据conjunction ID找到第一条流表，然后，查找对应conjunction 匹配集合；conjunction(id, k/n)来表示，其中id为conjunction ID ，k是dimension的编号，n是dimension 总数</p>
+<p>那么怎么样算是满足条件？n个dimension集合中，每一个集合必须有一个满足；这样必须有n个条件满足才算这个conjunction 满足情况，进行相应的动作执行。</p>
+<p>eg:</p>
+<p>conj_id=1234 actions=controller<br>                 ip,ip_src=10.0.0.1 actions=conjunction(1234, 1/2)<br>                 ip,ip_src=10.0.0.4 actions=conjunction(1234, 1/2)<br>                 ip,ip_src=10.0.0.6 actions=conjunction(1234, 1/2)<br>                 ip,ip_src=10.0.0.7 actions=conjunction(1234, 1/2)<br>                 ip,ip_dst=10.0.0.2 actions=conjunction(1234, 2/2)<br>                 ip,ip_dst=10.0.0.5 actions=conjunction(1234, 2/2)<br>                 ip,ip_dst=10.0.0.7 actions=conjunction(1234, 2/2)<br>                 ip,ip_dst=10.0.0.8 actions=conjunction(1234, 2/2)</p>
+<pre><code>两个条件，源IP（dimension 1 of2）和目的IP（dimension 2 of 2）同时满足的写法；假设有如下流量模型：
+
+a. src ip 10.0.0.1 dst ip 114.114.114.114 
+
+b. src ip 10.0.0.7 dst ip 10.0.0.8
+
+c. src ip 10.0.0.8 dst ip 10.0.0.1
+
+d. src ip 1.1.1.1 dst ip 2.2.2.2 
+
+上述abcd四个选项，只有b是满足条件的，可以执行actions=controller（将数据包发给控制器）
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://vcpu.me/dnat/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1482,486 +2000,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/chun/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/chun/" itemprop="url">春</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-31T18:00:00+08:00">
-                2018-03-31
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/诗和远方/" itemprop="url" rel="index">
-                    <span itemprop="name">诗和远方</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/chun/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="chun/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/chun/" class="leancloud_visitors" data-flag-title="春">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><img src="/myimages/chun.png" alt="chun.png"></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/dpdk-ovs-vhost-user-kvm/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/dpdk-ovs-vhost-user-kvm/" itemprop="url">OSX Fusion ubuntu16.04.2 虚拟机安装dpdk ovs</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-28T18:00:00+08:00">
-                2018-02-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/DPDK/" itemprop="url" rel="index">
-                    <span itemprop="name">DPDK</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/dpdk-ovs-vhost-user-kvm/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="dpdk-ovs-vhost-user-kvm/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/dpdk-ovs-vhost-user-kvm/" class="leancloud_visitors" data-flag-title="OSX Fusion ubuntu16.04.2 虚拟机安装dpdk ovs">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>为什么会有这篇文章：</p>
-<p>笔者想体验下ovs dpdk情况下，云主机使用最高网络io性能的vhostuser方式，可是却没有空闲的物理机器，且在物理机器调试也没有在虚拟机调试方便；于是笔者花了一些时间探究如何在虚拟机中完成dpdk vhostuser运行工作；本文涉及到kvm安装、ovs编译、dpdk编译、虚拟机中以kvm方式启动新的虚拟机、ovs流表等信息，以实践为主，先跑起来是更加理解的基础。因为环境差异，你参考这篇可能会遇到新的问题，请google解决吧。</p>
-<p>注意：<br>1.为了虚拟机内也支持硬件虚拟化，笔者选择fusion8 安装ubuntu16.04操作系统（fusion下载要注册，说实话很麻烦），勾选Intel VT-x/EPT<br>2.本人笔记本mac pro16款的，不需要设置，就可以在虚拟机中支持硬件虚拟化；不要拿virtual box跑，因为其建立虚拟机中不支持kvm</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/dpdk-ovs-vhost-user-kvm/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/dropwatch/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/dropwatch/" itemprop="url">我的数据包丢在那里之一场iptables旅行</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-07T18:00:00+08:00">
-                2018-02-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/网络/" itemprop="url" rel="index">
-                    <span itemprop="name">网络</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/dropwatch/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="dropwatch/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/dropwatch/" class="leancloud_visitors" data-flag-title="我的数据包丢在那里之一场iptables旅行">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>一般来搭建虚拟网络，或者其他业务情形，linux主机内部出现网络不通时候，有时候思路会断掉，因为内核协议栈对于专注于应用的开发者来说，属于黑盒子，看不到里面具体发生了什么，为什么丢包？</p>
-<p>当然大部分原因是由于我们使用方法和配置有误导致，但是从如果从上层看下层，从下层也反证上层，问题可以提前找到和快解决。</p>
-<p>本文重点举例，说明虚拟网络应用场景下出现iptables策略问题，并且通过工具反查和反证问题过程。属于一场iptables稍微深层次点的旅行吧，与君共勉。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/dropwatch/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2011,7 +2049,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">67</span>
+                <span class="site-state-item-count">70</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2033,7 +2071,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">173</span>
+                <span class="site-state-item-count">178</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
