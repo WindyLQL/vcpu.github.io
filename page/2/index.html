@@ -320,6 +320,172 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/policy_router/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/policy_router/" itemprop="url">linux策略路由的添加</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-13T18:00:00+08:00">
+                2018-05-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络/" itemprop="url" rel="index">
+                    <span itemprop="name">网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/policy_router/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="policy_router/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/policy_router/" class="leancloud_visitors" data-flag-title="linux策略路由的添加">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="添加记录"><a href="#添加记录" class="headerlink" title="添加记录"></a>添加记录</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">stack@pdf-compute:~$ ip rule show</span><br><span class="line"><span class="number">0</span>:	<span class="keyword">from</span> all lookup local</span><br><span class="line"><span class="number">32765</span>:	<span class="keyword">from</span> <span class="number">169.254</span><span class="number">.169</span><span class="number">.254</span> lookup <span class="number">2</span></span><br><span class="line"><span class="number">32766</span>:	<span class="keyword">from</span> all lookup main</span><br><span class="line"><span class="number">32767</span>:	<span class="keyword">from</span> all lookup default</span><br><span class="line">stack@pdf-compute:~$</span><br><span class="line">stack@pdf-compute:~$ sudo ip rule add <span class="keyword">from</span> <span class="number">192.168</span><span class="number">.56</span><span class="number">.0</span>/<span class="number">24</span> table <span class="number">10</span></span><br><span class="line">stack@pdf-compute:~$ sudo ip route add default via <span class="number">192.168</span><span class="number">.56</span><span class="number">.10</span> table <span class="number">10</span></span><br><span class="line">RTNETLINK answers: File exists</span><br><span class="line">stack@pdf-compute:~$ ip route show table <span class="number">10</span></span><br><span class="line">default via <span class="number">192.168</span><span class="number">.56</span><span class="number">.10</span> dev br-ex</span><br><span class="line">stack@pdf-compute:~$</span><br><span class="line">stack@pdf-compute:~$ sudo ip route delete  default via <span class="number">192.168</span><span class="number">.56</span><span class="number">.10</span> table <span class="number">10</span></span><br><span class="line">stack@pdf-compute:~$ ip route show table <span class="number">10</span></span><br><span class="line">stack@pdf-compute:~$</span><br><span class="line">stack@pdf-compute:~$ sudo ip route add default via <span class="number">192.168</span><span class="number">.56</span><span class="number">.10</span> table <span class="number">10</span></span><br><span class="line">stack@pdf-compute:~$</span><br><span class="line">stack@pdf-compute:~$ ip route show table <span class="number">10</span></span><br><span class="line">default via <span class="number">192.168</span><span class="number">.56</span><span class="number">.10</span> dev br-ex</span><br><span class="line">stack@pdf-compute:~$ sudo ip route add <span class="number">114.114</span><span class="number">.114</span><span class="number">.114</span>  via <span class="number">192.168</span><span class="number">.56</span><span class="number">.10</span> table <span class="number">10</span></span><br><span class="line">stack@pdf-compute:~$ ip route show table <span class="number">10</span></span><br><span class="line">default via <span class="number">192.168</span><span class="number">.56</span><span class="number">.10</span> dev br-ex</span><br><span class="line"><span class="number">114.114</span><span class="number">.114</span><span class="number">.114</span> via <span class="number">192.168</span><span class="number">.56</span><span class="number">.10</span> dev br-ex</span><br></pre></td></tr></table></figure>
+<h1 id="步骤总结"><a href="#步骤总结" class="headerlink" title="步骤总结"></a>步骤总结</h1><h2 id="添加"><a href="#添加" class="headerlink" title="添加"></a>添加</h2><ul>
+<li>ip rule add from 192.168.56.0/24 table 10</li>
+<li>ip route add default via 192.168.56.10 table 10</li>
+<li>ip route add 114.114.114.114 via 192.168.56.10 table 10</li>
+</ul>
+<h2 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h2><ul>
+<li>ip route delete 114.114.114.114 via 192.168.56.10 table 10</li>
+<li>sudo ip route delete default via 192.168.56.10 table 10</li>
+<li>sudo ip rule delete from 192.168.56.0/24</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://vcpu.me/conjuctive/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1917,162 +2083,6 @@ d. src ip 1.1.1.1 dst ip 2.2.2.2
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://vcpu.me/chun/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="vcpu.me">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/h.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="i博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/chun/" itemprop="url">春</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-31T18:00:00+08:00">
-                2018-03-31
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/诗和远方/" itemprop="url" rel="index">
-                    <span itemprop="name">诗和远方</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/chun/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="chun/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-             <span id="/chun/" class="leancloud_visitors" data-flag-title="春">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数 </span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p><img src="/myimages/chun.png" alt="chun.png"></p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2122,7 +2132,7 @@ d. src ip 1.1.1.1 dst ip 2.2.2.2
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">82</span>
+                <span class="site-state-item-count">83</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2144,7 +2154,7 @@ d. src ip 1.1.1.1 dst ip 2.2.2.2
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">200</span>
+                <span class="site-state-item-count">202</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

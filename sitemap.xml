@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://vcpu.me/vxlan_openvswitch_simple/</loc>
+    
+    <lastmod>2018-06-20T08:32:42.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://vcpu.me/ovs_simple_forward1/</loc>
     
     <lastmod>2018-06-20T03:38:37.000Z</lastmod>

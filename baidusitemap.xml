@@ -4,6 +4,32 @@
 
     
   <url>
+    <loc>http://vcpu.me/vxlan_openvswitch_simple/</loc>
+    <lastmod>2018-06-20T08:32:42.000Z</lastmod>
+    <data>
+        <display>
+        <title>最精简的vxlan封装解封装过程</title>
+        <pubTime>2018-06-19T10:00:00.000Z</pubTime>
+        
+        <tag>openvswitch Datapath</tag>
+         
+        <tag>openvswitch 内核工作原理</tag>
+         
+        <tag>vxlan工作过程</tag>
+         
+        <tag>vxlan工作架构</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux" url="http://vcpu.me/categories/linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://vcpu.me/ovs_simple_forward1/</loc>
     <lastmod>2018-06-20T03:38:37.000Z</lastmod>
     <data>
