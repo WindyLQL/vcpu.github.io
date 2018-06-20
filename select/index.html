@@ -1,0 +1,1376 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="tcp/ip,kernel3.10.0-514.16.1,select," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="i博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="1234567891011#include &amp;lt;sys/time.h&amp;gt;#include &amp;lt;sys/types.h&amp;gt;#include &amp;lt;unistd.h&amp;gt;int select(int nfds, fd_set *readfds, fd_set *writefds,           fd_set *exceptfds, struct timeval *timeou">
+<meta name="keywords" content="tcp&#x2F;ip,kernel3.10.0-514.16.1,select">
+<meta property="og:type" content="article">
+<meta property="og:title" content="select">
+<meta property="og:url" content="http://vcpu.me/select/index.html">
+<meta property="og:site_name" content="i博客">
+<meta property="og:description" content="1234567891011#include &amp;lt;sys/time.h&amp;gt;#include &amp;lt;sys/types.h&amp;gt;#include &amp;lt;unistd.h&amp;gt;int select(int nfds, fd_set *readfds, fd_set *writefds,           fd_set *exceptfds, struct timeval *timeou">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-06-26T09:00:57.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="select">
+<meta name="twitter:description" content="1234567891011#include &amp;lt;sys/time.h&amp;gt;#include &amp;lt;sys/types.h&amp;gt;#include &amp;lt;unistd.h&amp;gt;int select(int nfds, fd_set *readfds, fd_set *writefds,           fd_set *exceptfds, struct timeval *timeou">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://vcpu.me/select/"/>
+
+
+
+
+
+  <title>select | i博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">i博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">仰望星空前，还需脚踏实地。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/select/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">select</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-26T17:00:57+08:00">
+                2017-06-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/socket/" itemprop="url" rel="index">
+                    <span itemprop="name">socket</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/select/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="select/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/select/" class="leancloud_visitors" data-flag-title="select">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/time.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">select</span><span class="params">(<span class="keyword">int</span> nfds, fd_set *readfds, fd_set *writefds,</span></span></span><br><span class="line"><span class="function"><span class="params">           fd_set *exceptfds, struct timeval *timeout)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_CLR</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span>  <span class="title">FD_ISSET</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_SET</span><span class="params">(<span class="keyword">int</span> fd, fd_set *<span class="built_in">set</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FD_ZERO</span><span class="params">(fd_set *<span class="built_in">set</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>nfds 是最大文件描述符号 +1   怎么可能这么简单，它限制的是最大值而不是个数</li>
+<li>readfds 用来记录可读fd集合</li>
+<li>writefds 用来记录可写fd集合</li>
+<li>exceptfds 用来检查带外数据</li>
+<li>timeout 决定select等待I/O时间</li>
+</ul>
+<blockquote>
+<p>1.timeout该值为NULL，会阻塞一定等到监控的文件描述符集合中产生状态变化（可读，可写等）<br>2.timeout值为0分0毫秒，非阻塞，不关注文件描述符是否变化立刻返回<br>3.timeout正常值，timeout这段时间内阻塞，如果监控集合中有信号来临，select将返回，否则超时返回</p>
+</blockquote>
+<a id="more"></a>
+<p>返回值：</p>
+<ul>
+<li>0 出发信号的fd数目</li>
+<li>=0 超时</li>
+<li>-1 出错 </li>
+</ul>
+<p>作用：<br>    用来管理fd集合，实现多fd集合监听操作</p>
+<h2 id="select用户态用法"><a href="#select用户态用法" class="headerlink" title="select用户态用法"></a>select用户态用法</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;netinet/in.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;arpa/inet.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MYPORT 1234    <span class="comment">// the port users will be connecting to</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BACKLOG 5     <span class="comment">// how many pending connections queue will hold</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUF_SIZE 200</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> fd_A[BACKLOG];    <span class="comment">// accepted connection fd</span></span><br><span class="line"><span class="keyword">int</span> conn_amount;    <span class="comment">// current connection amount</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">showclient</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"client amount: %d\n"</span>, conn_amount);</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; BACKLOG; i++) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"[%d]:%d  "</span>, i, fd_A[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"\n\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> sock_fd, new_fd;  <span class="comment">// listen on sock_fd, new connection on new_fd</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">server_addr</span>;</span>    <span class="comment">// server address information</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> <span class="title">client_addr</span>;</span> <span class="comment">// connector's address information</span></span><br><span class="line">    <span class="keyword">socklen_t</span> sin_size;</span><br><span class="line">    <span class="keyword">int</span> yes = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">char</span> buf[BUF_SIZE];</span><br><span class="line">    <span class="keyword">int</span> ret;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((sock_fd = socket(AF_INET, SOCK_STREAM, <span class="number">0</span>)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        perror(<span class="string">"socket"</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, &amp;yes, <span class="keyword">sizeof</span>(<span class="keyword">int</span>)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        perror(<span class="string">"setsockopt"</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    server_addr.sin_family = AF_INET;</span><br><span class="line">    server_addr.sin_port = htons(MYPORT);</span><br><span class="line">    server_addr.sin_addr.s_addr = INADDR_ANY;</span><br><span class="line">    <span class="built_in">memset</span>(server_addr.sin_zero, <span class="string">'\0'</span>, <span class="keyword">sizeof</span>(server_addr.sin_zero));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (bind(sock_fd, (struct sockaddr *)&amp;server_addr, <span class="keyword">sizeof</span>(server_addr)) == <span class="number">-1</span>) &#123;</span><br><span class="line">        perror(<span class="string">"bind"</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (listen(sock_fd, BACKLOG) == <span class="number">-1</span>) &#123;</span><br><span class="line">        perror(<span class="string">"listen"</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"listen port %d\n"</span>, MYPORT);</span><br><span class="line"></span><br><span class="line">    fd_set fdsr;</span><br><span class="line">    <span class="keyword">int</span> maxsock;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">tv</span>;</span></span><br><span class="line"></span><br><span class="line">    conn_amount = <span class="number">0</span>;</span><br><span class="line">    sin_size = <span class="keyword">sizeof</span>(client_addr);</span><br><span class="line">    maxsock = sock_fd;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">// initialize file descriptor set</span></span><br><span class="line">        FD_ZERO(&amp;fdsr);</span><br><span class="line">        FD_SET(sock_fd, &amp;fdsr);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// timeout setting</span></span><br><span class="line">        tv.tv_sec = <span class="number">30</span>;</span><br><span class="line">        tv.tv_usec = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// add active connection to fd set</span></span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; BACKLOG; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (fd_A[i] != <span class="number">0</span>) &#123;</span><br><span class="line">                FD_SET(fd_A[i], &amp;fdsr);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        ret = select(maxsock + <span class="number">1</span>, &amp;fdsr, <span class="literal">NULL</span>, <span class="literal">NULL</span>, &amp;tv);</span><br><span class="line">        <span class="keyword">if</span> (ret &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            perror(<span class="string">"select"</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (ret == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"timeout\n"</span>);</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// check every fd in the set</span></span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; conn_amount; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (FD_ISSET(fd_A[i], &amp;fdsr)) &#123;</span><br><span class="line">                ret = recv(fd_A[i], buf, <span class="keyword">sizeof</span>(buf), <span class="number">0</span>);</span><br><span class="line">                <span class="keyword">if</span> (ret &lt;= <span class="number">0</span>) &#123;        <span class="comment">// client close</span></span><br><span class="line">                    <span class="built_in">printf</span>(<span class="string">"client[%d] close\n"</span>, i);</span><br><span class="line">                    close(fd_A[i]);</span><br><span class="line">                    FD_CLR(fd_A[i], &amp;fdsr);</span><br><span class="line">                    fd_A[i] = <span class="number">0</span>;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;        <span class="comment">// receive data</span></span><br><span class="line">                    <span class="keyword">if</span> (ret &lt; BUF_SIZE)</span><br><span class="line">                        <span class="built_in">memset</span>(&amp;buf[ret], <span class="string">'\0'</span>, <span class="number">1</span>);</span><br><span class="line">                    <span class="built_in">printf</span>(<span class="string">"client[%d] send:%s\n"</span>, i, buf);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// check whether a new connection comes</span></span><br><span class="line">        <span class="keyword">if</span> (FD_ISSET(sock_fd, &amp;fdsr)) &#123;</span><br><span class="line">            new_fd = accept(sock_fd, (struct sockaddr *)&amp;client_addr, &amp;sin_size);</span><br><span class="line">            <span class="keyword">if</span> (new_fd &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">                perror(<span class="string">"accept"</span>);</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// add to fd queue</span></span><br><span class="line">            <span class="keyword">if</span> (conn_amount &lt; BACKLOG) &#123;</span><br><span class="line">                fd_A[conn_amount++] = new_fd;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">"new connection client[%d] %s:%d\n"</span>, conn_amount,</span><br><span class="line">                        inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));</span><br><span class="line">                <span class="keyword">if</span> (new_fd &gt; maxsock)</span><br><span class="line">                    maxsock = new_fd;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">"max connections arrive, exit\n"</span>);</span><br><span class="line">                send(new_fd, <span class="string">"bye"</span>, <span class="number">4</span>, <span class="number">0</span>);</span><br><span class="line">                close(new_fd);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        showclient();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// close other connections</span></span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; BACKLOG; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (fd_A[i] != <span class="number">0</span>) &#123;</span><br><span class="line">            close(fd_A[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>代码实现采用select用法描述：</p>
+<blockquote>
+<p>1.select作为服务端使用<br>2.select监听服务的fd，如果有客户端连接此服务端时候，服务端fd会被触发，然后调用accept完成连接<br>3.select监听服务端和客户端建立好连接的fd，如果客户端发送数据过来，select可监听到读信号，然后recv读出数据。</p>
+</blockquote>
+</blockquote>
+<h2 id="select实现分析"><a href="#select实现分析" class="headerlink" title="select实现分析"></a>select实现分析</h2><h3 id="用户态select-系统调用-sys-select"><a href="#用户态select-系统调用-sys-select" class="headerlink" title="用户态select 系统调用 sys_select"></a>用户态select 系统调用 sys_select</h3><p> 调用栈如下：<br> 0xffffffff81213f80 : sys_select+0x0/0x110 [kernel]<br> 0xffffffff81697189 : system_call_fastpath+0x16/0x1b [kernel]</p>
+<p> 实现代码位于：fs/select.c  SYSCALL_DEFINE5(select,…</p>
+<h3 id="select功能概述"><a href="#select功能概述" class="headerlink" title="select功能概述"></a>select功能概述</h3><h3 id="sys-select实现分析"><a href="#sys-select实现分析" class="headerlink" title="sys_select实现分析"></a>sys_select实现分析</h3><p>分析结论：</p>
+<p>sys_select<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">SYSCALL_DEFINE5(select, <span class="keyword">int</span>, n, fd_set __user *, inp, fd_set __user *, outp,</span><br><span class="line">		fd_set __user *, <span class="built_in">exp</span>, struct timeval __user *, tvp)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">timespec</span> <span class="title">end_time</span>, *<span class="title">to</span> = <span class="title">NULL</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">tv</span>;</span></span><br><span class="line">	<span class="keyword">int</span> ret;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//用户态时间处理，将用户态时间拷入内核态并将参数规整为struct timespec以供调用</span></span><br><span class="line">	<span class="keyword">if</span> (tvp) &#123;</span><br><span class="line">		<span class="keyword">if</span> (copy_from_user(&amp;tv, tvp, <span class="keyword">sizeof</span>(tv)))</span><br><span class="line">			<span class="keyword">return</span> -EFAULT;</span><br><span class="line"></span><br><span class="line">		to = &amp;end_time;</span><br><span class="line">		<span class="keyword">if</span> (poll_select_set_timeout(to,</span><br><span class="line">				tv.tv_sec + (tv.tv_usec / USEC_PER_SEC),</span><br><span class="line">				(tv.tv_usec % USEC_PER_SEC) * NSEC_PER_USEC))</span><br><span class="line">			<span class="keyword">return</span> -EINVAL;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//select的核心实现</span></span><br><span class="line">	ret = core_sys_select(n, inp, outp, <span class="built_in">exp</span>, to);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//该函数会将剩余的时间拷入到用户态的tvp 中</span></span><br><span class="line">	ret = poll_select_copy_remaining(&amp;end_time, tvp, <span class="number">1</span>, ret);</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>1.将用户态select时间参数拷入内核<br>2.调用core_sys_select<br>3.将select退出后剩余时间结果拷入用户态时间参数中</p>
+</blockquote>
+<p>core_sys_select<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">core_sys_select</span><span class="params">(<span class="keyword">int</span> n, fd_set __user *inp, fd_set __user *outp,</span></span></span><br><span class="line"><span class="function"><span class="params">			   fd_set __user *<span class="built_in">exp</span>, struct timespec *end_time)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	fd_set_bits fds;</span><br><span class="line">	<span class="keyword">void</span> *bits;</span><br><span class="line">	<span class="keyword">int</span> ret, max_fds;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> size;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">fdtable</span> *<span class="title">fdt</span>;</span></span><br><span class="line">	<span class="comment">/* Allocate small arguments on the stack to save memory and be faster */</span></span><br><span class="line">	<span class="keyword">long</span> stack_fds[SELECT_STACK_ALLOC/<span class="keyword">sizeof</span>(<span class="keyword">long</span>)];</span><br><span class="line"></span><br><span class="line">	<span class="comment">//用户态给予参数nfds &lt; 0 ,直接返并报告参数非法 -EINVAL</span></span><br><span class="line">	ret = -EINVAL;</span><br><span class="line">	<span class="keyword">if</span> (n &lt; <span class="number">0</span>)</span><br><span class="line">		<span class="keyword">goto</span> out_nofds;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* max_fds can increase, so grab it once to avoid race */</span></span><br><span class="line">	rcu_read_lock();</span><br><span class="line">	fdt = files_fdtable(current-&gt;files);</span><br><span class="line">	max_fds = fdt-&gt;max_fds;</span><br><span class="line">	rcu_read_unlock();</span><br><span class="line">	<span class="keyword">if</span> (n &gt; max_fds)</span><br><span class="line">		n = max_fds;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * We need 6 bitmaps (in/out/ex for both incoming and outgoing),</span></span><br><span class="line"><span class="comment">	 * since we used fdset we need to allocate memory in units of</span></span><br><span class="line"><span class="comment">	 * long-words. </span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="comment">//以一个文件描述符占1bit，传递进来的这么多fd共占多数字</span></span><br><span class="line">	size = FDS_BYTES(n);</span><br><span class="line">	bits = stack_fds;</span><br><span class="line">	<span class="comment">//检查默认静态数据资源是否够用</span></span><br><span class="line">	<span class="keyword">if</span> (size &gt; <span class="keyword">sizeof</span>(stack_fds) / <span class="number">6</span>) &#123;</span><br><span class="line">		<span class="comment">/* Not enough space in on-stack array; must use kmalloc */</span></span><br><span class="line">		ret = -ENOMEM;</span><br><span class="line">		bits = kmalloc(<span class="number">6</span> * size, GFP_KERNEL);</span><br><span class="line">		<span class="keyword">if</span> (!bits)</span><br><span class="line">			<span class="keyword">goto</span> out_nofds;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//fds用来指向具体的存储空间</span></span><br><span class="line">	fds.in      = bits;</span><br><span class="line">	fds.out     = bits +   size;</span><br><span class="line">	fds.ex      = bits + <span class="number">2</span>*size;</span><br><span class="line">	fds.res_in  = bits + <span class="number">3</span>*size;</span><br><span class="line">	fds.res_out = bits + <span class="number">4</span>*size;</span><br><span class="line">	fds.res_ex  = bits + <span class="number">5</span>*size;</span><br><span class="line"></span><br><span class="line"><span class="comment">//将用户空间的inp  outp exp 拷入内核空间</span></span><br><span class="line">	<span class="keyword">if</span> ((ret = get_fd_set(n, inp, fds.in)) ||</span><br><span class="line">	    (ret = get_fd_set(n, outp, fds.out)) ||</span><br><span class="line">	    (ret = get_fd_set(n, <span class="built_in">exp</span>, fds.ex)))</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//存放返回状态的字段清零，后续可用作返回结果使用</span></span><br><span class="line">	zero_fd_set(n, fds.res_in);</span><br><span class="line">	zero_fd_set(n, fds.res_out);</span><br><span class="line">	zero_fd_set(n, fds.res_ex);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//select核心逻辑处理函数</span></span><br><span class="line">	ret = do_select(n, &amp;fds, end_time);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//存在错误</span></span><br><span class="line">	<span class="keyword">if</span> (ret &lt; <span class="number">0</span>)</span><br><span class="line">		<span class="keyword">goto</span> out;</span><br><span class="line">	<span class="comment">//超时情况</span></span><br><span class="line">	<span class="keyword">if</span> (!ret) &#123;</span><br><span class="line">		ret = -ERESTARTNOHAND;</span><br><span class="line">		<span class="keyword">if</span> (signal_pending(current))</span><br><span class="line">			<span class="keyword">goto</span> out;</span><br><span class="line">		ret = <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//把结果集拷入用户空间</span></span><br><span class="line">	<span class="keyword">if</span> (set_fd_set(n, inp, fds.res_in) ||</span><br><span class="line">	    set_fd_set(n, outp, fds.res_out) ||</span><br><span class="line">	    set_fd_set(n, <span class="built_in">exp</span>, fds.res_ex))</span><br><span class="line">		ret = -EFAULT;</span><br><span class="line"></span><br><span class="line">out:</span><br><span class="line">	<span class="comment">//释放辅助内存</span></span><br><span class="line">	<span class="keyword">if</span> (bits != stack_fds)</span><br><span class="line">		kfree(bits);</span><br><span class="line">out_nofds:</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>1.检验nfds，如果其小于0，参数异常返回；并规整nfds（最大不能超过当前进程的max_fds）<br>2.将用户态fd集合拷入内核态<br>3.运行do_select<br>4.将do_select检测结果拷入用户空间<br>5.释放select运算中辅助内存</p>
+</blockquote>
+<p>do_select<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">do_select</span><span class="params">(<span class="keyword">int</span> n, fd_set_bits *fds, struct timespec *end_time)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">ktime_t</span> expire, *to = <span class="literal">NULL</span>;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">poll_wqueues</span> <span class="title">table</span>;</span></span><br><span class="line">	poll_table *wait;</span><br><span class="line">	<span class="keyword">int</span> retval, i, timed_out = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span> slack = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> busy_flag = net_busy_loop_on() ? POLL_BUSY_LOOP : <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span> busy_end = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	rcu_read_lock();</span><br><span class="line">	<span class="comment">//检查fd对应file状态，且找出最大fd</span></span><br><span class="line">	retval = max_select_fd(n, fds);</span><br><span class="line">	rcu_read_unlock();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (retval &lt; <span class="number">0</span>)</span><br><span class="line">		<span class="keyword">return</span> retval;</span><br><span class="line">	n = retval;</span><br><span class="line"></span><br><span class="line">	poll_initwait(&amp;table);</span><br><span class="line">	wait = &amp;table.pt;</span><br><span class="line">	<span class="comment">//传入的时间为0s 0ms time_out标记为1 这种情况不阻塞直接返回</span></span><br><span class="line">	<span class="keyword">if</span> (end_time &amp;&amp; !end_time-&gt;tv_sec &amp;&amp; !end_time-&gt;tv_nsec) &#123;</span><br><span class="line">		wait-&gt;_qproc = <span class="literal">NULL</span>;</span><br><span class="line">		timed_out = <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//正常情况处理。 超时时间转换</span></span><br><span class="line">	<span class="keyword">if</span> (end_time &amp;&amp; !timed_out)</span><br><span class="line">		slack = select_estimate_accuracy(end_time);</span><br><span class="line"></span><br><span class="line">	retval = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span> (;;) &#123;</span><br><span class="line">		<span class="keyword">unsigned</span> <span class="keyword">long</span> *rinp, *routp, *rexp, *inp, *outp, *<span class="built_in">exp</span>;</span><br><span class="line">		<span class="keyword">bool</span> can_busy_loop = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">		inp = fds-&gt;in; outp = fds-&gt;out; <span class="built_in">exp</span> = fds-&gt;ex;</span><br><span class="line">		rinp = fds-&gt;res_in; routp = fds-&gt;res_out; rexp = fds-&gt;res_ex;</span><br><span class="line"></span><br><span class="line">		<span class="comment">//所有监听的fd大循环</span></span><br><span class="line">		<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; n; ++rinp, ++routp, ++rexp) &#123;</span><br><span class="line">			<span class="keyword">unsigned</span> <span class="keyword">long</span> in, out, ex, all_bits, bit = <span class="number">1</span>, mask, j;</span><br><span class="line">			<span class="keyword">unsigned</span> <span class="keyword">long</span> res_in = <span class="number">0</span>, res_out = <span class="number">0</span>, res_ex = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">			<span class="comment">//32个文件描述符号，没有任何状态被检测，进入下一轮32个</span></span><br><span class="line">			in = *inp++; out = *outp++; ex = *<span class="built_in">exp</span>++;</span><br><span class="line">			all_bits = in | out | ex;</span><br><span class="line">			<span class="keyword">if</span> (all_bits == <span class="number">0</span>) &#123;</span><br><span class="line">				i += BITS_PER_LONG;</span><br><span class="line">				<span class="keyword">continue</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">// 这一轮32个fd存在需要检测的状态</span></span><br><span class="line">			<span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; BITS_PER_LONG; ++j, ++i, bit &lt;&lt;= <span class="number">1</span>) &#123;</span><br><span class="line">				<span class="class"><span class="keyword">struct</span> <span class="title">fd</span> <span class="title">f</span>;</span></span><br><span class="line">				<span class="comment">//超过最大待检测fd n直接退出循环</span></span><br><span class="line">				<span class="keyword">if</span> (i &gt;= n)</span><br><span class="line">					<span class="keyword">break</span>;</span><br><span class="line">					</span><br><span class="line">				<span class="comment">//跳过没有状态检测的fd</span></span><br><span class="line">				<span class="keyword">if</span> (!(bit &amp; all_bits))</span><br><span class="line">					<span class="keyword">continue</span>;</span><br><span class="line">					</span><br><span class="line">				f = fdget(i);</span><br><span class="line">				<span class="keyword">if</span> (f.file) &#123;</span><br><span class="line">					<span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">file_operations</span> *<span class="title">f_op</span>;</span></span><br><span class="line">					f_op = f.file-&gt;f_op;</span><br><span class="line">					</span><br><span class="line">					<span class="comment">//设置fd检测事件掩码，poll相关情况处理</span></span><br><span class="line">					mask = DEFAULT_POLLMASK;</span><br><span class="line">					<span class="keyword">if</span> (f_op &amp;&amp; f_op-&gt;poll) &#123;</span><br><span class="line">						<span class="comment">//设置用户需要探查的标记</span></span><br><span class="line">						wait_key_set(wait, in, out,</span><br><span class="line">							     bit, busy_flag);</span><br><span class="line">						<span class="comment">//获取fd当前对应的信号掩码</span></span><br><span class="line">						mask = (*f_op-&gt;poll)(f.file, wait);</span><br><span class="line">					&#125;</span><br><span class="line">					fdput(f);</span><br><span class="line">					</span><br><span class="line">					<span class="comment">//可读</span></span><br><span class="line">					<span class="keyword">if</span> ((mask &amp; POLLIN_SET) &amp;&amp; (in &amp; bit)) &#123;</span><br><span class="line">						res_in |= bit;</span><br><span class="line">						retval++;</span><br><span class="line">						wait-&gt;_qproc = <span class="literal">NULL</span>;</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="comment">//可写</span></span><br><span class="line">					<span class="keyword">if</span> ((mask &amp; POLLOUT_SET) &amp;&amp; (out &amp; bit)) &#123;</span><br><span class="line">						res_out |= bit;</span><br><span class="line">						retval++;</span><br><span class="line">						wait-&gt;_qproc = <span class="literal">NULL</span>;</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">if</span> ((mask &amp; POLLEX_SET) &amp;&amp; (ex &amp; bit)) &#123;</span><br><span class="line">						res_ex |= bit;</span><br><span class="line">						retval++;</span><br><span class="line">						wait-&gt;_qproc = <span class="literal">NULL</span>;</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="comment">/* got something, stop busy polling */</span></span><br><span class="line">					<span class="keyword">if</span> (retval) &#123;</span><br><span class="line">						can_busy_loop = <span class="literal">false</span>;</span><br><span class="line">						busy_flag = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">					<span class="comment">/*</span></span><br><span class="line"><span class="comment">					 * only remember a returned</span></span><br><span class="line"><span class="comment">					 * POLL_BUSY_LOOP if we asked for it</span></span><br><span class="line"><span class="comment">					 */</span></span><br><span class="line">					&#125; <span class="keyword">else</span> <span class="keyword">if</span> (busy_flag &amp; mask)</span><br><span class="line">						can_busy_loop = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">//将检测结果存下来</span></span><br><span class="line">			<span class="keyword">if</span> (res_in)</span><br><span class="line">				*rinp = res_in;</span><br><span class="line">			<span class="keyword">if</span> (res_out)</span><br><span class="line">				*routp = res_out;</span><br><span class="line">			<span class="keyword">if</span> (res_ex)</span><br><span class="line">				*rexp = res_ex;</span><br><span class="line">				</span><br><span class="line">			<span class="comment">//增加抢占点 该抢占点可达到效果是：判断是否有进程需要抢占当前进程，如果是将立即发生调度</span></span><br><span class="line">			<span class="comment">//已经检查过的fd如果此时被唤醒，则会在此产生调度</span></span><br><span class="line">			cond_resched();</span><br><span class="line">		&#125;</span><br><span class="line">		wait-&gt;_qproc = <span class="literal">NULL</span>;</span><br><span class="line">		<span class="keyword">if</span> (retval || timed_out || signal_pending(current))</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">			</span><br><span class="line">		<span class="comment">//设备就绪异常超时终止灯信号触发，直接break，可跳出大循环结束程序</span></span><br><span class="line">		<span class="keyword">if</span> (table.error) &#123;</span><br><span class="line">			retval = table.error;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* only if found POLL_BUSY_LOOP sockets &amp;&amp; not out of time */</span></span><br><span class="line">		<span class="keyword">if</span> (can_busy_loop &amp;&amp; !need_resched()) &#123;</span><br><span class="line">			<span class="keyword">if</span> (!busy_end) &#123;</span><br><span class="line">				busy_end = busy_loop_end_time();</span><br><span class="line">				<span class="keyword">continue</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> (!busy_loop_timeout(busy_end))</span><br><span class="line">				<span class="keyword">continue</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		busy_flag = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/*</span></span><br><span class="line"><span class="comment">		 * If this is the first loop and we have a timeout</span></span><br><span class="line"><span class="comment">		 * given, then we convert to ktime_t and set the to</span></span><br><span class="line"><span class="comment">		 * pointer to the expiry value.</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">if</span> (end_time &amp;&amp; !to) &#123;</span><br><span class="line">			expire = timespec_to_ktime(*end_time);</span><br><span class="line">			to = &amp;expire;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//当前用户进程从这里进入睡眠，超时后timed_out 置1 直接退出</span></span><br><span class="line">		<span class="keyword">if</span> (!poll_schedule_timeout(&amp;table, TASK_INTERRUPTIBLE,</span><br><span class="line">					   to, slack))</span><br><span class="line">			timed_out = <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	poll_freewait(&amp;table);</span><br><span class="line">	<span class="keyword">return</span> retval;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+<p>do_select为select的核心实现，其处理过程如下：</p>
+<blockquote>
+<p>1.调用poll_initwait初始化poll_wqueues对象table，包括其成员poll_table；</p>
+</blockquote>
+<blockquote>
+<p>2.如果用户传入的timeout不为NULL，但是设定的时间为0，那么设置poll_table指针wait(即 &amp;table.pt）为NULL；当&amp;table.pt为NULL，它并不会被加到等到队列中。</p>
+</blockquote>
+<blockquote>
+<p>3.将in,out和exception进行或运算，得到all_bits，然后遍历all_bits中bit为1的fd，根据进程的fd_table查找到file指针filp，然后设置wait的key值（POLLEX_SET, POLLIN_SET,POLLIN_SET三者的或运算，取决于用户输入），并调用filp-&gt;poll(filp, wait)，获得返回值mask。 再根据mask值检查该文件是否立即满足条件，如果满足，设置res_in/res_out/res_exception的值，执行retval++, 并设置wait为NULL。</p>
+</blockquote>
+<blockquote>
+<p>4.在每遍历32（取决于long型整数的位数）个文件后，调用1次cond_resched()，主动寻求调度，可以等待已经遍历过的文件是否有唤醒的；</p>
+</blockquote>
+<blockquote>
+<p>5.在遍历完所有文件之后，设置wait为NULL，并检查是否有满足条件的文件（retval值是否为0），或者是否超时，或者是否有未决信号，如果有那么直接跳出循环，进入步骤7；</p>
+</blockquote>
+<blockquote>
+<p>6.否则调用poll_schedule_timeout，使进程进入睡眠，直到超时（如果未设置超时，那么是直接调用的schedule()）。如果是超时后进程继续执行，那么设置pwq-&gt;triggered为0；如果是被文件对应的驱动程序唤醒的，那么pwq-&gt;triggered被设置为1.</p>
+</blockquote>
+<blockquote>
+<p>   7.最终，函数调用poll_freewait，将本进程从所有文件的等待队列中删掉，并删除分配的poll_table_page对象，回收内存，并返回retval值。</p>
+</blockquote>
+<blockquote>
+<p> 8.拷贝res_in, res_out和res_exception到传入的in, out, exception，并返回ret。</p>
+</blockquote>
+<h3 id="select睡眠过程"><a href="#select睡眠过程" class="headerlink" title="select睡眠过程"></a>select睡眠过程</h3><p>do_select</p>
+<p>…<br>    步骤1<br>    poll_initwait(&amp;table);<br>    wait = &amp;table.pt;<br>…<br>    步骤2<br>    if (f_op &amp;&amp; f_op-&gt;poll) {<br>    wait_key_set(wait, in, out,<br>             bit, busy_flag);<br>    //如果是socket此处调用的是sock_poll<br>    mask = (*f_op-&gt;poll)(f.file, wait);<br>}<br>    步骤3<br>…<br>    if (!poll_schedule_timeout(&amp;table, TASK_INTERRUPTIBLE,<br>                       to, slack))</p>
+<p>步骤1:初始化table<br>    struct poll_wqueues table;</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">poll_initwait</span><span class="params">(struct poll_wqueues *pwq)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	init_poll_funcptr(&amp;pwq-&gt;pt, __pollwait);</span><br><span class="line">	pwq-&gt;polling_task = current;</span><br><span class="line">	pwq-&gt;triggered = <span class="number">0</span>;</span><br><span class="line">	pwq-&gt;error = <span class="number">0</span>;</span><br><span class="line">	pwq-&gt;table = <span class="literal">NULL</span>;</span><br><span class="line">	pwq-&gt;inline_index = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line">EXPORT_SYMBOL(poll_initwait);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>将当前进程标志current给table让其记录下来</li>
+<li>将__pollwait给table-&gt;pt-&gt;_qproc让其记录下来</li>
+</ul>
+<p>步骤2:调用sock_poll最终调用tcp_pool<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* No kernel lock held - perfect */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">sock_poll</span><span class="params">(struct file *file, poll_table *wait)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> busy_flag = <span class="number">0</span>;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">socket</span> *<span class="title">sock</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 *      We can't return errors to poll, so it's either yes or no.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	sock = file-&gt;private_data;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (sk_can_busy_loop(sock-&gt;sk)) &#123;</span><br><span class="line">		<span class="comment">/* this socket can poll_ll so tell the system call */</span></span><br><span class="line">		busy_flag = POLL_BUSY_LOOP;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* once, only if requested by syscall */</span></span><br><span class="line">		<span class="keyword">if</span> (wait &amp;&amp; (wait-&gt;_key &amp; POLL_BUSY_LOOP))</span><br><span class="line">			sk_busy_loop(sock-&gt;sk, <span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line">							<span class="comment">//针对于tcpsocket来讲此处调用tcp_pool</span></span><br><span class="line">	<span class="keyword">return</span> busy_flag | sock-&gt;ops-&gt;poll(file, sock, wait);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> *	Wait for a TCP event.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> *	Note that we don't need to lock the socket, as the upper poll layers</span></span><br><span class="line"><span class="comment"> *	take care of normal races (between the test and the event) and we don't</span></span><br><span class="line"><span class="comment"> *	go look at any of the socket buffers directly.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">int</span> <span class="title">tcp_poll</span><span class="params">(struct file *file, struct socket *sock, poll_table *wait)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> mask;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sock</span> *<span class="title">sk</span> = <span class="title">sock</span>-&gt;<span class="title">sk</span>;</span></span><br><span class="line">	<span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">tcp_sock</span> *<span class="title">tp</span> = <span class="title">tcp_sk</span>(<span class="title">sk</span>);</span></span><br><span class="line"></span><br><span class="line">	sock_rps_record_flow(sk);</span><br><span class="line"></span><br><span class="line">	sock_poll_wait(file, sk_sleep(sk), wait);</span><br><span class="line">	<span class="keyword">if</span> (sk-&gt;sk_state == TCP_LISTEN)</span><br><span class="line">		<span class="keyword">return</span> inet_csk_listen_poll(sk);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Socket is not locked. We are protected from async events</span></span><br><span class="line"><span class="comment">	 * by poll logic and correct handling of state changes</span></span><br><span class="line"><span class="comment">	 * made by other threads is impossible in any case.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line"></span><br><span class="line">	mask = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">if</span> (sk-&gt;sk_shutdown == SHUTDOWN_MASK || sk-&gt;sk_state == TCP_CLOSE)</span><br><span class="line">		mask |= POLLHUP;</span><br><span class="line">	<span class="keyword">if</span> (sk-&gt;sk_shutdown &amp; RCV_SHUTDOWN)</span><br><span class="line">		mask |= POLLIN | POLLRDNORM | POLLRDHUP;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Connected or passive Fast Open socket? */</span></span><br><span class="line">	<span class="keyword">if</span> (sk-&gt;sk_state != TCP_SYN_SENT &amp;&amp;</span><br><span class="line">	    (sk-&gt;sk_state != TCP_SYN_RECV || tp-&gt;fastopen_rsk != <span class="literal">NULL</span>)) &#123;</span><br><span class="line">		<span class="keyword">int</span> target = sock_rcvlowat(sk, <span class="number">0</span>, INT_MAX);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (tp-&gt;urg_seq == tp-&gt;copied_seq &amp;&amp;</span><br><span class="line">		    !sock_flag(sk, SOCK_URGINLINE) &amp;&amp;</span><br><span class="line">		    tp-&gt;urg_data)</span><br><span class="line">			target++;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* Potential race condition. If read of tp below will</span></span><br><span class="line"><span class="comment">		 * escape above sk-&gt;sk_state, we can be illegally awaken</span></span><br><span class="line"><span class="comment">		 * in SYN_* states. */</span></span><br><span class="line">		<span class="keyword">if</span> (tp-&gt;rcv_nxt - tp-&gt;copied_seq &gt;= target)</span><br><span class="line">			mask |= POLLIN | POLLRDNORM;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (!(sk-&gt;sk_shutdown &amp; SEND_SHUTDOWN)) &#123;</span><br><span class="line">			<span class="keyword">if</span> (sk_stream_is_writeable(sk)) &#123;</span><br><span class="line">				mask |= POLLOUT | POLLWRNORM;</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;  <span class="comment">/* send SIGIO later */</span></span><br><span class="line">				set_bit(SOCK_ASYNC_NOSPACE,</span><br><span class="line">					&amp;sk-&gt;sk_socket-&gt;flags);</span><br><span class="line">				set_bit(SOCK_NOSPACE, &amp;sk-&gt;sk_socket-&gt;flags);</span><br><span class="line"></span><br><span class="line">				<span class="comment">/* Race breaker. If space is freed after</span></span><br><span class="line"><span class="comment">				 * wspace test but before the flags are set,</span></span><br><span class="line"><span class="comment">				 * IO signal will be lost.</span></span><br><span class="line"><span class="comment">				 */</span></span><br><span class="line">				<span class="keyword">if</span> (sk_stream_is_writeable(sk))</span><br><span class="line">					mask |= POLLOUT | POLLWRNORM;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span></span><br><span class="line">			mask |= POLLOUT | POLLWRNORM;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (tp-&gt;urg_data &amp; TCP_URG_VALID)</span><br><span class="line">			mask |= POLLPRI;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">/* This barrier is coupled with smp_wmb() in tcp_reset() */</span></span><br><span class="line">	smp_rmb();</span><br><span class="line">	<span class="keyword">if</span> (sk-&gt;sk_err)</span><br><span class="line">		mask |= POLLERR;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> mask;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>收集信号状态以mask方式返回</li>
+<li>调用sock_poll_wait然后poll_wait最终调用_qproc也就是__pollwait</li>
+<li>__pollwait</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Add a new entry */</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> __pollwait(struct file *filp, <span class="keyword">wait_queue_head_t</span> *wait_address,</span><br><span class="line">				poll_table *p)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">poll_wqueues</span> *<span class="title">pwq</span> = <span class="title">container_of</span>(<span class="title">p</span>, <span class="title">struct</span> <span class="title">poll_wqueues</span>, <span class="title">pt</span>);</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">poll_table_entry</span> *<span class="title">entry</span> = <span class="title">poll_get_entry</span>(<span class="title">pwq</span>);</span></span><br><span class="line">	<span class="keyword">if</span> (!entry)</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	entry-&gt;filp = get_file(filp);</span><br><span class="line">	entry-&gt;wait_address = wait_address;</span><br><span class="line">	entry-&gt;key = p-&gt;_key;</span><br><span class="line">	init_waitqueue_func_entry(&amp;entry-&gt;wait, pollwake);</span><br><span class="line">	entry-&gt;wait.<span class="keyword">private</span> = pwq;</span><br><span class="line">	add_wait_queue(wait_address, &amp;entry-&gt;wait);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>为每个fd对应文件分配 poll_table_entry</li>
+<li>将fd对应poll_table_entry加入到等待队列中</li>
+</ul>
+<p>步骤3:<br>    poll_schedule_timeout，作用是使进程进入睡眠，直到超时或者被唤醒<br>    如果超时后进程继续执行设置pwq-&gt;triggered为0<br>    如果是被文件对应的驱动程序唤醒pwq-&gt;triggered为1</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">poll_schedule_timeout</span><span class="params">(struct poll_wqueues *pwq, <span class="keyword">int</span> state,</span></span></span><br><span class="line"><span class="function"><span class="params">			  <span class="keyword">ktime_t</span> *expires, <span class="keyword">unsigned</span> <span class="keyword">long</span> slack)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> rc = -EINTR;</span><br><span class="line"></span><br><span class="line">	set_current_state(state);</span><br><span class="line">	<span class="keyword">if</span> (!pwq-&gt;triggered)</span><br><span class="line">		rc = freezable_schedule_hrtimeout_range(expires, slack,</span><br><span class="line">							HRTIMER_MODE_ABS);</span><br><span class="line">	__set_current_state(TASK_RUNNING);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Prepare for the next iteration.</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 * The following set_mb() serves two purposes.  First, it's</span></span><br><span class="line"><span class="comment">	 * the counterpart rmb of the wmb in pollwake() such that data</span></span><br><span class="line"><span class="comment">	 * written before wake up is always visible after wake up.</span></span><br><span class="line"><span class="comment">	 * Second, the full barrier guarantees that triggered clearing</span></span><br><span class="line"><span class="comment">	 * doesn't pass event check of the next iteration.  Note that</span></span><br><span class="line"><span class="comment">	 * this problem doesn't exist for the first iteration as</span></span><br><span class="line"><span class="comment">	 * add_wait_queue() has full barrier semantics.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	set_mb(pwq-&gt;triggered, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> rc;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="select唤醒过程"><a href="#select唤醒过程" class="headerlink" title="select唤醒过程"></a>select唤醒过程</h3><p> 0xffffffff81213130 : pollwake+0x0/0x90 [kernel]<br> 0xffffffff810ba628 : <strong>wake_up_common+0x58/0x90 [kernel]<br> 0xffffffff810bc4a4 : </strong>wake_up_sync_key+0x44/0x60 [kernel]<br> 0xffffffff8155825a : sock_def_readable+0x3a/0x70 [kernel]<br> 0xffffffff815c8197 : tcp_data_queue+0x497/0xdd0 [kernel]<br> 0xffffffff815cb4a7 : tcp_rcv_established+0x217/0x760 [kernel]<br> 0xffffffff815d5f8a : tcp_v4_do_rcv+0x10a/0x340 [kernel]<br> 0xffffffff815d76d9 : tcp_v4_rcv+0x799/0x9a0 [kernel]<br> 0xffffffff815b1094 : ip_local_deliver_finish+0xb4/0x1f0 [kernel]<br> 0xffffffff815b1379 : ip_local_deliver+0x59/0xd0 [kernel]<br> 0xffffffff815b0d1a : ip_rcv_finish+0x8a/0x350 [kernel]<br> 0xffffffff815b16a6 : ip_rcv+0x2b6/0x410 [kernel]<br> 0xffffffff815700d2 : <strong>netif_receive_skb_core+0x582/0x800 [kernel]<br> 0xffffffff81570368 : </strong>netif_receive_skb+0x18/0x60 [kernel]<br> 0xffffffff815703f0 : netif_receive_skb_internal+0x40/0xc0 [kernel]<br> 0xffffffff81571578 : napi_gro_receive+0xd8/0x130 [kernel]<br> 0xffffffffa00472fc [e1000]</p>
+<p> pollwake -&gt;__pollwake-&gt;default_wake_function-&gt;try_to_wake_up</p>
+<p> try_to_wake_up会把进程的状态设置为TASK_RUNNING，并把进程插入CPU运行队列，来唤醒睡眠的进程</p>
+<h2 id="linux-select-1024限制魔咒"><a href="#linux-select-1024限制魔咒" class="headerlink" title="linux select 1024限制魔咒"></a>linux select 1024限制魔咒</h2><p>__FD_SETSIZE 默认最大为1024，一个int占用4个byte，也就是32个bit，所以使用了一个int数组大小为32位来表示了我们要操作的fd的数值，每个bit代表了一个handle数值</p>
+<p>需要注意的问题是，这里的最大为1024，如果handle数值为1025是不能处理的（而且很容易导致破坏堆栈），不是说可以容纳1024个网络客户端句柄，而是最大的handle数值为1024，再算上系统本身使用的stdout,stdin, stderr默认的3个，因此最多也就是1021个，再算上程序打开的文件句柄等等，实际上使用可能要比1024少上好多。</p>
+<p>另外，ulimit对每个进程打开的句柄也有限制。</p>
+<h3 id="why-1024"><a href="#why-1024" class="headerlink" title="why 1024 ?"></a>why 1024 ?</h3><p>内核参数适用结构体是fd_set</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SYSCALL_DEFINE5(select, <span class="keyword">int</span>, n, fd_set __user *, inp, fd_set __user *, outp,</span><br><span class="line">		fd_set __user *, <span class="built_in">exp</span>, struct timeval __user *, tvp)</span><br><span class="line">&#123;</span><br></pre></td></tr></table></figure>
+<p>fd_set是 __kernel_fd_set</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> __kernel_fd_set		fd_set;</span><br></pre></td></tr></table></figure>
+<p>__kernel_fd_set 中fds_bits 最大只能1024 </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __FD_SETSIZE	1024</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span> fds_bits[__FD_SETSIZE / (<span class="number">8</span> * <span class="keyword">sizeof</span>(<span class="keyword">long</span>))];</span><br><span class="line">&#125; __kernel_fd_set;</span><br></pre></td></tr></table></figure>
+<h3 id="我该怎么办才能突破1024限制？"><a href="#我该怎么办才能突破1024限制？" class="headerlink" title="我该怎么办才能突破1024限制？"></a>我该怎么办才能突破1024限制？</h3><p>修改掉此宏重新编译吧，当然还有其他办法，但是没必要这么复杂，直接用pool或者epool解决吧<br>当然你也可以多进程或者多线程，每个进程／线程 分别select</p>
+<h2 id="select缺点总结"><a href="#select缺点总结" class="headerlink" title="select缺点总结"></a>select缺点总结</h2><blockquote>
+<p>select效率低下，用户空间和内核空间来回拷贝，select内部吧存进程上下文切换，大型项目不适用<br>可同时监听的文件数量有限，linux平台1024个<br>每次调用select都要遍历完成所有的fd，每隔32fd需要调度一次<br>多个fd情况下，如果小的fs一直可读，会导致大的fd信号不会被收集到<br>需要在用户态和内核态来回拷贝fd_set，睡眠唤醒机制需要为fd分配poll_table_entry</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/tcp-ip/" rel="tag"># tcp/ip</a>
+          
+            <a href="/tags/kernel3-10-0-514-16-1/" rel="tag"># kernel3.10.0-514.16.1</a>
+          
+            <a href="/tags/select/" rel="tag"># select</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/TIME_WAIT状态分析/" rel="next" title="TIME_WAIT状态分析">
+                <i class="fa fa-chevron-left"></i> TIME_WAIT状态分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/socket_rw_proc/" rel="prev" title="socket读写条件">
+                socket读写条件 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/h.jpg"
+               alt="vcpu.me" />
+          <p class="site-author-name" itemprop="name">vcpu.me</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">82</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">200</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/vcpu/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://ytlm.github.io/" title="CDN张三丰" target="_blank">CDN张三丰</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://io.iwalk.me" title="互联网绝世高手Andy" target="_blank">互联网绝世高手Andy</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#select用户态用法"><span class="nav-number">1.</span> <span class="nav-text">select用户态用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#select实现分析"><span class="nav-number">2.</span> <span class="nav-text">select实现分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#用户态select-系统调用-sys-select"><span class="nav-number">2.1.</span> <span class="nav-text">用户态select 系统调用 sys_select</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#select功能概述"><span class="nav-number">2.2.</span> <span class="nav-text">select功能概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sys-select实现分析"><span class="nav-number">2.3.</span> <span class="nav-text">sys_select实现分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#select睡眠过程"><span class="nav-number">2.4.</span> <span class="nav-text">select睡眠过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#select唤醒过程"><span class="nav-number">2.5.</span> <span class="nav-text">select唤醒过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#linux-select-1024限制魔咒"><span class="nav-number">3.</span> <span class="nav-text">linux select 1024限制魔咒</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#why-1024"><span class="nav-number">3.1.</span> <span class="nav-text">why 1024 ?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#我该怎么办才能突破1024限制？"><span class="nav-number">3.2.</span> <span class="nav-text">我该怎么办才能突破1024限制？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#select缺点总结"><span class="nav-number">4.</span> <span class="nav-text">select缺点总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">vcpu.me</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://vcpu.me.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://vcpu.me/select/';
+          this.page.identifier = 'select/';
+          this.page.title = 'select';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://vcpu.me.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("l5u4v8AcoPCp9wlPGVJTG6Ny-gzGzoHsz", "RQdYIOd2snvd1muAW65nsn25");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

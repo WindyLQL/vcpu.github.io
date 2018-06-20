@@ -1,0 +1,1403 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ubuntun16.04,arp机制实验验证,arp机制," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="i博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="一.问题1.使用keepalived进行热备份的系统需要一个虚拟的IP地址，然而该虚拟IP地址到底属于哪台机器是根据热备群的主备来决定的，因此主机器在获得该虚拟IP的时候，必须要广播一个免费的arp，起初人们认为这没有必要，理由是不这么做，热备群也工作的很好，然而事实证明，这是必须的；2.ARP缓存表项都有一个老化时间，然而在linux系统中却没有给出具体如何来设置这个老化时间。那么到底怎么设置这">
+<meta name="keywords" content="ubuntun16.04,arp机制实验验证,arp机制">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux arp机制解析">
+<meta property="og:url" content="http://vcpu.me/linuxarp/index.html">
+<meta property="og:site_name" content="i博客">
+<meta property="og:description" content="一.问题1.使用keepalived进行热备份的系统需要一个虚拟的IP地址，然而该虚拟IP地址到底属于哪台机器是根据热备群的主备来决定的，因此主机器在获得该虚拟IP的时候，必须要广播一个免费的arp，起初人们认为这没有必要，理由是不这么做，热备群也工作的很好，然而事实证明，这是必须的；2.ARP缓存表项都有一个老化时间，然而在linux系统中却没有给出具体如何来设置这个老化时间。那么到底怎么设置这">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://vcpu.me/myimages/arp1.png">
+<meta property="og:image" content="http://vcpu.me/myimages/arp2.png">
+<meta property="og:image" content="http://vcpu.me/myimages/arp3.png">
+<meta property="og:updated_time" content="2017-10-30T10:01:40.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux arp机制解析">
+<meta name="twitter:description" content="一.问题1.使用keepalived进行热备份的系统需要一个虚拟的IP地址，然而该虚拟IP地址到底属于哪台机器是根据热备群的主备来决定的，因此主机器在获得该虚拟IP的时候，必须要广播一个免费的arp，起初人们认为这没有必要，理由是不这么做，热备群也工作的很好，然而事实证明，这是必须的；2.ARP缓存表项都有一个老化时间，然而在linux系统中却没有给出具体如何来设置这个老化时间。那么到底怎么设置这">
+<meta name="twitter:image" content="http://vcpu.me/myimages/arp1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://vcpu.me/linuxarp/"/>
+
+
+
+
+
+  <title>linux arp机制解析 | i博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">i博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">仰望星空前，还需脚踏实地。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/linuxarp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">linux arp机制解析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-01T18:00:00+08:00">
+                2017-10-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/linuxarp/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="linuxarp/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/linuxarp/" class="leancloud_visitors" data-flag-title="linux arp机制解析">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="一-问题"><a href="#一-问题" class="headerlink" title="一.问题"></a>一.问题</h2><h3 id="1-使用keepalived进行热备份的系统需要一个虚拟的IP地址，然而该虚拟IP地址到底属于哪台机器是根据热备群的主备来决定的，因此主机器在获得该虚拟IP的时候，必须要广播一个免费的arp，起初人们认为这没有必要，理由是不这么做，热备群也工作的很好，然而事实证明，这是必须的；"><a href="#1-使用keepalived进行热备份的系统需要一个虚拟的IP地址，然而该虚拟IP地址到底属于哪台机器是根据热备群的主备来决定的，因此主机器在获得该虚拟IP的时候，必须要广播一个免费的arp，起初人们认为这没有必要，理由是不这么做，热备群也工作的很好，然而事实证明，这是必须的；" class="headerlink" title="1.使用keepalived进行热备份的系统需要一个虚拟的IP地址，然而该虚拟IP地址到底属于哪台机器是根据热备群的主备来决定的，因此主机器在获得该虚拟IP的时候，必须要广播一个免费的arp，起初人们认为这没有必要，理由是不这么做，热备群也工作的很好，然而事实证明，这是必须的；"></a>1.使用keepalived进行热备份的系统需要一个虚拟的IP地址，然而该虚拟IP地址到底属于哪台机器是根据热备群的主备来决定的，因此主机器在获得该虚拟IP的时候，必须要广播一个免费的arp，起初人们认为这没有必要，理由是不这么做，热备群也工作的很好，然而事实证明，这是必须的；</h3><h3 id="2-ARP缓存表项都有一个老化时间，然而在linux系统中却没有给出具体如何来设置这个老化时间。那么到底怎么设置这个老化时间呢？"><a href="#2-ARP缓存表项都有一个老化时间，然而在linux系统中却没有给出具体如何来设置这个老化时间。那么到底怎么设置这个老化时间呢？" class="headerlink" title="2.ARP缓存表项都有一个老化时间，然而在linux系统中却没有给出具体如何来设置这个老化时间。那么到底怎么设置这个老化时间呢？"></a>2.ARP缓存表项都有一个老化时间，然而在linux系统中却没有给出具体如何来设置这个老化时间。那么到底怎么设置这个老化时间呢？</h3><a id="more"></a>
+<h2 id="二-解答问题前的说明"><a href="#二-解答问题前的说明" class="headerlink" title="二.解答问题前的说明"></a>二.解答问题前的说明</h2><p>ARP协议的规范只是阐述了地址解析的细节，然而并没有规定协议栈的实现如何去维护ARP缓存。ARP缓存需要有一个到期时间，这是必要的，因为ARP缓存并不维护映射的状态，也不进行认证，因此协议本身不能保证这种映射永远都是正确的，它只能保证该映射在得到arp应答之后的一定时间内是有效的。这也给了ARP欺骗以可乘之机，不过本文不讨论这种欺骗。<br> 像Cisco或者基于VRP的华为设备都有明确的配置来配置arp缓存的到期时间，然而Linux系统中却没有这样的配置，起码可以说没有这样的直接配置。Linux用户都知道如果需要配置什么系统行为，那么使用sysctl工具配置procfs下的sys接口是一个方法，然而当我们google了好久，终于发现关于ARP的配置处在/proc/sys/net/ipv4/neigh/ethX的时候，我们最终又迷茫于该目录下的N多文件，即使去查询Linux内核的Documents也不能清晰的明了这些文件的具体含义。对于Linux这样的成熟系统，一定有办法来配置ARP缓存的到期时间，但是具体到操作上，到底怎么配置呢？这还得从Linux实现的ARP状态机说起。<br> 如果你看过<strong><em>《Understading Linux Networking Internals》</em></strong>并且真的做到深入理解的话，那么本文讲的基本就是废话，但是很多人是没有看过那本书的，因此本文的内容还是有一定价值的。<br> Linux协议栈实现为ARP缓存维护了一个状态机，在理解具体的行为之前，先看一下下面的图(该图基于<strong><em>《Understading Linux Networking Internals》</em></strong>里面的图26-13修改，在第二十六章)：<br><img src="/myimages/arp1.png" alt="arp1"><br>在上图中，我们看到只有arp缓存项的reachable状态对于外发包是可用的，对于stale状态的arp缓存项而言，它实际上是不可用的。如果此时有人要发包，那么需要进行重新解析，对于常规的理解，重新解析意味着要重新发送arp请求，然后事实上却不一定这样，因为Linux为arp增加了一个“事件点”来“不用发送arp请求”而对arp协议生成的缓存维护的优化措施，事实上，这种措施十分有效。这就是arp的“确认”机制，也就是说，如果说从一个邻居主动发来一个数据包到本机，那么就可以确认该包的“上一跳”这个邻居是有效的，然而为何只有到达本机的包才能确认“上一跳”这个邻居的有效性呢？因为Linux并不想为IP层的处理增加负担，也即不想改变IP层的原始语义。<br> Linux维护一个stale状态其实就是为了保留一个neighbour结构体，在其状态改变时只是个别字段得到修改或者填充。如果按照简单的实现，只保存一个reachable状态即可，其到期则删除arp缓存表项。Linux的做法只是做了很多的优化，但是如果你为这些优化而绞尽脑汁，那就悲剧了…</p>
+<h2 id="三-Linux如何来维护这个stale状态"><a href="#三-Linux如何来维护这个stale状态" class="headerlink" title="三.Linux如何来维护这个stale状态"></a>三.Linux如何来维护这个stale状态</h2><p>在Linux实现的ARP状态机中，最复杂的就是stale状态了，在此状态中的arp缓存表项面临着生死抉择，抉择者就是本地发出的包，如果本地发出的包使用了这个stale状态的arp缓存表项，那么就将状态机推进到delay状态，如果在“垃圾收集”定时器到期后还没有人使用该邻居，那么就有可能删除这个表项了，到底删除吗？这样看看有木有其它路径使用它，关键是看路由缓存，路由缓存虽然是一个第三层的概念，然而却保留了该路由的下一条的ARP缓存表项，这个意义上，Linux的路由缓存实则一个转发表而不是一个路由表。<br> 如果有外发包使用了这个表项，那么该表项的ARP状态机将进入delay状态，在delay状态中，只要有“本地”确认的到来(本地接收包的上一跳来自该邻居)，linux还是不会发送ARP请求的，但是如果一直都没有本地确认，那么Linux就将发送真正的ARP请求了，进入probe状态。因此可以看到，从stale状态开始，所有的状态只是为一种优化措施而存在的，stale状态的ARP缓存表项就是一个缓存的缓存，如果Linux只是将过期的reachable状态的arp缓存表项删除，语义是一样的，但是实现看起来以及理解起来会简单得多！<br> 再次强调，reachable过期进入stale状态而不是直接删除，是为了保留neighbour结构体，优化内存以及CPU利用，实际上进入stale状态的arp缓存表项时不可用的，要想使其可用，要么在delay状态定时器到期前本地给予了确认，比如tcp收到了一个包，要么delay状态到期进入probe状态后arp请求得到了回应。否则还是会被删除。</p>
+<h2 id="四-Linux的ARP缓存实现要点"><a href="#四-Linux的ARP缓存实现要点" class="headerlink" title="四.Linux的ARP缓存实现要点"></a>四.Linux的ARP缓存实现要点</h2><p>在blog中分析源码是儿时的记忆了，现在不再浪费版面了。只要知道Linux在实现arp时维护的几个定时器的要点即可。<br>1.Reachable状态定时器<br>每当有arp回应到达或者其它能证明该ARP表项表示的邻居真的可达时，启动该定时器。到期时根据配置的时间将对应的ARP缓存表项转换到下一个状态。<br>2.垃圾回收定时器<br>定时启动该定时器，具体下一次什么到期，是根据配置的base_reachable_time来决定的，具体见下面的代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">neigh_periodic_timer</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">long</span> arg)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">if</span> (time_after(now, tbl-&gt;last_rand + <span class="number">300</span> * HZ)) &#123; <span class="comment">//内核每5分钟重新进行一次配置</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">neigh_parms</span> *<span class="title">p</span>;</span></span><br><span class="line">        tbl-&gt;last_rand = now;</span><br><span class="line">        <span class="keyword">for</span> (p = &amp;tbl-&gt;parms; p; p = p-&gt;next)</span><br><span class="line">            p-&gt;reachable_time =</span><br><span class="line">                neigh_rand_reach_time(p-&gt;base_reachable_time);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">     <span class="comment">/* Cycle through all hash buckets every base_reachable_time/2 ticks.</span></span><br><span class="line"><span class="comment">      * ARP entry timeouts range from 1/2 base_reachable_time to 3/2</span></span><br><span class="line"><span class="comment">      * base_reachable_time.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    expire = tbl-&gt;parms.base_reachable_time &gt;&gt; <span class="number">1</span>;</span><br><span class="line">    expire /= (tbl-&gt;hash_mask + <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span> (!expire)</span><br><span class="line">        expire = <span class="number">1</span>;</span><br><span class="line">    <span class="comment">//下次何时到期完全基于base_reachable_time);</span></span><br><span class="line">     mod_timer(&amp;tbl-&gt;gc_timer, now + expire);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一旦这个定时器到期，将执行neigh_periodic_timer回调函数，里面有以下的逻辑，也即上面的…省略的部分：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (atomic_read(&amp;n-&gt;refcnt) == <span class="number">1</span> &amp;&amp; <span class="comment">//n-&gt;used可能会因为“本地确认”机制而向前推进</span></span><br><span class="line">    (state == NUD_FAILED ||    time_after(now, n-&gt;used + n-&gt;parms-&gt;gc_staletime))) &#123;</span><br><span class="line">    *np = n-&gt;next;</span><br><span class="line">    n-&gt;dead = <span class="number">1</span>;</span><br><span class="line">    write_unlock(&amp;n-&gt;lock);</span><br><span class="line">    neigh_release(n);</span><br><span class="line">    <span class="keyword">continue</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果在实验中，你的处于stale状态的表项没有被及时删除，那么试着执行一下下面的命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip route flush cache</span><br></pre></td></tr></table></figure>
+<p>然后再看看ip neigh ls all的结果，注意，不要指望马上会被删除，因为此时垃圾回收定时器还没有到期呢…但是我敢保证，不长的时间之后，该缓存表项将被删除。</p>
+<h2 id="五-第一个问题的解决"><a href="#五-第一个问题的解决" class="headerlink" title="五.第一个问题的解决"></a>五.第一个问题的解决</h2><p>在启用keepalived进行基于vrrp热备份的群组上，很多同学认为根本不需要在进入master状态时重新绑定自己的MAC地址和虚拟IP地址，然而这是根本错误的，如果说没有出现什么问题，那也是侥幸，因为各个路由器上默认配置的arp超时时间一般很短，然而我们不能依赖这种配置。请看下面的图示：<br><img src="/myimages/arp2.png" alt="arp2"><br>如果发生了切换，假设路由器上的arp缓存超时时间为1小时，那么在将近一小时内，单向数据将无法通信(假设群组中的主机不会发送数据通过路由器，排出“本地确认”，毕竟我不知道路由器是不是在运行Linux)，路由器上的数据将持续不断的法往原来的master，然而原始的matser已经不再持有虚拟IP地址。<br> 因此，为了使得数据行为不再依赖路由器的配置，必须在vrrp协议下切换到master时手动绑定虚拟IP地址和自己的MAC地址，在Linux上使用方便的arping则是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arping -i ethX -S 1.1.1.1 -B -c 1</span><br></pre></td></tr></table></figure>
+<p>这样一来，获得1.1.1.1这个IP地址的master主机将IP地址为255.255.255.255的ARP请求广播到全网，假设路由器运行Linux，则路由器接收到该ARP请求后将根据来源IP地址更新其本地的ARP缓存表项(如果有的话)，然而问题是，该表项更新的结果状态却是stale，这只是ARP的规定，具体在代码中体现是这样的，在arp_process函数的最后：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (arp-&gt;ar_op != htons(ARPOP_REPLY) || skb-&gt;pkt_type != PACKET_HOST)</span><br><span class="line">    state = NUD_STALE;</span><br><span class="line">neigh_update(n, sha, state, override ? NEIGH_UPDATE_F_OVERRIDE : <span class="number">0</span>);</span><br></pre></td></tr></table></figure></p>
+<p>由此可见，只有实际的外发包的下一跳是1.1.1.1时，才会通过“本地确认”机制或者实际发送ARP请求的方式将对应的MAC地址映射reachable状态。</p>
+<p>更正：在看了keepalived的源码之后，发现这个担心是多余的，毕竟keepalived已经很成熟了，不应该犯“如此低级的错误”，keepalived在某主机切换到master之后，会主动发送免费arp，在keepalived中有代码如是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">vrrp_send_update(vrrp_rt * vrrp, ip_address * ipaddress, <span class="keyword">int</span> idx)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">char</span> *msg;</span><br><span class="line">    <span class="keyword">char</span> addr_str[<span class="number">41</span>];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!IP_IS6(ipaddress)) &#123;</span><br><span class="line">        msg = <span class="string">"gratuitous ARPs"</span>;</span><br><span class="line">        inet_ntop(AF_INET, &amp;ipaddress-&gt;u.<span class="built_in">sin</span>.sin_addr, addr_str, <span class="number">41</span>);</span><br><span class="line">        send_gratuitous_arp(ipaddress);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        msg = <span class="string">"Unsolicited Neighbour Adverts"</span>;</span><br><span class="line">        inet_ntop(AF_INET6, &amp;ipaddress-&gt;u.sin6_addr, addr_str, <span class="number">41</span>);</span><br><span class="line">        ndisc_send_unsolicited_na(ipaddress);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="number">0</span> == idx &amp;&amp; debug &amp; <span class="number">32</span>) &#123;</span><br><span class="line">        log_message(LOG_INFO, <span class="string">"VRRP_Instance(%s) Sending %s on %s for %s"</span>,</span><br><span class="line">                vrrp-&gt;iname, msg, IF_NAME(ipaddress-&gt;ifp), addr_str);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="六-第二个问题的解决"><a href="#六-第二个问题的解决" class="headerlink" title="六.第二个问题的解决"></a>六.第二个问题的解决</h2><p>扯了这么多，在Linux上到底怎么设置ARP缓存的老化时间呢？<br>我们看到/proc/sys/net/ipv4/neigh/ethX目录下面有多个文件，到底哪个是ARP缓存的老化时间呢？实际上，直接点说，就是base_reachable_time这个文件。其它的都只是优化行为的措施。比如gc_stale_time这个文件记录的是“ARP缓存表项的缓存”的存活时间，该时间只是一个缓存的缓存的存活时间，在该时间内，如果需要用到该邻居，那么直接使用表项记录的数据作为ARP请求的内容即可，或者得到“本地确认”后直接将其置为reachable状态，而不用再通过路由查找，ARP查找，ARP邻居创建，ARP邻居解析这种慢速的方式。<br> 默认情况下，reachable状态的超时时间是30秒，超过30秒，ARP缓存表项将改为stale状态，此时，你可以认为该表项已经老化到期了，只是Linux的实现中并没有将其删除罢了，再过了gc_stale_time时间，表项才被删除。在ARP缓存表项成为非reachable之后，垃圾回收器负责执行“再过了gc_stale_time时间，表项才被删除”这件事，这个定时器的下次到期时间是根据base_reachable_time计算出来的，具体就是在neigh_periodic_timer中：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">if</span> (time_after(now, tbl-&gt;last_rand + <span class="number">300</span> * HZ)) &#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">neigh_parms</span> *<span class="title">p</span>;</span></span><br><span class="line">    tbl-&gt;last_rand = now;</span><br><span class="line">    <span class="keyword">for</span> (p = &amp;tbl-&gt;parms; p; p = p-&gt;next)</span><br><span class="line">        <span class="comment">//随计化很重要，防止“共振行为”引发的ARP解析风暴</span></span><br><span class="line">        p-&gt;reachable_time =　neigh_rand_reach_time(p-&gt;base_reachable_time);</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line">expire = tbl-&gt;parms.base_reachable_time &gt;&gt; <span class="number">1</span>;</span><br><span class="line">expire /= (tbl-&gt;hash_mask + <span class="number">1</span>);</span><br><span class="line"><span class="keyword">if</span> (!expire)</span><br><span class="line">    expire = <span class="number">1</span>;</span><br><span class="line">mod_timer(&amp;tbl-&gt;gc_timer, now + expire);</span><br></pre></td></tr></table></figure>
+<p>可见一斑啊！适当地，我们可以通过看代码注释来理解这一点，好心人都会写上注释的。为了实验的条理清晰，我们设计以下两个场景：<br><strong>1.使用iptables禁止一切本地接收，从而屏蔽arp本地确认，使用sysctl将base_reachable_time设置为5秒，将gc_stale_time为5秒。<br>2.关闭iptables的禁止策略，使用TCP下载外部网络一个超大文件或者进行持续短连接，使用sysctl将base_reachable_time设置为5秒，将gc_stale_time为5秒。</strong><br>在两个场景下都使用ping命令来ping本地局域网的默认网关，然后迅速Ctrl-C掉这个ping，用ip neigh show all可以看到默认网关的arp表项，然而在场景1下，大约5秒之内，arp表项将变为stale之后不再改变，再ping的话，表项先变为delay再变为probe，然后为reachable，5秒之内再次成为stale.</p>
+<p>而在场景2下，arp表项持续为reachable以及dealy，这说明了Linux中的ARP状态机。那么为何场景1中，当表项成为stale之后很久都不会被删除呢？其实这是因为还有路由缓存项在使用它，此时你删除路由缓存之后，arp表项很快被删除。</p>
+<h2 id="七-总结"><a href="#七-总结" class="headerlink" title="七.总结"></a>七.总结</h2><p><strong>1.在Linux上如果你想设置你的ARP缓存老化时间，那么执行sysctl -w net.ipv4.neigh.ethX=Y即可，如果设置别的，只是影响了性能，在Linux中，ARP缓存老化以其变为stale状态为准，而不是以其表项被删除为准，stale状态只是对缓存又进行了缓存；<br>2.永远记住，在将一个IP地址更换到另一台本网段设备时，尽可能快地广播免费ARP，在Linux上可以使用arping来玩小技巧。</strong></p>
+<h2 id="八-linux系统默认的ARP老化时间"><a href="#八-linux系统默认的ARP老化时间" class="headerlink" title="八.linux系统默认的ARP老化时间"></a>八.linux系统默认的ARP老化时间</h2><p>root@compute:~# cat /proc/sys/net/ipv4/neigh/enp0s3/gc_stale_time</p>
+<p>60</p>
+<p>root@compute:~# cat /proc/sys/net/ipv4/neigh/enp0s3/base_reachable_time</p>
+<p>30</p>
+<p>在没有有路由缓存和别人使用情况下，30 s 维持在reachable状态，然后变更称为STALE状态，再经过60 s 删除此表项。</p>
+<p>如果处于STALE状态过期后，主机主动单播ARP确认是否延长表项时间。</p>
+<h2 id="九-ARP机制实验验证"><a href="#九-ARP机制实验验证" class="headerlink" title="九.ARP机制实验验证"></a>九.ARP机制实验验证</h2><p>上述涩难懂的ARP机制讲解来自网络，具体博文由谁书写，已经难觅其源，在此引用下作为本博文基础部分，感谢作者奉献；笔者因ARP机制问题困扰了许久，因此下文从实验事实角度探究linux APR状态机的变化和网络连通性的关系，解惑罢了。</p>
+<h3 id="实验背景"><a href="#实验背景" class="headerlink" title="实验背景"></a>实验背景</h3><hr>
+<p><img src="/myimages/arp3.png" alt="arp3"></p>
+<ul>
+<li>两台ubuntu16.04 机器接入交换机二层互联</li>
+<li>ubuntun 均安装arptables，用来控制arp流量</li>
+<li>ubuntu使用iptables控制ip流量</li>
+<li>通过ping和arping产生arp和ip流量</li>
+</ul>
+<h3 id="实验命令汇总"><a href="#实验命令汇总" class="headerlink" title="实验命令汇总"></a>实验命令汇总</h3><hr>
+<ul>
+<li>ping 10.30.10.141</li>
+<li>arping 10.30.10.141</li>
+<li>arptables -A INPUT -s 10.30.10.141 –opcode 1 -j DROP</li>
+<li>arptables -D INPUT -s 10.30.10.141 –opcode 1 -j DROP</li>
+<li>iptables -I INPUT 1 -s 10.30.10.141 -j DROP</li>
+<li>iptables -D INPUT -s 10.30.10.141 -j DROP</li>
+<li>cat /proc/sys/net/ipv4/neigh/enp0s3/base_reachable_time</li>
+<li>cat /proc/sys/net/ipv4/neigh/enp0s3/gc_stale_time</li>
+<li>echo 10 > /proc/sys/net/ipv4/neigh/enp0s3/base_reachable_time</li>
+<li>echo 5 > /proc/sys/net/ipv4/neigh/enp0s3/gc_stale_time</li>
+<li>watch -d -n 1 ip neigh show</li>
+</ul>
+<h3 id="实验情况1"><a href="#实验情况1" class="headerlink" title="实验情况1"></a>实验情况1</h3><p>主机B无主机A的ARP表项，主机A 一直arping主机B，查看主机B中主机A arp表项的变化情况</p>
+<p>主机A arping 主机 B</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">root@controller:~<span class="comment"># arping 10.30.10.141 -I enp0s8</span></span><br><span class="line">ARPING <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> enp0s8</span><br><span class="line">Unicast reply <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> [<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:B7]  <span class="number">1.048</span>ms</span><br><span class="line">Unicast reply <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> [<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:B7]  <span class="number">1.179</span>ms</span><br><span class="line">Unicast reply <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> [<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:B7]  <span class="number">1.038</span>ms</span><br><span class="line">Unicast reply <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> [<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:B7]  <span class="number">1.113</span>ms</span><br><span class="line">Unicast reply <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> [<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:B7]  <span class="number">1.057</span>ms</span><br><span class="line">Unicast reply <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> [<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:B7]  <span class="number">0.894</span>ms</span><br><span class="line">Unicast reply <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> [<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:B7]  <span class="number">3.004</span>ms</span><br><span class="line">Unicast reply <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> [<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:B7]  <span class="number">0.833</span>ms</span><br></pre></td></tr></table></figure>
+<p>主机B 长时间抓取ARP packet，发现主机B一直收到主机A ARP请求，主机B一直没有主动请求主机A 的ARP</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">root@compute:~<span class="comment"># tcpdump -i enp0s3 arp -ne  and host 10.30.10.145</span></span><br><span class="line">tcpdump: verbose output suppressed, use -v <span class="keyword">or</span> -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on enp0s3, link-type EN10MB (Ethernet), capture size <span class="number">262144</span> bytes</span><br><span class="line"><span class="number">12</span>:<span class="number">12</span>:<span class="number">31.733125</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9 &gt; ff:ff:ff:ff:ff:ff, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">60</span>: Request who-has <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> (ff:ff:ff:ff:ff:ff) tell <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span>, length <span class="number">46</span></span><br><span class="line"><span class="number">12</span>:<span class="number">12</span>:<span class="number">31.733166</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">42</span>: Reply <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> <span class="keyword">is</span>-at <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, length <span class="number">28</span></span><br><span class="line"><span class="number">12</span>:<span class="number">12</span>:<span class="number">32.734890</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">60</span>: Request who-has <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> (<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7) tell <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span>, length <span class="number">46</span></span><br><span class="line"><span class="number">12</span>:<span class="number">12</span>:<span class="number">32.734922</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">42</span>: Reply <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> <span class="keyword">is</span>-at <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, length <span class="number">28</span></span><br><span class="line"><span class="number">12</span>:<span class="number">12</span>:<span class="number">33.735815</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">60</span>: Request who-has <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> (<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7) tell <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span>, length <span class="number">46</span></span><br><span class="line"><span class="number">12</span>:<span class="number">12</span>:<span class="number">33.735838</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">42</span>: Reply <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> <span class="keyword">is</span>-at <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, length <span class="number">28</span></span><br><span class="line"><span class="number">12</span>:<span class="number">12</span>:<span class="number">34.736497</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">60</span>: Request who-has <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> (<span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7) tell <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span>, length <span class="number">46</span></span><br></pre></td></tr></table></figure>
+<p>主机B 查询 arp表 arp -n</p>
+<p>10.30.10.145 ether 08:00:27:5f:1b:a9 C enp0s3</p>
+<p>主机B 查询watch -d -n 1 ip neigh show</p>
+<p>10.30.10.145 dev enp0s3 lladdr 08:00:27:5f:1b:a9 STALE</p>
+<p><strong>结论：</strong></p>
+<ul>
+<li>主机B新增主机A的arp表项</li>
+<li>主机B中ip neigh show显示主机A 新增表项且一直处于STALE状态</li>
+<li>主机B在主机A一直请求ARP给主机B情况下，主机B就不会主动向主机A请求ARP了</li>
+</ul>
+<h3 id="实验情况2"><a href="#实验情况2" class="headerlink" title="实验情况2"></a>实验情况2</h3><p>主机A 持续ping 主机B，观察主机B ARP表项变化</p>
+<p>主机A ping主机B</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@controller:~<span class="comment"># ping 10.30.10.141</span></span><br><span class="line">PING <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> (<span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>) <span class="number">56</span>(<span class="number">84</span>) bytes of data.</span><br><span class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>: icmp_seq=<span class="number">1</span> ttl=<span class="number">64</span> time=<span class="number">0.297</span> ms</span><br><span class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>: icmp_seq=<span class="number">2</span> ttl=<span class="number">64</span> time=<span class="number">0.402</span> ms</span><br></pre></td></tr></table></figure>
+<p>查看主机B配置时间</p>
+<p>root@compute:~# cat /proc/sys/net/ipv4/neigh/enp0s3/gc_stale_time</p>
+<p>5</p>
+<p>root@compute:~# cat /proc/sys/net/ipv4/neigh/enp0s3/base_reachable_time</p>
+<p>10</p>
+<p>主机B抓取主动请求主机A的ARP，约每15s发一次</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">root@compute:~<span class="comment"># tcpdump -i enp0s3 arp -ne  and host 10.30.10.145</span></span><br><span class="line">tcpdump: verbose output suppressed, use -v <span class="keyword">or</span> -vv <span class="keyword">for</span> full protocol decode</span><br><span class="line">listening on enp0s3, link-type EN10MB (Ethernet), capture size <span class="number">262144</span> bytes</span><br><span class="line"></span><br><span class="line"><span class="number">15</span>:<span class="number">03</span>:<span class="number">37.286996</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">42</span>: Request who-has <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> tell <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>, length <span class="number">28</span></span><br><span class="line"><span class="number">15</span>:<span class="number">03</span>:<span class="number">37.287388</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">60</span>: Reply <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> <span class="keyword">is</span>-at <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, length <span class="number">46</span></span><br><span class="line"><span class="number">15</span>:<span class="number">03</span>:<span class="number">53.673456</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">42</span>: Request who-has <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> tell <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>, length <span class="number">28</span></span><br><span class="line"><span class="number">15</span>:<span class="number">03</span>:<span class="number">53.673875</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">60</span>: Reply <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> <span class="keyword">is</span>-at <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, length <span class="number">46</span></span><br><span class="line"><span class="number">15</span>:<span class="number">04</span>:<span class="number">10.055035</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">42</span>: Request who-has <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> tell <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>, length <span class="number">28</span></span><br><span class="line"><span class="number">15</span>:<span class="number">04</span>:<span class="number">10.055524</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">60</span>: Reply <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> <span class="keyword">is</span>-at <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, length <span class="number">46</span></span><br><span class="line"><span class="number">15</span>:<span class="number">04</span>:<span class="number">26.439254</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">42</span>: Request who-has <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> tell <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>, length <span class="number">28</span></span><br><span class="line"><span class="number">15</span>:<span class="number">04</span>:<span class="number">26.439720</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">60</span>: Reply <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> <span class="keyword">is</span>-at <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, length <span class="number">46</span></span><br><span class="line"><span class="number">15</span>:<span class="number">04</span>:<span class="number">42.823208</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">42</span>: Request who-has <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> tell <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>, length <span class="number">28</span></span><br><span class="line"><span class="number">15</span>:<span class="number">04</span>:<span class="number">42.823664</span> <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9 &gt; <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">99</span>:<span class="number">81</span>:b7, ethertype ARP (<span class="number">0x0806</span>), length <span class="number">60</span>: Reply <span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> <span class="keyword">is</span>-at <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9, length <span class="number">46</span></span><br></pre></td></tr></table></figure>
+<p>观察现象：主机B 10.30.10.145neigh表项，从建立reachable 10s后到STALE，然后过约5s后，重新变为reachable状态，且循环往复。STALE变为主机reachable状态时，主机B都会主动请求主机A ARP</p>
+<p><strong>结论推演：</strong></p>
+<ul>
+<li>主机A ping 主机B 主机B学习到主机A ARP表项达到reachable状态，约base_reachable_time时间后，变为STALE状态</li>
+<li>约gc_stale_time后主机B主动发ARP请求主机A，主机A确认后，表项状态重新回到reachable</li>
+</ul>
+<h3 id="实验情况3"><a href="#实验情况3" class="headerlink" title="实验情况3"></a>实验情况3</h3><p>主机A 持续ping 主机B，且在主机A禁止主机B的主动ARP请求（arptables -A INPUT -s 10.30.10.141 –opcode 1 -j DROP），观察主机B ARP表项变化</p>
+<p><strong>主机A现象1</strong></p>
+<p>主机A ping主机B，无法收到主机B的回复数据包，主机B 中 ARP状态从FAILD变更到INCOMPLETE 循环往复</p>
+<p><strong>主机A现象2</strong></p>
+<p>主机A ping 主机B，ping通约10个数据包后又不通，主机B中ARP状态从DELAY - PROB - FAILD</p>
+<p><strong>结论推演：</strong></p>
+<p>主机A ping 主机B 不通，因主机A限制主机B ARP请求，导致主机B无法获取到主机A的ARP，主机B无法回复icmp给主机A</p>
+<p>主机A 能ping 通主机B，因主机A主的请求主机B 的ARP，使得主机B学习到主机A的ARP，主机B可正常回复主机A数据包，但是主机B收到主机A 主动请求ARP学习到的表项处于DELAY，因DELAY过期后主机B主动请求主机A ARP没有得到回复，因此</p>
+<p>主机B中ARP状态从DELAY - PROB - FAILD ，表项最终失效后，主机A又无法ping通主机B了</p>
+<h3 id="实验情况4"><a href="#实验情况4" class="headerlink" title="实验情况4"></a>实验情况4</h3><p>主机A 持续ping 主机B，且在主机A禁止主机B的主动ARP请求（arptables -A INPUT -s 10.30.10.141 –opcode 1 -j DROP），主机A 持续arping 主机B，观察主机B ARP表项变化以及连通情况</p>
+<p><strong>现象描述：</strong></p>
+<ol>
+<li>主机A可以一直ping通主机B,没有出现任何丢包</li>
+<li>主机B查看主机A 对应ARP表项 arp -n ARP表象一直存在</li>
+<li>主机Aping主机B偶尔出现大的延迟</li>
+<li>主机B ip neigh show 查看ARP学习状态，主机B学习的主机A表项，一直处于STALE->DELAY->PROBE->FAILED</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">root@controller:~<span class="comment"># ping 10.30.10.141</span></span><br><span class="line">PING <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span> (<span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>) <span class="number">56</span>(<span class="number">84</span>) bytes of data.</span><br><span class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>: icmp_seq=<span class="number">510</span> ttl=<span class="number">64</span> time=<span class="number">0.304</span> ms</span><br><span class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>: icmp_seq=<span class="number">511</span> ttl=<span class="number">64</span> time=<span class="number">61.3</span> ms</span><br><span class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>: icmp_seq=<span class="number">512</span> ttl=<span class="number">64</span> time=<span class="number">0.584</span> ms</span><br><span class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>: icmp_seq=<span class="number">513</span> ttl=<span class="number">64</span> time=<span class="number">0.330</span> ms</span><br><span class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>: icmp_seq=<span class="number">514</span> ttl=<span class="number">64</span> time=<span class="number">0.326</span> ms</span><br><span class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>: icmp_seq=<span class="number">515</span> ttl=<span class="number">64</span> time=<span class="number">0.309</span> ms</span><br><span class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.30</span><span class="number">.10</span><span class="number">.141</span>: icmp_seq=<span class="number">516</span> ttl=<span class="number">64</span> time=<span class="number">0.317</span> ms</span><br></pre></td></tr></table></figure>
+<p><strong>结论推演:</strong></p>
+<p> 实验3和实验4差别在于，实验4的主机A会主动ARPping 主机B，因此主机B可以实时获取到主机A的MAC，因此其通讯是连通的ping服务不会出现丢包</p>
+<p>但是主机B在ARP学习时候STALE->DELAY->PROBE->FAILED状态变化幅度较大，会出现回应主机A ping数据包不及时情况，这是ping延迟的根本原因</p>
+<p><strong>额外结论：</strong></p>
+<p> STALE->DELAY->PROBE->FAILED 主机B ARP表象状态从DELAY->PROBE会连续发送3个ARP单播请求，因为主机A不会回应所以状态可能直接刷新成FAILED；为什么说可能刷新？</p>
+<p>因为主机A没有ARPING 主机B或则主动ARP请求主机B时候，主机B被动学习到主机A ARP表现也会导致ARP表项刷新，使主机B记录主机A ARP邻居状态直接落果FAILED状态重新回到STALE状态。</p>
+<p><strong>附带发现：</strong></p>
+<p> 主机B什么时候发ARP广播请求，什么时候发ARP单播请求？ </p>
+<p> FAILED - > incomplete 状态时候发的是广播请求</p>
+<p>10:51:54.106151 08:00:27:99:81:b7 > ff:ff:ff:ff:ff:ff, ethertype ARP (0x0806), length 42: Request who-has 10.30.10.145 tell 10.30.10.141, length 28</p>
+<p> DELAY -> PRPBE 状态时候发的是ARP单播请求</p>
+<p>10:51:52.258761 08:00:27:99:81:b7 > 08:00:27:5f:1b:a9, ethertype ARP (0x0806), length 42: Request who-has 10.30.10.145 tell 10.30.10.141, length 28</p>
+<p> 这其实也很好理解，FAILED - > incomplete属于重新开始状态，因此是广播；DELAY -> PRPBE 是属于已经知道主机A MAC但是要进行老化判断，因此发生ARP单播确认。</p>
+<p><strong>感性的推演将来判别网络问题时使用：</strong></p>
+<p> 如果主机B中主机A ip neigh show 邻居表处于reachable状态，或则总能及时回到reachable状态，主机B 向主机A的ARP通道时顺畅的（主机B发出的ARP请求主机A可以及时回复）</p>
+<p> 如果主机B中主机A ip neigh show邻居表从未处于reachable状态，一直于STALE、PROBE、DELAY、FAILED切换，说明该主机B到主机A的ARP通道有问题（主机A无法回应主机B的ARP请求），主机B可以回应主机A的ARP请求触发被动更新</p>
+<h3 id="实验情况5"><a href="#实验情况5" class="headerlink" title="实验情况5"></a>实验情况5</h3><p>主机A 中ARP表项绑定主机B的ARP(arp -s 10.30.10.141 08:00:27:99:81:b7)，主机B 中 ARP表项绑定主机A的ARP( arp -s 10.30.10.145 08:00:27:5f:1b:a9)，主机A ping 主机B，观察连通情况，并在主机B抓取数据包观察是否有ARP交互</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip neigh show</span><br><span class="line"><span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span> dev enp0s3 lladdr <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9 PERMANENT</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">arp -n</span><br><span class="line"><span class="number">10.30</span><span class="number">.10</span><span class="number">.145</span>             ether   <span class="number">08</span>:<span class="number">00</span>:<span class="number">27</span>:<span class="number">5</span>f:<span class="number">1</span>b:a9   CM                    enp0s3</span><br></pre></td></tr></table></figure>
+<p><strong>现象描述：</strong></p>
+<p>主机A可持续ping通主机B，在主机B上没有抓取到主机A和主机B ARP交互数据包</p>
+<p><strong>结论推演：</strong></p>
+<p><strong> 经过在主机B查看主机A ip neigh show得知，其ARP状态不在变化而是固定在</strong>PERMANENT状态，所以其不再进行ARP交互就很容易理解了，因为是静态永久地址，因此不需要主动学习。</p>
+<p><strong>感性的推演将来判别网络问题时使用：</strong></p>
+<p> 可以使用此种方法固定住ARP，排除主机学习ARP的问题，把网络问题聚焦在3层转发路由关系上，待3层转发网络问题解决后再行解决此问题。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ubuntun16-04/" rel="tag"># ubuntun16.04</a>
+          
+            <a href="/tags/arp机制实验验证/" rel="tag"># arp机制实验验证</a>
+          
+            <a href="/tags/arp机制/" rel="tag"># arp机制</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/4node-flowtable/" rel="next" title="openstack DVR openvswitch流表分析">
+                <i class="fa fa-chevron-left"></i> openstack DVR openvswitch流表分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/ovspatch/" rel="prev" title="ovs patch port 连接方法">
+                ovs patch port 连接方法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/h.jpg"
+               alt="vcpu.me" />
+          <p class="site-author-name" itemprop="name">vcpu.me</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">82</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">200</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/vcpu/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://ytlm.github.io/" title="CDN张三丰" target="_blank">CDN张三丰</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://io.iwalk.me" title="互联网绝世高手Andy" target="_blank">互联网绝世高手Andy</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-问题"><span class="nav-number">1.</span> <span class="nav-text">一.问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-使用keepalived进行热备份的系统需要一个虚拟的IP地址，然而该虚拟IP地址到底属于哪台机器是根据热备群的主备来决定的，因此主机器在获得该虚拟IP的时候，必须要广播一个免费的arp，起初人们认为这没有必要，理由是不这么做，热备群也工作的很好，然而事实证明，这是必须的；"><span class="nav-number">1.1.</span> <span class="nav-text">1.使用keepalived进行热备份的系统需要一个虚拟的IP地址，然而该虚拟IP地址到底属于哪台机器是根据热备群的主备来决定的，因此主机器在获得该虚拟IP的时候，必须要广播一个免费的arp，起初人们认为这没有必要，理由是不这么做，热备群也工作的很好，然而事实证明，这是必须的；</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-ARP缓存表项都有一个老化时间，然而在linux系统中却没有给出具体如何来设置这个老化时间。那么到底怎么设置这个老化时间呢？"><span class="nav-number">1.2.</span> <span class="nav-text">2.ARP缓存表项都有一个老化时间，然而在linux系统中却没有给出具体如何来设置这个老化时间。那么到底怎么设置这个老化时间呢？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-解答问题前的说明"><span class="nav-number">2.</span> <span class="nav-text">二.解答问题前的说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-Linux如何来维护这个stale状态"><span class="nav-number">3.</span> <span class="nav-text">三.Linux如何来维护这个stale状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四-Linux的ARP缓存实现要点"><span class="nav-number">4.</span> <span class="nav-text">四.Linux的ARP缓存实现要点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五-第一个问题的解决"><span class="nav-number">5.</span> <span class="nav-text">五.第一个问题的解决</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六-第二个问题的解决"><span class="nav-number">6.</span> <span class="nav-text">六.第二个问题的解决</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#七-总结"><span class="nav-number">7.</span> <span class="nav-text">七.总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#八-linux系统默认的ARP老化时间"><span class="nav-number">8.</span> <span class="nav-text">八.linux系统默认的ARP老化时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#九-ARP机制实验验证"><span class="nav-number">9.</span> <span class="nav-text">九.ARP机制实验验证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实验背景"><span class="nav-number">9.1.</span> <span class="nav-text">实验背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验命令汇总"><span class="nav-number">9.2.</span> <span class="nav-text">实验命令汇总</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验情况1"><span class="nav-number">9.3.</span> <span class="nav-text">实验情况1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验情况2"><span class="nav-number">9.4.</span> <span class="nav-text">实验情况2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验情况3"><span class="nav-number">9.5.</span> <span class="nav-text">实验情况3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验情况4"><span class="nav-number">9.6.</span> <span class="nav-text">实验情况4</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验情况5"><span class="nav-number">9.7.</span> <span class="nav-text">实验情况5</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">vcpu.me</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://vcpu.me.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://vcpu.me/linuxarp/';
+          this.page.identifier = 'linuxarp/';
+          this.page.title = 'linux arp机制解析';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://vcpu.me.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("l5u4v8AcoPCp9wlPGVJTG6Ny-gzGzoHsz", "RQdYIOd2snvd1muAW65nsn25");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

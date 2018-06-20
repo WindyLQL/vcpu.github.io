@@ -1,0 +1,1304 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="openstack,ubuntun16.04,SDN控制器," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="i博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="安装mininet apt-get install mininet">
+<meta name="keywords" content="openstack,ubuntun16.04,SDN控制器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mininet+RYU环境安装">
+<meta property="og:url" content="http://vcpu.me/mininet1/index.html">
+<meta property="og:site_name" content="i博客">
+<meta property="og:description" content="安装mininet apt-get install mininet">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://vcpu.me/myimages/22C5BBBE88326E6E91EA7C86BAA8E05A.jpg">
+<meta property="og:image" content="http://vcpu.me/myimages/28F9DECD6C9B32F83242D2DC3B1114AB.jpg">
+<meta property="og:updated_time" content="2017-11-02T07:03:52.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mininet+RYU环境安装">
+<meta name="twitter:description" content="安装mininet apt-get install mininet">
+<meta name="twitter:image" content="http://vcpu.me/myimages/22C5BBBE88326E6E91EA7C86BAA8E05A.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://vcpu.me/mininet1/"/>
+
+
+
+
+
+  <title>mininet+RYU环境安装 | i博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">i博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">仰望星空前，还需脚踏实地。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/mininet1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">mininet+RYU环境安装</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-20T18:00:00+08:00">
+                2017-10-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/RYU/" itemprop="url" rel="index">
+                    <span itemprop="name">RYU</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/mininet1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="mininet1/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/mininet1/" class="leancloud_visitors" data-flag-title="mininet+RYU环境安装">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="安装mininet"><a href="#安装mininet" class="headerlink" title="安装mininet"></a>安装mininet</h1><hr>
+<p>apt-get install mininet</p>
+<a id="more"></a>
+<h1 id="运行mininet"><a href="#运行mininet" class="headerlink" title="运行mininet"></a>运行mininet</h1><hr>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line">root@controller-VirtualBox:~<span class="comment"># mn</span></span><br><span class="line"></span><br><span class="line">*** No default OpenFlow controller found <span class="keyword">for</span> default switch!</span><br><span class="line"></span><br><span class="line">*** Falling back to OVS Bridge</span><br><span class="line"></span><br><span class="line">*** Creating network</span><br><span class="line"></span><br><span class="line">*** Adding controller</span><br><span class="line"></span><br><span class="line">*** Adding hosts:</span><br><span class="line"></span><br><span class="line">h1 h2</span><br><span class="line"></span><br><span class="line">*** Adding switches:</span><br><span class="line"></span><br><span class="line">s1</span><br><span class="line"></span><br><span class="line">*** Adding links:</span><br><span class="line"></span><br><span class="line">(h1, s1) (h2, s1)</span><br><span class="line"></span><br><span class="line">*** Configuring hosts</span><br><span class="line"></span><br><span class="line">h1 h2</span><br><span class="line"></span><br><span class="line">*** Starting controller</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">*** Starting <span class="number">1</span> switches</span><br><span class="line"></span><br><span class="line">s1 ...</span><br><span class="line"></span><br><span class="line">*** Starting CLI:</span><br><span class="line"></span><br><span class="line">mininet&gt; nodes</span><br><span class="line"></span><br><span class="line">available nodes are:</span><br><span class="line"></span><br><span class="line">h1 h2 s1</span><br><span class="line"></span><br><span class="line">mininet&gt; net</span><br><span class="line"></span><br><span class="line">h1 h1-eth0:s1-eth1</span><br><span class="line"></span><br><span class="line">h2 h2-eth0:s1-eth2</span><br><span class="line"></span><br><span class="line">s1 lo:  s1-eth1:h1-eth0 s1-eth2:h2-eth0</span><br><span class="line"></span><br><span class="line">mininet&gt; dump</span><br><span class="line"></span><br><span class="line">&lt;Host h1: h1-eth0:<span class="number">10.0</span><span class="number">.0</span><span class="number">.1</span> pid=<span class="number">1961</span>&gt;</span><br><span class="line"></span><br><span class="line">&lt;Host h2: h2-eth0:<span class="number">10.0</span><span class="number">.0</span><span class="number">.2</span> pid=<span class="number">1963</span>&gt;</span><br><span class="line"></span><br><span class="line">&lt;OVSBridge s1: lo:<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>,s1-eth1:<span class="keyword">None</span>,s1-eth2:<span class="keyword">None</span> pid=<span class="number">1968</span>&gt;</span><br><span class="line"></span><br><span class="line">mininet&gt; h1 ping h2</span><br><span class="line"></span><br><span class="line">PING <span class="number">10.0</span><span class="number">.0</span><span class="number">.2</span> (<span class="number">10.0</span><span class="number">.0</span><span class="number">.2</span>) <span class="number">56</span>(<span class="number">84</span>) bytes of data.</span><br><span class="line"></span><br><span class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.0</span><span class="number">.0</span><span class="number">.2</span>: icmp_seq=<span class="number">1</span> ttl=<span class="number">64</span> time=<span class="number">1.81</span> ms</span><br><span class="line"></span><br><span class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.0</span><span class="number">.0</span><span class="number">.2</span>: icmp_seq=<span class="number">2</span> ttl=<span class="number">64</span> time=<span class="number">0.072</span> ms</span><br><span class="line"></span><br><span class="line">^C</span><br><span class="line"></span><br><span class="line">--- <span class="number">10.0</span><span class="number">.0</span><span class="number">.2</span> ping statistics ---</span><br><span class="line"></span><br><span class="line"><span class="number">2</span> packets transmitted, <span class="number">2</span> received, <span class="number">0</span>% packet loss, time <span class="number">1002</span>ms</span><br><span class="line"></span><br><span class="line">rtt min/avg/max/mdev = <span class="number">0.072</span>/<span class="number">0.942</span>/<span class="number">1.812</span>/<span class="number">0.870</span> ms</span><br><span class="line"></span><br><span class="line">mininet&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="/myimages/22C5BBBE88326E6E91EA7C86BAA8E05A.jpg" alt="ryu1"></p>
+<h1 id="下载安装RYU"><a href="#下载安装RYU" class="headerlink" title="下载安装RYU"></a>下载安装RYU</h1><hr>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git clone git://github.com/osrg/ryu.git</span><br><span class="line">cd ryu</span><br><span class="line">sudo pip install -r tools/pip-requires</span><br><span class="line">sudo python setup.py install</span><br></pre></td></tr></table></figure>
+<h2 id="开启默认mininet环境，启动controller控制ip和端口"><a href="#开启默认mininet环境，启动controller控制ip和端口" class="headerlink" title="开启默认mininet环境，启动controller控制ip和端口"></a>开启默认mininet环境，启动controller控制ip和端口</h2><p>mn –controller remote,ip=127.0.0.1,port=6633</p>
+<p>执行外上述命令后，在一个窗口执行ovs-vsctl show 命令，查看配置情况</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">root@controller-VirtualBox:~/ryu<span class="comment"># ovs-vsctl show</span></span><br><span class="line"><span class="number">73065536</span>-d00b<span class="number">-440</span>c-a02f-b8d33ef05ee1</span><br><span class="line">    Bridge <span class="string">"s1"</span></span><br><span class="line">        Controller <span class="string">"ptcp:6634"</span></span><br><span class="line">        Controller <span class="string">"tcp:127.0.0.1:6633"</span></span><br><span class="line">        fail_mode: secure</span><br><span class="line">        Port <span class="string">"s1"</span></span><br><span class="line">            Interface <span class="string">"s1"</span></span><br><span class="line">                type: internal</span><br><span class="line">        Port <span class="string">"s1-eth1"</span></span><br><span class="line">            Interface <span class="string">"s1-eth1"</span></span><br><span class="line">        Port <span class="string">"s1-eth2"</span></span><br><span class="line">            Interface <span class="string">"s1-eth2"</span></span><br><span class="line">    ovs_version: <span class="string">"2.5.2"</span></span><br><span class="line">root@controller-VirtualBox:~/ryu<span class="comment">#</span></span><br></pre></td></tr></table></figure>
+<p>如上显示，controller控制ip：port信息如上，默认mininet环境启动了两个客户端分别通过s1-eth1和s1-eth2接入到ovs s1上，二层相连</p>
+<h2 id="未执行任何ping动作时候查查看默认流表"><a href="#未执行任何ping动作时候查查看默认流表" class="headerlink" title="未执行任何ping动作时候查查看默认流表"></a>未执行任何ping动作时候查查看默认流表</h2><p>root@controller-VirtualBox:~/ryu# ovs-ofctl dump-flows s1 -O openflow13</p>
+<p>OFPST_FLOW reply (OF1.3) (xid=0x2):</p>
+<h2 id="开启simple-switch-13-py-RYU控制器demo"><a href="#开启simple-switch-13-py-RYU控制器demo" class="headerlink" title="开启simple_switch_13.py RYU控制器demo"></a>开启simple_switch_13.py RYU控制器demo</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">root@controller-VirtualBox:/usr/local/lib/python2<span class="number">.7</span>/dist-packages/ryu/app<span class="comment">#  ryu-manager --verbose simple_switch_13.py </span></span><br><span class="line">loading app simple_switch_13.py</span><br><span class="line">loading app ryu.controller.ofp_handler</span><br><span class="line">instantiating app simple_switch_13.py of SimpleSwitch13</span><br><span class="line">instantiating app ryu.controller.ofp_handler of OFPHandler</span><br><span class="line">BRICK SimpleSwitch13</span><br><span class="line">  CONSUMES EventOFPPacketIn</span><br><span class="line">  CONSUMES EventOFPSwitchFeatures</span><br><span class="line">BRICK ofp_event</span><br><span class="line">  PROVIDES EventOFPPacketIn TO &#123;<span class="string">'SimpleSwitch13'</span>: set([<span class="string">'main'</span>])&#125;</span><br><span class="line">  PROVIDES EventOFPSwitchFeatures TO &#123;<span class="string">'SimpleSwitch13'</span>: set([<span class="string">'config'</span>])&#125;</span><br><span class="line">  CONSUMES EventOFPPortStatus</span><br><span class="line">  CONSUMES EventOFPSwitchFeatures</span><br><span class="line">  CONSUMES EventOFPHello</span><br><span class="line">  CONSUMES EventOFPErrorMsg</span><br><span class="line">  CONSUMES EventOFPEchoRequest</span><br><span class="line">  CONSUMES EventOFPPortDescStatsReply</span><br><span class="line">  CONSUMES EventOFPEchoReply</span><br><span class="line"></span><br><span class="line">connected socket:&lt;eventlet.greenio.base.GreenSocket object at <span class="number">0x7fcef67e5cd0</span>&gt; address:(<span class="string">'127.0.0.1'</span>, <span class="number">53604</span>)</span><br><span class="line">hello ev &lt;ryu.controller.ofp_event.EventOFPHello object at <span class="number">0x7fcef67e56d0</span>&gt;</span><br><span class="line">move onto config mode</span><br><span class="line">EVENT ofp_event-&gt;SimpleSwitch13 EventOFPSwitchFeatures</span><br><span class="line">switch features ev version=<span class="number">0x4</span>,msg_type=<span class="number">0x6</span>,msg_len=<span class="number">0x20</span>,xid=<span class="number">0xc20757d2</span>,OFPSwitchFeatures(auxiliary_id=<span class="number">0</span>,capabilities=<span class="number">79</span>,datapath_id=<span class="number">1</span>,n_buffers=<span class="number">256</span>,n_tables=<span class="number">254</span>)</span><br><span class="line">move onto main mode</span><br><span class="line">EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketIn</span><br><span class="line">packet <span class="keyword">in</span> <span class="number">1</span> <span class="number">82</span>:<span class="number">06</span>:<span class="number">4</span>f:<span class="number">42</span>:<span class="number">09</span>:<span class="number">6</span>c <span class="number">33</span>:<span class="number">33</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">02</span> <span class="number">1</span></span><br><span class="line">EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketIn</span><br><span class="line">packet <span class="keyword">in</span> <span class="number">1</span> <span class="number">82</span>:<span class="number">06</span>:<span class="number">4</span>f:<span class="number">42</span>:<span class="number">09</span>:<span class="number">6</span>c ff:ff:ff:ff:ff:ff <span class="number">1</span></span><br><span class="line">EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketIn</span><br><span class="line">packet <span class="keyword">in</span> <span class="number">1</span> <span class="number">76</span>:db:<span class="number">0</span>f:<span class="number">62</span>:<span class="number">67</span>:<span class="number">5</span>e <span class="number">82</span>:<span class="number">06</span>:<span class="number">4</span>f:<span class="number">42</span>:<span class="number">09</span>:<span class="number">6</span>c <span class="number">2</span></span><br><span class="line">EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketIn</span><br><span class="line">packet <span class="keyword">in</span> <span class="number">1</span> <span class="number">82</span>:<span class="number">06</span>:<span class="number">4</span>f:<span class="number">42</span>:<span class="number">09</span>:<span class="number">6</span>c <span class="number">76</span>:db:<span class="number">0</span>f:<span class="number">62</span>:<span class="number">67</span>:<span class="number">5</span>e <span class="number">1</span></span><br><span class="line">EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketIn</span><br><span class="line">packet <span class="keyword">in</span> <span class="number">1</span> <span class="number">76</span>:db:<span class="number">0</span>f:<span class="number">62</span>:<span class="number">67</span>:<span class="number">5</span>e <span class="number">33</span>:<span class="number">33</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">02</span> <span class="number">2</span></span><br><span class="line">EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketIn</span><br><span class="line">packet <span class="keyword">in</span> <span class="number">1</span> <span class="number">82</span>:<span class="number">06</span>:<span class="number">4</span>f:<span class="number">42</span>:<span class="number">09</span>:<span class="number">6</span>c <span class="number">33</span>:<span class="number">33</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">02</span> <span class="number">1</span></span><br><span class="line">EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketIn</span><br><span class="line">packet <span class="keyword">in</span> <span class="number">1</span> <span class="number">76</span>:db:<span class="number">0</span>f:<span class="number">62</span>:<span class="number">67</span>:<span class="number">5</span>e <span class="number">33</span>:<span class="number">33</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">02</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<h2 id="开启完simple-switch-13-py-后查看流表项，经过s1所有的流量都会通过127-0-0-1-6633发给控制器，交给simple-switch-13-py-处理"><a href="#开启完simple-switch-13-py-后查看流表项，经过s1所有的流量都会通过127-0-0-1-6633发给控制器，交给simple-switch-13-py-处理" class="headerlink" title="开启完simple_switch_13.py 后查看流表项，经过s1所有的流量都会通过127.0.0.1:6633发给控制器，交给simple_switch_13.py 处理"></a>开启完simple_switch_13.py 后查看流表项，经过s1所有的流量都会通过127.0.0.1:6633发给控制器，交给simple_switch_13.py 处理</h2><p>root@controller-VirtualBox:~/ryu# ovs-ofctl dump-flows s1 -O openflow13</p>
+<p>OFPST_FLOW reply (OF1.3) (xid=0x2):</p>
+<p> cookie=0x0, duration=2.782s, table=0, n_packets=0, n_bytes=0, priority=0 actions=CONTROLLER:65535</p>
+<h2 id="h1-ping-h2，流表新增两条"><a href="#h1-ping-h2，流表新增两条" class="headerlink" title="h1 ping h2，流表新增两条"></a>h1 ping h2，流表新增两条</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mininet&gt; h1 ping h2</span><br><span class="line">PING <span class="number">10.0</span><span class="number">.0</span><span class="number">.2</span> (<span class="number">10.0</span><span class="number">.0</span><span class="number">.2</span>) <span class="number">56</span>(<span class="number">84</span>) bytes of data.</span><br><span class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.0</span><span class="number">.0</span><span class="number">.2</span>: icmp_seq=<span class="number">1</span> ttl=<span class="number">64</span> time=<span class="number">6.59</span> ms</span><br><span class="line"><span class="number">64</span> bytes <span class="keyword">from</span> <span class="number">10.0</span><span class="number">.0</span><span class="number">.2</span>: icmp_seq=<span class="number">2</span> ttl=<span class="number">64</span> time=<span class="number">0.228</span> ms</span><br><span class="line">^C</span><br><span class="line">--- <span class="number">10.0</span><span class="number">.0</span><span class="number">.2</span> ping statistics ---</span><br><span class="line"><span class="number">2</span> packets transmitted, <span class="number">2</span> received, <span class="number">0</span>% packet loss, time <span class="number">1002</span>ms</span><br><span class="line">rtt min/avg/max/mdev = <span class="number">0.228</span>/<span class="number">3.412</span>/<span class="number">6.597</span>/<span class="number">3.185</span> ms</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root@controller-VirtualBox:~/ryu<span class="comment"># ovs-ofctl dump-flows s1 -O openflow13</span></span><br><span class="line">OFPST_FLOW reply (OF1<span class="number">.3</span>) (xid=<span class="number">0x2</span>):</span><br><span class="line"> cookie=<span class="number">0x0</span>, duration=<span class="number">12.970</span>s, table=<span class="number">0</span>, n_packets=<span class="number">4</span>, n_bytes=<span class="number">280</span>, priority=<span class="number">1</span>,in_port=<span class="number">2</span>,dl_dst=<span class="number">0</span>a:<span class="number">30</span>:ba:ff:<span class="number">9</span>b:<span class="number">80</span> actions=output:<span class="number">1</span></span><br><span class="line"> cookie=<span class="number">0x0</span>, duration=<span class="number">12.967</span>s, table=<span class="number">0</span>, n_packets=<span class="number">3</span>, n_bytes=<span class="number">238</span>, priority=<span class="number">1</span>,in_port=<span class="number">1</span>,dl_dst=ee:<span class="number">78</span>:<span class="number">58</span>:<span class="number">36</span>:<span class="number">2</span>b:<span class="number">06</span> actions=output:<span class="number">2</span></span><br><span class="line"> cookie=<span class="number">0x0</span>, duration=<span class="number">224.026</span>s, table=<span class="number">0</span>, n_packets=<span class="number">5</span>, n_bytes=<span class="number">322</span>, priority=<span class="number">0</span> actions=CONTROLLER:<span class="number">65535</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">packet <span class="keyword">in</span> <span class="number">1</span> ee:<span class="number">78</span>:<span class="number">58</span>:<span class="number">36</span>:<span class="number">2</span>b:<span class="number">06</span> <span class="number">33</span>:<span class="number">33</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">02</span> <span class="number">2</span></span><br><span class="line">EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketIn</span><br><span class="line"></span><br><span class="line">packet <span class="keyword">in</span> <span class="number">1</span> <span class="number">0</span>a:<span class="number">30</span>:ba:ff:<span class="number">9</span>b:<span class="number">80</span> ff:ff:ff:ff:ff:ff <span class="number">1</span></span><br><span class="line">EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketIn</span><br><span class="line"></span><br><span class="line">packet <span class="keyword">in</span> <span class="number">1</span> ee:<span class="number">78</span>:<span class="number">58</span>:<span class="number">36</span>:<span class="number">2</span>b:<span class="number">06</span> <span class="number">0</span>a:<span class="number">30</span>:ba:ff:<span class="number">9</span>b:<span class="number">80</span> <span class="number">2</span></span><br><span class="line">EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketIn</span><br><span class="line"></span><br><span class="line">packet <span class="keyword">in</span> <span class="number">1</span> <span class="number">0</span>a:<span class="number">30</span>:ba:ff:<span class="number">9</span>b:<span class="number">80</span> ee:<span class="number">78</span>:<span class="number">58</span>:<span class="number">36</span>:<span class="number">2</span>b:<span class="number">06</span> <span class="number">1</span></span><br><span class="line">EVENT ofp_event-&gt;SimpleSwitch13 EventOFPPacketIn</span><br><span class="line">packet <span class="keyword">in</span> <span class="number">1</span> <span class="number">0</span>a:<span class="number">30</span>:ba:ff:<span class="number">9</span>b:<span class="number">80</span> <span class="number">33</span>:<span class="number">33</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span>:<span class="number">02</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<h2 id="通过rest-api查找相关信息"><a href="#通过rest-api查找相关信息" class="headerlink" title="通过rest api查找相关信息"></a>通过rest api查找相关信息</h2><figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">进入：/usr/local/lib/python2.7/dist-packages/ryu/app</span><br></pre></td></tr></table></figure>
+<p>ryu-manager –verbose simple_switch_13.py ofctl_rest.py rest_topology.py</p>
+<p>rest-api查看ovs流表</p>
+<p><img src="/myimages/28F9DECD6C9B32F83242D2DC3B1114AB.jpg" alt="ryu2"></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/openstack/" rel="tag"># openstack</a>
+          
+            <a href="/tags/ubuntun16-04/" rel="tag"># ubuntun16.04</a>
+          
+            <a href="/tags/SDN控制器/" rel="tag"># SDN控制器</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/mininet-jiemian/" rel="next" title="mininet界面配置拓扑方法">
+                <i class="fa fa-chevron-left"></i> mininet界面配置拓扑方法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/ryu-connect-ovs/" rel="prev" title="RYU连接ovs方法举例">
+                RYU连接ovs方法举例 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/h.jpg"
+               alt="vcpu.me" />
+          <p class="site-author-name" itemprop="name">vcpu.me</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">82</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">200</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/vcpu/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://ytlm.github.io/" title="CDN张三丰" target="_blank">CDN张三丰</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://io.iwalk.me" title="互联网绝世高手Andy" target="_blank">互联网绝世高手Andy</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#安装mininet"><span class="nav-number">1.</span> <span class="nav-text">安装mininet</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#运行mininet"><span class="nav-number">2.</span> <span class="nav-text">运行mininet</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#下载安装RYU"><span class="nav-number">3.</span> <span class="nav-text">下载安装RYU</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#开启默认mininet环境，启动controller控制ip和端口"><span class="nav-number">3.1.</span> <span class="nav-text">开启默认mininet环境，启动controller控制ip和端口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#未执行任何ping动作时候查查看默认流表"><span class="nav-number">3.2.</span> <span class="nav-text">未执行任何ping动作时候查查看默认流表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开启simple-switch-13-py-RYU控制器demo"><span class="nav-number">3.3.</span> <span class="nav-text">开启simple_switch_13.py RYU控制器demo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开启完simple-switch-13-py-后查看流表项，经过s1所有的流量都会通过127-0-0-1-6633发给控制器，交给simple-switch-13-py-处理"><span class="nav-number">3.4.</span> <span class="nav-text">开启完simple_switch_13.py 后查看流表项，经过s1所有的流量都会通过127.0.0.1:6633发给控制器，交给simple_switch_13.py 处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#h1-ping-h2，流表新增两条"><span class="nav-number">3.5.</span> <span class="nav-text">h1 ping h2，流表新增两条</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通过rest-api查找相关信息"><span class="nav-number">3.6.</span> <span class="nav-text">通过rest api查找相关信息</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">vcpu.me</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://vcpu.me.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://vcpu.me/mininet1/';
+          this.page.identifier = 'mininet1/';
+          this.page.title = 'mininet+RYU环境安装';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://vcpu.me.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("l5u4v8AcoPCp9wlPGVJTG6Ny-gzGzoHsz", "RQdYIOd2snvd1muAW65nsn25");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

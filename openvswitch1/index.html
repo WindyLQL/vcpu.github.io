@@ -1,0 +1,1400 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ubuntun16.04,ovs,虚拟交换机,mirror,Qos,STP," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="i博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="ovs mirrorovs mirror介绍mirror可以将虚拟交换机把数据包发给的接口或则vlan  命令中对数据包选择选项：select_all，所有的包select_dst_portselect_src_portselect_vlan  将数据包镜像的命令：output_port (SPAN Switched Port ANalyzer 本地流量)output_vlan (RSPAN Re">
+<meta name="keywords" content="ubuntun16.04,ovs,虚拟交换机,mirror,Qos,STP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="openvSwitch mirror、Qos、STP">
+<meta property="og:url" content="http://vcpu.me/openvswitch1/index.html">
+<meta property="og:site_name" content="i博客">
+<meta property="og:description" content="ovs mirrorovs mirror介绍mirror可以将虚拟交换机把数据包发给的接口或则vlan  命令中对数据包选择选项：select_all，所有的包select_dst_portselect_src_portselect_vlan  将数据包镜像的命令：output_port (SPAN Switched Port ANalyzer 本地流量)output_vlan (RSPAN Re">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://vcpu.me/myimages/ovsmirror.png">
+<meta property="og:image" content="http://vcpu.me/myimages/qos.png">
+<meta property="og:image" content="http://vcpu.me/myimages/ovsstp.png">
+<meta property="og:image" content="http://vcpu.me/myimages/ovsstp1.png">
+<meta property="og:updated_time" content="2017-08-03T07:44:29.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="openvSwitch mirror、Qos、STP">
+<meta name="twitter:description" content="ovs mirrorovs mirror介绍mirror可以将虚拟交换机把数据包发给的接口或则vlan  命令中对数据包选择选项：select_all，所有的包select_dst_portselect_src_portselect_vlan  将数据包镜像的命令：output_port (SPAN Switched Port ANalyzer 本地流量)output_vlan (RSPAN Re">
+<meta name="twitter:image" content="http://vcpu.me/myimages/ovsmirror.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://vcpu.me/openvswitch1/"/>
+
+
+
+
+
+  <title>openvSwitch mirror、Qos、STP | i博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">i博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">仰望星空前，还需脚踏实地。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/openvswitch1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">openvSwitch mirror、Qos、STP</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-03T18:00:00+08:00">
+                2017-08-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络/" itemprop="url" rel="index">
+                    <span itemprop="name">网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/openvswitch1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="openvswitch1/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/openvswitch1/" class="leancloud_visitors" data-flag-title="openvSwitch mirror、Qos、STP">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="ovs-mirror"><a href="#ovs-mirror" class="headerlink" title="ovs mirror"></a>ovs mirror</h2><h3 id="ovs-mirror介绍"><a href="#ovs-mirror介绍" class="headerlink" title="ovs mirror介绍"></a>ovs mirror介绍</h3><p>mirror可以将虚拟交换机把数据包发给的接口或则vlan</p>
+<ul>
+<li><p>命令中对数据包选择选项：<br>select_all，所有的包<br>select_dst_port<br>select_src_port<br>select_vlan</p>
+</li>
+<li><p>将数据包镜像的命令：<br>output_port (SPAN Switched Port ANalyzer 本地流量)<br>output_vlan (RSPAN Remote Switched Port ANalyzer 远程流量)</p>
+</li>
+</ul>
+<h3 id="实验拓扑"><a href="#实验拓扑" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><p><img src="/myimages/ovsmirror.png" alt="ovsmirror"></p>
+<a id="more"></a>
+<h3 id="拓扑实现脚本"><a href="#拓扑实现脚本" class="headerlink" title="拓扑实现脚本"></a>拓扑实现脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">ip netns add ns1</span><br><span class="line">ip netns add ns2</span><br><span class="line">ip netns add ns3</span><br><span class="line">ip netns add ns4</span><br><span class="line">ip netns add ns5</span><br><span class="line"></span><br><span class="line">ovs-vsctl add-br br0</span><br><span class="line">ovs-vsctl add-br br1</span><br><span class="line"></span><br><span class="line">ovs-vsctl add-port br0 tap1 -- set Interface tap1 type=internal</span><br><span class="line">ip link set tap1 netns ns1</span><br><span class="line">ip netns exec ns1 ip addr add 1.1.1.1/24 dev tap1</span><br><span class="line">ip netns exec ns1 ip link set tap1 up</span><br><span class="line">ip netns exec ns1 ip link set lo up</span><br><span class="line"></span><br><span class="line">ovs-vsctl add-port br0 tap2 -- set Interface tap2 type=internal</span><br><span class="line">ip link set tap2 netns ns2</span><br><span class="line">ip netns exec ns2 ip addr add 1.1.1.2/24 dev tap2</span><br><span class="line">ip netns exec ns2 ip link set tap2 up</span><br><span class="line">ip netns exec ns2 ip link set lo up</span><br><span class="line"></span><br><span class="line">ip link add firstbr type veth peer name firstif</span><br><span class="line">ip link add secondbr type veth peer name secondif</span><br><span class="line">ip link add thirdbr type veth peer name thirdif</span><br><span class="line"></span><br><span class="line">ovs-vsctl add-port br0 firstbr</span><br><span class="line">ip link set firstif netns ns3</span><br><span class="line"></span><br><span class="line">ovs-vsctl add-port br0 secondbr</span><br><span class="line">ovs-vsctl add-port br1 secondif</span><br><span class="line"></span><br><span class="line">ovs-vsctl add-port br1 thirdbr</span><br><span class="line">ip link set thirdif netns ns4</span><br><span class="line"></span><br><span class="line">ip netns exec ns3 ip link set firstif up</span><br><span class="line">ip netns exec ns4 ip link set thirdif up</span><br><span class="line">ip link set firstbr up</span><br><span class="line">ip link set secondbr up</span><br><span class="line">ip link set secondif up</span><br><span class="line">ip link set thirdbr up</span><br></pre></td></tr></table></figure>
+<p>附加拓扑清除脚本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ip link del firstbr type veth peer name firstif</span><br><span class="line">ip link del secondbr type veth peer name secondif</span><br><span class="line">ip link del thirdbr type veth peer name thirdif</span><br><span class="line"></span><br><span class="line">ovs-vsctl del-br br0</span><br><span class="line">ovs-vsctl del-br br1</span><br><span class="line">ip netns del ns1</span><br><span class="line">ip netns del ns2</span><br><span class="line">ip netns del ns3</span><br><span class="line">ip netns del ns4</span><br></pre></td></tr></table></figure>
+<h3 id="拓扑环境测试"><a href="#拓扑环境测试" class="headerlink" title="拓扑环境测试"></a>拓扑环境测试</h3><p>ip netns exec ns1 ping -c 2 1.1.1.1<br>ip netns exec ns1 ping -c 2 1.1.1.2</p>
+<h3 id="将ns1-ping-ns2的双向流量镜像到ns3（本地镜像）"><a href="#将ns1-ping-ns2的双向流量镜像到ns3（本地镜像）" class="headerlink" title="将ns1 ping ns2的双向流量镜像到ns3（本地镜像）"></a>将ns1 ping ns2的双向流量镜像到ns3（本地镜像）</h3><h4 id="镜像命令"><a href="#镜像命令" class="headerlink" title="镜像命令"></a>镜像命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl -- set bridge br0 mirrors=@m -- --id=@tap1 get Port tap1 -- --id=@firstbr get Port firstbr -- --id=@m create Mirror name=mirrortap1 select-dst-port=@tap1 select-src-port=@tap1 output-port=@firstbr</span><br></pre></td></tr></table></figure>
+<h4 id="实验过程记录"><a href="#实验过程记录" class="headerlink" title="实验过程记录"></a>实验过程记录</h4><ul>
+<li><p>ns1 ping ns2 (tap1: 1.1.1.1-&gt; tap2: 1.1.1.2)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">root@controller-VirtualBox:~/floodlight# ip netns exec ns1 ping -c 20 1.1.1.2</span><br><span class="line">PING 1.1.1.2 (1.1.1.2) 56(84) bytes of data.</span><br><span class="line">64 bytes from 1.1.1.2: icmp_seq=1 ttl=64 time=0.269 ms</span><br><span class="line">64 bytes from 1.1.1.2: icmp_seq=2 ttl=64 time=0.050 ms</span><br><span class="line">64 bytes from 1.1.1.2: icmp_seq=3 ttl=64 time=0.075 ms</span><br><span class="line">64 bytes from 1.1.1.2: icmp_seq=4 ttl=64 time=0.047 ms</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在ns3可以抓到流泪</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">root@controller-VirtualBox:~# ip netns exec ns3 tcpdump -i firstif</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv for full protocol decode</span><br><span class="line">listening on firstif, link-type EN10MB (Ethernet), capture size 262144 bytes</span><br><span class="line">15:01:59.883866 IP 1.1.1.1 &gt; 1.1.1.2: ICMP echo request, id 12123, seq 1, length 64</span><br><span class="line">15:01:59.883935 IP 1.1.1.2 &gt; 1.1.1.1: ICMP echo reply, id 12123, seq 1, length 64</span><br><span class="line">15:02:00.903931 IP 1.1.1.1 &gt; 1.1.1.2: ICMP echo request, id 12123, seq 2, length 64</span><br><span class="line">15:02:00.903951 IP 1.1.1.2 &gt; 1.1.1.1: ICMP echo reply, id 12123, seq 2, length 64</span><br><span class="line">15:02:01.928521 IP 1.1.1.1 &gt; 1.1.1.2: ICMP echo request, id 12123, seq 3, length 64</span><br><span class="line">15:02:01.928553 IP 1.1.1.2 &gt; 1.1.1.1: ICMP echo reply, id 12123, seq 3, length 64</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="实验结论"><a href="#实验结论" class="headerlink" title="实验结论"></a>实验结论</h4><p>经过虚拟交换机器配置，经过tap1所有的流量可以额外镜像复制到ns3</p>
+<h3 id="将ns1-ping-ns2的双向流量镜像到ns4（远程镜像）"><a href="#将ns1-ping-ns2的双向流量镜像到ns4（远程镜像）" class="headerlink" title="将ns1 ping ns2的双向流量镜像到ns4（远程镜像）"></a>将ns1 ping ns2的双向流量镜像到ns4（远程镜像）</h3><h4 id="设置secondbr、secondif、thirdbr为vlan110"><a href="#设置secondbr、secondif、thirdbr为vlan110" class="headerlink" title="设置secondbr、secondif、thirdbr为vlan110"></a>设置secondbr、secondif、thirdbr为vlan110</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl set Port secondbr tag=110</span><br><span class="line">ovs-vsctl set Port secondif tag=110</span><br><span class="line">ovs-vsctl set Port thirdbr tag=110</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>其它： vs-vsctl clear port secondbr tag</p>
+</blockquote>
+<h4 id="设置虚拟交换机br0-tap1接口镜像输出到vlan110"><a href="#设置虚拟交换机br0-tap1接口镜像输出到vlan110" class="headerlink" title="设置虚拟交换机br0:tap1接口镜像输出到vlan110"></a>设置虚拟交换机br0:tap1接口镜像输出到vlan110</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl -- set bridge br0 mirrors=@m -- --id=@tap1 get Port tap1 -- --id=@m create Mirror name=mirrortap1 select-dst-port=@tap1 select-src-port=@tap1 output-vlan=110</span><br><span class="line"></span><br><span class="line">#配置虚拟交换机从vlan110来的，都output到vlan110</span><br><span class="line">ovs-vsctl -- set bridge br1 mirrors=@m -- --id=@m create Mirror name=mirrorvlan select-vlan=110 output-vlan=110</span><br></pre></td></tr></table></figure>
+<h4 id="禁止学习vlan110的mac"><a href="#禁止学习vlan110的mac" class="headerlink" title="禁止学习vlan110的mac"></a>禁止学习vlan110的mac</h4><p>ovs-vsctl set bridge br0 flood-vlans=110<br>ovs-vsctl set bridge br1 flood-vlans=110</p>
+<h4 id="实验过程记录-1"><a href="#实验过程记录-1" class="headerlink" title="实验过程记录"></a>实验过程记录</h4><ul>
+<li><p>ns1 ping ns2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">root@controller-VirtualBox:~/floodlight# ip netns exec ns1 ping -c 200 1.1.1.2</span><br><span class="line">PING 1.1.1.2 (1.1.1.2) 56(84) bytes of data.</span><br><span class="line">64 bytes from 1.1.1.2: icmp_seq=1 ttl=64 time=0.103 ms</span><br><span class="line">64 bytes from 1.1.1.2: icmp_seq=2 ttl=64 time=0.056 ms</span><br><span class="line">64 bytes from 1.1.1.2: icmp_seq=3 ttl=64 time=0.064 ms</span><br><span class="line">64 bytes from 1.1.1.2: icmp_seq=4 ttl=64 time=0.083 ms</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>ns4 tcpdump抓到了远程镜像的报文</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">root@controller-VirtualBox:~# ip netns exec ns4 tcpdump -i thirdif</span><br><span class="line">tcpdump: verbose output suppressed, use -v or -vv for full protocol decode</span><br><span class="line">listening on thirdif, link-type EN10MB (Ethernet), capture size 262144 bytes</span><br><span class="line">15:19:21.064214 IP 1.1.1.1 &gt; 1.1.1.2: ICMP echo request, id 12180, seq 3, length 64</span><br><span class="line">15:19:21.064245 IP 1.1.1.2 &gt; 1.1.1.1: ICMP echo reply, id 12180, seq 3, length 64</span><br><span class="line">15:19:22.088654 IP 1.1.1.1 &gt; 1.1.1.2: ICMP echo request, id 12180, seq 4, length 64</span><br><span class="line">15:19:22.088681 IP 1.1.1.2 &gt; 1.1.1.1: ICMP echo reply, id 12180, seq 4, length 64</span><br><span class="line">15:19:23.111975 IP 1.1.1.1 &gt; 1.1.1.2: ICMP echo request, id 12180, seq 5, length 64</span><br><span class="line">15:19:23.112006 IP 1.1.1.2 &gt; 1.1.1.1: ICMP echo reply, id 12180, seq 5, length 64</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>br0学习到了ns1和ns2接口的mac，br1不会学习到镜像流量的mac</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">root@controller-VirtualBox:~/floodlight# ovs-appctl fdb/show br0</span><br><span class="line"> port  VLAN  MAC                Age</span><br><span class="line">    2     0  d2:82:aa:d7:3d:f2  150</span><br><span class="line">    1     0  b2:3f:c1:d1:16:7d  150</span><br><span class="line">root@controller-VirtualBox:~/floodlight# ovs-appctl fdb/show br1</span><br><span class="line"> port  VLAN  MAC                Age</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="实验结论-1"><a href="#实验结论-1" class="headerlink" title="实验结论"></a>实验结论</h4><p>通过一定配置克实现虚拟交换剂的远程镜像功能</p>
+<h4 id="清除实验环境的镜像配置"><a href="#清除实验环境的镜像配置" class="headerlink" title="清除实验环境的镜像配置"></a>清除实验环境的镜像配置</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl clear Bridge br0 mirrors</span><br><span class="line">ovs-vsctl clear Bridge br0 flood_vlans</span><br><span class="line"></span><br><span class="line">ovs-vsctl clear Bridge br1 mirrors</span><br><span class="line">ovs-vsctl clear Bridge br1 flood_vlans</span><br></pre></td></tr></table></figure>
+<h2 id="ovs-QOS"><a href="#ovs-QOS" class="headerlink" title="ovs QOS"></a>ovs QOS</h2><h3 id="实验拓扑-1"><a href="#实验拓扑-1" class="headerlink" title="实验拓扑"></a>实验拓扑</h3><p><img src="/myimages/qos.png" alt="qos"></p>
+<h3 id="拓扑实现脚本-1"><a href="#拓扑实现脚本-1" class="headerlink" title="拓扑实现脚本"></a>拓扑实现脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">ip netns add ns1</span><br><span class="line">ip netns add ns2</span><br><span class="line">ip netns add ns3</span><br><span class="line">ip netns add ns4</span><br><span class="line"></span><br><span class="line">ovs-vsctl add-br br0</span><br><span class="line">ovs-vsctl add-br br1</span><br><span class="line"></span><br><span class="line">ovs-vsctl add-port br0 tap1 -- set Interface tap1 type=internal</span><br><span class="line">ip link set tap1 netns ns1</span><br><span class="line">ip netns exec ns1 ip addr add 1.1.1.1/24 dev tap1</span><br><span class="line">ip netns exec ns1 ip link set tap1 up</span><br><span class="line">ip netns exec ns1 ip link set lo up</span><br><span class="line"></span><br><span class="line">ovs-vsctl add-port br0 tap2 -- set Interface tap2 type=internal</span><br><span class="line">ip link set tap2 netns ns2</span><br><span class="line">ip netns exec ns2 ip addr add 1.1.1.2/24 dev tap2</span><br><span class="line">ip netns exec ns2 ip link set tap2 up</span><br><span class="line">ip netns exec ns2 ip link set lo up</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ovs-vsctl add-port br0 tap3 -- set Interface tap3 type=internal</span><br><span class="line">ip link set tap3 netns ns3</span><br><span class="line">ip netns exec ns3 ip addr add 1.1.1.3/24 dev tap3</span><br><span class="line">ip netns exec ns3 ip link set tap3 up</span><br><span class="line">ip netns exec ns3 ip link set lo up</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ip link add firstbr type veth peer name firstif</span><br><span class="line"></span><br><span class="line">ovs-vsctl add-port br0 firstbr</span><br><span class="line">ovs-vsctl add-port br1 firstif</span><br><span class="line">ip link set firstbr up</span><br><span class="line">ip link set firstif up</span><br><span class="line"></span><br><span class="line">ovs-vsctl add-port br1 tap4 -- set Interface tap4 type=internal</span><br><span class="line">ip link set tap4 netns ns4</span><br><span class="line">ip netns exec ns4 ip addr add 1.1.1.4/24 dev tap4</span><br><span class="line">ip netns exec ns4 ip link set tap4 up</span><br><span class="line">ip netns exec ns4 ip link set lo up</span><br></pre></td></tr></table></figure>
+<ul>
+<li>拓扑销毁方法</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ip link del firstbr type veth peer name firstif</span><br><span class="line">ovs-vsctl del-br br0</span><br><span class="line">ovs-vsctl del-br br1</span><br><span class="line">ip netns del ns1</span><br><span class="line">ip netns del ns2</span><br><span class="line">ip netns del ns3</span><br><span class="line">ip netns del ns4</span><br></pre></td></tr></table></figure>
+<h3 id="测试验证方法"><a href="#测试验证方法" class="headerlink" title="测试验证方法"></a>测试验证方法</h3><ul>
+<li><p>在服务端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#在ns4串口中netserver开启流量测试服务端</span><br><span class="line">root@controller-VirtualBox:~# netserver</span><br><span class="line">Starting netserver with host &apos;IN(6)ADDR_ANY&apos; port &apos;12865&apos; and family AF_UNSPEC</span><br><span class="line"></span><br><span class="line">root@controller-VirtualBox:~# netstat -ntlp</span><br><span class="line">Active Internet connections (only servers)</span><br><span class="line">Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name</span><br><span class="line">tcp6       0      0 :::12865                :::*                    LISTEN      14197/netserver</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在测试端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">第四列为速率： 36669.53(即约36Gbps)</span><br><span class="line">root@controller-VirtualBox:~# netperf -H 1.1.1.4 -t UDP_STREAM</span><br><span class="line">MIGRATED UDP STREAM TEST from 0.0.0.0 (0.0.0.0) port 0 AF_INET to 1.1.1.4 (1.1.1.4) port 0 AF_INET : demo</span><br><span class="line">Socket  Message  Elapsed      Messages</span><br><span class="line">Size    Size     Time         Okay Errors   Throughput</span><br><span class="line">bytes   bytes    secs            #      #   10^6bits/sec</span><br><span class="line"></span><br><span class="line">212992   65507   10.00      700111      0    36688.91</span><br><span class="line">212992           10.00      699741           36669.53</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="设置接口firstif发包速率10Mbps"><a href="#设置接口firstif发包速率10Mbps" class="headerlink" title="设置接口firstif发包速率10Mbps"></a>设置接口firstif发包速率10Mbps</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl set Interface firstif ingress_policing_rate=10000</span><br><span class="line">ovs-vsctl set Interface firstif ingress_policing_burst=10000</span><br></pre></td></tr></table></figure>
+<p><strong> 测试结论：</strong><br>如下结论，从ns1-&gt;ns4  104741.35<br>        从ns4-&gt;ns1  10.27<br>    也就是当流量走入接口firstif后速率限制为10Mbps,导致到ns4位10Mbps,因此回程流量（ns4-&gt;ns1）为10Mbps左右</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">root@controller-VirtualBox:~# netperf -H 1.1.1.4 -t UDP_STREAM</span><br><span class="line">MIGRATED UDP STREAM TEST from 0.0.0.0 (0.0.0.0) port 0 AF_INET to 1.1.1.4 (1.1.1.4) port 0 AF_INET : demo</span><br><span class="line">Socket  Message  Elapsed      Messages</span><br><span class="line">Size    Size     Time         Okay Errors   Throughput</span><br><span class="line">bytes   bytes    secs            #      #   10^6bits/sec</span><br><span class="line"></span><br><span class="line">212992   65507   10.00     1998882      0    104741.35</span><br><span class="line">212992           10.00         196             10.27</span><br></pre></td></tr></table></figure>
+<h3 id="清除接口速率限制方法"><a href="#清除接口速率限制方法" class="headerlink" title="清除接口速率限制方法"></a>清除接口速率限制方法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl set Interface firstif ingress_policing_rate=0</span><br><span class="line">ovs-vsctl set Interface firstif ingress_policing_burst=0</span><br></pre></td></tr></table></figure>
+<h2 id="ovs-stp"><a href="#ovs-stp" class="headerlink" title="ovs stp"></a>ovs stp</h2><h3 id="环路拓扑"><a href="#环路拓扑" class="headerlink" title="环路拓扑"></a>环路拓扑</h3><p><img src="/myimages/ovsstp.png" alt="ovsstp"></p>
+<h3 id="组成拓扑结构的脚本"><a href="#组成拓扑结构的脚本" class="headerlink" title="组成拓扑结构的脚本"></a>组成拓扑结构的脚本</h3><h4 id="构成连通脚本"><a href="#构成连通脚本" class="headerlink" title="构成连通脚本"></a>构成连通脚本</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">ip netns add ns1</span><br><span class="line">ovs-vsctl add-br br1</span><br><span class="line">ovs-vsctl add-port br1 tap1 -- set Interface tap1 type=internal</span><br><span class="line">ip link set tap1 netns ns1</span><br><span class="line">ip netns exec ns1 ip addr add 1.1.1.1/24 dev tap1</span><br><span class="line">ip netns exec ns1 ip link set tap1 up</span><br><span class="line"></span><br><span class="line">ip netns add ns2</span><br><span class="line">ovs-vsctl add-br br2</span><br><span class="line">ovs-vsctl add-port br2 tap2 -- set Interface tap2 type=internal</span><br><span class="line">ip link set tap2 netns ns2</span><br><span class="line">ip netns exec ns2 ip addr add 1.1.1.2/24 dev tap2</span><br><span class="line">ip netns exec ns2 ip link set tap2 up</span><br><span class="line"></span><br><span class="line">ip netns add ns3</span><br><span class="line">ovs-vsctl add-br br3</span><br><span class="line">ovs-vsctl add-port br3 tap3 -- set Interface tap3 type=internal</span><br><span class="line">ip link set tap3 netns ns3</span><br><span class="line">ip netns exec ns3 ip addr add 1.1.1.3/24 dev tap3</span><br><span class="line">ip netns exec ns3 ip link set tap3 up</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ip link  add br1-br2 type veth peer name br2-br1</span><br><span class="line">ip link  add br1-br3 type veth peer name br3-br1</span><br><span class="line">ip link  add br2-br3 type veth peer name br3-br2</span><br><span class="line"></span><br><span class="line">ip link set dev br1-br2  up</span><br><span class="line">ip link set dev br2-br1  up</span><br><span class="line">ip link set dev br1-br3  up</span><br><span class="line">ip link set dev br3-br1  up</span><br><span class="line">ip link set dev br2-br3  up</span><br><span class="line">ip link set dev br3-br2  up</span><br><span class="line"></span><br><span class="line">#连接br1 &lt;-&gt; br2</span><br><span class="line">ovs-vsctl add-port br1 br1-br2</span><br><span class="line">ovs-vsctl add-port br2 br2-br1</span><br><span class="line"></span><br><span class="line">#连接br1&lt;-&gt;br3</span><br><span class="line">ovs-vsctl add-port br1 br1-br3</span><br><span class="line">ovs-vsctl add-port br3 br3-br1</span><br><span class="line"></span><br><span class="line">#连接br2&lt;-&gt;br3 一半</span><br><span class="line">ovs-vsctl add-port br2 br2-br3</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>拓扑清理脚本<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ip link  del br1-br2 type veth peer name br2-br1</span><br><span class="line">ip link  del br1-br3 type veth peer name br3-br1</span><br><span class="line">ip link  del br2-br3 type veth peer name br3-br2</span><br><span class="line">ovs-vsctl del-br br1</span><br><span class="line">ovs-vsctl del-br br2</span><br><span class="line">ovs-vsctl del-br br3</span><br><span class="line">ip netns del ns1</span><br><span class="line">ip netns del ns2</span><br><span class="line">ip netns del ns3</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>上述脚本执行完成后br3 <-> br2 未完全连接，因此还未组成环路<br>此时测试连通性：</-></p>
+<h4 id="连通脚本的测试命令"><a href="#连通脚本的测试命令" class="headerlink" title="连通脚本的测试命令"></a>连通脚本的测试命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip netns exec ns1 ping -c 3 1.1.1.2</span><br><span class="line">ip netns exec ns1 ping -c 4 1.1.1.3</span><br></pre></td></tr></table></figure>
+<h4 id="测试结果"><a href="#测试结果" class="headerlink" title="测试结果"></a>测试结果</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">root@controller-VirtualBox:~# ip netns exec ns1 ping -c 3 1.1.1.2</span><br><span class="line">PING 1.1.1.2 (1.1.1.2) 56(84) bytes of data.</span><br><span class="line">64 bytes from 1.1.1.2: icmp_seq=1 ttl=64 time=0.225 ms</span><br><span class="line"></span><br><span class="line">64 bytes from 1.1.1.2: icmp_seq=2 ttl=64 time=0.049 ms</span><br><span class="line">64 bytes from 1.1.1.2: icmp_seq=3 ttl=64 time=0.051 ms</span><br><span class="line"></span><br><span class="line">--- 1.1.1.2 ping statistics ---</span><br><span class="line">3 packets transmitted, 3 received, 0% packet loss, time 2031ms</span><br><span class="line">rtt min/avg/max/mdev = 0.049/0.108/0.225/0.082 ms</span><br><span class="line">root@controller-VirtualBox:~# ip netns exec ns1 ping -c 4 1.1.1.3</span><br><span class="line">PING 1.1.1.3 (1.1.1.3) 56(84) bytes of data.</span><br><span class="line">64 bytes from 1.1.1.3: icmp_seq=1 ttl=64 time=0.219 ms</span><br><span class="line">64 bytes from 1.1.1.3: icmp_seq=2 ttl=64 time=0.051 ms</span><br><span class="line">64 bytes from 1.1.1.3: icmp_seq=3 ttl=64 time=0.046 ms</span><br><span class="line">64 bytes from 1.1.1.3: icmp_seq=4 ttl=64 time=0.050 ms</span><br><span class="line"></span><br><span class="line">--- 1.1.1.3 ping statistics ---</span><br><span class="line">4 packets transmitted, 4 received, 0% packet loss, time 3065ms</span><br><span class="line">rtt min/avg/max/mdev = 0.046/0.091/0.219/0.074 ms</span><br></pre></td></tr></table></figure>
+<h4 id="将br2和br3连通组成二层环路"><a href="#将br2和br3连通组成二层环路" class="headerlink" title="将br2和br3连通组成二层环路"></a>将br2和br3连通组成二层环路</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl add-port br3 br3-br2</span><br></pre></td></tr></table></figure>
+<h4 id="环路后进行ping连通测试结果-时通时不通"><a href="#环路后进行ping连通测试结果-时通时不通" class="headerlink" title="环路后进行ping连通测试结果,时通时不通"></a>环路后进行ping连通测试结果,时通时不通</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">root@controller-VirtualBox:~# ip netns exec ns1 ping -c 30 1.1.1.2</span><br><span class="line">PING 1.1.1.2 (1.1.1.2) 56(84) bytes of data.</span><br><span class="line">64 bytes from 1.1.1.2: icmp_seq=1 ttl=64 time=0.436 ms</span><br><span class="line">--- 1.1.1.2 ping statistics ---</span><br><span class="line">18 packets transmitted, 1 received, 94% packet loss, time 17402ms</span><br><span class="line">rtt min/avg/max/mdev = 0.436/0.436/0.436/0.000 ms</span><br></pre></td></tr></table></figure>
+<h4 id="环路情况下分析"><a href="#环路情况下分析" class="headerlink" title="环路情况下分析"></a>环路情况下分析</h4><ul>
+<li><p>查询接口名称和接口索引的对应关系</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line">root@controller-VirtualBox:~# ovs-ofctl show br1</span><br><span class="line">OFPT_FEATURES_REPLY (xid=0x2): dpid:0000bee79fe0e948</span><br><span class="line">n_tables:254, n_buffers:0</span><br><span class="line">capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP</span><br><span class="line">actions: output enqueue set_vlan_vid set_vlan_pcp strip_vlan mod_dl_src mod_dl_dst mod_nw_src mod_nw_dst mod_nw_tos mod_tp_src mod_tp_dst</span><br><span class="line"> 1(tap1): addr:ff:7f:00:00:36:38</span><br><span class="line">     config:     PORT_DOWN</span><br><span class="line">     state:      LINK_DOWN</span><br><span class="line">     speed: 0 Mbps now, 0 Mbps max</span><br><span class="line"> 2(br1-br2): addr:b2:86:95:fa:4b:b9</span><br><span class="line">     config:     0</span><br><span class="line">     state:      0</span><br><span class="line">     current:    10GB-FD COPPER</span><br><span class="line">     speed: 10000 Mbps now, 0 Mbps max</span><br><span class="line"> 3(br1-br3): addr:12:a5:67:28:40:f1</span><br><span class="line">     config:     0</span><br><span class="line">     state:      0</span><br><span class="line">     current:    10GB-FD COPPER</span><br><span class="line">     speed: 10000 Mbps now, 0 Mbps max</span><br><span class="line"> LOCAL(br1): addr:be:e7:9f:e0:e9:48</span><br><span class="line">     config:     PORT_DOWN</span><br><span class="line">     state:      LINK_DOWN</span><br><span class="line">     speed: 0 Mbps now, 0 Mbps max</span><br><span class="line">OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0</span><br><span class="line">root@controller-VirtualBox:~# ovs-ofctl show br2</span><br><span class="line">OFPT_FEATURES_REPLY (xid=0x2): dpid:00007a10ec6b6942</span><br><span class="line">n_tables:254, n_buffers:0</span><br><span class="line">capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP</span><br><span class="line">actions: output enqueue set_vlan_vid set_vlan_pcp strip_vlan mod_dl_src mod_dl_dst mod_nw_src mod_nw_dst mod_nw_tos mod_tp_src mod_tp_dst</span><br><span class="line"> 1(tap2): addr:ff:7f:00:00:36:38</span><br><span class="line">     config:     PORT_DOWN</span><br><span class="line">     state:      LINK_DOWN</span><br><span class="line">     speed: 0 Mbps now, 0 Mbps max</span><br><span class="line"> 2(br2-br1): addr:0e:dd:29:5c:73:ec</span><br><span class="line">     config:     0</span><br><span class="line">     state:      0</span><br><span class="line">     current:    10GB-FD COPPER</span><br><span class="line">     speed: 10000 Mbps now, 0 Mbps max</span><br><span class="line"> 3(br2-br3): addr:4a:73:b5:67:af:fe</span><br><span class="line">     config:     0</span><br><span class="line">     state:      0</span><br><span class="line">     current:    10GB-FD COPPER</span><br><span class="line">     speed: 10000 Mbps now, 0 Mbps max</span><br><span class="line"> LOCAL(br2): addr:7a:10:ec:6b:69:42</span><br><span class="line">     config:     PORT_DOWN</span><br><span class="line">     state:      LINK_DOWN</span><br><span class="line">     speed: 0 Mbps now, 0 Mbps max</span><br><span class="line">OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0</span><br><span class="line">root@controller-VirtualBox:~# ovs-ofctl show br3</span><br><span class="line">OFPT_FEATURES_REPLY (xid=0x2): dpid:0000462c85b99a4d</span><br><span class="line">n_tables:254, n_buffers:0</span><br><span class="line">capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP</span><br><span class="line">actions: output enqueue set_vlan_vid set_vlan_pcp strip_vlan mod_dl_src mod_dl_dst mod_nw_src mod_nw_dst mod_nw_tos mod_tp_src mod_tp_dst</span><br><span class="line"> 1(tap3): addr:ff:7f:00:00:36:38</span><br><span class="line">     config:     PORT_DOWN</span><br><span class="line">     state:      LINK_DOWN</span><br><span class="line">     speed: 0 Mbps now, 0 Mbps max</span><br><span class="line"> 2(br3-br1): addr:ca:ed:37:ef:7d:21</span><br><span class="line">     config:     0</span><br><span class="line">     state:      0</span><br><span class="line">     current:    10GB-FD COPPER</span><br><span class="line">     speed: 10000 Mbps now, 0 Mbps max</span><br><span class="line"> 3(br3-br2): addr:ea:55:a1:2e:d9:d1</span><br><span class="line">     config:     0</span><br><span class="line">     state:      0</span><br><span class="line">     current:    10GB-FD COPPER</span><br><span class="line">     speed: 10000 Mbps now, 0 Mbps max</span><br><span class="line"> LOCAL(br3): addr:46:2c:85:b9:9a:4d</span><br><span class="line">     config:     PORT_DOWN</span><br><span class="line">     state:      LINK_DOWN</span><br><span class="line">     speed: 0 Mbps now, 0 Mbps max</span><br><span class="line">OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看ns1的arp表项，发现已经无法学习到1.1.1.2 mac地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root@controller-VirtualBox:~# ip netns exec ns1 arp -n</span><br><span class="line">Address                  HWtype  HWaddress           Flags Mask            Iface</span><br><span class="line">1.1.1.3                  ether   72:e4:76:db:2e:c5   C                     tap1</span><br><span class="line">1.1.1.2                          (incomplete)                              tap1</span><br><span class="line">root@controller-VirtualBox:~#</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>分别查看br1、br2、br3的mac转发表，发现br1和br2表项已经错乱</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">root@controller-VirtualBox:~# ovs-appctl fdb/show br1</span><br><span class="line"> port  VLAN  MAC                Age</span><br><span class="line">    2     0  3a:52:a3:d6:67:12    0</span><br><span class="line">    3     0  b2:86:95:fa:4b:b9    0</span><br><span class="line">    3     0  02:a1:bd:ae:56:75    0</span><br><span class="line">root@controller-VirtualBox:~# ovs-appctl fdb/show br2</span><br><span class="line"> port  VLAN  MAC                Age</span><br><span class="line">    3     0  3a:52:a3:d6:67:12    0</span><br><span class="line">    2     0  b2:86:95:fa:4b:b9    0</span><br><span class="line">    2     0  02:a1:bd:ae:56:75    0</span><br><span class="line">root@controller-VirtualBox:~# ovs-appctl fdb/show br3</span><br><span class="line"> port  VLAN  MAC                Age</span><br><span class="line">    2     0  3a:52:a3:d6:67:12    0</span><br><span class="line">    3     0  b2:86:95:fa:4b:b9    0</span><br><span class="line">    2     0  02:a1:bd:ae:56:75    0</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>表项错乱说明：<br>br1连接ns1的tap1本应该从接口1学习到，结果从接口三学习到<br>br2连接ns2的tap2本应该从接口1学习到，结果从接口三学习到</p>
+<h3 id="开启ovs-stp解决上述二层环路问题"><a href="#开启ovs-stp解决上述二层环路问题" class="headerlink" title="开启ovs stp解决上述二层环路问题"></a>开启ovs stp解决上述二层环路问题</h3><h4 id="ovs-vsctl-list-bridge查看stp默认是关闭的"><a href="#ovs-vsctl-list-bridge查看stp默认是关闭的" class="headerlink" title="ovs-vsctl list bridge查看stp默认是关闭的"></a>ovs-vsctl list bridge查看stp默认是关闭的</h4><h4 id="开启stp"><a href="#开启stp" class="headerlink" title="开启stp"></a>开启stp</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl set Bridge br1 stp_enable=true</span><br><span class="line">ovs-vsctl set Bridge br2 stp_enable=true</span><br><span class="line">ovs-vsctl set Bridge br3 stp_enable=true</span><br></pre></td></tr></table></figure>
+<h4 id="经过测试网络恢复正常"><a href="#经过测试网络恢复正常" class="headerlink" title="经过测试网络恢复正常"></a>经过测试网络恢复正常</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">root@controller-VirtualBox:~# ip netns exec ns1 ping -c 2 1.1.1.2</span><br><span class="line">PING 1.1.1.2 (1.1.1.2) 56(84) bytes of data.</span><br><span class="line">64 bytes from 1.1.1.2: icmp_seq=1 ttl=64 time=0.272 ms</span><br><span class="line">64 bytes from 1.1.1.2: icmp_seq=2 ttl=64 time=0.057 ms</span><br><span class="line">--- 1.1.1.2 ping statistics ---</span><br><span class="line">2 packets transmitted, 2 received, 0% packet loss, time 1023ms</span><br><span class="line">rtt min/avg/max/mdev = 0.057/0.164/0.272/0.108 ms</span><br><span class="line">root@controller-VirtualBox:~# ip netns exec ns1 ping -c 3 1.1.1.3</span><br><span class="line">PING 1.1.1.3 (1.1.1.3) 56(84) bytes of data.</span><br><span class="line">64 bytes from 1.1.1.3: icmp_seq=1 ttl=64 time=0.463 ms</span><br><span class="line">64 bytes from 1.1.1.3: icmp_seq=2 ttl=64 time=0.068 ms</span><br><span class="line">64 bytes from 1.1.1.3: icmp_seq=3 ttl=64 time=0.050 ms</span><br></pre></td></tr></table></figure>
+<h4 id="stp研究"><a href="#stp研究" class="headerlink" title="stp研究"></a>stp研究</h4><p>ovs-vsctl list bridge 获取到如下信息</p>
+<p>br3 stp_root_path_cost=”0”<br>br2 stp_root_path_cost=”2”<br>br1 stp_root_path_cost=”2”‘</p>
+<p>在br3-br1处抓包，并且令开窗口ns1 ping ns2</p>
+<p>窗口1： ns1 ping ns2<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@controller-VirtualBox:~# ping 1.1.1.2</span><br><span class="line">PING 1.1.1.2 (1.1.1.2) 56(84) bytes of data.</span><br><span class="line">64 bytes from 1.1.1.2: icmp_seq=1 ttl=64 time=0.502 ms</span><br><span class="line">64 bytes from 1.1.1.2: icmp_seq=2 ttl=64 time=0.078 ms</span><br></pre></td></tr></table></figure></p>
+<p>窗口2：抓取到报文流量经过了br3<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tcpdump: verbose output suppressed, use -v or -vv for full protocol decode</span><br><span class="line">listening on br3-br1, link-type EN10MB (Ethernet), capture size 262144 bytes</span><br><span class="line">15:08:46.538492 IP 1.1.1.1 &gt; 1.1.1.2: ICMP echo request, id 4525, seq 3, length 64</span><br><span class="line">15:08:46.538524 IP 1.1.1.2 &gt; 1.1.1.1: ICMP echo reply, id 4525, seq 3, length 64</span><br></pre></td></tr></table></figure></p>
+<p>通过测试得知上述环形网络，已经被逻辑修剪为如下拓扑图，从此解决了ovs二层环路问题</p>
+<p><img src="/myimages/ovsstp1.png" alt="ovsstp1"></p>
+<h4 id="stp相关命令总结"><a href="#stp相关命令总结" class="headerlink" title="stp相关命令总结"></a>stp相关命令总结</h4><ul>
+<li><p>开启br1 stp</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl set bridge br1 tp_enable=ture</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>关闭br1 stp</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl set Bridge br1 stp_enable=false</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置br1 stp cost</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl set Port br2-br1 other_config:stp-path-cost=100</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>查询br1 stp状态</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl get bridge br1 stp_enable</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置br1的stp优先级</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl set bridge br1 other_config:stp-priority=0x7800</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>移除br1 stp设置 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl clear bridge br100 other_config</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ubuntun16-04/" rel="tag"># ubuntun16.04</a>
+          
+            <a href="/tags/ovs/" rel="tag"># ovs</a>
+          
+            <a href="/tags/虚拟交换机/" rel="tag"># 虚拟交换机</a>
+          
+            <a href="/tags/mirror/" rel="tag"># mirror</a>
+          
+            <a href="/tags/Qos/" rel="tag"># Qos</a>
+          
+            <a href="/tags/STP/" rel="tag"># STP</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/openvswitch/" rel="next" title="openvSwitch">
+                <i class="fa fa-chevron-left"></i> openvSwitch
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/openvswitch2/" rel="prev" title="openvSwitch tunnel">
+                openvSwitch tunnel <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/h.jpg"
+               alt="vcpu.me" />
+          <p class="site-author-name" itemprop="name">vcpu.me</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">82</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">200</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/vcpu/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://ytlm.github.io/" title="CDN张三丰" target="_blank">CDN张三丰</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://io.iwalk.me" title="互联网绝世高手Andy" target="_blank">互联网绝世高手Andy</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ovs-mirror"><span class="nav-number">1.</span> <span class="nav-text">ovs mirror</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ovs-mirror介绍"><span class="nav-number">1.1.</span> <span class="nav-text">ovs mirror介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实验拓扑"><span class="nav-number">1.2.</span> <span class="nav-text">实验拓扑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#拓扑实现脚本"><span class="nav-number">1.3.</span> <span class="nav-text">拓扑实现脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#拓扑环境测试"><span class="nav-number">1.4.</span> <span class="nav-text">拓扑环境测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#将ns1-ping-ns2的双向流量镜像到ns3（本地镜像）"><span class="nav-number">1.5.</span> <span class="nav-text">将ns1 ping ns2的双向流量镜像到ns3（本地镜像）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#镜像命令"><span class="nav-number">1.5.1.</span> <span class="nav-text">镜像命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实验过程记录"><span class="nav-number">1.5.2.</span> <span class="nav-text">实验过程记录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实验结论"><span class="nav-number">1.5.3.</span> <span class="nav-text">实验结论</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#将ns1-ping-ns2的双向流量镜像到ns4（远程镜像）"><span class="nav-number">1.6.</span> <span class="nav-text">将ns1 ping ns2的双向流量镜像到ns4（远程镜像）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#设置secondbr、secondif、thirdbr为vlan110"><span class="nav-number">1.6.1.</span> <span class="nav-text">设置secondbr、secondif、thirdbr为vlan110</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设置虚拟交换机br0-tap1接口镜像输出到vlan110"><span class="nav-number">1.6.2.</span> <span class="nav-text">设置虚拟交换机br0:tap1接口镜像输出到vlan110</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#禁止学习vlan110的mac"><span class="nav-number">1.6.3.</span> <span class="nav-text">禁止学习vlan110的mac</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实验过程记录-1"><span class="nav-number">1.6.4.</span> <span class="nav-text">实验过程记录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实验结论-1"><span class="nav-number">1.6.5.</span> <span class="nav-text">实验结论</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#清除实验环境的镜像配置"><span class="nav-number">1.6.6.</span> <span class="nav-text">清除实验环境的镜像配置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ovs-QOS"><span class="nav-number">2.</span> <span class="nav-text">ovs QOS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实验拓扑-1"><span class="nav-number">2.1.</span> <span class="nav-text">实验拓扑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#拓扑实现脚本-1"><span class="nav-number">2.2.</span> <span class="nav-text">拓扑实现脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试验证方法"><span class="nav-number">2.3.</span> <span class="nav-text">测试验证方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设置接口firstif发包速率10Mbps"><span class="nav-number">2.4.</span> <span class="nav-text">设置接口firstif发包速率10Mbps</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#清除接口速率限制方法"><span class="nav-number">2.5.</span> <span class="nav-text">清除接口速率限制方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ovs-stp"><span class="nav-number">3.</span> <span class="nav-text">ovs stp</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#环路拓扑"><span class="nav-number">3.1.</span> <span class="nav-text">环路拓扑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#组成拓扑结构的脚本"><span class="nav-number">3.2.</span> <span class="nav-text">组成拓扑结构的脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#构成连通脚本"><span class="nav-number">3.2.1.</span> <span class="nav-text">构成连通脚本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#连通脚本的测试命令"><span class="nav-number">3.2.2.</span> <span class="nav-text">连通脚本的测试命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试结果"><span class="nav-number">3.2.3.</span> <span class="nav-text">测试结果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#将br2和br3连通组成二层环路"><span class="nav-number">3.2.4.</span> <span class="nav-text">将br2和br3连通组成二层环路</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#环路后进行ping连通测试结果-时通时不通"><span class="nav-number">3.2.5.</span> <span class="nav-text">环路后进行ping连通测试结果,时通时不通</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#环路情况下分析"><span class="nav-number">3.2.6.</span> <span class="nav-text">环路情况下分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#开启ovs-stp解决上述二层环路问题"><span class="nav-number">3.3.</span> <span class="nav-text">开启ovs stp解决上述二层环路问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ovs-vsctl-list-bridge查看stp默认是关闭的"><span class="nav-number">3.3.1.</span> <span class="nav-text">ovs-vsctl list bridge查看stp默认是关闭的</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#开启stp"><span class="nav-number">3.3.2.</span> <span class="nav-text">开启stp</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#经过测试网络恢复正常"><span class="nav-number">3.3.3.</span> <span class="nav-text">经过测试网络恢复正常</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#stp研究"><span class="nav-number">3.3.4.</span> <span class="nav-text">stp研究</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#stp相关命令总结"><span class="nav-number">3.3.5.</span> <span class="nav-text">stp相关命令总结</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">vcpu.me</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://vcpu.me.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://vcpu.me/openvswitch1/';
+          this.page.identifier = 'openvswitch1/';
+          this.page.title = 'openvSwitch mirror、Qos、STP';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://vcpu.me.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("l5u4v8AcoPCp9wlPGVJTG6Ny-gzGzoHsz", "RQdYIOd2snvd1muAW65nsn25");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

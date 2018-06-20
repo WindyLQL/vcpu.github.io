@@ -1,0 +1,1429 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="linux bridge,linux kernel,数据包转发原理,openvswitch,协议栈处理过程,网卡驱动处理过程,处理数据包中断上半部分和下半部分,netfilter,RPS算法工作原理,vhost-net线程工作原理,linux veth口工作原理,数据包抓包点和数据包统计个数位置,kvm中断触发云主机中断过程," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="i博客" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="笔者工作后从事的行业是linux2.6内核态的负载均衡研发，但是当时采用的mips CPU且整个架构重构了；对于通用的服务器的网络数据包运行流程，有了解，但是缺少大规模的总结和深刻的认识 因为笔者在之前工作中解决了云主机tap口丢包问题，就借此机会详细阐述下数据包处理流程吧，一为总结，二为兴趣，笔者不太喜欢看黑盒的东西。  如上图示，数据包从物理HOST外侧，经过物理网卡，发给ovs bridge">
+<meta name="keywords" content="linux bridge,linux kernel,数据包转发原理,openvswitch,协议栈处理过程,网卡驱动处理过程,处理数据包中断上半部分和下半部分,netfilter,RPS算法工作原理,vhost-net线程工作原理,linux veth口工作原理,数据包抓包点和数据包统计个数位置,kvm中断触发云主机中断过程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据包如何从物理网卡到达云主机的应用程序？">
+<meta property="og:url" content="http://vcpu.me/packet_from_nic_to_user_process/index.html">
+<meta property="og:site_name" content="i博客">
+<meta property="og:description" content="笔者工作后从事的行业是linux2.6内核态的负载均衡研发，但是当时采用的mips CPU且整个架构重构了；对于通用的服务器的网络数据包运行流程，有了解，但是缺少大规模的总结和深刻的认识 因为笔者在之前工作中解决了云主机tap口丢包问题，就借此机会详细阐述下数据包处理流程吧，一为总结，二为兴趣，笔者不太喜欢看黑盒的东西。  如上图示，数据包从物理HOST外侧，经过物理网卡，发给ovs bridge">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://vcpu.me/myimages/54E1C1AAA206DB51E9E4C23F2B68CFE6.png">
+<meta property="og:image" content="http://vcpu.me/myimages/E5A8D6023DD0FA5804F77BEFEF96A63F.png">
+<meta property="og:image" content="http://vcpu.me/myimages/E7B39EBF413495D3788123DAFB23CA5F.png">
+<meta property="og:image" content="http://vcpu.me/myimages/DBA3554D5524A2563C67F575857707AC.png">
+<meta property="og:image" content="http://vcpu.me/myimages/5AEBF23BD93A0525798AEB6A573C299E.png">
+<meta property="og:image" content="http://vcpu.me/myimages/AF5A75583B063B55A6C675CFD0E63B03.png">
+<meta property="og:image" content="http://vcpu.me/myimages/3341C8785A5EC9F4530DA7437AF4F84C.png">
+<meta property="og:image" content="http://vcpu.me/myimages/C6599043FF4BEE2325048B1346858411.png">
+<meta property="og:image" content="http://vcpu.me/myimages/C09BA022BE99E0E3487760EC345029B1.png">
+<meta property="og:image" content="http://vcpu.me/myimages/88ACAF18318CB722EDD337C03C74FEB8.png">
+<meta property="og:updated_time" content="2018-06-12T04:59:36.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="数据包如何从物理网卡到达云主机的应用程序？">
+<meta name="twitter:description" content="笔者工作后从事的行业是linux2.6内核态的负载均衡研发，但是当时采用的mips CPU且整个架构重构了；对于通用的服务器的网络数据包运行流程，有了解，但是缺少大规模的总结和深刻的认识 因为笔者在之前工作中解决了云主机tap口丢包问题，就借此机会详细阐述下数据包处理流程吧，一为总结，二为兴趣，笔者不太喜欢看黑盒的东西。  如上图示，数据包从物理HOST外侧，经过物理网卡，发给ovs bridge">
+<meta name="twitter:image" content="http://vcpu.me/myimages/54E1C1AAA206DB51E9E4C23F2B68CFE6.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://vcpu.me/packet_from_nic_to_user_process/"/>
+
+
+
+
+
+  <title>数据包如何从物理网卡到达云主机的应用程序？ | i博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">i博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">仰望星空前，还需脚踏实地。</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://vcpu.me/packet_from_nic_to_user_process/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="vcpu.me">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/h.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="i博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">数据包如何从物理网卡到达云主机的应用程序？</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-12T18:00:00+08:00">
+                2018-06-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/packet_from_nic_to_user_process/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="packet_from_nic_to_user_process/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/packet_from_nic_to_user_process/" class="leancloud_visitors" data-flag-title="数据包如何从物理网卡到达云主机的应用程序？">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>笔者工作后从事的行业是linux2.6内核态的负载均衡研发，但是当时采用的mips CPU且整个架构重构了；对于通用的服务器的网络数据包运行流程，有了解，但是缺少大规模的总结和深刻的认识</p>
+<p>因为笔者在之前工作中解决了云主机tap口丢包问题，就借此机会详细阐述下数据包处理流程吧，一为总结，二为兴趣，笔者不太喜欢看黑盒的东西。</p>
+<p><img src="/myimages/54E1C1AAA206DB51E9E4C23F2B68CFE6.png" alt="cc.png"></p>
+<p>如上图示，数据包从物理HOST外侧，经过物理网卡，发给ovs bridge，最后经过linux 安全组交给guest云主机1，最后交给guest1云主机应用程序；后文就从接近代码级别阐述此过程的详细步骤；笔者讲述的这个过程只能算是通用流程，可以用来参考，因为不同物理网卡会存在差异性。希望你通过这篇文章了解整个数据包转发流程，更深入了解底层网络实现。<br><a id="more"></a></p>
+<h1 id="粗略的转发逻辑"><a href="#粗略的转发逻辑" class="headerlink" title="粗略的转发逻辑"></a>粗略的转发逻辑</h1><p>其实下图中有linux bridge设备，用来实现安全组功能，现在大部分云计算实现，已经去除linux bridge，采用ovs 流表实现。但是笔者定位tap口丢包问题时候，就是这种转发路径</p>
+<p>所以就按照这种转发路径进行流程分析，对于想了解ovs情况读者来说，内容也只多不少吧</p>
+<p><img src="/myimages/E5A8D6023DD0FA5804F77BEFEF96A63F.png" alt="xx.png"></p>
+<p>如上图，一个数据包从物理网卡到云主机内部粗略转发逻辑可以概括如下四大部分，后文分别对该四大部分进行较详细的解析</p>
+<ol>
+<li>数据包经过物理口到达ovs 桥(br-int)</li>
+<li>通过虚拟机网络中的veth pair重新传送给 linux bridge</li>
+<li>linux bridge 将数据包发给tap口，送给云主机</li>
+<li>云主机收到该数据包并最终将数据包交给云主机内部程序</li>
+</ol>
+<h1 id="数据包经过物理口到达ovs-桥-br-int"><a href="#数据包经过物理口到达ovs-桥-br-int" class="headerlink" title="数据包经过物理口到达ovs 桥(br-int) "></a>数据包经过物理口到达ovs 桥(br-int) </h1><p>数据包经过物理服务器物理网卡送给br-int，虽然描述起来很简单，但是其实质过程是相当复杂的；这个过程涉及到物理网卡收数据包，驱动将数据包给内核协议栈，协议栈将数据包发给ovs三大部分；</p>
+<p>因为过程较为复杂，我们在此继续将该过程拆分成三大部分进行描述，详细部分如下：</p>
+<ol>
+<li>物理网卡处理</li>
+<li>中断下半部分软中断处理</li>
+<li>将数据包交给内核的ovs bridge处理</li>
+</ol>
+<h2 id="物理网卡处理"><a href="#物理网卡处理" class="headerlink" title="物理网卡处理"></a>物理网卡处理</h2><p><img src="/myimages/E7B39EBF413495D3788123DAFB23CA5F.png" alt="cc.png"></p>
+<p>物理网卡收到数据包的处理流程如上图所示，详细步骤如下：</p>
+<ol>
+<li>网卡收到数据包，先将高低电平转换到网卡fifo存储，网卡申请ring buffer的描述，根据描述找到具体的物理地址，从fifo队列物理网卡会使用DMA将数据包写到了该物理地址写到了，其实就是skb_buffer中</li>
+<li>这个时候数据包已经被转移到skb_buffer中，因为是DMA写入，内核并没有监控数据包写入情况，这时候NIC触发一个硬中断，每一个硬件中断会对应一个中断号，且指定一个vCPU来处理，如上图vcpu2收到了该硬件中断</li>
+<li>硬件中断的中断处理程序，调用驱动程序完成，a.启动软中断</li>
+<li>硬中断触发的驱动程序会禁用网卡硬中断，其实这时候意思是告诉NIC，再来数据不用触发硬中断了，把数据DMA拷入系统内存即可</li>
+<li>硬中断触发的驱动程序会启动软中断，启用软中断目的是将数据包后续处理流程交给软中断慢慢处理，这个时候退出硬件中断了，但是注意和网络有关的硬中断，要等到后续开启硬中断后，才有机会再次被触发</li>
+<li>NAPI触发软中断，触发napi系统</li>
+<li>消耗ringbuffer指向的skb_buffer</li>
+<li>NAPI循环处理ringbuffer数据，处理完成</li>
+<li>启动网络硬件中断，有数据来时候就可以继续触发硬件中断，继续通知CPU来消耗数据包</li>
+</ol>
+<p>其实上述过程过程简单描述为：网卡收到数据包，DMA到内核内存，中断通知内核数据有了，内核按轮次处理消耗数据包，一轮处理完成后，开启硬中断。其核心就是网卡和内核其实是生产和消费模型，网卡生产，内核负责消费，生产者需要通知消费者消费；如果生产过快会产生丢包，如果消费过慢也会产生问题。也就说在高流量压力情况下，只有生产消费优化后，消费能力够快，此生产消费关系才可以正常维持，所以如果物理接口有丢包计数时候，未必是网卡存在问题，也可能是内核消费的太慢。</p>
+<p>在介绍完整体流程后，也许明白很多，其实也迷惑很多，我的疑惑是，网卡数据如何写到内核内存？</p>
+<h3 id="如何将网卡收到的数据写入到内核内存？"><a href="#如何将网卡收到的数据写入到内核内存？" class="headerlink" title="如何将网卡收到的数据写入到内核内存？"></a>如何将网卡收到的数据写入到内核内存？</h3><p>引用:<a href="https://tech.meituan.com/Redis_High_Concurrency_Optimization.html" target="_blank" rel="noopener">https://tech.meituan.com/Redis_High_Concurrency_Optimization.html</a></p>
+<p>NIC在接收到数据包之后，首先需要将数据同步到内核中，这中间的桥梁是rx ring buffer。它是由NIC和驱动程序共享的一片区域，事实上，rx ring buffer存储的并不是实际的packet数据，而是一个描述符，这个描述符指向了它真正的存储地址，具体流程如下：</p>
+<p>驱动在内存中分配一片缓冲区用来接收数据包，叫做sk_buffer;</p>
+<p>将上述缓冲区的地址和大小（即接收描述符），加入到rx ring buffer。描述符中的缓冲区地址是DMA使用的物理地址;</p>
+<p>驱动通知网卡有一个新的描述符;</p>
+<p>网卡从rx ring buffer中取出描述符，从而获知缓冲区的地址和大小;</p>
+<p>网卡收到新的数据包;</p>
+<p>网卡将新数据包通过DMA直接写到sk_buffer中。</p>
+<p><img src="/myimages/DBA3554D5524A2563C67F575857707AC.png" alt=""></p>
+<p>当驱动处理速度跟不上网卡收包速度时，驱动来不及分配缓冲区，NIC接收到的数据包无法及时写到sk_buffer，就会产生堆积，当NIC内部缓冲区写满后，就会丢弃部分数据，引起丢包。这部分丢包为rx_fifo_errors，在 /proc/net/dev中体现为fifo字段增长，在ifconfig中体现为overruns指标增长。</p>
+<p>在理解完物理网卡处理流程后，后面理解中断下本部分中断处理详细过程。</p>
+<h2 id="中断下半部分软中断处理"><a href="#中断下半部分软中断处理" class="headerlink" title="中断下半部分软中断处理"></a>中断下半部分软中断处理</h2><p>见上图，在上述第7步，主要流程是一个一个的消费数据包，那么具体流程如何？</p>
+<p>7.1 因为igb_ckean_rx_irq会循环消耗数据包，但是需要有个度，否则就会一直在消耗数据包，整个CPU一只停留在处理部分，用户态程序就没有机会真正消费数据包了，所以这循环有次数限制，内核参数是net.core.netdev_budget = 300，其含义是最大300个，无论如何</p>
+<p>都应该退出软中断部分，空出CPU时间片，就有机会调度应用程序了。</p>
+<p>7.2 取出skb，调用napi_gro_receive，这个函数先做一些GRO包合并动作，然后根据是否开启RPS执行如下流程</p>
+<p>7.2.1: 开启了RPS，将会将数据包放到hash到的vCPU队列中，默认大小由net.core.netdev_max_backlog = 1000 控制，数据包挂入这个队列后，本包处理就结束了，继续处理下一个包。也就是数据包如果超过1000个，就会被丢弃，所以用户态消耗还是要跟上才行。 当然此处涉及到到数据包挂到cpu3队列后，后续执行流程是cpu3中断触发时候，会从取出数据调用__netif_receive_skb_core处理消耗该数据包</p>
+<p>7.2.2:没有开启RPS，直接使用vcpu2调用__netif_receive_skb_core进行处理消耗该数据包</p>
+<h3 id="rps"><a href="#rps" class="headerlink" title="rps"></a>rps</h3><p>由上述描述可以知道，开启rps后，接收硬件中断vCPU2 和处理下半步中断的vcpu2就有机会把大量的数据包简短处理，直接挂到其它vcpu队列上，这样就能减少该vcpu2压力，vcpu2就能处理更大流量。RPS适合单网卡队列，多vcpu的使用场景</p>
+<h3 id="netif-receive-skb-core"><a href="#netif-receive-skb-core" class="headerlink" title="__netif_receive_skb_core"></a>__netif_receive_skb_core</h3><p>__netif_receive_skb_core 是协议栈处理数据包的入口函数，你使用tcpdump抓包就是在此起作用，也就是说如果你tcpdump抓到数据包，代表该数据包已经到达协议栈入口了。</p>
+<p>软中断处理结尾是调用__netif_receive_skb_core进行消耗数据包，后文的ovs处理流程的入口也在该函数中调用</p>
+<h2 id="将数据包交给内核的ovs-bridge处理"><a href="#将数据包交给内核的ovs-bridge处理" class="headerlink" title="将数据包交给内核的ovs bridge处理"></a>将数据包交给内核的ovs bridge处理</h2><p><img src="/myimages/5AEBF23BD93A0525798AEB6A573C299E.png" alt="cc.png"></p>
+<p>上图所示是数据包在ovs内转发流程，其中netdev_frame_hook是ovs入口，被__netif_receive_skb_core调用用来处理收到的数据包；数据流量进入ovs bridge</p>
+<p>根据数据包信息查找流表，该数据包主要有如下两种处理情况</p>
+<ol>
+<li>流量发给控制器</li>
+<li>流量在内核态直接转发</li>
+</ol>
+<h3 id="流量发给控制器"><a href="#流量发给控制器" class="headerlink" title="流量发给控制器"></a>流量发给控制器</h3><p>内核流量通过netlink将数据包传给用户态的ovs-vswitchd进程，该进程会对流量解析，根据解析和预制处理逻辑处理（一般是下发流表）</p>
+<h3 id="流量在内核态直接转发"><a href="#流量在内核态直接转发" class="headerlink" title="流量在内核态直接转发"></a>流量在内核态直接转发</h3><p>以当前分析情况为例说明，数据包转发到linux veth口的详细过程，以及最后如何发给linux bridge的？</p>
+<p>根据流表的动作执行发送动作，最终会调用dev_hard_star_xmit,该函数会调用xmit_one , 最后调用ndo_start_xmit发送数据包（当前采用的linux 虚拟口，所以调用veth_xmit）。</p>
+<p>其中tcpdump工作在xmit_one</p>
+<p>其中虚拟口发包计数统计工作在veth_xmit</p>
+<p>所以抓包是在包个数统计之前的，这一点要注意</p>
+<h3 id="linux虚拟机口工作原理描述"><a href="#linux虚拟机口工作原理描述" class="headerlink" title="linux虚拟机口工作原理描述"></a>linux虚拟机口工作原理描述</h3><p>一边用于收包收到数据包后立刻将该数据包发出，所谓的发出是指： “将数据包收取到后立刻再次注入到协议栈，交给另一个处理对象”，具体处理方法如下：</p>
+<ol>
+<li>veth_xmit将数据包发出</li>
+<li>调用dev_forward_sk,调用协议栈收包入口netif_rx_internal, 我们当前情况很可能netif_rx_internal将数据直接放入CPU队列中，该数据包就被注入了协议栈</li>
+<li>另一个处理对象，会经过软中断触发时候，立刻处理该CPU队列的数据包，协议栈会再次收到数据包，相当于连接linux bridge的口收到了数据包，协议栈会将该数据包送给linux bridge</li>
+</ol>
+<h1 id="linux-bridge-将数据包发给tap口"><a href="#linux-bridge-将数据包发给tap口" class="headerlink" title="linux bridge 将数据包发给tap口"></a>linux bridge 将数据包发给tap口</h1><p><img src="/myimages/AF5A75583B063B55A6C675CFD0E63B03.png" alt="cc.png"></p>
+<p>连接该linux bridge的是linux veth pair口，由之前的描述可以知道，数据包会经过linux veth pair被注入到协议栈，协议栈会再次调用_netif_reveive_skb处理该数据包；</p>
+<p>而因该函数是veth口收到的数据，该接口连接的是linux bridge，协议栈会调用br_handle_frame处理该数据包。linux bridge处理数据包会经过如下几个情况：</p>
+<ol>
+<li>协议栈收到该数据包会先经过NF_BR_PRE_ROUTING钩子，该钩子在处理之前，你可以通过iptabls加PRE ROUTING策略，加的策略会通过该钩子函数工作</li>
+<li>经过NF_BR_PRE_ROUTING钩子后，会判断是将数据包当成本机数据包处理，还是继续转发（后文就以转发为例进行说明）</li>
+<li>数据包转发时候会经过NF_BR_FORWARD钩子函数，该函数是所有转发的数据包都会经过的，安全组策略就是在此钩子中work的</li>
+<li>转发数据包处理完成后，最后将调用br_forward_finish将数据包发出去，NF_BR_POST_ROUTING钩子存在此处，数据包发出前最后经历过的处理</li>
+<li>最后会调用dev_hard_start_xmit函数将数据包发出</li>
+</ol>
+<p>经过linux bridge转发处理后，linux最后将数据包调用dev_hard_start_xmit发给tap口了，后文描述tap详细处理过程</p>
+<h2 id="tap口详细处理过程"><a href="#tap口详细处理过程" class="headerlink" title="tap口详细处理过程"></a>tap口详细处理过程</h2><p>按照我们本次研究的场景，linux bridge连接的是tap口，linux bridge会将数据包交给tap口；终极目标是将数据包将给用户态进程qume进程的云主机进行消耗；</p>
+<p>所以需要将数据包从内核态转发到用户态，且触发中断告知云主机数据包来了，让云主机work起来，处理消耗数据包。很显然tap口自己是完成不了，接口紧紧能处理接收数据包</p>
+<p>而数据内核态和用户态穿越以及中断触发，就需要通过另一个层级的内核线程驱动了，在此研究场景下使用的vhost-net技术；也就是说tap口和vhost配合完成将数据包交给云主机。</p>
+<p>后文先说明tap口如何处理，以及tap口和vhost如何配合的</p>
+<p><img src="/myimages/3341C8785A5EC9F4530DA7437AF4F84C.png" alt="cc.png"></p>
+<h3 id="tap口如何处理数据包"><a href="#tap口如何处理数据包" class="headerlink" title="tap口如何处理数据包"></a>tap口如何处理数据包</h3><p>linux bridge最后会调用 dev_hard_start_xmit，因为连接的是tap口，所以会调用tap口的xmit_one将数据包送给tap口入口函数。</p>
+<p>如上图，tcpdump抓取数据包点在xmit_one调用，经过抓包点后会最后将数据包调用tun_net_xmit发出去，tun_net_xmit这个函数很重要，承载了tap数据的逻辑，具体点介绍是：</p>
+<ol>
+<li>发包统计计数在此统计、drop丢包计数在此统计</li>
+<li>tun_net_xmit会将数据包放入socket.sk-&gt;sk_receive_queue，socket队列中,且该队列有长度限制，默认长度大小为tap口的tx_queuelen：一般为1000个数据包，如果长度大于1000后数据包会被丢弃，遇到这种情况，说明云主机处理的慢了，你就想办法优化云主机处理速度吧</li>
+<li>数据包放入socket队列中，需要唤醒vhost线程工作，具体工作见tap口和vhost线程如何配合</li>
+</ol>
+<p>如下：txqueuelen:1000 为tap口socket队列长度，单位是包个数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">root@compute<span class="number">-001</span>:~<span class="comment"># ifconfig tapc3072bad-18</span></span><br><span class="line">tapc3072bad<span class="number">-18</span> Link encap:Ethernet  HWaddr fe:<span class="number">16</span>:<span class="number">3</span>e:<span class="number">09</span>:<span class="number">6</span>f:<span class="number">46</span></span><br><span class="line">          inet6 addr: fe80::fc16:<span class="number">3</span>eff:fe09:<span class="number">6</span>f46/<span class="number">64</span> Scope:Link</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST  MTU:<span class="number">1450</span>  Metric:<span class="number">1</span></span><br><span class="line">          RX packets:<span class="number">3569</span> errors:<span class="number">0</span> dropped:<span class="number">0</span> overruns:<span class="number">0</span> frame:<span class="number">0</span></span><br><span class="line">          TX packets:<span class="number">372</span> errors:<span class="number">0</span> dropped:<span class="number">0</span> overruns:<span class="number">0</span> carrier:<span class="number">0</span></span><br><span class="line">          collisions:<span class="number">0</span> txqueuelen:<span class="number">1000</span></span><br><span class="line">          RX bytes:<span class="number">294046</span> (<span class="number">294.0</span> KB)  TX bytes:<span class="number">26034</span> (<span class="number">26.0</span> KB)</span><br></pre></td></tr></table></figure>
+<h3 id="tap口和vhost线程如何配合"><a href="#tap口和vhost线程如何配合" class="headerlink" title="tap口和vhost线程如何配合"></a>tap口和vhost线程如何配合</h3><p>其实tap口和vhost配合很简单，tap口接收到数据包后放入挂到socket队列后，调用tun_net_xmit后，唤醒vhost线程让起工作即可，</p>
+<p>这个时候vhost线程会将数据包考入云主机的ring buffer中，且触发中断告诉云主机数据包已经来了，让云主机去处理消耗数据包，详细见vhost线程工作过程</p>
+<h2 id="vhost线程工作过程"><a href="#vhost线程工作过程" class="headerlink" title="vhost线程工作过程"></a>vhost线程工作过程</h2><p>vhost线程，是云主机vhost-net后，建立云主机时候一并建立的线程，线程名称组成为vhost-26735,其中26735为qume进程号</p>
+<p>说到这里获取设计常用的接口工作技术，按照器性能高低来个排序， vhost-user &gt; vhost &gt;virtio ,在此不多做解释了</p>
+<p>如下图：</p>
+<p>vhost线程是个死循环，它被唤醒后，循环做两件事情</p>
+<p>事情1:注入中断触发gust主机活动起来</p>
+<p>事情2:循环从tap口的socket队列中取出数据，直接将数据包考入用户态云主机的ringbuffer中，注意ringbuffer是vhost线程内核和用户态共享内存</p>
+<p>做完这两件事情，后续的事情就交给kvm触发中断物理主机vcpu如何将cpu让给gust主机的CPU了，这些事情后文讲述</p>
+<p><img src="/myimages/C6599043FF4BEE2325048B1346858411.png" alt="cc.png"></p>
+<h2 id="kvm如何中断触发云主机协议栈？"><a href="#kvm如何中断触发云主机协议栈？" class="headerlink" title="kvm如何中断触发云主机协议栈？"></a>kvm如何中断触发云主机协议栈？</h2><p>如下图vhost线程会调用kvm一些接口触发中断，为了触发中断主要做了两件事情</p>
+<p>事情1:判断物理cpu运行中，让cpu运行先退出，为了有机会注入中断</p>
+<p>事情2:想目标cpu添加一个请求，这个请求vcpu死循环会去检查，如果发现了这个请求，就真正注入中断</p>
+<p>也就是说，这两件事情其实只是让cpu退出，方便cpu注入，和提前写入注入中断标记，其过程还需要vcpu死循环来完成</p>
+<p>同样如下图：vcpu死循环主要干了什么？</p>
+<p>vcpu在运行的时候一直处于循环状态，在循环体中，会有环节检查中断注入标记，如果发现该标记就调用kvm_x86_ops-&gt;run触发中断</p>
+<p>该触发会最终调用中断处理函数vp_interrupt -&gt; vp_ring_interrupt-&gt; 最终触发协议栈的运行，让协议栈调用__netif_receive_core处理数据包</p>
+<p><img src="/myimages/C09BA022BE99E0E3487760EC345029B1.png" alt="cc.png"></p>
+<h1 id="云主机收到该数据包并最终将数据包交给云主机内部程序"><a href="#云主机收到该数据包并最终将数据包交给云主机内部程序" class="headerlink" title="云主机收到该数据包并最终将数据包交给云主机内部程序"></a>云主机收到该数据包并最终将数据包交给云主机内部程序</h1><p>其处理就是正常linux协议栈收包处理是一致的，这里就不多做说明了</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>到此叙述算是完成了，这还仅仅是针对于特定场景下收包过程，虽然描述完成了，其实我也还是有很多疑问点，因此这就当作你一个总结吧，后续根据不同的环境你可以自己跟踪下运行过程。</p>
+<p>在跟踪此流程过程中，借用了网上一些总结、同时也借用systemtap探究了调用栈、并且配合linux kernel源代码，但是其过程介绍的还是相对分散了，我们对这个流程再来一次汇总吧，如下图</p>
+<p><img src="/myimages/88ACAF18318CB722EDD337C03C74FEB8.png" alt="cc.png"></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux-bridge/" rel="tag"># linux bridge</a>
+          
+            <a href="/tags/linux-kernel/" rel="tag"># linux kernel</a>
+          
+            <a href="/tags/数据包转发原理/" rel="tag"># 数据包转发原理</a>
+          
+            <a href="/tags/openvswitch/" rel="tag"># openvswitch</a>
+          
+            <a href="/tags/协议栈处理过程/" rel="tag"># 协议栈处理过程</a>
+          
+            <a href="/tags/网卡驱动处理过程/" rel="tag"># 网卡驱动处理过程</a>
+          
+            <a href="/tags/处理数据包中断上半部分和下半部分/" rel="tag"># 处理数据包中断上半部分和下半部分</a>
+          
+            <a href="/tags/netfilter/" rel="tag"># netfilter</a>
+          
+            <a href="/tags/RPS算法工作原理/" rel="tag"># RPS算法工作原理</a>
+          
+            <a href="/tags/vhost-net线程工作原理/" rel="tag"># vhost-net线程工作原理</a>
+          
+            <a href="/tags/linux-veth口工作原理/" rel="tag"># linux veth口工作原理</a>
+          
+            <a href="/tags/数据包抓包点和数据包统计个数位置/" rel="tag"># 数据包抓包点和数据包统计个数位置</a>
+          
+            <a href="/tags/kvm中断触发云主机中断过程/" rel="tag"># kvm中断触发云主机中断过程</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/tap_drop/" rel="next" title="云主机tap口丢包问题">
+                <i class="fa fa-chevron-left"></i> 云主机tap口丢包问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/ovs_simple_forward1/" rel="prev" title="最简单的openvswitch转发过程内核代码级实现">
+                最简单的openvswitch转发过程内核代码级实现 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/h.jpg"
+               alt="vcpu.me" />
+          <p class="site-author-name" itemprop="name">vcpu.me</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">82</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">200</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/vcpu/" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://ytlm.github.io/" title="CDN张三丰" target="_blank">CDN张三丰</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://io.iwalk.me" title="互联网绝世高手Andy" target="_blank">互联网绝世高手Andy</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#粗略的转发逻辑"><span class="nav-number">1.</span> <span class="nav-text">粗略的转发逻辑</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据包经过物理口到达ovs-桥-br-int"><span class="nav-number">2.</span> <span class="nav-text">数据包经过物理口到达ovs 桥(br-int) </span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#物理网卡处理"><span class="nav-number">2.1.</span> <span class="nav-text">物理网卡处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何将网卡收到的数据写入到内核内存？"><span class="nav-number">2.1.1.</span> <span class="nav-text">如何将网卡收到的数据写入到内核内存？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#中断下半部分软中断处理"><span class="nav-number">2.2.</span> <span class="nav-text">中断下半部分软中断处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#rps"><span class="nav-number">2.2.1.</span> <span class="nav-text">rps</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#netif-receive-skb-core"><span class="nav-number">2.2.2.</span> <span class="nav-text">__netif_receive_skb_core</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#将数据包交给内核的ovs-bridge处理"><span class="nav-number">2.3.</span> <span class="nav-text">将数据包交给内核的ovs bridge处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#流量发给控制器"><span class="nav-number">2.3.1.</span> <span class="nav-text">流量发给控制器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#流量在内核态直接转发"><span class="nav-number">2.3.2.</span> <span class="nav-text">流量在内核态直接转发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#linux虚拟机口工作原理描述"><span class="nav-number">2.3.3.</span> <span class="nav-text">linux虚拟机口工作原理描述</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#linux-bridge-将数据包发给tap口"><span class="nav-number">3.</span> <span class="nav-text">linux bridge 将数据包发给tap口</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#tap口详细处理过程"><span class="nav-number">3.1.</span> <span class="nav-text">tap口详细处理过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#tap口如何处理数据包"><span class="nav-number">3.1.1.</span> <span class="nav-text">tap口如何处理数据包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tap口和vhost线程如何配合"><span class="nav-number">3.1.2.</span> <span class="nav-text">tap口和vhost线程如何配合</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vhost线程工作过程"><span class="nav-number">3.2.</span> <span class="nav-text">vhost线程工作过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kvm如何中断触发云主机协议栈？"><span class="nav-number">3.3.</span> <span class="nav-text">kvm如何中断触发云主机协议栈？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#云主机收到该数据包并最终将数据包交给云主机内部程序"><span class="nav-number">4.</span> <span class="nav-text">云主机收到该数据包并最终将数据包交给云主机内部程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">vcpu.me</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://vcpu.me.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://vcpu.me/packet_from_nic_to_user_process/';
+          this.page.identifier = 'packet_from_nic_to_user_process/';
+          this.page.title = '数据包如何从物理网卡到达云主机的应用程序？';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://vcpu.me.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("l5u4v8AcoPCp9wlPGVJTG6Ny-gzGzoHsz", "RQdYIOd2snvd1muAW65nsn25");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,2040 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+
+    
+  <url>
+    <loc>http://vcpu.me/ovs_simple_forward1/</loc>
+    <lastmod>2018-06-20T03:38:37.000Z</lastmod>
+    <data>
+        <display>
+        <title>最简单的openvswitch转发过程内核代码级实现</title>
+        <pubTime>2018-06-18T10:00:00.000Z</pubTime>
+        
+        <tag>openvswitch Datapath</tag>
+         
+        <tag>openvswitch 内核工作原理</tag>
+         
+        <tag>namespace协议栈工作过程</tag>
+         
+        <tag>internal ovs口</tag>
+         
+        <tag>数据包内核态转发过程</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux" url="http://vcpu.me/categories/linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/tcp_pps_test/</loc>
+    <lastmod>2018-06-12T07:29:49.000Z</lastmod>
+    <data>
+        <display>
+        <title>云主机TCP PPS测试方法</title>
+        <pubTime>2017-12-11T10:00:00.000Z</pubTime>
+        
+        <tag>TCP PPS</tag>
+         
+         
+           
+             
+              <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/dragonflow_flows/</loc>
+    <lastmod>2018-06-12T07:23:25.000Z</lastmod>
+    <data>
+        <display>
+        <title>Dragonflow openvswitch流表实现原理</title>
+        <pubTime>2018-04-17T10:00:00.000Z</pubTime>
+        
+        <tag>Dragonflow openvswitch流表实现原理</tag>
+         
+        <tag>Dragonflow 流表采用的标记</tag>
+         
+         
+           
+             
+              <breadCrumb title="dragonflow" url="http://vcpu.me/categories/dragonflow/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/read_dragonflow_etcd_data/</loc>
+    <lastmod>2018-06-12T07:17:08.000Z</lastmod>
+    <data>
+        <display>
+        <title>Dragonflow etcdv3数据读取方法</title>
+        <pubTime>2018-03-22T10:00:00.000Z</pubTime>
+        
+        <tag>Dragonflow etcdv3数据读取方法</tag>
+         
+         
+           
+             
+              <breadCrumb title="dragonflow" url="http://vcpu.me/categories/dragonflow/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/etcdv3/</loc>
+    <lastmod>2018-06-12T07:14:53.000Z</lastmod>
+    <data>
+        <display>
+        <title>etcdv3使用</title>
+        <pubTime>2018-03-21T10:00:00.000Z</pubTime>
+        
+        <tag>etcdv3使用</tag>
+         
+         
+           
+             
+              <breadCrumb title="dragonflow" url="http://vcpu.me/categories/dragonflow/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/self-service_and_provider_flows/</loc>
+    <lastmod>2018-06-12T07:10:23.000Z</lastmod>
+    <data>
+        <display>
+        <title>dragonflow self-service 和 provider通信流量走向图示</title>
+        <pubTime>2018-04-11T10:00:00.000Z</pubTime>
+        
+        <tag>draonflow 流表结构</tag>
+         
+         
+           
+             
+              <breadCrumb title="dragonflow" url="http://vcpu.me/categories/dragonflow/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/dragonflow_muti_external_network/</loc>
+    <lastmod>2018-06-12T07:02:39.000Z</lastmod>
+    <data>
+        <display>
+        <title>dragonflow2018多外网转发方案</title>
+        <pubTime>2018-04-22T10:00:00.000Z</pubTime>
+        
+        <tag>dragonflow多外网方案</tag>
+         
+         
+           
+             
+              <breadCrumb title="dragonflow" url="http://vcpu.me/categories/dragonflow/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/dragonflow_provider_flow/</loc>
+    <lastmod>2018-06-12T06:47:31.000Z</lastmod>
+    <data>
+        <display>
+        <title>dragonflow provider流量走向图示</title>
+        <pubTime>2018-04-09T10:00:00.000Z</pubTime>
+        
+        <tag>draonflow 流表结构</tag>
+         
+         
+           
+             
+              <breadCrumb title="dragonflow" url="http://vcpu.me/categories/dragonflow/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/dragonflow_fip_flows/</loc>
+    <lastmod>2018-06-12T06:46:15.000Z</lastmod>
+    <data>
+        <display>
+        <title>dragonflow fip流量走向图示</title>
+        <pubTime>2018-04-08T10:00:00.000Z</pubTime>
+        
+        <tag>draonflow 流表结构</tag>
+         
+         
+           
+             
+              <breadCrumb title="dragonflow" url="http://vcpu.me/categories/dragonflow/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/dragonflow_security_group3/</loc>
+    <lastmod>2018-06-12T06:39:18.000Z</lastmod>
+    <data>
+        <display>
+        <title>Dragonflow安全组实现三（详细）</title>
+        <pubTime>2018-05-21T10:00:00.000Z</pubTime>
+        
+        <tag>openvswitch安全组实现细节</tag>
+         
+        <tag>dragonflow安全组实现偏向于安全组作用原理介绍</tag>
+         
+        <tag>按照流量时刻分析安全组起作用过程</tag>
+         
+        <tag>linux conntrack</tag>
+         
+         
+           
+             
+              <breadCrumb title="dragonflow" url="http://vcpu.me/categories/dragonflow/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/ovs_connection_crach/</loc>
+    <lastmod>2018-06-12T06:15:34.000Z</lastmod>
+    <data>
+        <display>
+        <title>两台云主机处于同一个物理主机的fip和安全组会话冲突</title>
+        <pubTime>2018-04-23T10:00:00.000Z</pubTime>
+        
+        <tag>openvswitch实现安全组和FIP icmp偶尔通</tag>
+         
+        <tag>openvswitch实现安全组和FIP tcp一直不通</tag>
+         
+        <tag>fip修改地址后导致ct状态判断inv</tag>
+         
+        <tag>openvswitch实现安全组和FIP会遇到的问题</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux" url="http://vcpu.me/categories/linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/build_ovs/</loc>
+    <lastmod>2018-06-12T06:06:29.000Z</lastmod>
+    <data>
+        <display>
+        <title>openvswitch手动编译方法</title>
+        <pubTime>2018-04-28T10:00:00.000Z</pubTime>
+        
+        <tag>openvswitch编译运行过程</tag>
+         
+        <tag>openvswitch 打包deb</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux" url="http://vcpu.me/categories/linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/conjuctive/</loc>
+    <lastmod>2018-06-12T05:34:17.000Z</lastmod>
+    <data>
+        <display>
+        <title>CONJUNCTIVE MATCH FIELDS原理</title>
+        <pubTime>2018-05-08T10:00:00.000Z</pubTime>
+        
+        <tag>openvswitch CONJUNCTIVE</tag>
+         
+        <tag>openvswitch conjunctive 原理解析</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/policy_router/</loc>
+    <lastmod>2018-06-12T05:33:34.000Z</lastmod>
+    <data>
+        <display>
+        <title>linux策略路由的添加</title>
+        <pubTime>2018-05-13T10:00:00.000Z</pubTime>
+        
+        <tag>linux主机策略路由</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/ovs_l3_forward/</loc>
+    <lastmod>2018-06-12T05:28:37.000Z</lastmod>
+    <data>
+        <display>
+        <title>openvswitch bridge br-ex三层转发</title>
+        <pubTime>2018-05-16T10:00:00.000Z</pubTime>
+        
+        <tag>openvswitch三层转发</tag>
+         
+        <tag>openvswitch配置IP后转发流程</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/tap_drop/</loc>
+    <lastmod>2018-06-12T05:08:25.000Z</lastmod>
+    <data>
+        <display>
+        <title>云主机tap口丢包问题</title>
+        <pubTime>2018-06-11T10:00:00.000Z</pubTime>
+        
+        <tag>tap口丢包</tag>
+         
+        <tag>云主机带宽测试不稳定</tag>
+         
+        <tag>ping云主机高延迟</tag>
+         
+        <tag>云主机cpu绑定</tag>
+         
+        <tag>高性能云主机方法</tag>
+         
+        <tag>NUMA优化概念</tag>
+         
+        <tag>CPU挤压导致性能下降</tag>
+         
+        <tag>使用CPU资源的隔离</tag>
+         
+         
+           
+             
+              <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/packet_from_nic_to_user_process/</loc>
+    <lastmod>2018-06-12T04:59:36.000Z</lastmod>
+    <data>
+        <display>
+        <title>数据包如何从物理网卡到达云主机的应用程序？</title>
+        <pubTime>2018-06-12T10:00:00.000Z</pubTime>
+        
+        <tag>linux bridge</tag>
+         
+        <tag>linux kernel</tag>
+         
+        <tag>数据包转发原理</tag>
+         
+        <tag>openvswitch</tag>
+         
+        <tag>协议栈处理过程</tag>
+         
+        <tag>网卡驱动处理过程</tag>
+         
+        <tag>处理数据包中断上半部分和下半部分</tag>
+         
+        <tag>netfilter</tag>
+         
+        <tag>RPS算法工作原理</tag>
+         
+        <tag>vhost-net线程工作原理</tag>
+         
+        <tag>linux veth口工作原理</tag>
+         
+        <tag>数据包抓包点和数据包统计个数位置</tag>
+         
+        <tag>kvm中断触发云主机中断过程</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux" url="http://vcpu.me/categories/linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/network_brocast/</loc>
+    <lastmod>2018-06-12T02:27:01.000Z</lastmod>
+    <data>
+        <display>
+        <title>二层广播和三层广播</title>
+        <pubTime>2018-06-03T10:00:00.000Z</pubTime>
+        
+        <tag>二层广播</tag>
+         
+        <tag>三层广播</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/rx_dropped/</loc>
+    <lastmod>2018-06-12T02:20:15.000Z</lastmod>
+    <data>
+        <display>
+        <title>网卡rx dropped问题</title>
+        <pubTime>2018-06-06T10:00:00.000Z</pubTime>
+        
+        <tag>rx dropped</tag>
+         
+        <tag>rx_missed_errors</tag>
+         
+        <tag>rx_over_errors</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux" url="http://vcpu.me/categories/linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/tunning_simple/</loc>
+    <lastmod>2018-06-12T02:16:01.000Z</lastmod>
+    <data>
+        <display>
+        <title>linux服务端程序tunning过程简要总结</title>
+        <pubTime>2018-06-11T10:00:00.000Z</pubTime>
+        
+        <tag>linux高性能tunning</tag>
+         
+        <tag>服务端程序性能</tag>
+         
+        <tag>网络丢包</tag>
+         
+        <tag>性能优化方法</tag>
+         
+        <tag>Linux wake affinity</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux" url="http://vcpu.me/categories/linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/openstackdns/</loc>
+    <lastmod>2018-06-08T12:28:32.000Z</lastmod>
+    <data>
+        <display>
+        <title>openstack and Dragonflow DNS</title>
+        <pubTime>2018-05-28T10:00:00.000Z</pubTime>
+        
+        <tag>dragonflow dns相关</tag>
+         
+        <tag>云主机dns解析</tag>
+         
+        <tag>openstack 云主机stack</tag>
+         
+        <tag>DNS试验</tag>
+         
+        <tag>search</tag>
+         
+        <tag>domain</tag>
+         
+         
+           
+             
+              <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/dnat/</loc>
+    <lastmod>2018-04-18T03:29:49.000Z</lastmod>
+    <data>
+        <display>
+        <title>Using vlan external netowrk fip，dragonflow dirtributed dnat does not work</title>
+        <pubTime>2018-04-18T04:00:00.000Z</pubTime>
+        
+        <tag>dragonflow</tag>
+         
+        <tag>dirtributed dnat</tag>
+         
+        <tag>vlan external netowrk</tag>
+         
+        <tag>floating ip</tag>
+         
+         
+           
+             
+              <breadCrumb title="dragonflow" url="http://vcpu.me/categories/dragonflow/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+    
+  <url>
+    <loc>http://vcpu.me/chun/</loc>
+    <lastmod>2018-03-31T07:09:16.000Z</lastmod>
+    <data>
+        <display>
+        <title>春</title>
+        <pubTime>2018-03-31T10:00:00.000Z</pubTime>
+        
+        <tag>春</tag>
+         
+         
+           
+             
+              <breadCrumb title="诗和远方" url="http://vcpu.me/categories/%E8%AF%97%E5%92%8C%E8%BF%9C%E6%96%B9/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+    
+  <url>
+    <loc>http://vcpu.me/dpdk-ovs-vhost-user-kvm/</loc>
+    <lastmod>2018-03-01T03:27:34.000Z</lastmod>
+    <data>
+        <display>
+        <title>OSX Fusion ubuntu16.04.2 虚拟机安装dpdk ovs</title>
+        <pubTime>2018-02-28T10:00:00.000Z</pubTime>
+        
+        <tag>osx操作系统</tag>
+         
+        <tag>VMware Fusion 8</tag>
+         
+        <tag>kvm</tag>
+         
+        <tag>dpdk</tag>
+         
+        <tag>ovs</tag>
+         
+        <tag>vhost-user</tag>
+         
+         
+           
+             
+              <breadCrumb title="DPDK" url="http://vcpu.me/categories/DPDK/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/ubuntu_soure_make/</loc>
+    <lastmod>2018-02-26T10:21:55.000Z</lastmod>
+    <data>
+        <display>
+        <title>ubuntu16.04内核代码编译升级步骤</title>
+        <pubTime>2017-12-22T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntu16.04.2</tag>
+         
+        <tag>内核代码获取</tag>
+         
+        <tag>内核代码编译</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux kernel" url="http://vcpu.me/categories/linux-kernel/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/addr2line/</loc>
+    <lastmod>2018-02-14T09:50:14.000Z</lastmod>
+    <data>
+        <display>
+        <title>addr2line如何根据地址找到行号？</title>
+        <pubTime>2018-01-23T10:00:00.000Z</pubTime>
+        
+        <tag>addr2line</tag>
+         
+        <tag>反汇编</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux" url="http://vcpu.me/categories/linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/print_stack/</loc>
+    <lastmod>2018-02-11T16:35:25.000Z</lastmod>
+    <data>
+        <display>
+        <title>gdb工具打印函数调用栈</title>
+        <pubTime>2018-01-10T10:00:00.000Z</pubTime>
+        
+        <tag>gdb</tag>
+         
+        <tag>函数调用栈</tag>
+         
+        <tag>性能点找寻方法之一</tag>
+         
+        <tag>用户态进程性能调整方法</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux kernel" url="http://vcpu.me/categories/linux-kernel/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/exectime_for_c_proess/</loc>
+    <lastmod>2018-02-11T16:34:06.000Z</lastmod>
+    <data>
+        <display>
+        <title>strace跟踪程序执行时间</title>
+        <pubTime>2018-01-13T10:00:00.000Z</pubTime>
+        
+        <tag>strace</tag>
+         
+        <tag>性能点找寻</tag>
+         
+        <tag>程序执行时间细化</tag>
+         
+        <tag>strace使用方法</tag>
+         
+        <tag>你可以使用的用户程序性能优化找寻仿佛之一</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux kernel" url="http://vcpu.me/categories/linux-kernel/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/valgrind/</loc>
+    <lastmod>2018-02-11T16:33:36.000Z</lastmod>
+    <data>
+        <display>
+        <title>valgrind打印程序调用栈</title>
+        <pubTime>2018-01-15T10:00:00.000Z</pubTime>
+        
+        <tag>valgrind</tag>
+         
+        <tag>性能点找寻方法</tag>
+         
+        <tag>c程序服务端用户态程序调用栈打印</tag>
+         
+        <tag>一个强大的用户态程序调优方法</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux kernel" url="http://vcpu.me/categories/linux-kernel/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/guest_tx_pps_performance/</loc>
+    <lastmod>2018-02-11T16:12:11.000Z</lastmod>
+    <data>
+        <display>
+        <title>云主机发包性能提升方法</title>
+        <pubTime>2017-12-29T10:00:00.000Z</pubTime>
+        
+        <tag>虚拟云主机</tag>
+         
+        <tag>vhost-net</tag>
+         
+        <tag>tx pps</tag>
+         
+        <tag>hping3</tag>
+         
+        <tag>iperf3</tag>
+         
+        <tag>perftop分析性能瓶颈</tag>
+         
+        <tag>云主机tx性能提升两倍方法</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/ftrace/</loc>
+    <lastmod>2018-02-11T15:48:10.000Z</lastmod>
+    <data>
+        <display>
+        <title>ftrace一个系统含有的工具</title>
+        <pubTime>2017-12-25T10:00:00.000Z</pubTime>
+        
+        <tag>ftrace</tag>
+         
+        <tag>cpu调度情况查看</tag>
+         
+        <tag>内核函数调用</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux kernel" url="http://vcpu.me/categories/linux-kernel/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/systemtap3.1/</loc>
+    <lastmod>2018-02-11T15:18:58.000Z</lastmod>
+    <data>
+        <display>
+        <title>ubuntu16.04.2 systemtap安装以及工作原理和协议栈调用栈不全解决方法</title>
+        <pubTime>2017-12-02T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntu16.04.2</tag>
+         
+        <tag>systemtap编译安装</tag>
+         
+        <tag>systemtap运行原理</tag>
+         
+        <tag>systemtap符号不全解决方法</tag>
+         
+        <tag>stap运行举例</tag>
+         
+        <tag>veth pair和linux bridge函数调用栈打印</tag>
+         
+        <tag>虚拟网络</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux kernel" url="http://vcpu.me/categories/linux-kernel/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/systemtap-skills/</loc>
+    <lastmod>2018-02-11T15:18:53.000Z</lastmod>
+    <data>
+        <display>
+        <title>systemtap能做什么？第一篇</title>
+        <pubTime>2017-12-10T10:00:00.000Z</pubTime>
+        
+        <tag>systemtap</tag>
+         
+        <tag>ubuntu16.04.2</tag>
+         
+        <tag>probe</tag>
+         
+        <tag>内存泄漏探测</tag>
+         
+        <tag>嵌入c</tag>
+         
+        <tag>打印二级指针</tag>
+         
+        <tag>qemu进程创建失败</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux kernel" url="http://vcpu.me/categories/linux-kernel/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/dropwatch/</loc>
+    <lastmod>2018-02-11T14:48:59.000Z</lastmod>
+    <data>
+        <display>
+        <title>我的数据包丢在那里之一场iptables旅行</title>
+        <pubTime>2018-02-07T10:00:00.000Z</pubTime>
+        
+        <tag>iptables</tag>
+         
+        <tag>linuxbridge</tag>
+         
+        <tag>dropwatch</tag>
+         
+        <tag>perf</tag>
+         
+        <tag>ubuntun16.04.3</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/osx-ensible/</loc>
+    <lastmod>2018-02-11T14:04:07.000Z</lastmod>
+    <data>
+        <display>
+        <title>使用mac pro 使用ansible自动监控服务器进程状态</title>
+        <pubTime>2018-01-07T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntun16.04</tag>
+         
+        <tag>dropwatch</tag>
+         
+        <tag>osx</tag>
+         
+        <tag>ensible</tag>
+         
+        <tag>云主机</tag>
+         
+        <tag>自动化控制许多台远程主机</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/f-stack%E5%AE%89%E8%A3%85/</loc>
+    <lastmod>2018-02-07T13:13:17.000Z</lastmod>
+    <data>
+        <display>
+        <title>f-stack安装运行</title>
+        <pubTime>2017-06-12T09:50:55.000Z</pubTime>
+        
+        <tag>DPDK</tag>
+         
+        <tag>f-stack</tag>
+         
+        <tag>nginx</tag>
+         
+         
+           
+             
+              <breadCrumb title="DPDK" url="http://vcpu.me/categories/DPDK/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/ovs-limit/</loc>
+    <lastmod>2017-11-08T10:12:35.000Z</lastmod>
+    <data>
+        <display>
+        <title>ovs 发包限速</title>
+        <pubTime>2017-11-08T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntun16.04</tag>
+         
+        <tag>ovs</tag>
+         
+        <tag>tc</tag>
+         
+        <tag>netperf</tag>
+         
+        <tag>发包限速</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/guanshen/</loc>
+    <lastmod>2017-11-02T11:05:04.000Z</lastmod>
+    <data>
+        <display>
+        <title>小说官神经典语录</title>
+        <pubTime>2017-11-02T10:00:00.000Z</pubTime>
+        
+        <tag>经典语录</tag>
+         
+         
+           
+             
+              <breadCrumb title="杂文" url="http://vcpu.me/categories/%E6%9D%82%E6%96%87/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/linux-bridge1/</loc>
+    <lastmod>2017-11-02T10:53:23.000Z</lastmod>
+    <data>
+        <display>
+        <title>linux bridge</title>
+        <pubTime>2017-11-02T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntun16.04</tag>
+         
+        <tag>iptables</tag>
+         
+        <tag>linux bridge</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/ovs-snat/</loc>
+    <lastmod>2017-11-02T10:52:53.000Z</lastmod>
+    <data>
+        <display>
+        <title>ovs snat</title>
+        <pubTime>2017-10-31T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntun16.04</tag>
+         
+        <tag>ovs</tag>
+         
+        <tag>snat</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/ryu-connect-ovs/</loc>
+    <lastmod>2017-11-02T07:04:57.000Z</lastmod>
+    <data>
+        <display>
+        <title>RYU连接ovs方法举例</title>
+        <pubTime>2017-10-25T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntun16.04</tag>
+         
+        <tag>ovs</tag>
+         
+        <tag>实验性质</tag>
+         
+        <tag>RYU</tag>
+         
+         
+           
+             
+              <breadCrumb title="RYU" url="http://vcpu.me/categories/RYU/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/mininet-jiemian/</loc>
+    <lastmod>2017-11-02T07:04:15.000Z</lastmod>
+    <data>
+        <display>
+        <title>mininet界面配置拓扑方法</title>
+        <pubTime>2017-10-20T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntun16.04</tag>
+         
+        <tag>mininet界面配置</tag>
+         
+        <tag>实验性质</tag>
+         
+         
+           
+             
+              <breadCrumb title="RYU" url="http://vcpu.me/categories/RYU/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/mininet1/</loc>
+    <lastmod>2017-11-02T07:03:52.000Z</lastmod>
+    <data>
+        <display>
+        <title>mininet+RYU环境安装</title>
+        <pubTime>2017-10-20T10:00:00.000Z</pubTime>
+        
+        <tag>openstack</tag>
+         
+        <tag>ubuntun16.04</tag>
+         
+        <tag>SDN控制器</tag>
+         
+         
+           
+             
+              <breadCrumb title="RYU" url="http://vcpu.me/categories/RYU/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/openstackmoni/</loc>
+    <lastmod>2017-11-02T07:03:17.000Z</lastmod>
+    <data>
+        <display>
+        <title>openstack 网络环境模拟</title>
+        <pubTime>2017-10-15T10:00:00.000Z</pubTime>
+        
+        <tag>openstack</tag>
+         
+        <tag>ubuntun16.04</tag>
+         
+        <tag>实验性质</tag>
+         
+         
+           
+             
+              <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/linuxarp/</loc>
+    <lastmod>2017-10-30T10:01:40.000Z</lastmod>
+    <data>
+        <display>
+        <title>linux arp机制解析</title>
+        <pubTime>2017-10-01T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntun16.04</tag>
+         
+        <tag>arp机制实验验证</tag>
+         
+        <tag>arp机制</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux" url="http://vcpu.me/categories/linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/ovspatch/</loc>
+    <lastmod>2017-10-11T03:21:29.000Z</lastmod>
+    <data>
+        <display>
+        <title>ovs patch port 连接方法</title>
+        <pubTime>2017-10-11T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntun16.04</tag>
+         
+        <tag>ovs</tag>
+         
+        <tag>patch port</tag>
+         
+         
+           
+             
+              <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/openstackenv/</loc>
+    <lastmod>2017-10-11T03:20:48.000Z</lastmod>
+    <data>
+        <display>
+        <title>openstack多种组网环境下组网信息记录和插件组成</title>
+        <pubTime>2017-08-30T10:00:00.000Z</pubTime>
+        
+        <tag>openstack</tag>
+         
+        <tag>ubuntun16.04</tag>
+         
+        <tag>newton</tag>
+         
+         
+           
+             
+              <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/4node-flowtable/</loc>
+    <lastmod>2017-10-11T03:16:42.000Z</lastmod>
+    <data>
+        <display>
+        <title>openstack DVR openvswitch流表分析</title>
+        <pubTime>2017-09-04T10:00:00.000Z</pubTime>
+        
+        <tag>openstack</tag>
+         
+        <tag>DVR</tag>
+         
+        <tag>ubuntun16.04</tag>
+         
+        <tag>控制节点、网络节点、2个计算节点</tag>
+         
+         
+           
+             
+              <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/openvswitch4/</loc>
+    <lastmod>2017-09-01T09:02:28.000Z</lastmod>
+    <data>
+        <display>
+        <title>openvSwitch 基础命令行</title>
+        <pubTime>2017-08-08T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntun16.04</tag>
+         
+        <tag>ovs</tag>
+         
+        <tag>虚拟交换机</tag>
+         
+        <tag>cmd</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/fwaas/</loc>
+    <lastmod>2017-08-25T07:57:47.000Z</lastmod>
+    <data>
+        <display>
+        <title>fwaas</title>
+        <pubTime>2017-08-14T10:00:00.000Z</pubTime>
+        
+        <tag>openstack</tag>
+         
+        <tag>ubuntun16.04</tag>
+         
+        <tag>fwaas</tag>
+         
+         
+           
+             
+              <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/metadata/</loc>
+    <lastmod>2017-08-25T07:57:18.000Z</lastmod>
+    <data>
+        <display>
+        <title>metadata</title>
+        <pubTime>2017-08-24T10:00:00.000Z</pubTime>
+        
+        <tag>openstack</tag>
+         
+        <tag>ubuntun16.04</tag>
+         
+        <tag>metadata</tag>
+         
+        <tag>nova-api-metadata</tag>
+         
+        <tag>Neutron-ns-metadata-proxy</tag>
+         
+        <tag>Neutron-metadata-agent</tag>
+         
+         
+           
+             
+              <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/vmcreate/</loc>
+    <lastmod>2017-08-25T07:57:08.000Z</lastmod>
+    <data>
+        <display>
+        <title>图示openstack -组件间基本关系和虚拟机创建</title>
+        <pubTime>2017-08-24T10:00:00.000Z</pubTime>
+        
+        <tag>openstack</tag>
+         
+        <tag>ubuntun16.04</tag>
+         
+         
+           
+             
+              <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/secritygroup/</loc>
+    <lastmod>2017-08-09T06:59:00.000Z</lastmod>
+    <data>
+        <display>
+        <title>openstack Security group</title>
+        <pubTime>2017-08-09T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntun16.04</tag>
+         
+        <tag>Security group</tag>
+         
+        <tag>安全组</tag>
+         
+         
+           
+             
+              <breadCrumb title="openstack" url="http://vcpu.me/categories/openstack/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/openvswitch2/</loc>
+    <lastmod>2017-08-07T09:45:44.000Z</lastmod>
+    <data>
+        <display>
+        <title>openvSwitch tunnel</title>
+        <pubTime>2017-08-03T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntun16.04</tag>
+         
+        <tag>ovs</tag>
+         
+        <tag>虚拟交换机</tag>
+         
+        <tag>gre</tag>
+         
+        <tag>vxlan</tag>
+         
+        <tag>ovx tunnel</tag>
+         
+        <tag>ipsec gre</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/openvswitch3/</loc>
+    <lastmod>2017-08-07T07:39:02.000Z</lastmod>
+    <data>
+        <display>
+        <title>openvSwitch flow</title>
+        <pubTime>2017-08-07T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntun16.04</tag>
+         
+        <tag>ovs</tag>
+         
+        <tag>虚拟交换机</tag>
+         
+        <tag>ovs-ofctl</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/openvswitch1/</loc>
+    <lastmod>2017-08-03T07:44:29.000Z</lastmod>
+    <data>
+        <display>
+        <title>openvSwitch mirror、Qos、STP</title>
+        <pubTime>2017-08-03T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntun16.04</tag>
+         
+        <tag>ovs</tag>
+         
+        <tag>虚拟交换机</tag>
+         
+        <tag>mirror</tag>
+         
+        <tag>Qos</tag>
+         
+        <tag>STP</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/openvswitch/</loc>
+    <lastmod>2017-08-03T07:24:09.000Z</lastmod>
+    <data>
+        <display>
+        <title>openvSwitch</title>
+        <pubTime>2017-07-31T10:00:00.000Z</pubTime>
+        
+        <tag>ubuntun16.04</tag>
+         
+        <tag>ovs</tag>
+         
+        <tag>虚拟交换机</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/hub/</loc>
+    <lastmod>2017-08-02T02:17:55.000Z</lastmod>
+    <data>
+        <display>
+        <title>集线器、网桥、交换机、中继器原理</title>
+        <pubTime>2017-07-07T09:22:34.000Z</pubTime>
+        
+        <tag>集线器</tag>
+         
+        <tag>网桥</tag>
+         
+        <tag>中继器</tag>
+         
+        <tag>交换机</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/iptables/</loc>
+    <lastmod>2017-07-27T03:24:52.000Z</lastmod>
+    <data>
+        <display>
+        <title>iptables</title>
+        <pubTime>2017-07-27T10:00:00.000Z</pubTime>
+        
+        <tag>iptables</tag>
+         
+        <tag>netfilter框架原理</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/vxlan1/</loc>
+    <lastmod>2017-07-19T05:43:20.000Z</lastmod>
+    <data>
+        <display>
+        <title> vxlan</title>
+        <pubTime>2017-07-19T10:00:00.000Z</pubTime>
+        
+        <tag>overlay</tag>
+         
+        <tag>云计算组网</tag>
+         
+        <tag>vxlan原理</tag>
+         
+        <tag>vxlan实验</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/network1/</loc>
+    <lastmod>2017-07-14T07:31:24.000Z</lastmod>
+    <data>
+        <display>
+        <title> 虚拟网络</title>
+        <pubTime>2017-07-14T10:00:00.000Z</pubTime>
+        
+        <tag>network namespace</tag>
+         
+        <tag>网络设备tun/tap</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/cmd1/</loc>
+    <lastmod>2017-07-13T10:59:59.000Z</lastmod>
+    <data>
+        <display>
+        <title> 网络基本命令</title>
+        <pubTime>2017-07-13T10:00:00.000Z</pubTime>
+        
+        <tag>arp相关命令</tag>
+         
+        <tag>路由相关命令</tag>
+         
+        <tag>地址配置相关命令</tag>
+         
+        <tag>虚拟命名空间相关命令</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/switchtech/</loc>
+    <lastmod>2017-07-07T03:47:23.000Z</lastmod>
+    <data>
+        <display>
+        <title>二三层转发-基本原理</title>
+        <pubTime>2017-07-07T10:00:00.000Z</pubTime>
+        
+        <tag>二三层转发</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://vcpu.me/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/TCP%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6/</loc>
+    <lastmod>2017-07-05T01:33:00.000Z</lastmod>
+    <data>
+        <display>
+        <title>拥塞控制</title>
+        <pubTime>2017-07-04T10:00:00.000Z</pubTime>
+        
+        <tag>拥塞控制</tag>
+         
+        <tag>tcp/ip</tag>
+         
+        <tag>Linux拥塞控制基本概念</tag>
+         
+         
+           
+             
+              <breadCrumb title="TCP" url="http://vcpu.me/categories/TCP/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/interrupt/</loc>
+    <lastmod>2017-07-04T03:28:38.000Z</lastmod>
+    <data>
+        <display>
+        <title>软中断和硬中断</title>
+        <pubTime>2017-07-04T04:00:00.000Z</pubTime>
+        
+        <tag>软中断</tag>
+         
+        <tag>硬中断</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux" url="http://vcpu.me/categories/linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/epool/</loc>
+    <lastmod>2017-07-04T03:23:55.000Z</lastmod>
+    <data>
+        <display>
+        <title>epool基本用法</title>
+        <pubTime>2017-06-28T04:00:00.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>epoll</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="http://vcpu.me/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/%E6%83%8A%E7%BE%A4/</loc>
+    <lastmod>2017-06-29T03:06:20.000Z</lastmod>
+    <data>
+        <display>
+        <title>惊群探究</title>
+        <pubTime>2017-06-29T04:00:00.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>nginx</tag>
+         
+        <tag>惊群</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux" url="http://vcpu.me/categories/linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/socket%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/</loc>
+    <lastmod>2017-06-26T09:01:27.000Z</lastmod>
+    <data>
+        <display>
+        <title>socket信号处理</title>
+        <pubTime>2017-06-26T11:10:34.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>socket信号处理</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="http://vcpu.me/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/select/</loc>
+    <lastmod>2017-06-26T09:00:57.000Z</lastmod>
+    <data>
+        <display>
+        <title>select</title>
+        <pubTime>2017-06-26T09:00:57.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>select</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="http://vcpu.me/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/socket_rw_proc/</loc>
+    <lastmod>2017-06-26T08:55:50.000Z</lastmod>
+    <data>
+        <display>
+        <title>socket读写条件</title>
+        <pubTime>2017-06-26T11:10:34.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="http://vcpu.me/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/connect/</loc>
+    <lastmod>2017-06-26T03:33:43.000Z</lastmod>
+    <data>
+        <display>
+        <title>connect()实现源码分析</title>
+        <pubTime>2017-06-09T09:30:34.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>socket</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="http://vcpu.me/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/TIME_WAIT%E7%8A%B6%E6%80%81%E5%88%86%E6%9E%90/</loc>
+    <lastmod>2017-06-23T03:16:59.000Z</lastmod>
+    <data>
+        <display>
+        <title>TIME_WAIT状态分析</title>
+        <pubTime>2017-06-23T03:16:59.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+         
+           
+             
+              <breadCrumb title="TCP" url="http://vcpu.me/categories/TCP/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+    
+  <url>
+    <loc>http://vcpu.me/socket/</loc>
+    <lastmod>2017-06-22T10:13:08.000Z</lastmod>
+    <data>
+        <display>
+        <title>socket()实现源码分析</title>
+        <pubTime>2017-06-09T09:22:34.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>socket</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="http://vcpu.me/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/Linux%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/</loc>
+    <lastmod>2017-06-22T10:10:14.000Z</lastmod>
+    <data>
+        <display>
+        <title>Linux系统调用</title>
+        <pubTime>2017-06-22T10:10:14.000Z</pubTime>
+        
+        <tag>系统调用</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux" url="http://vcpu.me/categories/linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/tcp_sndbuf/</loc>
+    <lastmod>2017-06-20T10:31:48.000Z</lastmod>
+    <data>
+        <display>
+        <title>tcp socket发送缓冲区</title>
+        <pubTime>2017-06-20T10:31:48.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>socket</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="http://vcpu.me/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/pf_inet/</loc>
+    <lastmod>2017-06-20T10:12:51.000Z</lastmod>
+    <data>
+        <display>
+        <title>PF_INET和AF_INET区别</title>
+        <pubTime>2017-06-20T10:12:51.000Z</pubTime>
+        
+        <tag>PF_INET</tag>
+         
+        <tag>AF_INET</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="http://vcpu.me/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/sockaddr_in/</loc>
+    <lastmod>2017-06-20T07:18:11.000Z</lastmod>
+    <data>
+        <display>
+        <title>sockaddr_in和sockaddr的区别</title>
+        <pubTime>2017-06-20T07:18:11.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>sockaddr_in</tag>
+         
+        <tag>sockaddr</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="http://vcpu.me/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/socket_stp/</loc>
+    <lastmod>2017-06-20T06:52:23.000Z</lastmod>
+    <data>
+        <display>
+        <title>systemtap使用调试记录（二）</title>
+        <pubTime>2017-06-20T06:52:23.000Z</pubTime>
+        
+        <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>socket</tag>
+         
+        <tag>systemtap</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux kernel" url="http://vcpu.me/categories/linux-kernel/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/socketsend1/</loc>
+    <lastmod>2017-06-19T04:43:31.000Z</lastmod>
+    <data>
+        <display>
+        <title>socket send</title>
+        <pubTime>2017-06-19T04:43:31.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
+         
+        <tag>send</tag>
+         
+        <tag>sendto</tag>
+         
+        <tag>sendmsg</tag>
+         
+        <tag>sendmmsg</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="http://vcpu.me/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/centos%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F/</loc>
+    <lastmod>2017-06-15T07:42:10.000Z</lastmod>
+    <data>
+        <display>
+        <title>centos环境下脚本执行顺序探究</title>
+        <pubTime>2017-06-15T07:42:10.000Z</pubTime>
+        
+        <tag>linux</tag>
+         
+        <tag>centos</tag>
+         
+         
+           
+             
+              <breadCrumb title="centos" url="http://vcpu.me/categories/centos/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/bind/</loc>
+    <lastmod>2017-06-12T09:35:01.000Z</lastmod>
+    <data>
+        <display>
+        <title>bind()实现源码分析</title>
+        <pubTime>2017-06-12T09:35:01.000Z</pubTime>
+        
+        <tag>tcp/ip</tag>
+         
+        <tag>bind</tag>
+         
+        <tag>kernel3.10.0-514.16.1</tag>
+         
+         
+           
+             
+              <breadCrumb title="socket" url="http://vcpu.me/categories/socket/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://vcpu.me/systemtap%E4%BD%BF%E7%94%A8%E8%B0%83%E8%AF%95%E8%AE%B0%E5%BD%95%EF%BC%88%E4%B8%80%EF%BC%89/</loc>
+    <lastmod>2017-06-05T10:15:52.000Z</lastmod>
+    <data>
+        <display>
+        <title>systemtap使用调试记录（一）</title>
+        <pubTime>2017-06-05T10:15:52.000Z</pubTime>
+        
+        <tag>systemtap</tag>
+         
+         
+           
+             
+              <breadCrumb title="linux kernel" url="http://vcpu.me/categories/linux-kernel/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+    
+</urlset>
