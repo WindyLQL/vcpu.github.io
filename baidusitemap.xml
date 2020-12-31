@@ -5,7 +5,7 @@
     
   <url>
     <loc>http://vcpu.me/vxlan_openvswitch_simple/</loc>
-    <lastmod>2018-06-20T08:32:42.000Z</lastmod>
+    <lastmod>2020-12-31T14:17:44.142Z</lastmod>
     <data>
         <display>
         <title>最精简的vxlan封装解封装过程</title>
@@ -1625,9 +1625,9 @@
         <title>拥塞控制</title>
         <pubTime>2017-07-04T10:00:00.000Z</pubTime>
         
-        <tag>tcp/ip</tag>
-         
         <tag>拥塞控制</tag>
+         
+        <tag>tcp/ip</tag>
          
         <tag>Linux拥塞控制基本概念</tag>
          

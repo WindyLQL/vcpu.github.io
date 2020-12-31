@@ -104,7 +104,7 @@
 <meta property="og:description" content="vxlan使用背景如下图">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://vcpu.me/myimages/5E9DEEF206276D632D15FE8E98512F33.jpg">
-<meta property="og:updated_time" content="2018-06-20T08:32:42.000Z">
+<meta property="og:updated_time" content="2020-12-31T14:17:44.142Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="最精简的vxlan封装解封装过程">
 <meta name="twitter:description" content="vxlan使用背景如下图">
@@ -433,8 +433,8 @@
       
 
       
-        <h1 id="vxlan使用背景如下图"><a href="#vxlan使用背景如下图" class="headerlink" title="vxlan使用背景如下图"></a>vxlan使用背景如下图</h1><p><img src="/myimages/5E9DEEF206276D632D15FE8E98512F33.jpg" alt=""></p>
-<a id="more"></a>
+        <h1 id="vxlan使用背景如下图"><a href="#vxlan使用背景如下图" class="headerlink" title="vxlan使用背景如下图"></a>vxlan使用背景如下图</h1><a id="more"></a>
+<p><img src="/myimages/5E9DEEF206276D632D15FE8E98512F33.jpg" alt=""></p>
 <h1 id="vxlan-环境实现脚本"><a href="#vxlan-环境实现脚本" class="headerlink" title="vxlan 环境实现脚本"></a>vxlan 环境实现脚本</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">#vbox虚拟机1</span><br><span class="line">ip netns add left</span><br><span class="line">ip link add name veth1 type veth peer name sw1-p1</span><br><span class="line">ip link set dev veth1 netns left</span><br><span class="line">ip netns exec left ifconfig veth1 10.0.0.1/24 up</span><br><span class="line"></span><br><span class="line">ovs-vsctl add-br sw1</span><br><span class="line">ovs-vsctl add-port sw1 sw1-p1</span><br><span class="line">ip link set sw1-p1 up</span><br><span class="line"></span><br><span class="line">#vbox虚拟机2</span><br><span class="line">ip netns add right</span><br><span class="line">ip link add name veth1 type veth peer name sw2-p1</span><br><span class="line">ip link set dev veth1 netns right</span><br><span class="line">ip netns exec right ifconfig veth1 10.0.0.2/24 up</span><br><span class="line"></span><br><span class="line">ovs-vsctl add-br sw2</span><br><span class="line">ovs-vsctl add-port sw2 sw2-p1</span><br><span class="line">ip link set sw2-p1 up</span><br></pre></td></tr></table></figure>
 <h1 id="vxlan实现过程粗略过程说明"><a href="#vxlan实现过程粗略过程说明" class="headerlink" title="vxlan实现过程粗略过程说明"></a>vxlan实现过程粗略过程说明</h1><ul>
 <li>默认端口4789</li>
@@ -719,7 +719,7 @@
         <div class="copyright" >
   
   &copy;  2017 - 
-  <span itemprop="copyrightYear">2018</span>
+  <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
